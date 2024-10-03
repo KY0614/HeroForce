@@ -6,7 +6,6 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/Camera.h"
-#include "../Object/SpaceDome.h"
 #include "TitleScene.h"
 
 TitleScene::TitleScene(void)
@@ -27,11 +26,7 @@ void TitleScene::Init(void)
 	// タイトルロゴ
 	imgTitleLogo_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::START_LOGO).handleId_;
 
-	// スカイドーム
-	spaceDomeTran_.pos = AsoUtility::VECTOR_ZERO;
-
-	spaceDome_ = new SpaceDome(spaceDomeTran_);
-	spaceDome_->Init();
+	
 }
 
 void TitleScene::Update(void)
@@ -43,15 +38,10 @@ void TitleScene::Update(void)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 	}
-
-	// スカイドーム
-	spaceDome_->Update();
 }
 
 void TitleScene::Draw(void)
 {
-	// スカイドーム(背景や不透明を最初に描画)
-	spaceDome_->Draw();
 
 	// ロゴ描画
 	DrawLogo();
@@ -60,9 +50,6 @@ void TitleScene::Draw(void)
 
 void TitleScene::Release(void)
 {
-	// スカイドーム
-	spaceDome_->Release();
-	delete spaceDome_;
 }
 
 void TitleScene::DrawLogo(void)
