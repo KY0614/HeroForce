@@ -35,13 +35,13 @@ void Camera::SetBeforeDraw(void)
 	switch (mode_)
 	{
 	case Camera::MODE::FIXED_POINT:
-		SetBeforeDrawFixedPoint();
+		//SetBeforeDrawFixedPoint();
 		break;
 	case Camera::MODE::FREE:
 		SetBeforeDrawFree();
 	
 	case Camera::MODE::FOLLOW:
-		SetBeforeDrawFollow();
+		//SetBeforeDrawFollow();
 		break;
 
 	case Camera::MODE::FOLLOW_SPRING:
@@ -130,52 +130,75 @@ void Camera::SetBeforeDrawFree(void)
 
 void Camera::SetBeforeDrawFollow(void)
 {
-	//// 追従対象の位置
-	//VECTOR followPos = followTransform_->pos;
-	//
-	//// 追従対象の向き
-	//Quaternion followRot = followTransform_->quaRot;
-	//
-	//// 追従対象からカメラまでの相対座標
-	//VECTOR relativeCPos = followRot.PosAxis(RELATIVE_F2C_POS_FOLLOW);
-	//
-	//// カメラ位置の更新
-	//pos_ = VAdd(followPos, relativeCPos);
-	//
-	//// カメラ位置から注視点までの相対座標
-	//VECTOR relativeTPos = followRot.PosAxis(RELATIVE_C2T_POS);
-	//
-	//// 注視点の更新
-	//targetPos_ = VAdd(pos_, relativeTPos);
-	//
-	//// カメラの上方向
-	//cameraUp_ = followRot.PosAxis(rot_.GetUp());
+	// 追従対象の位置
+	VECTOR followPos = followTransform_->pos;
+
+	// 追従対象の向き
+	Quaternion followRot = followTransform_->quaRot;
+
+	// 追従対象からカメラまでの相対座標
+	VECTOR relativeCPos = followRot.PosAxis(RELATIVE_F2C_POS_FOLLOW);
+
+	// カメラ位置の更新
+	pos_ = VAdd(followPos, relativeCPos);
+
+	// カメラ位置から注視点までの相対座標
+	VECTOR relativeTPos = followRot.PosAxis(RELATIVE_C2T_POS);
+
+	// 注視点の更新
+	targetPos_ = VAdd(pos_, relativeTPos);
+
+	// カメラの上方向
+	cameraUp_ = followRot.PosAxis(rot_.GetUp());
 }
 
 void Camera::SetBeforeDrawFollowSpring(void)
 {
 	// ばね定数(ばねの強さ)
 	float POW_SPRING = 24.0f;
+
+	// ばね定数（ばねの抵抗）
 	float dampening = 2.0f * sqrt(POW_SPRING);
 
 	// デルタタイム
 	float delta = SceneManager::GetInstance().GetDeltaTime();
 
+	// 3D酔いする人用
+	//delta = 1.0f / 60.0f;
 
-	//VECTOR
+	// 追従対象の位置
+	VECTOR followPos = followTransform_->pos;
+
+	// 追従対象の向き
+	Quaternion followRot = followTransform_->quaRot;
+
+	// 追従対象からカメラまでの相対座標
+	VECTOR relativeCPos = followRot.PosAxis(RELATIVE_F2C_POS_SPRING);
 
 	// 理想位置
-	//VECTOR idealPos = VAdd(shipPos, relative);
-	
+	VECTOR idealPos = VAdd(followPos, relativeCPos);
+
 	// 実際と理想の差
-	//VECTOR diff = VSub(pos_, idealPos);
-	
+	VECTOR diff = VSub(pos_, idealPos);
+
 	// 力 = -バネの強さ × バネの伸び - 抵抗 × カメラの速度
-	//VECTOR force = VScale(diff, -POW_SPRING);
-	//force = VSub(force, VScale(velocity_, dampening));
-	
+	VECTOR force = VScale(diff, -POW_SPRING);
+	force = VSub(force, VScale(velocity_, dampening));
+
 	// 速度の更新
-	//velocity_ = VAdd(velocity_, VScale(force, delta));
+	velocity_ = VAdd(velocity_, VScale(force, delta));
+
+	// カメラ位置の更新
+	pos_ = VAdd(pos_, VScale(velocity_, delta));
+
+	// カメラ位置から注視点までの相対座標
+	VECTOR relativeTPos = followRot.PosAxis(RELATIVE_C2T_POS);
+
+	// 注視点の更新
+	targetPos_ = VAdd(pos_, relativeTPos);
+
+	// カメラの上方向
+	cameraUp_ = followRot.PosAxis(rot_.GetUp());
 }
 
 void Camera::Draw(void)
@@ -213,6 +236,7 @@ void Camera::ChangeMode(MODE mode)
 
 void Camera::SetFollow(const Transform* follow)
 {
+	followTransform_ = follow;
 }
 
 void Camera::SetDefault(void)
@@ -230,5 +254,7 @@ void Camera::SetDefault(void)
 	// カメラはX軸に傾いているが、
 	// この傾いた状態を角度ゼロ、傾き無しとする
 	rot_ = Quaternion::Identity();
+
+	velocity_ = AsoUtility::VECTOR_ZERO;
 
 }
