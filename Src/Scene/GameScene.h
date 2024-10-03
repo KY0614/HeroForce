@@ -2,8 +2,6 @@
 #include "SceneBase.h"
 
 class Grid;
-class SpaceDome;
-class PlayerShip;
 
 class GameScene : public SceneBase
 {
@@ -24,9 +22,5 @@ private:
 
 	// ƒOƒŠƒbƒhü
 	Grid* grid_;
-
-	SpaceDome* spaceDome_;
-
-	PlayerShip* playerShip_;
 };
 
