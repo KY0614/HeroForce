@@ -126,6 +126,14 @@ void Camera::SetBeforeDrawFree(void)
 		pos_ = VAdd(pos_, movePow);
 		targetPos_ = VAdd(targetPos_, movePow);
 	}
+
+
+	//Nキーを押すとカメラがシェイクするように
+	if (ins.IsTrgDown(KEY_INPUT_N))
+	{
+
+	}
+
 }
 
 void Camera::SetBeforeDrawFollow(void)
