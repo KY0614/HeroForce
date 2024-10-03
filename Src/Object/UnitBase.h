@@ -36,7 +36,7 @@ public:
 	//–hŒä—Í
 	const float GetDef(void)const {return def_;};
 
-private:
+protected:
 
 	int mdlId_;			//ƒ‚ƒfƒ‹•Û‘¶
 	int hp_;			//‘Ì—Í
