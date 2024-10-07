@@ -67,7 +67,7 @@ void Camera::SetBeforeDrawFixedPoint(void)
 
 void Camera::SetBeforeDrawFree(void)
 {
-	
+	auto& ins = InputManager::GetInstance();
 
 	ProcessMove();
 
