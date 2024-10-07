@@ -30,6 +30,15 @@ public:
 	// 追従対象からカメラ位置までの相対座標(ばね付き)
 	static constexpr VECTOR RELATIVE_F2C_POS_SPRING = { 0.0f, 40.0f, 150.0f };
 
+	// 移動速度の最大値
+	static constexpr float MAX_MOVE_SPEED = 3.5f;
+
+	// 加速
+	static constexpr float MOVE_ACC = 0.25f;
+
+	// 減速
+	static constexpr float MOVE_DEC = 0.05f;
+
 	// カメラモード
 	enum class MODE
 	{
@@ -88,6 +97,22 @@ private:
 
 	// カメラを初期位置に戻す
 	void SetDefault(void);
+
+	//カメラシェイク
+	void Shake(void);
+	
+	//カメラシェイクさせるための準備
+	void SetShake(float intensity,float duration);
+
+	void ProcessMove(void);
+
+	void Accel(float speed);
+
+	void Decelerate(float speed);
+
+	float shakeIntensity; // 振動の強さ
+	float shakeDuration;  // 振動の持続時間
+	float shakeTime;      // 現在の振動時間
 
 };
 
