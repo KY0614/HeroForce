@@ -25,11 +25,14 @@ protected:
     //移動処理
     void Move(DIR _dir);
 
-    //移動操作（コントローラー）
+    //操作系（コントローラー）
     void KeyBoardControl(void);
 
     //方向処理
     void Turn(float deg, VECTOR axis);
+
+    //攻撃処理
+    void Attack(void);
     
 
     DIR dir_;

@@ -72,10 +72,21 @@ void PlayerBase::KeyBoardControl(void)
 	{
 		Move(DIR::RIGHT);
 	}
+
+	if (ins.IsNew(KEY_INPUT_E))
+	{
+		Attack();
+	}
+
 }
 
 void PlayerBase::Turn(float deg, VECTOR axis)
 {
 	transform_.quaRot =
 		transform_.quaRot.Mult(Quaternion::AngleAxis(AsoUtility::Deg2RadF(deg), axis));
+}
+
+void PlayerBase::Attack(void)
+{
+	
 }
