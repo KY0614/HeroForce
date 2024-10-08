@@ -23,6 +23,8 @@ void Camera::Init(void)
 	SetDefault();
 
 	SetShake(0.0f, 0.0f);
+
+	moveSpeed_ = 0.0f;
 }
 
 void Camera::Update(void)
@@ -83,9 +85,9 @@ void Camera::SetBeforeDrawFree(void)
 	// 回転軸と量を決める
 	const float ROT_POW = 1.0f;
 	VECTOR axisDeg = AsoUtility::VECTOR_ZERO;
-	if (ins.IsNew(KEY_INPUT_UP)) { axisDeg.x = -1.0f; }
-	if (ins.IsNew(KEY_INPUT_DOWN)) { axisDeg.x = 1.0f; }
-	if (ins.IsNew(KEY_INPUT_LEFT)) { axisDeg.y = -1.0f; }
+	if (ins.IsNew(KEY_INPUT_UP))	{ axisDeg.x = -1.0f; }
+	if (ins.IsNew(KEY_INPUT_DOWN))	{ axisDeg.x = 1.0f; }
+	if (ins.IsNew(KEY_INPUT_LEFT))	{ axisDeg.y = -1.0f; }
 	if (ins.IsNew(KEY_INPUT_RIGHT)) { axisDeg.y = 1.0f; }
 
 	// カメラ座標を中心として、注視点を回転させる
@@ -142,8 +144,14 @@ void Camera::SetBeforeDrawFree(void)
 		SetShake(10.5f, 5.0f);
 	}
 
-	pos_ = Lerp(pos_, targetPos_, 0.05f);
+	//pos_ = Lerp(pos_, targetPos_, 0.01f);
 
+	if (ins.IsNew(KEY_INPUT_N))
+	{
+		moveSpeed_ += 0.1f;
+	}
+
+	DrawFormatString(0, 0, 0xffffff, "moveSpeed_ : %f", moveSpeed_);
 }
 
 void Camera::SetBeforeDrawFollow(void)

@@ -1,5 +1,7 @@
 #pragma once
 #include <DxLib.h>
+#include <cmath>
+#include <DirectXMath.h>
 #include "../Common/Quaternion.h"
 
 class Transform;
@@ -47,7 +49,6 @@ public:
 			start.z + (end.z - start.z) * t
 		);
 	}
-
 
 	Camera(void);
 	~Camera(void);
@@ -110,5 +111,7 @@ private:
 	
 
 	float larpSpeed_;
+
+	float moveSpeed_;
 };
 
