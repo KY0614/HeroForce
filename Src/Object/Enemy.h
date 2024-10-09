@@ -2,8 +2,6 @@
 #include<vector>
 #include "UnitBase.h"
 
-class EnemyAtk;
-
 class Enemy : public UnitBase
 {
 public:
@@ -44,31 +42,27 @@ public:
 	//描画
 	void Draw(void)override;
 
-	//敵の攻撃を取得
-	std::vector<EnemyAtk*> GetAtk(void);
+	/// <summary>
+	/// ダメージ
+	/// </summary>
+	/// <param name="_damage">ダメージ量</param>
+	//void Damage(float _damage);
+
+	//敵の攻撃の生存判定
+	bool IsAtk(void);
 
 private:
-
-	std::vector<EnemyAtk*> atk_;	//攻撃用インスタンス
 	
 	STATE state_;	//現在の状態
 
-	float atkCdt_;	//攻撃のクールダウンカウンタ
+	float atkCdt_;						//攻撃のクールダウンカウンタ
+
+	std::vector<Transform> atkTrans_;	//攻撃の位置依存関係
 
 	//移動
 	void Move(const float _moveSpeed);
 
 	//敵の攻撃処理
 	void Attack(void);
-
-	//攻撃の生成処理
-	void CreateAtk(void);
-
-	/// <summary>
-	/// 有効な攻撃の取得
-	/// </summary>
-	/// <param name=""></param>
-	/// <returns>使用中ではない領域</returns>
-	EnemyAtk* GetValidAtk(void);
 };
 

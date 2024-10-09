@@ -3,7 +3,6 @@
 #include"../Manager/InputManager.h"
 #include"../Manager/ResourceManager.h"
 #include"../Utility/AsoUtility.h"
-#include"EnemyAtk.h"
 #include "Enemy.h"
 
 Enemy::Enemy()
@@ -27,16 +26,15 @@ void Enemy::Init(void)
 	state_ = STATE::NML;
 
 	atkCdt_ = 0.0f;
-	
+
 	trans_.Update();
 }
 
 void Enemy::Update(void)
 {
 	//攻撃クールダウン中なら待機
-	atkCdt_ < ATK_CDT
-		? state_ = STATE::NML
-		: state_ = STATE::ATK;
+	if (atkCdt_ < ATK_CDT)state_ = STATE::NML;
+	else state_ = STATE::ATK;
 
 	//状態ごとのUpdate
 	switch (state_)
@@ -77,11 +75,8 @@ void Enemy::UpdateDead(void)
 void Enemy::Draw(void)
 {
 	DrawSphere3D(trans_.pos, 10.0f, 10, 0xff00ff, 0xff00ff, true);
-}
 
-std::vector<EnemyAtk*> Enemy::GetAtk(void)
-{
-	return atk_;
+	
 }
 
 void Enemy::Move(const float _moveSpeed)
@@ -119,39 +114,6 @@ void Enemy::Move(const float _moveSpeed)
 
 void Enemy::Attack(void)
 {
-	//攻撃の生成
-	CreateAtk();
-
 	//攻撃クールダウンカウンタ初期化
 	atkCdt_ = 0.0f;
-}
-
-void Enemy::CreateAtk(void)
-{
-	//有効な攻撃を取得
-	EnemyAtk* atk = GetValidAtk();
-
-	//攻撃の生成
-	atk->Init(this);
-}
-
-EnemyAtk* Enemy::GetValidAtk(void)
-{
-	//使用しきった配列を探す
-	for (auto& atk : atk_)
-	{
-		//役目が終わっているなら
-		if (!atk->IsAlive())
-		{
-			//再利用
-			return atk;
-		}
-	}
-
-	//ないので新しく攻撃用に配列を追加
-	EnemyAtk* newAtk = new EnemyAtk();
-	atk_.emplace_back(newAtk);
-
-	//新しく作ったのを返す
-	return newAtk;
 }
