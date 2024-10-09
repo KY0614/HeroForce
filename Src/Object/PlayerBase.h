@@ -9,6 +9,7 @@ public:
     static constexpr float SPEED_MOVE = 5.0f;
     static constexpr float SPEED_DODGE = 10.0f;
     static constexpr int FRAME_ATK_MAX = 100;
+    static constexpr int FRAME_DODGE_MAX = 100;
     PlayerBase(void);
     ~PlayerBase(void) = default;
     void Destroy(void)override;
