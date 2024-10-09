@@ -33,13 +33,13 @@ public:
 	static constexpr VECTOR RELATIVE_F2C_POS_SPRING = { 0.0f, 40.0f, 150.0f };
 
 	// 移動速度の最大値
-	static constexpr float MAX_MOVE_SPEED = 3.5f;
+	static constexpr float MAX_MOVE_SPEED = 5.0f;
 
 	// 加速
-	static constexpr float MOVE_ACC = 0.5;
+	static constexpr float MOVE_ACC = 0.5f;
 
 	// 減速
-	static constexpr float MOVE_DEC = 0.05f;
+	static constexpr float MOVE_DEC = 0.2f;
 
 
 	// カメラモード
