@@ -12,7 +12,7 @@ class Camera
 public:
 
 	// カメラスピード：NEAR
-	static constexpr float SPEED = 20.0f;
+	static constexpr float SPEED = 10.0f;
 
 	// カメラクリップ：NEAR
 	static constexpr float CAMERA_NEAR = 40.0f;
@@ -31,6 +31,16 @@ public:
 
 	// 追従対象からカメラ位置までの相対座標(ばね付き)
 	static constexpr VECTOR RELATIVE_F2C_POS_SPRING = { 0.0f, 40.0f, 150.0f };
+
+	// 移動速度の最大値
+	static constexpr float MAX_MOVE_SPEED = 3.5f;
+
+	// 加速
+	static constexpr float MOVE_ACC = 0.5;
+
+	// 減速
+	static constexpr float MOVE_DEC = 0.05f;
+
 
 	// カメラモード
 	enum class MODE
@@ -110,8 +120,20 @@ private:
 	float shakeTime;      // 現在の振動時間
 	
 
-	float larpSpeed_;
+	// 移動操作
+	void ProcessMove(void);
+
+	// 移動
+	void Move(void);
+
+	// 加速
+	void Accele(float speed);
+
+	// 減速（スピードを減少させる）
+	void Decelerate(float speed);
 
 	float moveSpeed_;
+
+	VECTOR moveDir;
 };
 

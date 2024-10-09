@@ -73,70 +73,11 @@ void Camera::SetBeforeDrawFree(void)
 {
 	auto& ins = InputManager::GetInstance();
 
+	ProcessMove();
 
-	larpSpeed_ = 3.0f;
-	// 移動
-	VECTOR moveDir = AsoUtility::VECTOR_ZERO;
-	if (ins.IsNew(KEY_INPUT_W)) { moveDir = AsoUtility::DIR_F; }
-	if (ins.IsNew(KEY_INPUT_S)) { moveDir = AsoUtility::DIR_B; }
-	if (ins.IsNew(KEY_INPUT_A)) { moveDir = AsoUtility::DIR_L; }
-	if (ins.IsNew(KEY_INPUT_D)) { moveDir = AsoUtility::DIR_R; }
+	Decelerate(MOVE_DEC);
 
-	// 回転軸と量を決める
-	const float ROT_POW = 1.0f;
-	VECTOR axisDeg = AsoUtility::VECTOR_ZERO;
-	if (ins.IsNew(KEY_INPUT_UP))	{ axisDeg.x = -1.0f; }
-	if (ins.IsNew(KEY_INPUT_DOWN))	{ axisDeg.x = 1.0f; }
-	if (ins.IsNew(KEY_INPUT_LEFT))	{ axisDeg.y = -1.0f; }
-	if (ins.IsNew(KEY_INPUT_RIGHT)) { axisDeg.y = 1.0f; }
-
-	// カメラ座標を中心として、注視点を回転させる
-	if (!AsoUtility::EqualsVZero(axisDeg))
-	{
-		// 今回の回転量を合成
-		Quaternion rotPow;
-		rotPow = rotPow.Mult(
-			Quaternion::AngleAxis(
-				AsoUtility::Deg2RadF(axisDeg.z), AsoUtility::AXIS_Z));
-		rotPow = rotPow.Mult(
-			Quaternion::AngleAxis(
-				AsoUtility::Deg2RadF(axisDeg.x), AsoUtility::AXIS_X));
-		rotPow = rotPow.Mult(
-			Quaternion::AngleAxis(
-				AsoUtility::Deg2RadF(axisDeg.y), AsoUtility::AXIS_Y));
-
-		// カメラの回転の今回の回転量を加える（合成）
-		rot_ = rot_.Mult(rotPow);
-
-		// 注視点の相対座標を回転させる
-		VECTOR rotLocalPos = rot_.PosAxis(RELATIVE_C2T_POS);
-
-		// 注視点更新
-		targetPos_ = VAdd(pos_, rotLocalPos);
-
-		// カメラの上方向更新
-		cameraUp_ = rot_.GetUp();
-	}
-
-	// 移動処理
-	if (!AsoUtility::EqualsVZero(moveDir))
-	{
-		// 移動 = 座標 + 移動量
-		// 移動量 = 方向 * スピード 
-
-		// 入力された方向をカメラの回転情報を使って、
-		// カメラの進行方向に変換する
-		VECTOR direction = rot_.PosAxis(moveDir);
-		
-		// 移動量
-		VECTOR movePow = VScale(direction, SPEED);
-		
-		// 移動処理
-		pos_ = VAdd(pos_, movePow);
-
-		targetPos_ = VAdd(targetPos_, movePow);
-
-	}
+	Move();
 
 	//Nキーを押すとカメラがシェイクするように
 	if (ins.IsTrgDown(KEY_INPUT_N))
@@ -312,4 +253,115 @@ void Camera::SetShake(float intensity, float duration)
 {
 	shakeIntensity = intensity;
 	shakeDuration = duration;
+}
+
+void Camera::ProcessMove(void)
+{
+	auto& ins = InputManager::GetInstance();
+
+	// 移動
+	//moveDir = AsoUtility::VECTOR_ZERO;
+	if (ins.IsNew(KEY_INPUT_W)) { moveDir = AsoUtility::DIR_F; Accele(MOVE_ACC); }
+	if (ins.IsNew(KEY_INPUT_S)) { moveDir = AsoUtility::DIR_B; Accele(MOVE_ACC); }
+	if (ins.IsNew(KEY_INPUT_A)) { moveDir = AsoUtility::DIR_L; Accele(MOVE_ACC); }
+	if (ins.IsNew(KEY_INPUT_D)) { moveDir = AsoUtility::DIR_R; Accele(MOVE_ACC); }
+
+	// 回転軸と量を決める
+	const float ROT_POW = 1.0f;
+	VECTOR axisDeg = AsoUtility::VECTOR_ZERO;
+	if (ins.IsNew(KEY_INPUT_UP)) { axisDeg.x = -1.0f; }
+	if (ins.IsNew(KEY_INPUT_DOWN)) { axisDeg.x = 1.0f; }
+	if (ins.IsNew(KEY_INPUT_LEFT)) { axisDeg.y = -1.0f; }
+	if (ins.IsNew(KEY_INPUT_RIGHT)) { axisDeg.y = 1.0f; }
+
+
+	// カメラ座標を中心として、注視点を回転させる
+	if (!AsoUtility::EqualsVZero(axisDeg))
+	{
+		// 今回の回転量を合成
+		Quaternion rotPow;
+		rotPow = rotPow.Mult(
+			Quaternion::AngleAxis(
+				AsoUtility::Deg2RadF(axisDeg.z), AsoUtility::AXIS_Z));
+		rotPow = rotPow.Mult(
+			Quaternion::AngleAxis(
+				AsoUtility::Deg2RadF(axisDeg.x), AsoUtility::AXIS_X));
+		rotPow = rotPow.Mult(
+			Quaternion::AngleAxis(
+				AsoUtility::Deg2RadF(axisDeg.y), AsoUtility::AXIS_Y));
+
+		// カメラの回転の今回の回転量を加える（合成）
+		rot_ = rot_.Mult(rotPow);
+
+		// 注視点の相対座標を回転させる
+		VECTOR rotLocalPos = rot_.PosAxis(RELATIVE_C2T_POS);
+
+		// 注視点更新
+		targetPos_ = VAdd(pos_, rotLocalPos);
+
+		// カメラの上方向更新
+		cameraUp_ = rot_.GetUp();
+	}
+}
+
+void Camera::Move(void)
+{
+	// 移動処理
+	if (!AsoUtility::EqualsVZero(moveDir))
+	{
+		// 移動 = 座標 + 移動量
+		// 移動量 = 方向 * スピード 
+
+		// 入力された方向をカメラの回転情報を使って、
+		// カメラの進行方向に変換する
+		VECTOR direction = rot_.PosAxis(moveDir);
+
+		// 移動量
+		VECTOR movePow = VScale(direction, moveSpeed_);
+
+		// 移動処理
+		pos_ = VAdd(pos_, movePow);
+
+		targetPos_ = VAdd(targetPos_, movePow);
+	}
+}
+
+void Camera::Accele(float speed)
+{
+	moveSpeed_ += speed;
+
+	// 速度制限(右方向)
+	if (moveSpeed_ > MAX_MOVE_SPEED)
+	{
+		moveSpeed_ = MAX_MOVE_SPEED;
+	}
+
+	// 速度制限(左方向)
+	if (moveSpeed_ < -MAX_MOVE_SPEED)
+	{
+		moveSpeed_ = -MAX_MOVE_SPEED;
+	}
+}
+
+void Camera::Decelerate(float speed)
+{
+	// 右方向の移動を減速させる
+	if (moveSpeed_ > 0.0f)
+	{
+		moveSpeed_ -= speed;
+		if (moveSpeed_ < 0.0f)
+		{
+			moveSpeed_ = 0.0f;
+		}
+	}
+
+	// 左方向の移動を減速させる
+	if (moveSpeed_ < 0.0f)
+	{
+		moveSpeed_ += speed;
+		if (moveSpeed_ > 0.0f)
+		{
+			moveSpeed_ = 0.0f;
+		}
+	}
 }
