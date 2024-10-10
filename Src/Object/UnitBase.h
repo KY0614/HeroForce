@@ -46,7 +46,7 @@ public:
 	//Transform‚¢‚½‚¾‚«
 	const Transform& GetTransform(void)const { return trans_;};
 
-	const Transform* GetTransformEntity(void)const { return &trans_; };
+	const Transform* GetTransformEntity(void)const;
 
 	//ˆÊ’u
 	const VECTOR GetPos(void)const {return trans_.pos;};
