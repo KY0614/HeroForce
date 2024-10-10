@@ -1,4 +1,5 @@
 #pragma once
+#include"../Object/PlayerBase.h"
 #include "SceneBase.h"
 
 class Grid;
@@ -22,5 +23,7 @@ private:
 
 	// グリッド線
 	Grid* grid_;
+	//プレイヤー（テスト）
+	PlayerBase* playerB_;
 };
 
