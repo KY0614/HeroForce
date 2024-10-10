@@ -31,8 +31,6 @@ public:
 	const VECTOR GetRot(void)const {return trans_.rot;};
 	//‘å‚«‚³
 	const VECTOR GetScl(void)const {return trans_.scl;};
-	//UŒ‚—Í
-	const float GetAtk(void)const {return atk_;};
 	//–hŒä—Í
 	const float GetDef(void)const {return def_;};
 
@@ -41,7 +39,6 @@ protected:
 	int mdlId_;			//ƒ‚ƒfƒ‹•Û‘¶
 	int hp_;			//‘Ì—Í
 	Transform trans_;	//ˆÊ’uî•ñŠÖŒW
-	float atk_;			//UŒ‚—Í
 	float def_;			//–hŒä—Í
 
 };

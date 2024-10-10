@@ -11,26 +11,7 @@ public:
 	// リソース名
 	enum class SRC
 	{
-		START_LOGO,
-		END_LOGO,
-		ALERT_MSG,
-		LIGHT,
-		SKYDOME,
-		PLAYER_SHIP,
-		LEADER_SHIP,
-		BOSS_SHIP,
-		DUNGEON,
-		SHOT_EXPLOSION,
-		ALPHABET,
-		SPEECH_BALLOON,
-		SHOT_MODEL,
-		TURRET_STAND,
-		TURRET_GUN,
-		ROCK01,
-		ROCK02,
-		JET,
-		BOOST,
-		PLAYER_SHIP_EXPLOSION,
+		
 	};
 
 	// 明示的にインステンスを生成する
