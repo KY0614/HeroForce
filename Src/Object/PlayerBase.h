@@ -7,6 +7,7 @@ class PlayerBase :
 public:
     // 移動スピード
     static constexpr float SPEED_MOVE = 5.0f;
+    static constexpr float SPEED_DEG = 5.0f;
     static constexpr float SPEED_DODGE = 10.0f;
     static constexpr int FRAME_ATK_MAX = 100;
     static constexpr int FRAME_DODGE_MAX = 100;
