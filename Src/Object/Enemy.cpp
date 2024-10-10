@@ -122,6 +122,9 @@ void Enemy::Attack(void)
 {
 	//攻撃クールダウンカウンタ初期化
 	atkCdt_ = 0.0f;
+
+	//攻撃生成
+	CreateAtk();
 }
 
 void Enemy::CreateAtk(void)
@@ -134,24 +137,32 @@ void Enemy::CreateAtk(void)
 
 const Enemy::ATK Enemy::GetValidAtk(void)
 {
+	//現在存在する攻撃を取得
 	for (auto& atk : atk_)
 	{
-		if (atk.duration_)
+		//攻撃の時間が過ぎているなら
+		if (atk.cnt_ > atk.duration_ + atk.backlash_)
 		{
 			//カウンタを初期化してもう一度再利用する
+			atk.ResetCnt();
 
+			//TODO::新しい攻撃の情報を代入し、上書きする
 
 			return atk;
 		}
 	}
 
 	//新たな攻撃配列を生成
-	ATK atk;
+	ATK newAtk;
 	
 	//カウンタの初期化
+	newAtk.ResetCnt();
+
+	//TODO::新しい攻撃の情報を代入し、上書きする
 
 	//新たに作った攻撃を配列に挿入
+	atk_.emplace_back(newAtk);
 
 	//作った攻撃を返す
-	return ATK();
+	return newAtk;
 }

@@ -44,16 +44,13 @@ public:
 	/// <param name="_damage">ダメージ量</param>
 	//void Damage(float _damage);
 
-	//敵の攻撃の生存判定
-	bool IsAtk(void);
-
 private:
 	
 	STATE state_;	//現在の状態
 
 	float atkCdt_;			//攻撃のクールダウンカウンタ
 
-	std::vector<ATK> atk_;	//攻撃の位置依存関係
+	std::vector<ATK> atk_;	//攻撃情報
 
 	//更新(通常)
 	void UpdateNml(void);
