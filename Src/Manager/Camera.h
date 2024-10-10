@@ -11,45 +11,45 @@ class Camera
 
 public:
 
-	// カメラスピード：NEAR
+	//カメラスピード：NEAR
 	static constexpr float SPEED = 10.0f;
 
-	// カメラクリップ：NEAR
+	//カメラクリップ：NEAR
 	static constexpr float CAMERA_NEAR = 40.0f;
 
-	// カメラクリップ：NEAR
+	//カメラクリップ：NEAR
 	static constexpr float CAMERA_FAR = 15000.0f;
 
-	// カメラの初期座標
+	//カメラの初期座標
 	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 100.0f, -500.0f };
 
-	// カメラ位置から注視点までの相対座標
+	//カメラ位置から注視点までの相対座標
 	static constexpr VECTOR RELATIVE_C2T_POS = { 0.0f, -100.0f, 500.0f };
 
-	// 追従対象からカメラ位置までの相対座標(完全追従)
+	//追従対象からカメラ位置までの相対座標(完全追従)
 	static constexpr VECTOR RELATIVE_F2C_POS_FOLLOW = { 0.0f, 25.0f, -80.0f };
 
-	// 追従対象からカメラ位置までの相対座標(ばね付き)
+	//追従対象からカメラ位置までの相対座標(ばね付き)
 	static constexpr VECTOR RELATIVE_F2C_POS_SPRING = { 0.0f, 40.0f, 150.0f };
 
-	// 移動速度の最大値
+	//移動速度の最大値
 	static constexpr float MAX_MOVE_SPEED = 5.0f;
 
-	// 加速
+	//加速
 	static constexpr float MOVE_ACC = 0.5f;
 
-	// 減速
+	//減速
 	static constexpr float MOVE_DEC = 0.2f;
 
 
-	// カメラモード
+	//カメラモード
 	enum class MODE
 	{
 		NONE,
-		FIXED_POINT,	// 定点カメラ
-		FREE,			// フリーモード
-		FOLLOW,			// 追従モード
-		FOLLOW_SPRING	// ばね付き追従モード
+		FIXED_POINT,	//定点カメラ
+		FREE,			//フリーモード
+		FOLLOW,			//追従モード
+		FOLLOW_SPRING	//ばね付き追従モード
 	};
 
 	VECTOR Lerp(VECTOR start, VECTOR end, float t) {
@@ -77,36 +77,36 @@ public:
 
 	VECTOR GetPos(void) const;
 
-	// カメラモードの変更
+	//カメラモードの変更
 	void ChangeMode(MODE mode);
 
-	// 追従対象の設定
+	//追従対象の設定
 	void SetFollow(const Transform* follow);
 
 private:
 
-	// 追従対象
+	//追従対象
 	const Transform* followTransform_;
 
-	// カメラモード
+	//カメラモード
 	MODE mode_;
 
-	// カメラの位置
+	//カメラの位置
 	VECTOR pos_;
 
-	// カメラの注視点
+	//カメラの注視点
 	VECTOR targetPos_;
 
-	// カメラの上方向
+	//カメラの上方向
 	VECTOR cameraUp_;
 
-	// カメラの回転
+	//カメラの回転
 	Quaternion rot_;
 
-	// カメラの速度(移動量)
+	//カメラの速度(移動量)
 	VECTOR velocity_;
 
-	// カメラを初期位置に戻す
+	//カメラを初期位置に戻す
 	void SetDefault(void);
 
 	//カメラシェイク
@@ -115,25 +115,28 @@ private:
 	//カメラシェイクさせるための準備
 	void SetShake(float intensity,float duration);
 
-	float shakeIntensity; // 振動の強さ
-	float shakeDuration;  // 振動の持続時間
-	float shakeTime;      // 現在の振動時間
+	bool isVibrating = false;
+	float vibrationStrength = 0.1f; //振動の強さ
+	int vibrationDuration = 20;;  //振動の持続時間
+	int currentVibrationTime = 0;      //現在の振動時間
 	
 
-	// 移動操作
+	//移動操作
 	void ProcessMove(void);
 
-	// 移動
+	//移動
 	void Move(void);
 
-	// 加速
+	//加速
 	void Accele(float speed);
 
-	// 減速（スピードを減少させる）
+	//減速（スピードを減少させる）
 	void Decelerate(float speed);
 
+	// 移動量
 	float moveSpeed_;
 
+	//向き
 	VECTOR moveDir;
 };
 
