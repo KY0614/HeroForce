@@ -42,6 +42,10 @@ public:
 	//ゲッター各種
 	//生存確認(生存しているとtrue)
 	const bool IsAlive(void)const {return hp_ > 0;};
+
+	//Transformいただき
+	const Transform& GetTransform(void)const { return trans_;};
+
 	//位置
 	const VECTOR GetPos(void)const {return trans_.pos;};
 	//角度
