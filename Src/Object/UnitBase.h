@@ -7,6 +7,22 @@
 class UnitBase
 {
 public:
+
+	//攻撃関係
+	struct ATK
+	{
+		VECTOR pos_;		//位置
+		float atk_;			//攻撃力
+		float duration_;	//持続時間
+		float Backlash_;	//後隙
+
+	//攻撃力取得
+		const float GetAtk(void)const { return atk_; };
+	//位置取得
+		const VECTOR GetPos(void)const { return pos_; };
+	};
+
+
 	//コンストラクタ
 	UnitBase(void);
 	//デストラクタ

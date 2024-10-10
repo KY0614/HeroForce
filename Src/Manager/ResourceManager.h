@@ -11,7 +11,20 @@ public:
 	// リソース名
 	enum class SRC
 	{
-		
+		TITLE,
+		GAMEOVER,
+		RESTART,
+		NEXT,
+		//モデル
+		STAGE_1,		//ステージ①
+		PLAYER_MAGE,	//魔法使い（プレイヤー）
+		PLAYER_KNIGHT,	//騎士（プレイヤー）
+		PLAYER_ARCHER,	//弓使い（プレイヤー）
+		PLAYER_AXEMAN,	//斧使い（プレイヤー）
+		ENEMY_MAGE,		//魔法使い（敵）
+		ENEMY_BRIGANT,	//山賊（敵）
+		ENEMY_ARCHER,	//弓使い（敵）
+		ENEMY_AXEMAN,	//斧使い（敵）
 	};
 
 	// 明示的にインステンスを生成する
