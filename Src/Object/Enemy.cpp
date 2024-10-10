@@ -18,11 +18,13 @@ void Enemy::Init(void)
 	//モデル読み込み
 	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_AXEMAN));
 
+	float scl = 0.2f;
+
 	//変数の初期化
-	trans_.scl = { 1.0f,1.0f,1.0f };
+	trans_.scl = { scl,scl,scl };
 	trans_.pos = { 0.0f,0.0f,0.0f };
 	trans_.quaRot = Quaternion();
-	trans_.quaRotLocal = Quaternion();
+	trans_.quaRotLocal = Quaternion::AngleAxis(AsoUtility::Deg2RadF(180.0f), AsoUtility::AXIS_Y);
 	
 	state_ = STATE::NML;
 
@@ -52,6 +54,9 @@ void Enemy::Update(void)
 		UpdateDead();
 		break;
 	}
+
+	//モデル制御
+	trans_.Update();
 }
 
 void Enemy::UpdateNml(void)
@@ -117,4 +122,36 @@ void Enemy::Attack(void)
 {
 	//攻撃クールダウンカウンタ初期化
 	atkCdt_ = 0.0f;
+}
+
+void Enemy::CreateAtk(void)
+{
+	//有効な攻撃を取得
+	ATK atk = GetValidAtk();
+
+	
+}
+
+const Enemy::ATK Enemy::GetValidAtk(void)
+{
+	for (auto& atk : atk_)
+	{
+		if (atk.duration_)
+		{
+			//カウンタを初期化してもう一度再利用する
+
+
+			return atk;
+		}
+	}
+
+	//新たな攻撃配列を生成
+	ATK atk;
+	
+	//カウンタの初期化
+
+	//新たに作った攻撃を配列に挿入
+
+	//作った攻撃を返す
+	return ATK();
 }
