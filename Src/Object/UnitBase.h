@@ -10,14 +10,17 @@ public:
 	struct ATK
 	{
 		VECTOR pos_;		//位置
-		float atk_;			//攻撃力
-		float duration_;	//持続時間
-		float Backlash_;	//後隙
+		float pow_;			//攻撃力
+		float duration_;	//持続時間（攻撃がどれくらい続くかを記述)
+		float backlash_;	//後隙（後隙がどれくらい続くかを記述)
+		float cnt_;			//カウンター
 
-	//攻撃力取得
-		const float GetAtk(void)const { return atk_; };
-	//位置取得
-		const VECTOR GetPos(void)const { return pos_; };
+	//攻撃中かどうか
+		const bool IsAttack(void)const { return 0 < cnt_ && cnt_ <= duration_; };
+	//後隙がどうか
+		const bool IsBacklash_(void) { return 0 < (cnt_ - duration_) && (cnt_ - duration_) <= backlash_; };
+	//カウンターリセット
+		void ResetCnt(void) { cnt_ = 0; };
 	};
 
 
