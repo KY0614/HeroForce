@@ -14,6 +14,10 @@ public:
 	//-------------------------------------------
 	static const std::string PATH_IMAGE;
 	static const std::string PATH_MODEL;
+	static const std::string PATH_ENEMY;
+	static const std::string PATH_PLAYER;
+	static const std::string PATH_STAGE;
+	static const std::string PATH_OBJECT;
 	static const std::string PATH_EFFECT;
 	//-------------------------------------------
 

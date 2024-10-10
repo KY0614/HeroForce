@@ -24,86 +24,43 @@ void ResourceManager::Init(void)
 
 	Resource res;
 
-	// スタートロゴ
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "StartLogo.png");
-	resourcesMap_.emplace(SRC::START_LOGO, res);
+	//モデル
+	// ********************************************************************
+	//魔法使い（プレイヤー）
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_PLAYER + "Mage.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_MAGE, res);
 
-	// エンドロゴ
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "EndLogo.png");
-	resourcesMap_.emplace(SRC::END_LOGO, res);
+	//騎士（プレイヤー）
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_PLAYER + "Knight.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_KNIGHT, res);
 
-	// アラート
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Alert.png");
-	resourcesMap_.emplace(SRC::ALERT_MSG, res);
+	//弓使い（プレイヤー）
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_PLAYER + "Archer.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_ARCHER, res);
 
-	// パーティクルエフェクト用
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Light.png");
-	resourcesMap_.emplace(SRC::LIGHT, res);
+	//斧使い（プレイヤー）
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_PLAYER + "Axeman.mv1");
+	resourcesMap_.emplace(SRC::PLAYER_AXEMAN, res);
 
-	// スカイドーム
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "SkyDome/SkyDome.mv1");
-	resourcesMap_.emplace(SRC::SKYDOME, res);
+	//魔法使い（敵）
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ENEMY + "Enemy_Mage.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_MAGE, res);
 
-	// プレイヤー機
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "PlayerShip/PlayerShip.mv1");
-	resourcesMap_.emplace(SRC::PLAYER_SHIP, res);
+	//山賊（敵）
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ENEMY + "Enemy_Brigant.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_BRIGANT, res);
 
-	// リーダー機
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "LeaderShip/LeaderShip.mv1");
-	resourcesMap_.emplace(SRC::LEADER_SHIP, res);
+	//弓使い（敵）
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ENEMY + "Enemy_Archer.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_ARCHER, res);
 
-	// ボス戦艦
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "BossShip/BossShip.mv1");
-	resourcesMap_.emplace(SRC::BOSS_SHIP, res);
+	//斧使い（敵）
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ENEMY + "Enemy_Axeman.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_AXEMAN, res);
 
-	// ダンジョン
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Rock/Dungeon.mv1");
-	resourcesMap_.emplace(SRC::DUNGEON, res);
-
-	// 文字画像
-	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Alphabet.png", 10, 6, 32, 32);
-	resourcesMap_.emplace(SRC::ALPHABET, res);
-
-	// 吹き出し
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "SpeechBalloon.png");
-	resourcesMap_.emplace(SRC::SPEECH_BALLOON, res);
-
-	// 弾
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Shot/Shot.mv1");
-	resourcesMap_.emplace(SRC::SHOT_MODEL, res);
-
-	// 砲台
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "BossShip/Turret.mv1");
-	resourcesMap_.emplace(SRC::TURRET_STAND, res);
-
-	// 砲身
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "BossShip/Turret_Gun.mv1");
-	resourcesMap_.emplace(SRC::TURRET_GUN, res);
-
-	// 背景岩１
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Rock/Rock21.mv1");
-	resourcesMap_.emplace(SRC::ROCK01, res);
-
-	// 背景岩２
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Rock/Rock23.mv1");
-	resourcesMap_.emplace(SRC::ROCK02, res);
-
-	// 自機噴射
-	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Jet.efkefc");
-	resourcesMap_.emplace(SRC::JET, res);
-
-	// 自機ブースト
-	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Boost.efkefc");
-	resourcesMap_.emplace(SRC::BOOST, res);
-
-	// 自機破壊
-	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Explosion.efkefc");
-	resourcesMap_.emplace(SRC::PLAYER_SHIP_EXPLOSION, res);
-
-	// 弾の爆発
-	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Blast.efkefc");
-	resourcesMap_.emplace(SRC::SHOT_EXPLOSION, res);
-
+	//ステージ
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stagei.mv1");
+	resourcesMap_.emplace(SRC::STAGE_1, res);
 }
 
 void ResourceManager::Release(void)
