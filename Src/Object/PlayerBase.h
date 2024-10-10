@@ -11,7 +11,7 @@ public:
     static constexpr float SPEED_DODGE = 15.0f;
     static constexpr int FRAME_ATK_MAX = 100;
     static constexpr int FRAME_DODGE_MAX = 10;
-    static constexpr int DODGE_CDT_MAX = 10;
+    static constexpr int DODGE_CDT_MAX = 20;
     PlayerBase(void);
     ~PlayerBase(void) = default;
     void Destroy(void)override;

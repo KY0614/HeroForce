@@ -14,6 +14,7 @@ void PlayerBase::Init(void)
 {
 	frameAtk_ = FRAME_ATK_MAX;
 	frameDodge_ = FRAME_DODGE_MAX;
+	dodgeCdt_ = DODGE_CDT_MAX;
 	color_ = 0xffffff;
 
 	//モデルの初期化
@@ -54,7 +55,7 @@ void PlayerBase::Draw(void)
 
 void PlayerBase::Move(float _deg, VECTOR _axis)
 {
-	if (!IsAtk())
+	if (!IsAtk()&&!IsDodge())
 	{
 		Turn(_deg, _axis);
 		VECTOR dir = transform_.GetForward();
@@ -96,9 +97,16 @@ void PlayerBase::KeyBoardControl(void)
 	if (ins.IsTrgDown(KEY_INPUT_E)&&!IsAtk()){frameAtk_ = 0;}
 	
 	//回避
-	if (ins.IsTrgDown(KEY_INPUT_N)&&!IsDodge()&&!IsAtk())
+	if (ins.IsTrgDown(KEY_INPUT_N)/*&&!IsDodge()&&!IsAtk()*/)
 	{
-		frameDodge_ = 0;
+		if (!IsDodge())
+		{
+			if (!IsAtk())
+			{
+				frameDodge_ = 0;
+			}
+		}
+		
 	}
 
 }
@@ -137,6 +145,7 @@ void PlayerBase::Attack(void)
 
 void PlayerBase::Dodge(void)
 {
+	//ドッジフラグがtrueになったら
 	if (IsDodge())
 	{
 		frameDodge_++;
@@ -148,10 +157,14 @@ void PlayerBase::Dodge(void)
 			//移動処理
 			transform_.pos = VAdd(transform_.pos, movePow);
 		}
+		else
+		{
+			dodgeCdt_ = 0;
+		}
 	}
 	else
 	{
-		dodgeCdt_ = 0;
+		dodgeCdt_ ++;
 		color_ = 0xffffff;
 	}
 }
