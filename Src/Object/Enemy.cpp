@@ -59,7 +59,7 @@ void Enemy::UpdateNml(void)
 	atkCdt_++;
 
 	//移動処理
-	Move(5.0f);
+	Move();
 }
 
 void Enemy::UpdateAtk(void)
@@ -79,37 +79,37 @@ void Enemy::Draw(void)
 	
 }
 
-void Enemy::Move(const float _moveSpeed)
+void Enemy::Move(void)
 {
 	//入力用
 	InputManager& ins = InputManager::GetInstance();
 
-	//移動方向
-	VECTOR dir = AsoUtility::VECTOR_ZERO;
-
 	//移動(デバッグ)
-	if (ins.IsNew(KEY_INPUT_UP))
-	{
-		dir = VAdd(dir, trans_.quaRot.GetForward());
-	}
-	if (ins.IsNew(KEY_INPUT_RIGHT))
-	{
-		dir = VAdd(dir, trans_.quaRot.GetRight());
-	}
-	if (ins.IsNew(KEY_INPUT_DOWN))
-	{
-		dir = VAdd(dir, trans_.quaRot.GetBack());
-	}
-	if (ins.IsNew(KEY_INPUT_LEFT))
-	{
-		dir = VAdd(dir, trans_.quaRot.GetLeft());
-	}
+	if (ins.IsNew(KEY_INPUT_UP)) { ProcessMove(5.0f, 0.0f); }
+	if (ins.IsNew(KEY_INPUT_RIGHT)){ ProcessMove(5.0f, 90.0f); }
+	if (ins.IsNew(KEY_INPUT_DOWN)){ ProcessMove(5.0f, 180.0f); }
+	if (ins.IsNew(KEY_INPUT_LEFT)){ ProcessMove(5.0f, 270.0f); }
+}
+
+void Enemy::ProcessMove(const float _moveSpeed, const float _deg)
+{
+	//方向転換
+	Turn(_deg, AsoUtility::AXIS_Y);
+
+	//移動方向
+	VECTOR dir = trans_.quaRot.GetForward();
 
 	//移動量
 	VECTOR movePow = VScale(dir, _moveSpeed);
 
 	//移動
 	trans_.pos = VAdd(trans_.pos, movePow);
+}
+
+void Enemy::Turn(float _deg, VECTOR _axis)
+{
+	//trans_.quaRot = trans_.quaRot.Mult(trans_.quaRot.AngleAxis(AsoUtility::Deg2RadF(_deg), _axis));
+	trans_.quaRot = trans_.quaRot.AngleAxis(AsoUtility::Deg2RadF(_deg), _axis);
 }
 
 void Enemy::Attack(void)

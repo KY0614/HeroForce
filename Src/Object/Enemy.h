@@ -60,7 +60,11 @@ private:
 	std::vector<Transform> atkTrans_;	//UŒ‚‚ÌˆÊ’uˆË‘¶ŠÖŒW
 
 	//ˆÚ“®
-	void Move(const float _moveSpeed);
+	void Move(void);
+	//ˆÚ“®ˆ—
+	void ProcessMove(const float _moveSpeed, const float _deg);
+	//•ûŒü“]Š·
+	void Turn(float _deg, VECTOR _axis);
 
 	//“G‚ÌUŒ‚ˆ—
 	void Attack(void);
