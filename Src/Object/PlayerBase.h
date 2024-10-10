@@ -8,9 +8,10 @@ public:
     // 移動スピード
     static constexpr float SPEED_MOVE = 5.0f;
     static constexpr float SPEED_DEG = 5.0f;
-    static constexpr float SPEED_DODGE = 10.0f;
+    static constexpr float SPEED_DODGE = 15.0f;
     static constexpr int FRAME_ATK_MAX = 100;
-    static constexpr int FRAME_DODGE_MAX = 100;
+    static constexpr int FRAME_DODGE_MAX = 10;
+    static constexpr int DODGE_CDT_MAX = 10;
     PlayerBase(void);
     ~PlayerBase(void) = default;
     void Destroy(void)override;
@@ -46,6 +47,9 @@ protected:
     //操作系（コントローラー）
     void KeyBoardControl(void);
 
+    //デバッグ用関数
+    void DrawDebug(void);
+
 
 
 
@@ -53,7 +57,7 @@ protected:
     //移動関連
     //-------------------------------------
     //移動処理
-    void Move(VECTOR _dir);
+    void Move(float _deg, VECTOR _axis);
     //方向処理
     void Turn(float deg, VECTOR axis);
 
@@ -61,7 +65,7 @@ protected:
     //攻撃
     //-------------------------------------
     //攻撃中フラグ
-    bool IsAtk(void){return frameAtk_ > 0;}
+    bool IsAtk(void){return frameAtk_ < FRAME_ATK_MAX;}
 
     //攻撃処理
     void Attack(void);
@@ -70,10 +74,12 @@ protected:
     int frameAtk_;
     
     //回避関連
-    bool IsDodge(void) { return frameDodge_ > 0; }
+    //---------------------------------------
+    bool IsDodge(void) { return frameDodge_ < FRAME_DODGE_MAX&& dodgeCdt_ > DODGE_CDT_MAX;}
     void Dodge(void);
 
     int frameDodge_;
+    int dodgeCdt_;
 
     
 
