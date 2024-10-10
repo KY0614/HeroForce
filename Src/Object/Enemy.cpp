@@ -15,7 +15,8 @@ void Enemy::Destroy(void)
 
 void Enemy::Init(void)
 {
-	//trans_.SetModel()
+	//ƒ‚ƒfƒ‹“Ç‚İ‚İ
+	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_AXEMAN));
 
 	//•Ï”‚Ì‰Šú‰»
 	trans_.scl = { 1.0f,1.0f,1.0f };
@@ -74,9 +75,9 @@ void Enemy::UpdateDead(void)
 
 void Enemy::Draw(void)
 {
-	DrawSphere3D(trans_.pos, 10.0f, 10, 0xff00ff, 0xff00ff, true);
+	//DrawSphere3D(trans_.pos, 10.0f, 10, 0xff00ff, 0xff00ff, true);
 
-	
+	MV1DrawModel(trans_.modelId);
 }
 
 void Enemy::Move(void)
