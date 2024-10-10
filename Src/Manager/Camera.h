@@ -115,10 +115,10 @@ private:
 	//ƒJƒƒ‰ƒVƒFƒCƒN‚³‚¹‚é‚½‚ß‚Ì€”õ
 	void SetShake(float intensity,float duration);
 
-	bool isVibrating = false;
-	float vibrationStrength = 0.1f; //U“®‚Ì‹­‚³
-	int vibrationDuration = 20;;  //U“®‚Ì‘±ŠÔ
-	int currentVibrationTime = 0;      //Œ»İ‚ÌU“®ŠÔ
+	bool isVibrating;
+	float vibrationStrength;	//U“®‚Ì‹­‚³
+	int vibrationDuration;		//U“®‚Ì‘±ŠÔ
+	int currentVibrationTime;   //Œ»İ‚ÌU“®ŠÔ
 	
 
 	//ˆÚ“®‘€ì

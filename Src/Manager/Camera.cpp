@@ -25,6 +25,12 @@ void Camera::Init(void)
 	SetShake(0.0f, 0.0f);
 
 	moveSpeed_ = 0.0f;
+
+	 isVibrating = false;
+	 vibrationStrength = 0.1f; 
+	 vibrationDuration = 20;	
+	 currentVibrationTime = 0; 
+
 }
 
 void Camera::Update(void)
@@ -85,7 +91,7 @@ void Camera::SetBeforeDrawFree(void)
 
 	//Nキーを押すとカメラがシェイクするように
 	//未実装
-	if (ins.IsTrgDown(KEY_INPUT_N))
+	if (ins.IsNew(KEY_INPUT_N))
 	{
 		SetShake(10.5f, 5.0f);
 		isVibrating = true;
@@ -98,26 +104,26 @@ void Camera::SetBeforeDrawFree(void)
 
 void Camera::SetBeforeDrawFollow(void)
 {
-	//追従対象の位置
-	VECTOR followPos = followTransform_->pos;
+	////追従対象の位置
+	//VECTOR followPos = followTransform_->pos;
 
-	//追従対象の向き
-	Quaternion followRot = followTransform_->quaRot;
+	////追従対象の向き
+	//Quaternion followRot = followTransform_->quaRot;
 
-	//追従対象からカメラまでの相対座標
-	VECTOR relativeCPos = followRot.PosAxis(RELATIVE_F2C_POS_FOLLOW);
+	////追従対象からカメラまでの相対座標
+	//VECTOR relativeCPos = followRot.PosAxis(RELATIVE_F2C_POS_FOLLOW);
 
-	//カメラ位置の更新
-	pos_ = VAdd(followPos, relativeCPos);
+	////カメラ位置の更新
+	//pos_ = VAdd(followPos, relativeCPos);
 
-	//カメラ位置から注視点までの相対座標
-	VECTOR relativeTPos = followRot.PosAxis(RELATIVE_C2T_POS);
+	////カメラ位置から注視点までの相対座標
+	//VECTOR relativeTPos = followRot.PosAxis(RELATIVE_C2T_POS);
 
-	//注視点の更新
-	targetPos_ = VAdd(pos_, relativeTPos);
+	////注視点の更新
+	//targetPos_ = VAdd(pos_, relativeTPos);
 
-	//カメラの上方向
-	cameraUp_ = followRot.PosAxis(rot_.GetUp());
+	////カメラの上方向
+	//cameraUp_ = followRot.PosAxis(rot_.GetUp());
 }
 
 void Camera::SetBeforeDrawFollowSpring(void)
