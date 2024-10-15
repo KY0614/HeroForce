@@ -14,27 +14,28 @@ void PlayerBase::Init(void)
 {
 	frameAtk_ = FRAME_ATK_MAX;
 	frameDodge_ = FRAME_DODGE_MAX;
+	dodgeCdt_ = DODGE_CDT_MAX;
 	color_ = 0xffffff;
 
 	//モデルの初期化
-	transform_.SetModel(
+	trans_.SetModel(
 		ResourceManager::GetInstance()
 		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_KNIGHT));
 	float scale = 0.5f;
-	transform_.scl = { scale, scale, scale };
-	transform_.pos = { 0.0f, 0.0f, 0.0f };
-	transform_.quaRot = Quaternion();
-	transform_.quaRotLocal = Quaternion::Euler(
+	trans_.scl = { scale, scale, scale };
+	trans_.pos = { 0.0f, 0.0f, 0.0f };
+	trans_.quaRot = Quaternion();
+	trans_.quaRotLocal = Quaternion::Euler(
 		0.0f, AsoUtility::Deg2RadF(180.0f),
 		0.0f
 	);
-	transform_.Update();
+	trans_.Update();
 }
 
 void PlayerBase::Update(void)
 {
 	//モデルの更新
-	transform_.Update();
+	trans_.Update();
 	//コントロール系
 	KeyBoardControl();
 
@@ -49,19 +50,20 @@ void PlayerBase::Update(void)
 
 void PlayerBase::Draw(void)
 {
-	MV1DrawModel(transform_.modelId);
+	MV1DrawModel(trans_.modelId);
+	DrawDebug();
 }
 
 void PlayerBase::Move(float _deg, VECTOR _axis)
 {
-	if (!IsAtk())
+	if (!IsAtk()&&!IsDodge())
 	{
 		Turn(_deg, _axis);
-		VECTOR dir = transform_.GetForward();
+		VECTOR dir = trans_.GetForward();
 		//移動方向
 		VECTOR movePow = VScale(dir, SPEED_MOVE);
 		//移動処理
-		transform_.pos = VAdd(transform_.pos, movePow);
+		trans_.pos = VAdd(trans_.pos, movePow);
 	}
 }
 
@@ -106,7 +108,7 @@ void PlayerBase::KeyBoardControl(void)
 void PlayerBase::DrawDebug(void)
 {
 	//球体
-	DrawSphere3D(transform_.pos, 20.0f, 8, 0x0, color_, true);
+	DrawSphere3D(trans_.pos, 20.0f, 8, 0x0, color_, true);
 	//値見る用
 	DrawFormatString(0, 0, 0xffffff, "FrameATK(%d)\nisAtk(%d)", frameAtk_, IsAtk());
 }
@@ -116,8 +118,8 @@ void PlayerBase::Turn(float _deg, VECTOR _axis)
 	//transform_.quaRot =
 	//	transform_.quaRot.Mult(Quaternion::AngleAxis(AsoUtility::Deg2RadF(deg), axis));
 
-	transform_.quaRot =
-		transform_.quaRot.AngleAxis(AsoUtility::Deg2RadF(_deg), _axis);
+	trans_.quaRot =
+		trans_.quaRot.AngleAxis(AsoUtility::Deg2RadF(_deg), _axis);
 }
 
 
@@ -137,21 +139,26 @@ void PlayerBase::Attack(void)
 
 void PlayerBase::Dodge(void)
 {
+	//ドッジフラグがtrueになったら
 	if (IsDodge())
 	{
 		frameDodge_++;
 		if (frameDodge_ < FRAME_DODGE_MAX)
 		{
-			VECTOR dir = transform_.GetForward();
+			VECTOR dir = trans_.GetForward();
 			//移動方向
 			VECTOR movePow = VScale(dir, SPEED_DODGE);
 			//移動処理
-			transform_.pos = VAdd(transform_.pos, movePow);
+			trans_.pos = VAdd(trans_.pos, movePow);
+		}
+		else
+		{
+			dodgeCdt_ = 0;
 		}
 	}
 	else
 	{
-		dodgeCdt_ = 0;
+		dodgeCdt_ ++;
 		color_ = 0xffffff;
 	}
 }

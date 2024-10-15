@@ -11,7 +11,7 @@ public:
     static constexpr float SPEED_DODGE = 15.0f;
     static constexpr int FRAME_ATK_MAX = 100;
     static constexpr int FRAME_DODGE_MAX = 10;
-    static constexpr int DODGE_CDT_MAX = 10;
+    static constexpr int DODGE_CDT_MAX = 20;
     PlayerBase(void);
     ~PlayerBase(void) = default;
     void Destroy(void)override;
@@ -59,7 +59,7 @@ protected:
     //移動処理
     void Move(float _deg, VECTOR _axis);
     //方向処理
-    void Turn(float deg, VECTOR axis);
+    void Turn(float _deg, VECTOR _axis);
 
 
     //攻撃
@@ -83,9 +83,13 @@ protected:
 
     
 
-    //
+    //スキル仮想関数
+    //-----------------------------------------
+    //スキル1
+     virtual void Skill_1(void);
+
+     //スキル2
+     virtual void Skill_2(void);
 private:
-    //ポインタ
-    Transform transform_;
 };
 
