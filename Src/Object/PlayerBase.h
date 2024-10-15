@@ -12,6 +12,8 @@ public:
     static constexpr int FRAME_ATK_MAX = 100;
     static constexpr int FRAME_DODGE_MAX = 10;
     static constexpr int DODGE_CDT_MAX = 20;
+    static constexpr int FRAME_SKILL1 = 40;
+    static constexpr int FRAME_SKILL2 = 30;
     PlayerBase(void);
     ~PlayerBase(void) = default;
     void Destroy(void)override;
@@ -93,6 +95,15 @@ protected:
 
      //スキル使用中フラグ
      bool IsSkill(void);
+
+     //位置
+     const VECTOR GetPos(void)const override { return trans_.pos; }
+     //角度
+     const VECTOR GetRot(void)const override { return trans_.rot; }
+     //大きさ
+     const VECTOR GetScl(void)const override { return trans_.scl; }
+     //防御力
+     const float GetDef(void)const override { return def_; };
 private:
 };
 
