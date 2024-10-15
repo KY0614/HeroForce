@@ -36,3 +36,23 @@ const inline Transform* UnitBase::GetTransformEntity(void) const
 	return ret;
 }
 
+const VECTOR UnitBase::GetPos(void) const
+{
+	return VECTOR();
+}
+
+const VECTOR UnitBase::GetRot(void) const
+{
+	return VECTOR();
+}
+
+const VECTOR UnitBase::GetScl(void) const
+{
+	return VECTOR();
+}
+
+const float UnitBase::GetDef(void) const
+{
+	return 0.0f;
+}
+
