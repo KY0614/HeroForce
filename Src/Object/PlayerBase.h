@@ -59,7 +59,7 @@ protected:
     //移動処理
     void Move(float _deg, VECTOR _axis);
     //方向処理
-    void Turn(float deg, VECTOR axis);
+    void Turn(float _deg, VECTOR _axis);
 
 
     //攻撃
@@ -83,9 +83,13 @@ protected:
 
     
 
-    //
+    //スキル仮想関数
+    //-----------------------------------------
+    //スキル1
+     virtual void Skill_1(void);
+
+     //スキル2
+     virtual void Skill_2(void);
 private:
-    //ポインタ
-    Transform transform_;
 };
 
