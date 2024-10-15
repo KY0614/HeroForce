@@ -46,14 +46,16 @@ public:
 	//Transform‚¢‚½‚¾‚«
 	const Transform& GetTransform(void)const { return trans_;};
 
+	const Transform* GetTransformEntity(void)const;
+
 	//ˆÊ’u
-	const VECTOR GetPos(void)const {return trans_.pos;};
+	virtual const VECTOR GetPos(void)const;
 	//Šp“x
-	const VECTOR GetRot(void)const {return trans_.rot;};
+	virtual const VECTOR GetRot(void)const;
 	//‘å‚«‚³
-	const VECTOR GetScl(void)const {return trans_.scl;};
+	virtual const VECTOR GetScl(void)const;
 	//–hŒä—Í
-	const float GetDef(void)const {return def_;};
+	virtual const float GetDef(void)const;
 
 protected:
 
