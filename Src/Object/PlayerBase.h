@@ -90,6 +90,9 @@ protected:
 
      //スキル2
      virtual void Skill_2(void);
+
+     //スキル使用中フラグ
+     bool IsSkill(void);
 private:
 };
 

@@ -162,3 +162,16 @@ void PlayerBase::Dodge(void)
 		color_ = 0xffffff;
 	}
 }
+
+void PlayerBase::Skill_1(void)
+{
+}
+
+void PlayerBase::Skill_2(void)
+{
+}
+
+bool PlayerBase::IsSkill(void)
+{
+	return false;
+}
