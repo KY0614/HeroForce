@@ -20,7 +20,7 @@ void StageBase::Init(void)
 	// ƒ‚ƒfƒ‹§Œä‚ÌŠî–{î•ñ
 	trans_.SetModel(
 			ResourceManager::GetInstance().LoadModelDuplicate(
-			ResourceManager::SRC::STAGE));
+			ResourceManager::SRC::STAGE_1));
 
 	// ƒ‚ƒfƒ‹‘å‚«‚³
 	float scale = 1.0;
