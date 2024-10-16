@@ -1,5 +1,6 @@
 #pragma once
 #include"Common/Transform.h"
+#include<unordered_map>
 
 
 class UnitBase
@@ -22,6 +23,25 @@ public:
 	//カウンターリセット
 		void ResetCnt(void) { cnt_ = 0; };
 	};
+
+	enum class ANIM
+	{
+		IDLE,		//待機
+		WALK,		//歩き
+		RUN,		//走り
+		SKILL_1,	//スキル①
+		SKILL_2,	//スキル②
+		DODGE,		//回避
+		DAMAGE,		//被ダメ
+		DEATH,		//死亡
+		ENTRY,		//出現
+		UNIQUE_1,	//固有のやつ①
+		UNIQUE_2,	//固有のやつ②
+	};
+
+	//定数
+	// アニメーションの再生速度
+	static constexpr float SPEED_ANIM = 20.0f;
 
 
 	//コンストラクタ
@@ -57,6 +77,11 @@ public:
 	//防御力
 	virtual const float GetDef(void)const;
 
+	//アニメーション関数
+	void Anim(const int _num);
+	//アニメーションリセット
+	void ResetAnim(const int _totalAnim);
+
 protected:
 
 	int mdlId_;			//モデル保存
@@ -64,5 +89,9 @@ protected:
 	Transform trans_;	//位置情報関係
 	float def_;			//防御力
 
+	//アニメ関係
+	std::unordered_map<ANIM, int> animNum_;	//アニメーションナンバー格納配列。
+	int animTotalTime_;		//アニメーションの総再生時間
+	int stepAnim_;			//アニメーションの再生時間
 };
 
