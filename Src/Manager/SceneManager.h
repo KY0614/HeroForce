@@ -17,6 +17,10 @@ public:
 		GAME
 	};
 	
+	//定数
+	//FPS
+	static constexpr int DEFAULT_FPS = 60;
+
 	// インスタンスの生成
 	static void CreateInstance(void);
 

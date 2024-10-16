@@ -1,3 +1,4 @@
+#include"../Manager/SceneManager.h"
 #include "UnitBase.h"
 
 UnitBase::UnitBase(void)
@@ -54,5 +55,35 @@ const VECTOR UnitBase::GetScl(void) const
 const float UnitBase::GetDef(void) const
 {
 	return 0.0f;
+}
+
+/// <summary>
+/// アニメーション関数
+/// </summary>
+/// <param name="_num">再生するアニメーションナンバー</param>
+void UnitBase::Anim(const int _num)
+{
+	// アニメーション再生
+// 経過時間の取得
+	float deltaTime = 1.0f / SceneManager::DEFAULT_FPS;
+	// アニメーション時間の進行
+	stepAnim_ += (SPEED_ANIM * deltaTime);
+	if (stepAnim_ > animTotalTime_)
+	{
+		// ループ再生
+		stepAnim_ = 0.0f;
+	}
+	// 再生するアニメーション時間の設定
+	MV1SetAttachAnimTime(mdlId_, _num, stepAnim_);
+}
+
+/// <summary>
+/// アニメリセット
+/// </summary>
+/// <param name="_totalAnim">アニメ総再生時間</param>
+void UnitBase::ResetAnim(const int _totalAnim)
+{
+	animTotalTime_ = _totalAnim;
+	stepAnim_ = 0;
 }
 
