@@ -78,12 +78,25 @@ void UnitBase::Anim(const int _num)
 }
 
 /// <summary>
-/// アニメリセット
+/// アニメーションリセット
 /// </summary>
-/// <param name="_totalAnim">アニメ総再生時間</param>
-void UnitBase::ResetAnim(const int _totalAnim)
+/// <param name="_anim">セットするアニメーション</param>
+/// <param name="_attachNum">アニメーションナンバー</param>
+void UnitBase::ResetAnim(const ANIM _anim)
 {
-	animTotalTime_ = _totalAnim;
+	
+
+	//デタッチ
+	MV1DetachAnim(mdlId_, animNum_[anim_]);
+
+	anim_ = _anim;
+	//アタッチ
+	animNum_[anim_] = MV1AttachAnim(mdlId_, animNum_[anim_]);
+
+
+	animTotalTime_ = MV1GetAttachAnimTotalTime(mdlId_, animNum_[anim_]);
 	stepAnim_ = 0;
 }
+
+
 
