@@ -1,3 +1,4 @@
+#include "../Application.h"
 #include "../Utility/AsoUtility.h"
 #include "../Application.h"
 #include "../Manager/SceneManager.h"
@@ -55,6 +56,7 @@ void Camera::SetBeforeDraw(void)
 		break;
 	case Camera::MODE::FREE:
 		SetBeforeDrawFree();
+		break;
 	
 	case Camera::MODE::FOLLOW:
 		SetBeforeDrawFollow();
@@ -99,7 +101,6 @@ void Camera::SetBeforeDrawFree(void)
 
 	Shake();
 
-	DrawFormatString(0, 0, 0xffffff, "moveSpeed_ : %f", moveSpeed_);
 }
 
 void Camera::SetBeforeDrawFollow(void)
@@ -124,6 +125,41 @@ void Camera::SetBeforeDrawFollow(void)
 
 	////カメラの上方向
 	//cameraUp_ = followRot.PosAxis(rot_.GetUp());
+
+	DrawBox(Application::SCREEN_SIZE_X / 2 - 400, Application::SCREEN_SIZE_Y / 2 - 200,
+		Application::SCREEN_SIZE_X / 2 + 400, Application::SCREEN_SIZE_Y / 2 + 200,
+		0xFF0000, false);
+
+#pragma region テスト機能
+
+		//追従対象の位置
+	VECTOR followPos = followTransform_->pos;
+
+	//追従対象の向き
+	Quaternion followRot = followTransform_->quaRot;
+
+	VECTOR i = { 0.0f,0.0f,0.0f };
+
+	Quaternion forward = Quaternion::Euler(i);
+
+	//追従対象からカメラまでの相対座標
+	VECTOR relativeCPos = forward.PosAxis(RELATIVE_F2C_POS_FOLLOW);
+
+	//カメラ位置の更新
+	pos_ = VAdd(followPos, relativeCPos);
+
+	//カメラ位置から注視点までの相対座標
+	VECTOR relativeTPos = forward.PosAxis(RELATIVE_C2T_POS);
+
+	//注視点の更新
+	targetPos_ = VAdd(pos_, relativeTPos);
+
+	//カメラの上方向
+	cameraUp_ = forward.PosAxis(rot_.GetUp());
+
+
+#pragma endregion
+
 }
 
 void Camera::SetBeforeDrawFollowSpring(void)

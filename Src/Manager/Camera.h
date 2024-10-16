@@ -27,7 +27,7 @@ public:
 	static constexpr VECTOR RELATIVE_C2T_POS = { 0.0f, -100.0f, 500.0f };
 
 	//追従対象からカメラ位置までの相対座標(完全追従)
-	static constexpr VECTOR RELATIVE_F2C_POS_FOLLOW = { 0.0f, 25.0f, -80.0f };
+	static constexpr VECTOR RELATIVE_F2C_POS_FOLLOW = { 0.0f, 100.0f, -200.0f };
 
 	//追従対象からカメラ位置までの相対座標(ばね付き)
 	static constexpr VECTOR RELATIVE_F2C_POS_SPRING = { 0.0f, 40.0f, 150.0f };
