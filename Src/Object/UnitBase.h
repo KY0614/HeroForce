@@ -90,6 +90,7 @@ protected:
 	float def_;			//防御力
 
 	//アニメ関係
+	ANIM anim_;
 	std::unordered_map<ANIM, int> animNum_;	//アニメーションナンバー格納配列。
 	int animTotalTime_;		//アニメーションの総再生時間
 	int stepAnim_;			//アニメーションの再生時間
