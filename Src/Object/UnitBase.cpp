@@ -61,7 +61,7 @@ const float UnitBase::GetDef(void) const
 /// アニメーション関数
 /// </summary>
 /// <param name="_num">再生するアニメーションナンバー</param>
-void UnitBase::Anim(const int _num)
+void UnitBase::Anim(const ANIM _anim)
 {
 	// アニメーション再生
 // 経過時間の取得
@@ -74,7 +74,7 @@ void UnitBase::Anim(const int _num)
 		stepAnim_ = 0.0f;
 	}
 	// 再生するアニメーション時間の設定
-	MV1SetAttachAnimTime(mdlId_, _num, stepAnim_);
+	MV1SetAttachAnimTime(mdlId_, animNum_[_anim], stepAnim_);
 }
 
 /// <summary>
