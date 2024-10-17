@@ -3,7 +3,7 @@
 
 UnitBase::UnitBase(void)
 {
-	mdlId_ = -1;
+	trans_.modelId = -1;
 	hp_ = -1;
 	trans_.pos = { 0.0f,0.0f,0.0f };
 	trans_.scl = { 0.0f,0.0f,0.0f };
@@ -83,7 +83,7 @@ void UnitBase::Anim(void)
 		stepAnim_ = 0.0f;
 	}
 	// 再生するアニメーション時間の設定
-	MV1SetAttachAnimTime(mdlId_, atcAnim_, stepAnim_);
+	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
 }
 
 /// <summary>
@@ -95,19 +95,19 @@ void UnitBase::ResetAnim(const ANIM _anim)
 {
 	//デタッチ
 	//実質atcAnimの初期化
-	MV1DetachAnim(mdlId_, atcAnim_);
+	MV1DetachAnim(trans_.modelId, atcAnim_);
 
 	anim_ = _anim;
 	//アタッチ
 	//実質atcAnimの代入
-	atcAnim_ = MV1AttachAnim(mdlId_, animNum_[anim_]);
+	atcAnim_ = MV1AttachAnim(trans_.modelId, animNum_[anim_]);
 
 
-	animTotalTime_ = MV1GetAttachAnimTotalTime(mdlId_, atcAnim_);
+	animTotalTime_ = MV1GetAttachAnimTotalTime(trans_.modelId, atcAnim_);
 	stepAnim_ = 0.0f;
 
 	// 再生するアニメーション時間の設定
-	MV1SetAttachAnimTime(mdlId_, atcAnim_, stepAnim_);
+	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
 }
 
 

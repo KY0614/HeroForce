@@ -86,7 +86,6 @@ public:
 
 protected:
 
-	int mdlId_;			//ƒ‚ƒfƒ‹•Û‘¶
 	int hp_;			//‘Ì—Í
 	Transform trans_;	//ˆÊ’uî•ñŠÖŒW
 	float def_;			//–hŒä—Í
