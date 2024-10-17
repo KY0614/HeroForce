@@ -86,7 +86,6 @@ public:
 
 protected:
 
-	int mdlId_;			//モデル保存
 	int hp_;			//体力
 	Transform trans_;	//位置情報関係
 	float def_;			//防御力
@@ -96,6 +95,6 @@ protected:
 	std::unordered_map<ANIM, int> animNum_;	//アニメーションナンバー格納配列。
 	int atcAnim_;			//アタッチするアニメを格納
 	int animTotalTime_;		//アニメーションの総再生時間
-	int stepAnim_;			//アニメーションの再生時間
+	float stepAnim_;			//アニメーションの再生時間
 };
 
