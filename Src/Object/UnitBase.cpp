@@ -74,7 +74,7 @@ void UnitBase::Anim(void)
 		stepAnim_ = 0.0f;
 	}
 	// 再生するアニメーション時間の設定
-	MV1SetAttachAnimTime(mdlId_, animNum_[anim_], stepAnim_);
+	MV1SetAttachAnimTime(mdlId_, atcAnim_, stepAnim_);
 }
 
 /// <summary>
@@ -84,17 +84,17 @@ void UnitBase::Anim(void)
 /// <param name="_attachNum">アニメーションナンバー</param>
 void UnitBase::ResetAnim(const ANIM _anim)
 {
-	
-
 	//デタッチ
-	MV1DetachAnim(mdlId_, animNum_[anim_]);
+	//実質atcAnimの初期化
+	MV1DetachAnim(mdlId_, atcAnim_);
 
 	anim_ = _anim;
 	//アタッチ
-	animNum_[anim_] = MV1AttachAnim(mdlId_, animNum_[anim_]);
+	//実質atcAnimの代入
+	atcAnim_ = MV1AttachAnim(mdlId_, animNum_[anim_]);
 
 
-	animTotalTime_ = MV1GetAttachAnimTotalTime(mdlId_, animNum_[anim_]);
+	animTotalTime_ = MV1GetAttachAnimTotalTime(mdlId_, atcAnim_);
 	stepAnim_ = 0;
 }
 
