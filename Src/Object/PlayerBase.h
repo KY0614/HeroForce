@@ -1,7 +1,7 @@
 #pragma once
 #include"../Utility/AsoUtility.h"
 #include "UnitBase.h"
-class PlayerBase :
+class PlayerBase:
     public UnitBase
 {
 public:
@@ -9,7 +9,8 @@ public:
     static constexpr float SPEED_MOVE = 5.0f;
     static constexpr float SPEED_DEG = 5.0f;
     static constexpr float SPEED_DODGE = 15.0f;
-    static constexpr int FRAME_ATK_MAX = 100;
+    static constexpr float FRAME_ATK_MAX = 0.0f;
+    static constexpr float FRAME_ATK_DURATION = 40.0f;
     static constexpr int FRAME_DODGE_MAX = 10;
     static constexpr int DODGE_CDT_MAX = 20;
     static constexpr int FRAME_SKILL1 = 40;
@@ -67,17 +68,21 @@ protected:
     //攻撃
     //-------------------------------------
     //攻撃中フラグ
-    bool IsAtk(void){return frameAtk_ < FRAME_ATK_MAX;}
+    bool IsAtk(void){return atk_.cnt_ < FRAME_ATK_MAX;}
 
     //攻撃処理
     void Attack(void);
 
     //攻撃フレーム
-    int frameAtk_;
+    
+
+    ATK atk_;
     
     //回避関連
     //---------------------------------------
-    bool IsDodge(void) { return frameDodge_ < FRAME_DODGE_MAX&& dodgeCdt_ > DODGE_CDT_MAX;}
+    bool IsDodge(void) { return frameDodge_ < FRAME_DODGE_MAX; }
+    //クールタイム中かどうか
+    bool IsCoolDodge(void){return dodgeCdt_ < DODGE_CDT_MAX;}
     void Dodge(void);
 
     int frameDodge_;
@@ -88,14 +93,30 @@ protected:
     //スキル仮想関数
     //-----------------------------------------
     //スキル1
-     virtual void Skill_1(void);
+    virtual void Skill_1(void);
 
      //スキル2
      virtual void Skill_2(void);
+     /// <summary>
+     /// スキル中フラグ
+     /// </summary>
+     /// <param name="_frameSkillNo">スキルフレーム最大値(今はスキル1か2)</param>
+     /// <returns>スキル中/スキル中でない</returns>
+     bool IsSkill(int _frameSkillNo) { return frameSkill_ < _frameSkillNo; }
 
-     //スキル使用中フラグ
-     bool IsSkill(void);
+     //スキルクールタイム中フラグ
+     bool IsSkillCool(void);
 
+     //スキル持続時間
+     int frameSkill_;
+
+     //スキルクールタイム
+     int skillCdt_;
+
+     std::string skillNum_;
+
+     //ゲッター
+     //--------------------------------------------
      //位置
      const VECTOR GetPos(void)const override { return trans_.pos; }
      //角度

@@ -12,10 +12,17 @@ void PlayerBase::Destroy(void)
 
 void PlayerBase::Init(void)
 {
-	frameAtk_ = FRAME_ATK_MAX;
+	
 	frameDodge_ = FRAME_DODGE_MAX;
 	dodgeCdt_ = DODGE_CDT_MAX;
 	color_ = 0xffffff;
+
+	atk_.cnt_ = FRAME_ATK_MAX;
+	atk_.duration_ = FRAME_ATK_DURATION;
+	atk_.pow_ = 0;
+
+
+
 
 	//モデルの初期化
 	trans_.SetModel(
@@ -56,7 +63,7 @@ void PlayerBase::Draw(void)
 
 void PlayerBase::Move(float _deg, VECTOR _axis)
 {
-	if (!IsAtk()&&!IsDodge())
+	if (!atk_.IsAttack()&&!IsDodge())
 	{
 		Turn(_deg, _axis);
 		VECTOR dir = trans_.GetForward();
@@ -95,22 +102,29 @@ void PlayerBase::KeyBoardControl(void)
 	}
 	
 	//攻撃（攻撃アニメーションのフレームが0以下だったらフレームを設定）
-	if (ins.IsTrgDown(KEY_INPUT_E)&&!IsAtk()){frameAtk_ = 0;}
+	if (ins.IsTrgDown(KEY_INPUT_E)/*&&!atk_.IsAttack()*/)
+	{
+		if (!atk_.IsAttack())
+		{
+			atk_.cnt_++;
+		}
+		
+	}
+
+	if (ins.IsNew(KEY_INPUT_Q))
+	{ Skill_1(); }
 	
 	//回避
-	if (ins.IsTrgDown(KEY_INPUT_N)&&!IsDodge()&&!IsAtk())
-	{
-		frameDodge_ = 0;
-	}
+	if (ins.IsTrgDown(KEY_INPUT_N)&&!IsDodge()&&!atk_.IsAttack()){ frameDodge_ = 0; }
 
 }
 
 void PlayerBase::DrawDebug(void)
 {
 	//球体
-	DrawSphere3D(trans_.pos, 20.0f, 8, 0x0, color_, true);
+	//DrawSphere3D(trans_.pos, 20.0f, 8, 0x0, color_, true);
 	//値見る用
-	DrawFormatString(0, 0, 0xffffff, "FrameATK(%d)\nisAtk(%d)", frameAtk_, IsAtk());
+	DrawFormatString(0, 0, 0xffffff, "FrameATK(%f)\nisAtk(%d)", atk_.cnt_, atk_.IsAttack());
 }
 
 void PlayerBase::Turn(float _deg, VECTOR _axis)
@@ -125,13 +139,14 @@ void PlayerBase::Turn(float _deg, VECTOR _axis)
 
 void PlayerBase::Attack(void)
 {
-	if (IsAtk())
+	if (atk_.IsAttack())
 	{
-		frameAtk_++;
+		atk_.cnt_++;
 		color_ = 0xff0000;
 	}
 	else
 	{
+		atk_.ResetCnt();
 		color_ = 0xffffff;
 	}
 	
@@ -140,7 +155,7 @@ void PlayerBase::Attack(void)
 void PlayerBase::Dodge(void)
 {
 	//ドッジフラグがtrueになったら
-	if (IsDodge())
+	if (IsDodge()&&!IsCoolDodge())
 	{
 		frameDodge_++;
 		if (frameDodge_ < FRAME_DODGE_MAX)
@@ -165,13 +180,11 @@ void PlayerBase::Dodge(void)
 
 void PlayerBase::Skill_1(void)
 {
+	skillNum_ = "Skill_1";
 }
 
 void PlayerBase::Skill_2(void)
 {
+	skillNum_ = "Skill_2";
 }
 
-bool PlayerBase::IsSkill(void)
-{
-	return false;
-}
