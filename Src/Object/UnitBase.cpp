@@ -3,6 +3,15 @@
 
 UnitBase::UnitBase(void)
 {
+	mdlId_ = -1;
+	hp_ = -1;
+	trans_.pos = { 0.0f,0.0f,0.0f };
+	trans_.scl = { 0.0f,0.0f,0.0f };
+	trans_.rot = { 0.0f,0.0f,0.0f };
+	anim_ = ANIM::IDLE;
+	atcAnim_ = -1;
+	animTotalTime_ = -1;
+	stepAnim_ = -1.0f;
 }
 
 UnitBase::~UnitBase(void)
@@ -95,7 +104,10 @@ void UnitBase::ResetAnim(const ANIM _anim)
 
 
 	animTotalTime_ = MV1GetAttachAnimTotalTime(mdlId_, atcAnim_);
-	stepAnim_ = 0;
+	stepAnim_ = 0.0f;
+
+	// 再生するアニメーション時間の設定
+	MV1SetAttachAnimTime(mdlId_, atcAnim_, stepAnim_);
 }
 
 
