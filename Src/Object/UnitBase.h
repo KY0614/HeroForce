@@ -80,7 +80,7 @@ public:
 	virtual const float GetDef(void)const;
 
 	//アニメーション関数
-	void Anim(const int _num);
+	void Anim(void);
 	//アニメーションリセット
 	void ResetAnim(const ANIM _anim);
 
