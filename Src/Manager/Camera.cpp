@@ -91,16 +91,6 @@ void Camera::SetBeforeDrawFree(void)
 
 	Move();
 
-	//Nキーを押すとカメラがシェイクするように
-	//未実装
-	if (ins.IsNew(KEY_INPUT_N))
-	{
-		SetShake(10.5f, 5.0f);
-		isVibrating = true;
-	}
-
-	Shake();
-
 }
 
 void Camera::SetBeforeDrawFollow(void)
@@ -126,20 +116,38 @@ void Camera::SetBeforeDrawFollow(void)
 	////カメラの上方向
 	//cameraUp_ = followRot.PosAxis(rot_.GetUp());
 
+	//移動範囲の最大画角
 	DrawBox(Application::SCREEN_SIZE_X / 2 - 400, Application::SCREEN_SIZE_Y / 2 - 200,
 		Application::SCREEN_SIZE_X / 2 + 400, Application::SCREEN_SIZE_Y / 2 + 200,
-		0xFF0000, false);
+		0xFF00FFF, false);
+
+	//カメラが移動し始める画角
+	DrawBox(Application::SCREEN_SIZE_X / 2 - 350, Application::SCREEN_SIZE_Y / 2 - 150,
+		Application::SCREEN_SIZE_X / 2 + 350, Application::SCREEN_SIZE_Y / 2 + 150,
+		0xFFFFFF, false);
+
 
 #pragma region テスト機能
 
-		//追従対象の位置
-	VECTOR followPos = followTransform_->pos;
+	//追従対象の位置
+	VECTOR followPPos = followTransform_->pos;
+	VECTOR followPos = { 0.0f,0.0f,0.0f };
 
 	//追従対象の向き
+	//Quaternion followRot = followTransform_->quaRot;
 	Quaternion followRot = followTransform_->quaRot;
 
-	VECTOR i = { 0.0f,0.0f,0.0f };
+	//
+	VECTOR pos2D = ConvWorldPosToScreenPos(followPPos);
+	VECTOR pos3D = ConvScreenPosToWorldPos(followPos);
 
+	DrawFormatString(0, 90, 0xFFFFFF, "%f,%f,%f", pos2D.x, pos2D.y, pos2D.z);
+	DrawFormatString(0, 110, 0xFFFFFF, "%f,%f,%f", pos3D.x, pos3D.y, pos3D.z);
+
+	//if(pos2D.x )
+
+	//カメラの方向を固定する用
+	VECTOR i = { 0.0f,0.0f,0.0f };
 	Quaternion forward = Quaternion::Euler(i);
 
 	//追従対象からカメラまでの相対座標
@@ -252,6 +260,51 @@ void Camera::SetFollow(const Transform* follow)
 	followTransform_ = follow;
 }
 
+//bool Camera::IsCollisionRect(Vector2 stPos1, Vector2 edPos1, Vector2 stPos2, Vector2 edPos2)
+//{
+//	if (stPos1.x < edPos2.x
+//		&& stPos2.x < edPos1.x
+//		&& stPos1.y < edPos2.y
+//		&& stPos2.y < edPos1.y)
+//	{
+//		return true;
+//	}
+//
+//	return false;
+//}
+//
+//bool Camera::IsCollisionRectCenter(Vector2 centerPos1, Vector2 size1, Vector2 centerPos2, Vector2 size2)
+//{
+//	// 矩形1(左上座標、右上座標)
+//	Vector2 stPos1 = centerPos1;
+//	Vector2 edPos1 = centerPos1;
+//	Vector2 hSize1 = { size1.x / 2, size1.y / 2 };
+//
+//	stPos1.x -= hSize1.x;
+//	stPos1.y -= hSize1.y;
+//	edPos1.x += hSize1.x;
+//	edPos1.y += hSize1.y;
+//
+//	// 矩形２(左上座標、右上座標)
+//	Vector2 stPos2 = centerPos2;
+//	Vector2 edPos2 = centerPos2;
+//	Vector2 hSize2 = { size2.x / 2, size2.y / 2 };
+//
+//	stPos2.x -= hSize2.x;
+//	stPos2.y -= hSize2.y;
+//	edPos2.x += hSize2.x;
+//	edPos2.y += hSize2.y;
+//
+//	// 矩形同士の衝突判定
+//	// 矩形１の左よりも、矩形２の右が大きい
+//	// 矩形２の左よりも、矩形１の右が大きい
+//	if (IsCollisionRect(stPos1, edPos1, stPos2, edPos2))
+//	{
+//		return true;
+//	}
+//	return false;
+//}
+
 void Camera::SetDefault(void)
 {
 
@@ -274,28 +327,12 @@ void Camera::SetDefault(void)
 
 void Camera::Shake(void)
 {
-	if (isVibrating) {
-		if (currentVibrationTime < vibrationDuration) {
-			// 振動の計算
-			pos_.x += (rand() % 200 - 100) / 1000.0f * vibrationStrength;
-			pos_.y += (rand() % 200 - 100) / 1000.0f * vibrationStrength;
-			currentVibrationTime++;
-		}
-		else {
-			// 振動終了
-			isVibrating = false;
-			currentVibrationTime = 0;
-		}
-	}
 
-	// カメラの位置を設定
-	SetCameraPositionAndTargetAndUpVec(pos_, targetPos_, cameraUp_);;
 }
 
 void Camera::SetShake(float intensity, float duration)
 {
-	vibrationStrength = intensity;
-	vibrationDuration = duration;
+
 }
 
 void Camera::ProcessMove(void)
