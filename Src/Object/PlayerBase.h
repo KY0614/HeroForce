@@ -1,5 +1,6 @@
 #pragma once
 #include"../Utility/AsoUtility.h"
+#include<map>
 #include "UnitBase.h"
 class PlayerBase:
     public UnitBase
@@ -9,12 +10,25 @@ public:
     static constexpr float SPEED_MOVE = 5.0f;
     static constexpr float SPEED_DEG = 5.0f;
     static constexpr float SPEED_DODGE = 15.0f;
-    static constexpr float FRAME_ATK_MAX = 0.0f;
-    static constexpr float FRAME_ATK_DURATION = 40.0f;
-    static constexpr int FRAME_DODGE_MAX = 10;
-    static constexpr int DODGE_CDT_MAX = 20;
-    static constexpr int FRAME_SKILL1 = 40;
-    static constexpr int FRAME_SKILL2 = 30;
+    static constexpr float FRAME_ATK_DURATION = 1.0f;
+    static constexpr float FRAME_ATK_BACKRASH = 0.3f;
+    static constexpr float FRAME_DODGE_MAX = 0.5f;
+    static constexpr float DODGE_CDT_MAX = 0.5f;
+    static constexpr float FRAME_SKILL1 = 0.5f;
+    static constexpr float FRAME_SKILL2 = 0.5f;
+
+    //各アニメーション番号
+    static constexpr int IDLE_NUM = 36;
+    static constexpr int WALK_NUM = 72;
+    static constexpr int RUN_NUM = 49;
+    static constexpr int DODGE_NUM = 28;
+    static constexpr int ATK_NUM = 1;
+    static constexpr int SKILL_NUM = 2;
+
+
+
+
+
     PlayerBase(void);
     ~PlayerBase(void) = default;
     void Destroy(void)override;
@@ -23,20 +37,6 @@ public:
     void Draw(void)override;
     
 protected:
-    enum class ANIM
-    {
-        T_POSE
-        ,IDLE
-        ,WALK
-        ,RUN
-        ,RUN_R
-        ,RUN_L
-        ,JUMP
-        ,HAPPY
-        ,DAMAGE
-        ,DEATH
-        ,ATK
-    };
 
     enum class STATE
     {
@@ -44,6 +44,12 @@ protected:
         ,MOVE
         ,ATK
         ,DODGE
+    };
+
+    enum class SKILL
+    {
+        ONE
+        ,TWO
     };
     //球体の色
     unsigned int color_;
@@ -54,6 +60,7 @@ protected:
     void DrawDebug(void);
 
 
+   
 
 
 
@@ -64,14 +71,21 @@ protected:
     //方向処理
     void Turn(float _deg, VECTOR _axis);
 
+    //移動スピード
+    float speedMove_;
+
+    bool IsMove(void) { return speedMove_ > 0; }
+
+    
+
 
     //攻撃
     //-------------------------------------
-    //攻撃中フラグ
-    bool IsAtk(void){return atk_.cnt_ < FRAME_ATK_MAX;}
 
     //攻撃処理
     void Attack(void);
+    bool IsAtkAction(void) { return atk_.IsAttack() || atk_.IsBacklash_(); }
+
 
     //攻撃フレーム
     
@@ -80,18 +94,22 @@ protected:
     
     //回避関連
     //---------------------------------------
-    bool IsDodge(void) { return frameDodge_ < FRAME_DODGE_MAX; }
+    bool IsDodge(void) { return 0.0f<frameDodge_&&frameDodge_ < FRAME_DODGE_MAX; }
     //クールタイム中かどうか
     bool IsCoolDodge(void){return dodgeCdt_ < DODGE_CDT_MAX;}
     void Dodge(void);
 
-    int frameDodge_;
-    int dodgeCdt_;
+    //ドッジカウント初期化
+    void ResetDodgeFrame(void){frameDodge_ = 0.0f; }
+
+    float frameDodge_;
+    float dodgeCdt_;
 
     
 
     //スキル仮想関数
     //-----------------------------------------
+    SKILL skill_;
     //スキル1
     virtual void Skill_1(void);
 
@@ -102,16 +120,16 @@ protected:
      /// </summary>
      /// <param name="_frameSkillNo">スキルフレーム最大値(今はスキル1か2)</param>
      /// <returns>スキル中/スキル中でない</returns>
-     bool IsSkill(int _frameSkillNo) { return frameSkill_ < _frameSkillNo; }
+     bool IsSkill(SKILL _skill) { return skillCnt_[_skill] < FRAME_SKILL1; }
 
      //スキルクールタイム中フラグ
      bool IsSkillCool(void);
 
      //スキル持続時間
-     int frameSkill_;
+     std::map<SKILL,float> skillCnt_;
 
      //スキルクールタイム
-     int skillCdt_;
+     std::map<SKILL,float> skillCdt_;
 
      std::string skillNum_;
 
