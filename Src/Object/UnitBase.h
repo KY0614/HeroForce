@@ -19,7 +19,7 @@ public:
 	//攻撃中かどうか
 		const bool IsAttack(void)const { return 0 < cnt_ && cnt_ <= duration_; };
 	//後隙がどうか
-		const bool IsBacklash_(void)const { return 0 < (cnt_ - duration_) && (cnt_ - duration_) <= backlash_; };
+		const bool IsBacklash(void)const { return 0 < (cnt_ - duration_) && (cnt_ - duration_) <= backlash_; };
 	//モーションが終了しているか
 		const bool IsFinishMotion(void)const { return cnt_ > (duration_ + backlash_); };
 	//カウンターリセット

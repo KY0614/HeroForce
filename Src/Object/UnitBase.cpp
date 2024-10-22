@@ -93,6 +93,8 @@ void UnitBase::Anim(void)
 /// <param name="_attachNum">アニメーションナンバー</param>
 void UnitBase::ResetAnim(const ANIM _anim)
 {
+	if (anim_ == _anim)return;
+
 	//デタッチ
 	//実質atcAnimの初期化
 	MV1DetachAnim(trans_.modelId, atcAnim_);
