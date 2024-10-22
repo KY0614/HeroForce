@@ -7,7 +7,7 @@ LevelBase::LevelBase(void)
 {
 	exp_ = 0.0f;
 	nowLevel_ = 0;
-	gage_ = 0.0f;
+	gauge_ = 0.0f;
 }
 
 LevelBase::~LevelBase(void)
@@ -24,6 +24,7 @@ void LevelBase::Init(void)
 	Load();
 
 	//初期状態の設定
+	gauge_ = 30;
 }
 
 void LevelBase::Update(void)
@@ -54,13 +55,13 @@ void LevelBase::SetExp(float value)
 void LevelBase::SetGage(int level)
 {
 	//敵の経験値量を決めて修正予定
-	gage_ = level * CONSTANT_GAGE;
+	gauge_ = level * CONSTANT_GAGE;
 }
 
 void LevelBase::CheckExp()
 {
 	//経験値が次のレベル条件まで達したら
-	if (exp_ >= gage_)
+	if (exp_ >= gauge_)
 	{
 		nowLevel_++;	//レベルを上げる
 		exp_ = 0;		//経験値の初期化
