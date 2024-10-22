@@ -65,6 +65,10 @@ void Camera::SetBeforeDraw(void)
 	case Camera::MODE::FOLLOW_SPRING:
 		SetBeforeDrawFollowSpring();
 		break;
+
+	case Camera::MODE::FOLLOW_DELAY:
+		SetBeforeDrawFollowDelay();
+		break;
 	}
 
 	//カメラの設定(位置と注視点による制御)
@@ -95,78 +99,26 @@ void Camera::SetBeforeDrawFree(void)
 
 void Camera::SetBeforeDrawFollow(void)
 {
-	////追従対象の位置
-	//VECTOR followPos = followTransform_->pos;
-
-	////追従対象の向き
-	//Quaternion followRot = followTransform_->quaRot;
-
-	////追従対象からカメラまでの相対座標
-	//VECTOR relativeCPos = followRot.PosAxis(RELATIVE_F2C_POS_FOLLOW);
-
-	////カメラ位置の更新
-	//pos_ = VAdd(followPos, relativeCPos);
-
-	////カメラ位置から注視点までの相対座標
-	//VECTOR relativeTPos = followRot.PosAxis(RELATIVE_C2T_POS);
-
-	////注視点の更新
-	//targetPos_ = VAdd(pos_, relativeTPos);
-
-	////カメラの上方向
-	//cameraUp_ = followRot.PosAxis(rot_.GetUp());
-
-	//移動範囲の最大画角
-	DrawBox(Application::SCREEN_SIZE_X / 2 - 400, Application::SCREEN_SIZE_Y / 2 - 200,
-		Application::SCREEN_SIZE_X / 2 + 400, Application::SCREEN_SIZE_Y / 2 + 200,
-		0xFF00FFF, false);
-
-	//カメラが移動し始める画角
-	DrawBox(Application::SCREEN_SIZE_X / 2 - 350, Application::SCREEN_SIZE_Y / 2 - 150,
-		Application::SCREEN_SIZE_X / 2 + 350, Application::SCREEN_SIZE_Y / 2 + 150,
-		0xFFFFFF, false);
-
-
-#pragma region テスト機能
-
 	//追従対象の位置
-	VECTOR followPPos = followTransform_->pos;
-	VECTOR followPos = { 0.0f,0.0f,0.0f };
+	VECTOR followPos = followTransform_->pos;
 
 	//追従対象の向き
-	//Quaternion followRot = followTransform_->quaRot;
 	Quaternion followRot = followTransform_->quaRot;
 
-	//
-	VECTOR pos2D = ConvWorldPosToScreenPos(followPPos);
-	VECTOR pos3D = ConvScreenPosToWorldPos(followPos);
-
-	DrawFormatString(0, 90, 0xFFFFFF, "%f,%f,%f", pos2D.x, pos2D.y, pos2D.z);
-	DrawFormatString(0, 110, 0xFFFFFF, "%f,%f,%f", pos3D.x, pos3D.y, pos3D.z);
-
-	//if(pos2D.x )
-
-	//カメラの方向を固定する用
-	VECTOR i = { 0.0f,0.0f,0.0f };
-	Quaternion forward = Quaternion::Euler(i);
-
 	//追従対象からカメラまでの相対座標
-	VECTOR relativeCPos = forward.PosAxis(RELATIVE_F2C_POS_FOLLOW);
+	VECTOR relativeCPos = followRot.PosAxis(RELATIVE_F2C_POS_FOLLOW);
 
 	//カメラ位置の更新
 	pos_ = VAdd(followPos, relativeCPos);
 
 	//カメラ位置から注視点までの相対座標
-	VECTOR relativeTPos = forward.PosAxis(RELATIVE_C2T_POS);
+	VECTOR relativeTPos = followRot.PosAxis(RELATIVE_C2T_POS);
 
 	//注視点の更新
 	targetPos_ = VAdd(pos_, relativeTPos);
 
 	//カメラの上方向
-	cameraUp_ = forward.PosAxis(rot_.GetUp());
-
-
-#pragma endregion
+	cameraUp_ = followRot.PosAxis(rot_.GetUp());
 
 }
 
@@ -219,6 +171,59 @@ void Camera::SetBeforeDrawFollowSpring(void)
 	cameraUp_ = followRot.PosAxis(rot_.GetUp());
 }
 
+void Camera::SetBeforeDrawFollowDelay(void)
+{
+	//移動範囲の最大画角
+	DrawBox(Application::SCREEN_SIZE_X / 2 - 400, Application::SCREEN_SIZE_Y / 2 - 200,
+		Application::SCREEN_SIZE_X / 2 + 400, Application::SCREEN_SIZE_Y / 2 + 200,
+		0xFF00FFF, false);
+
+	//カメラが移動し始める画角
+	DrawBox(Application::SCREEN_SIZE_X / 2 - 150, Application::SCREEN_SIZE_Y / 2 - 80,
+		Application::SCREEN_SIZE_X / 2 + 150, Application::SCREEN_SIZE_Y / 2 + 80,
+		0xFFFFFF, false);
+
+
+	//追従対象の位置
+	VECTOR followPos = followTransform_->pos;
+	VECTOR o = { 0.0f,0.0f,0.0f };
+
+
+	//追従対象の向き
+	Quaternion followRot = followTransform_->quaRot;
+
+	//
+	VECTOR pos2D = ConvWorldPosToScreenPos(followPos);
+	VECTOR pos3D = ConvScreenPosToWorldPos(pos2D);
+
+	DrawFormatString(0, 90, 0xFFFFFF, "WP2SP : %f,%f,%f", pos2D.x, pos2D.y, pos2D.z);
+	DrawFormatString(0, 110, 0xFFFFFF, "Player : %f,%f,%f", followPos.x, followPos.y, followPos.z);
+
+	DrawCircle(pos2D.x, pos2D.y, 50, 0xFF0000, false);
+
+
+	//カメラの方向を固定する用
+	VECTOR i = { 0.0f,0.0f,0.0f };
+	Quaternion forward = Quaternion::Euler(i);
+
+	//追従対象からカメラまでの相対座標
+	VECTOR relativeCPos = forward.PosAxis(RELATIVE_F2C_POS_FOLLOW);
+
+	//カメラ位置の更新
+	pos_ = VAdd(o, relativeCPos);
+
+	//カメラ位置から注視点までの相対座標
+	VECTOR relativeTPos = forward.PosAxis(RELATIVE_C2T_POS);
+
+	//注視点の更新
+	targetPos_ = VAdd(pos_, relativeTPos);
+
+	//カメラの上方向
+	cameraUp_ = forward.PosAxis(rot_.GetUp());
+	//	}
+
+}
+
 void Camera::Draw(void)
 {
 	DrawBox(Application::SCREEN_SIZE_X / 2 - 50, Application::SCREEN_SIZE_Y / 2 - 50,
@@ -250,6 +255,12 @@ void Camera::ChangeMode(MODE mode)
 	case Camera::MODE::FIXED_POINT:
 		break;
 	case Camera::MODE::FREE:
+		break;
+	case Camera::MODE::FOLLOW:
+		break;
+	case Camera::MODE::FOLLOW_SPRING:
+		break;
+	case Camera::MODE::FOLLOW_DELAY:
 		break;
 	}
 

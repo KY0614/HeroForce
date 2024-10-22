@@ -52,7 +52,8 @@ public:
 		FIXED_POINT,	//定点カメラ
 		FREE,			//フリーモード
 		FOLLOW,			//追従モード
-		FOLLOW_SPRING	//ばね付き追従モード
+		FOLLOW_SPRING,	//ばね付き追従モード
+		FOLLOW_DELAY
 	};
 
 	Camera(void);
@@ -66,6 +67,7 @@ public:
 	void SetBeforeDrawFree(void);
 	void SetBeforeDrawFollow(void);
 	void SetBeforeDrawFollowSpring(void);
+	void SetBeforeDrawFollowDelay(void);
 
 	void Draw(void);
 	void Release(void);
