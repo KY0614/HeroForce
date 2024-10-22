@@ -95,8 +95,7 @@ void Enemy::Damage(const int _damage)
 {
 	//É_ÉÅÅ[ÉW
 	hp_ -= _damage;
-	if (IsAlive()) { ResetAnim(ANIM::DAMAGE); }
-	else { ResetAnim(ANIM::DEATH); }
+	if (!IsAlive()){ ResetAnim(ANIM::DEATH); }
 }
 
 void Enemy::InitAnimNum()
