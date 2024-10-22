@@ -52,7 +52,7 @@ protected:
 	float exp_;
 
 	//ゲージ(次のレベルまでの経験値量)
-	float gage_;
+	float gauge_;
 
 };
 
