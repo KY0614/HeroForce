@@ -25,15 +25,6 @@ public:
 		ENEMY_BRIGANT,	//山賊（敵）
 		ENEMY_ARCHER,	//弓使い（敵）
 		ENEMY_AXEMAN,	//斧使い（敵）
-
-		SKY_DOME,
-		BUSH_03,
-		FLOWERS_02,
-		ROCK_01,
-		ROCK_04,
-		STUMP_01,
-		TERRAIN,
-		TREE_05,
 	};
 
 	// 明示的にインステンスを生成する
