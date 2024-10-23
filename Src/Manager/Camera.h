@@ -41,9 +41,9 @@ public:
 	//Œ¸‘¬
 	static constexpr float MOVE_DEC = 0.2f;
 
-	//ˆÚ“®”ÍˆÍ‚Ì‰æŠp
-	static constexpr float MOVE_SIZE_X = 512.0f - 400.0f;
-	static constexpr float MOVE_SIZE_Y = 320.0f - 150.0f;
+	//ˆÚ“®”ÍˆÍ‚Ì‰æŠp(Å¬)
+	static constexpr float MOVE_SIZE_X = 512.0f - 10.0f;
+	static constexpr float MOVE_SIZE_Y = 320.0f - 80.0f;
 
 	//ƒJƒƒ‰ƒ‚[ƒh
 	enum class MODE
@@ -78,7 +78,7 @@ public:
 	void ChangeMode(MODE mode);
 
 	//’Ç]‘ÎÛ‚Ìİ’è
-	void SetFollow(const Transform* follow);
+	const void SetFollow(const Transform* follow);
 
 	bool IsCheckFollow(VECTOR centerPos1, VECTOR size1, VECTOR centerPos2, VECTOR size2);
 

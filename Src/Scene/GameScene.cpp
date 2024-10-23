@@ -29,8 +29,8 @@ void GameScene::Init(void)
 	// カメラモード　：フリーカメラ
 	Camera* camera = SceneManager::GetInstance().GetCamera();
 	//カメラの対象設定
-	//camera->SetFollow(&playerShip_->GetTransform());
-	camera->ChangeMode(Camera::MODE::NONE);
+	camera->SetFollow(&playerB_->GetTransform());
+	camera->ChangeMode(Camera::MODE::FOLLOW_DELAY);
 }
 
 void GameScene::Update(void)

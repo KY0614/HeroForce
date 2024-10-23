@@ -173,20 +173,32 @@ void Camera::SetBeforeDrawFollowSpring(void)
 
 void Camera::SetBeforeDrawFollowDelay(void)
 {
+	int screenX = Application::SCREEN_SIZE_X;
+	int screenY = Application::SCREEN_SIZE_Y;
+
+	//左上座標
+	int topL = screenX / 2 - 150;
+	//左下
+	int underL = screenX / 2 + 150;
+	//右上
+	int topR = screenY / 2 - 80;
+	//右下
+	int underR = screenY / 2 + 80;
+
 	//移動範囲の最大画角
-	DrawBox(Application::SCREEN_SIZE_X / 2 - 400, Application::SCREEN_SIZE_Y / 2 - 200,
-		Application::SCREEN_SIZE_X / 2 + 400, Application::SCREEN_SIZE_Y / 2 + 200,
+	DrawBox(screenX / 2 - 400, screenY / 2 - 200,
+		screenX / 2 + 400, screenY / 2 + 200,
 		0xFF00FFF, false);
 
 	//カメラが移動し始める画角
-	DrawBox(Application::SCREEN_SIZE_X / 2 - 150, Application::SCREEN_SIZE_Y / 2 - 80,
-		Application::SCREEN_SIZE_X / 2 + 150, Application::SCREEN_SIZE_Y / 2 + 80,
+	DrawBox(topL, topR,
+		underL, underR,
 		0xFFFFFF, false);
 
 
 	//追従対象の位置
 	VECTOR followPos = followTransform_->pos;
-	VECTOR o = { 0.0f,0.0f,0.0f };
+	VECTOR zero = { 0.0f,0.0f,0.0f };
 
 
 	//追従対象の向き
@@ -196,10 +208,24 @@ void Camera::SetBeforeDrawFollowDelay(void)
 	VECTOR pos2D = ConvWorldPosToScreenPos(followPos);
 	VECTOR pos3D = ConvScreenPosToWorldPos(pos2D);
 
-	DrawFormatString(0, 90, 0xFFFFFF, "WP2SP : %f,%f,%f", pos2D.x, pos2D.y, pos2D.z);
-	DrawFormatString(0, 110, 0xFFFFFF, "Player : %f,%f,%f", followPos.x, followPos.y, followPos.z);
+	DrawFormatString(0, 70, 0xFFFFFF, "SCREENSIZE X : %d,Y : %d", screenX, screenY);
+	DrawFormatString(0, 90, 0xFFFFFF, "WP2SP : %.2f,%.2f,%.2f", pos2D.x, pos2D.y, pos2D.z);
+	DrawFormatString(0, 110, 0xFFFFFF, "Player : %.2f,%.2f,%.2f", followPos.x, followPos.y, followPos.z);
 
-	DrawCircle(pos2D.x, pos2D.y, 50, 0xFF0000, false);
+	DrawCircle(pos3D.x + screenX/2, -pos3D.z , 50, 0xFF0000, false);
+
+	auto& ins = InputManager::GetInstance();
+
+	Vector2 mPos = ins.GetMousePos();
+
+	//マウスの座標をワールド座標に変換
+	VECTOR startPos = { mPos.x,mPos.y,0.0f };
+	startPos = ConvScreenPosToWorldPos(startPos);
+
+
+	VECTOR endPos = { pos2D.x,pos2D.y,pos2D.z };
+	endPos = ConvScreenPosToWorldPos(endPos);
+
 
 
 	//カメラの方向を固定する用
@@ -210,7 +236,7 @@ void Camera::SetBeforeDrawFollowDelay(void)
 	VECTOR relativeCPos = forward.PosAxis(RELATIVE_F2C_POS_FOLLOW);
 
 	//カメラ位置の更新
-	pos_ = VAdd(o, relativeCPos);
+	pos_ = VAdd(zero, relativeCPos);
 
 	//カメラ位置から注視点までの相対座標
 	VECTOR relativeTPos = forward.PosAxis(RELATIVE_C2T_POS);
@@ -221,6 +247,9 @@ void Camera::SetBeforeDrawFollowDelay(void)
 	//カメラの上方向
 	cameraUp_ = forward.PosAxis(rot_.GetUp());
 	//	}
+
+	DrawLine3D(startPos, followPos, 0xff9999);
+
 
 }
 
@@ -266,7 +295,7 @@ void Camera::ChangeMode(MODE mode)
 
 }
 
-void Camera::SetFollow(const Transform* follow)
+const void Camera::SetFollow(const Transform* follow)
 {
 	followTransform_ = follow;
 }
