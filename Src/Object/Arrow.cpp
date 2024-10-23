@@ -1,7 +1,11 @@
 #include"../Utility/AsoUtility.h"
 #include "Arrow.h"
 
-Arrow::Arrow(const int _mdlId, const Transform& _trans)
+Arrow::Arrow(void)
+{
+}
+
+void Arrow::Init(const int _mdlId, const Transform& _trans)
 {
 	//à¯êîÇÃà¯åpÇ¨
 	trans_ = _trans;
@@ -17,13 +21,9 @@ Arrow::Arrow(const int _mdlId, const Transform& _trans)
 	trans_.Update();
 
 	ChangeState(STATE::SHOT);
+	SetIsAlive(true);
 	atkPow_ = 0.0f;
 	speed_ = 1.0f;
-}
-
-void Arrow::Init(void)
-{
-	
 }
 
 void Arrow::Update(void)
@@ -54,8 +54,14 @@ void Arrow::Draw(void)
 	if (state_ == STATE::SHOT)MV1DrawModel(trans_.modelId);
 }
 
+void Arrow::Release()
+{
+}
+
 void Arrow::Destroy(void)
 {
+	ChangeState(STATE::DESTROY);
+	SetIsAlive(false);
 }
 
 void Arrow::Move(void)

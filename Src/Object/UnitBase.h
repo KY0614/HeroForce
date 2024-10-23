@@ -42,7 +42,7 @@ public:
 	};
 
 	//定数
-	// アニメーションの再生速度
+	// アニメーションの再生速度(仮）
 	static constexpr float SPEED_ANIM = 20.0f;
 
 
@@ -66,23 +66,23 @@ public:
 	const bool IsAlive(void)const {return hp_ > 0;};
 
 	//Transformいただき
-	const Transform& GetTransform(void)const { return trans_;};
+	const Transform& GetTransform(void)const;
 
 	const Transform* GetTransformEntity(void)const;
 
 	//位置
-	virtual const VECTOR GetPos(void)const;
+	const VECTOR GetPos(void)const;
 	//角度
-	virtual const VECTOR GetRot(void)const;
+	const VECTOR GetRot(void)const;
 	//大きさ
-	virtual const VECTOR GetScl(void)const;
+	const VECTOR GetScl(void)const;
 	//防御力
-	virtual const float GetDef(void)const;
+	const float GetDef(void)const;
 
 	//アニメーション関数
 	void Anim(void);
 	//アニメーションリセット
-	void ResetAnim(const ANIM _anim);
+	void ResetAnim(const ANIM _anim,const float _speed);
 
 protected:
 
@@ -91,10 +91,14 @@ protected:
 	float def_;			//防御力
 
 	//アニメ関係
-	ANIM anim_;
+	ANIM anim_;								//アニメステート
 	std::unordered_map<ANIM, int> animNum_;	//アニメーションナンバー格納配列。
-	int atcAnim_;			//アタッチするアニメを格納
-	int animTotalTime_;		//アニメーションの総再生時間
-	float stepAnim_;			//アニメーションの再生時間
+	int atcAnim_;							//アタッチするアニメを格納
+	int animTotalTime_;						//アニメーションの総再生時間
+	float stepAnim_;						//アニメーションの再生時間
+	float speedAnim_;						//アニメーション速度
+
+	//アニメーション終了時の動き
+	virtual void FinishAnim(void);
 };
 

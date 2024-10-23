@@ -18,13 +18,17 @@ public:
 	};
 
 	//モデルID、発生位置、行き先,方向
-	Arrow(const int _mdlId,const Transform& _trans);	
+	Arrow(void);	
 	~Arrow(void) = default;
 
-	void Init(void);
+	void Init(const int _mdlId, const Transform& _trans);
 	void Update(void);
 	void Draw(void);
+	void Release();
 	void Destroy(void);
+
+	const bool GetIsAlive(void)const { return isAlive_; }
+	const STATE GetState(void)const { return state_; }
 
 private:
 	//位置情報
@@ -43,6 +47,8 @@ private:
 	//移動処理
 	void Move(void);
 	//状況変位
-	void ChangeState(STATE _state) { state_ = _state; }
+	void ChangeState(const STATE _state) { state_ = _state; }
+	//生存フラグ設定
+	void SetIsAlive(const bool _flag) { isAlive_ = _flag; }
 };
 
