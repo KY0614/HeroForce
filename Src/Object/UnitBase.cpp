@@ -12,6 +12,7 @@ UnitBase::UnitBase(void)
 	atcAnim_ = -1;
 	animTotalTime_ = -1;
 	stepAnim_ = -1.0f;
+	speedAnim_ = 1.0f;
 }
 
 UnitBase::~UnitBase(void)
@@ -34,6 +35,11 @@ void UnitBase::Draw(void)
 {
 }
 
+const Transform& UnitBase::GetTransform(void) const
+{
+	return trans_;
+}
+
 const inline Transform* UnitBase::GetTransformEntity(void) const
 {
 	auto ret = new Transform();
@@ -48,22 +54,22 @@ const inline Transform* UnitBase::GetTransformEntity(void) const
 
 const VECTOR UnitBase::GetPos(void) const
 {
-	return VECTOR();
+	return trans_.pos;
 }
 
 const VECTOR UnitBase::GetRot(void) const
 {
-	return VECTOR();
+	return trans_.rot;
 }
 
 const VECTOR UnitBase::GetScl(void) const
 {
-	return VECTOR();
+	return trans_.scl;
 }
 
 const float UnitBase::GetDef(void) const
 {
-	return 0.0f;
+	return def_;
 }
 
 /// <summary>
@@ -76,23 +82,29 @@ void UnitBase::Anim(void)
 // 経過時間の取得
 	float deltaTime = 1.0f / SceneManager::DEFAULT_FPS;
 	// アニメーション時間の進行
-	stepAnim_ += (SPEED_ANIM * deltaTime);
+	stepAnim_ += (speedAnim_ * deltaTime);
 	if (stepAnim_ > animTotalTime_)
 	{
-		// ループ再生
-		stepAnim_ = 0.0f;
+		//アニメーション終了時処理（継承先で行動を決めておく）
+		FinishAnim();
 	}
 	// 再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
 }
 
+
 /// <summary>
-/// アニメーションリセット
+/// アニメーションセット
 /// </summary>
-/// <param name="_anim">セットするアニメーション</param>
-/// <param name="_attachNum">アニメーションナンバー</param>
-void UnitBase::ResetAnim(const ANIM _anim)
+/// <param name="_anim">アニメの指定</param>
+/// <param name="_speed">アニメーションスピード</param>
+void UnitBase::ResetAnim(const ANIM _anim, const float _speed)
 {
+	if (anim_ == _anim)return;
+
+	//アニメーションスピードの変更
+	speedAnim_ = _speed;
+
 	//デタッチ
 	//実質atcAnimの初期化
 	MV1DetachAnim(trans_.modelId, atcAnim_);
@@ -108,6 +120,13 @@ void UnitBase::ResetAnim(const ANIM _anim)
 
 	// 再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
+}
+
+//アニメ終了時の動き
+void UnitBase::FinishAnim(void)
+{
+	//ループ再生
+	stepAnim_ = 0.0f;
 }
 
 
