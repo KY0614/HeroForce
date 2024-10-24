@@ -200,19 +200,18 @@ void Camera::SetBeforeDrawFollowDelay(void)
 	VECTOR followPos = followTransform_->pos;
 	VECTOR zero = { 0.0f,0.0f,0.0f };
 
-
 	//追従対象の向き
 	Quaternion followRot = followTransform_->quaRot;
 
 	//
-	VECTOR pos2D = ConvWorldPosToScreenPos(followPos);
-	VECTOR pos3D = ConvScreenPosToWorldPos(pos2D);
+	//VECTOR pos2D = ConvWorldPosToScreenPos(followPos);
+	//VECTOR pos3D = ConvScreenPosToWorldPos(pos2D);
 
-	DrawFormatString(0, 70, 0xFFFFFF, "SCREENSIZE X : %d,Y : %d", screenX, screenY);
-	DrawFormatString(0, 90, 0xFFFFFF, "WP2SP : %.2f,%.2f,%.2f", pos2D.x, pos2D.y, pos2D.z);
-	DrawFormatString(0, 110, 0xFFFFFF, "Player : %.2f,%.2f,%.2f", followPos.x, followPos.y, followPos.z);
+	//DrawFormatString(0, 70, 0xFFFFFF, "SCREENSIZE X : %d,Y : %d", screenX, screenY);
+	//DrawFormatString(0, 90, 0xFFFFFF, "WP2SP : %.2f,%.2f,%.2f", pos2D.x, pos2D.y, pos2D.z);
+	//DrawFormatString(0, 110, 0xFFFFFF, "Player : %.2f,%.2f,%.2f", followPos.x, followPos.y, followPos.z);
 
-	DrawCircle(pos3D.x + screenX/2, -pos3D.z , 50, 0xFF0000, false);
+	//DrawCircle(pos3D.x + screenX/2, -pos3D.z , 50, 0xFF0000, false);
 
 	auto& ins = InputManager::GetInstance();
 
@@ -222,34 +221,39 @@ void Camera::SetBeforeDrawFollowDelay(void)
 	VECTOR startPos = { mPos.x,mPos.y,0.0f };
 	startPos = ConvScreenPosToWorldPos(startPos);
 
+	//プレイヤーの座標をスクリーン座標に変換
+	VECTOR endPos = { followPos.x,followPos.y,followPos.z };
 
-	VECTOR endPos = { pos2D.x,pos2D.y,pos2D.z };
-	endPos = ConvScreenPosToWorldPos(endPos);
-
-
+	DrawLine3D(followPos, startPos, 0xff9999);
 
 	//カメラの方向を固定する用
-	VECTOR i = { 0.0f,0.0f,0.0f };
-	Quaternion forward = Quaternion::Euler(i);
+	Quaternion forward = Quaternion::Euler(zero);
 
+#pragma region 追従機能
 	//追従対象からカメラまでの相対座標
-	VECTOR relativeCPos = forward.PosAxis(RELATIVE_F2C_POS_FOLLOW);
+	VECTOR relativeCPos = followRot.PosAxis(RELATIVE_F2C_POS_FOLLOW);
 
 	//カメラ位置の更新
-	pos_ = VAdd(zero, relativeCPos);
+	pos_ = VAdd(followPos, relativeCPos);
 
 	//カメラ位置から注視点までの相対座標
-	VECTOR relativeTPos = forward.PosAxis(RELATIVE_C2T_POS);
+	VECTOR relativeTPos = followRot.PosAxis(RELATIVE_C2T_POS);
 
 	//注視点の更新
 	targetPos_ = VAdd(pos_, relativeTPos);
 
+	targetPos_.y = 0.0f;
+
 	//カメラの上方向
-	cameraUp_ = forward.PosAxis(rot_.GetUp());
-	//	}
+	cameraUp_ = followRot.PosAxis(rot_.GetUp());
+#pragma endregion
 
-	DrawLine3D(startPos, followPos, 0xff9999);
+#pragma region 3DWaorldの注視点を追従対象の前にセット
 
+#pragma endregion
+
+
+	DrawSphere3D(targetPos_, 20.0f, 10, 0x00ff00, 0x00ff00, false);
 
 }
 
