@@ -28,6 +28,7 @@ public:
 
 	enum class ANIM
 	{
+		NONE,		//‰Šú‰»—p
 		IDLE,		//‘Ò‹@
 		WALK,		//•à‚«
 		RUN,		//‘–‚è
