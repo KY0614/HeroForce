@@ -4,6 +4,7 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Object/Common/Transform.h"
+#include "../Object/PlayerBase.h"
 #include "Camera.h"
 
 Camera::Camera(void)
@@ -177,18 +178,14 @@ void Camera::SetBeforeDrawFollowDelay(void)
 	int screenY = Application::SCREEN_SIZE_Y;
 
 	//左上座標
-	int topL = screenX / 2 - 150;
+	int topL = (screenX / 2) - 150; 
 	//左下
-	int underL = screenX / 2 + 150;
+	int underL = screenX / 2 + 150; 
 	//右上
 	int topR = screenY / 2 - 80;
 	//右下
 	int underR = screenY / 2 + 80;
 
-	//移動範囲の最大画角
-	DrawBox(screenX / 2 - 400, screenY / 2 - 200,
-		screenX / 2 + 400, screenY / 2 + 200,
-		0xFF00FFF, false);
 
 	//カメラが移動し始める画角
 	DrawBox(topL, topR,
@@ -196,72 +193,71 @@ void Camera::SetBeforeDrawFollowDelay(void)
 		0xFFFFFF, false);
 
 
-	//追従対象の位置
+	// 追従対象の位置
 	VECTOR followPos = followTransform_->pos;
 	VECTOR zero = { 0.0f,0.0f,0.0f };
 
-	//追従対象の向き
+	// 追従対象の向き
 	Quaternion followRot = followTransform_->quaRot;
 
 	//
-	//VECTOR pos2D = ConvWorldPosToScreenPos(followPos);
-	//VECTOR pos3D = ConvScreenPosToWorldPos(pos2D);
+	VECTOR pos2D = ConvWorldPosToScreenPos(followPos);
+	VECTOR pos3D = ConvScreenPosToWorldPos(pos2D);
 
-	//DrawFormatString(0, 70, 0xFFFFFF, "SCREENSIZE X : %d,Y : %d", screenX, screenY);
-	//DrawFormatString(0, 90, 0xFFFFFF, "WP2SP : %.2f,%.2f,%.2f", pos2D.x, pos2D.y, pos2D.z);
-	//DrawFormatString(0, 110, 0xFFFFFF, "Player : %.2f,%.2f,%.2f", followPos.x, followPos.y, followPos.z);
+	DrawFormatString(0, 70, 0xFFFFFF, "SCREENSIZE X : %d,Y : %d", screenX, screenY);
+	DrawFormatString(0, 90, 0xFFFFFF, "WP2SP : %.2f,%.2f,%.2f", pos2D.x, pos2D.y, pos2D.z);
+	DrawFormatString(0, 110, 0xFFFFFF, "Player : %.2f,%.2f,%.2f", followPos.x, followPos.y, followPos.z);
 
-	//DrawCircle(pos3D.x + screenX/2, -pos3D.z , 50, 0xFF0000, false);
 
-	auto& ins = InputManager::GetInstance();
+	//auto& ins = InputManager::GetInstance();
 
-	Vector2 mPos = ins.GetMousePos();
+	//Vector2 mPos = ins.GetMousePos();
 
-	//マウスの座標をワールド座標に変換
-	VECTOR startPos = { mPos.x,mPos.y,0.0f };
-	startPos = ConvScreenPosToWorldPos(startPos);
+	////マウスの座標をワールド座標に変換
+	//VECTOR startPos = { mPos.x,mPos.y,0.0f };
+	//startPos = ConvScreenPosToWorldPos(startPos);
 
-	//プレイヤーの座標をスクリーン座標に変換
-	VECTOR endPos = { followPos.x,followPos.y,followPos.z };
+	////プレイヤーの座標をスクリーン座標に変換
+	//VECTOR endPos = { followPos.x,followPos.y,followPos.z };
 
-	DrawLine3D(followPos, startPos, 0xff9999);
+	//DrawLine3D(followPos, startPos, 0xff9999);
 
 	//カメラの方向を固定する用
 	Quaternion forward = Quaternion::Euler(zero);
 
 #pragma region 追従機能
-	//追従対象からカメラまでの相対座標
-	VECTOR relativeCPos = followRot.PosAxis(RELATIVE_F2C_POS_FOLLOW);
+	// 画面境界を考慮してカメラの位置を調整
+	if (pos2D.x < -MOVE_SIZE_X/2
+		||pos2D.x > MOVE_SIZE_X/2) {
 
-	//カメラ位置の更新
-	pos_ = VAdd(followPos, relativeCPos);
+		zero = followPos;
 
-	//カメラ位置から注視点までの相対座標
-	VECTOR relativeTPos = followRot.PosAxis(RELATIVE_C2T_POS);
+	}
 
-	//注視点の更新
+	// 追従対象からカメラまでの相対座標
+	VECTOR relativeCPos = forward.PosAxis(RELATIVE_F2C_POS_FOLLOW);
+
+	// カメラ位置の更新
+	pos_ = VAdd(zero, relativeCPos);
+
+	// カメラ位置から注視点までの相対座標
+	VECTOR relativeTPos = forward.PosAxis(RELATIVE_C2T_POS);
+
+	// 注視点の更新
 	targetPos_ = VAdd(pos_, relativeTPos);
 
-	targetPos_.y = 0.0f;
-
-	//カメラの上方向
-	cameraUp_ = followRot.PosAxis(rot_.GetUp());
-#pragma endregion
-
-#pragma region 3DWaorldの注視点を追従対象の前にセット
-
+	// カメラの上方向
+	cameraUp_ = forward.PosAxis(rot_.GetUp());
 #pragma endregion
 
 
+	DrawSphere3D(followPos, 20.0f, 10, 0x589763, 0x245354, false);
 	DrawSphere3D(targetPos_, 20.0f, 10, 0x00ff00, 0x00ff00, false);
 
 }
 
 void Camera::Draw(void)
 {
-	DrawBox(Application::SCREEN_SIZE_X / 2 - 50, Application::SCREEN_SIZE_Y / 2 - 50,
-		Application::SCREEN_SIZE_X / 2 + 50, Application::SCREEN_SIZE_Y / 2 + 50,
-		0xFFFFFF,true);
 }
 
 void Camera::Release(void)

@@ -44,7 +44,7 @@ public:
 	static constexpr float MOVE_DEC = 0.2f;
 
 	//ˆÚ“®”ÍˆÍ‚Ì‰æŠp(Å¬)
-	static constexpr float MOVE_SIZE_X = 512.0f - 10.0f;
+	static constexpr float MOVE_SIZE_X = 300.0f;
 	static constexpr float MOVE_SIZE_Y = 320.0f - 80.0f;
 
 	//ƒJƒƒ‰ƒ‚[ƒh
