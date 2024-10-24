@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include"Common/Transform.h"
 #include<unordered_map>
 
@@ -7,99 +7,102 @@ class UnitBase
 {
 public:
 
-	//UŒ‚ŠÖŒW
+	//æ”»æ’ƒé–¢ä¿‚
 	struct ATK
 	{
-		VECTOR pos_;		//ˆÊ’u
-		float pow_;			//UŒ‚—Í
-		float duration_;	//‘±ŠÔiUŒ‚‚ª‚Ç‚ê‚­‚ç‚¢‘±‚­‚©‚ğ‹Lq)
-		float backlash_;	//ŒãŒ„iŒãŒ„‚ª‚Ç‚ê‚­‚ç‚¢‘±‚­‚©‚ğ‹Lq)
-		float cnt_;			//ƒJƒEƒ“ƒ^[
+		VECTOR pos_;		//ä½ç½®
+		float pow_;			//æ”»æ’ƒåŠ›
+		float duration_;	//æŒç¶šæ™‚é–“ï¼ˆæ”»æ’ƒãŒã©ã‚Œãã‚‰ã„ç¶šãã‹ã‚’è¨˜è¿°)
+		float backlash_;	//å¾Œéš™ï¼ˆå¾Œéš™ãŒã©ã‚Œãã‚‰ã„ç¶šãã‹ã‚’è¨˜è¿°)
+		float cnt_;			//ã‚«ã‚¦ãƒ³ã‚¿ãƒ¼
 
-	//UŒ‚’†‚©‚Ç‚¤‚©
+	//æ”»æ’ƒä¸­ã‹ã©ã†ã‹
 		const bool IsAttack(void)const { return 0 < cnt_ && cnt_ <= duration_; };
-	//ŒãŒ„‚ª‚Ç‚¤‚©
+	//å¾Œéš™ãŒã©ã†ã‹
 		const bool IsBacklash(void)const { return 0 < (cnt_ - duration_) && (cnt_ - duration_) <= backlash_; };
-	//ƒ‚[ƒVƒ‡ƒ“‚ªI—¹‚µ‚Ä‚¢‚é‚©
+	//ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ã¦ã„ã‚‹ã‹
 		const bool IsFinishMotion(void)const { return cnt_ > (duration_ + backlash_); };
-	//ƒJƒEƒ“ƒ^[ƒŠƒZƒbƒg
+	//ã‚«ã‚¦ãƒ³ã‚¿ãƒ¼ãƒªã‚»ãƒƒãƒˆ
 		void ResetCnt(void) { cnt_ = 0; };
 	};
 
 	enum class ANIM
 	{
-		NONE,		//‰Šú‰»—p
-		IDLE,		//‘Ò‹@
-		WALK,		//•à‚«
-		RUN,		//‘–‚è
-		SKILL_1,	//ƒXƒLƒ‹‡@
-		SKILL_2,	//ƒXƒLƒ‹‡A
-		DODGE,		//‰ñ”ğ
-		DAMAGE,		//”íƒ_ƒ
-		DEATH,		//€–S
-		ENTRY,		//oŒ»
-		UNIQUE_1,	//ŒÅ—L‚Ì‚â‚Â‡@
-		UNIQUE_2,	//ŒÅ—L‚Ì‚â‚Â‡A
+		NONE,		//åˆæœŸåŒ–ç”¨
+		IDLE,		//å¾…æ©Ÿ
+		WALK,		//æ­©ã
+		RUN,		//èµ°ã‚Š
+		SKILL_1,	//ã‚¹ã‚­ãƒ«â‘ 
+		SKILL_2,	//ã‚¹ã‚­ãƒ«â‘¡
+		SKILL_3,	//ã‚¹ã‚­ãƒ«â‚
+		SKILL_4,	//ã‚¹ã‚­ãƒ«â‘£
+		SKILL_5,	//ã‚¹ã‚­ãƒ«â„
+		DODGE,		//å›é¿
+		DAMAGE,		//è¢«ãƒ€ãƒ¡
+		DEATH,		//æ­»äº¡
+		ENTRY,		//å‡ºç¾
+		UNIQUE_1,	//å›ºæœ‰ã®ã‚„ã¤â‘ 
+		UNIQUE_2,	//å›ºæœ‰ã®ã‚„ã¤â‘¡
 	};
 
-	//’è”
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶‘¬“x(‰¼j
+	//å®šæ•°
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿé€Ÿåº¦(ä»®ï¼‰
 	static constexpr float SPEED_ANIM = 20.0f;
 
 
-	//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	UnitBase(void);
-	//ƒfƒXƒgƒ‰ƒNƒ^
+	//ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	~UnitBase(void);
-	//‰ğ•ú
+	//è§£æ”¾
 	virtual void Destroy(void);
 
-	//Šî–{ˆ—‚Ì‚S‚Â‚Í‰¼‘zŠÖ”‰»‚·‚é‚Ì‚Å‚µ‚Á‚©‚èƒI[ƒo[ƒ‰ƒCƒh‚·‚é‚æ‚¤‚É
-	//‰Šú‰»
+	//åŸºæœ¬å‡¦ç†ã®ï¼”ã¤ã¯ä»®æƒ³é–¢æ•°åŒ–ã™ã‚‹ã®ã§ã—ã£ã‹ã‚Šã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰ã™ã‚‹ã‚ˆã†ã«
+	//åˆæœŸåŒ–
 	virtual void Init(void);
-	//XV
+	//æ›´æ–°
 	virtual void Update(void);
-	//•`‰æ
+	//æç”»
 	virtual void Draw(void);
 
-	//ƒQƒbƒ^[Šeí
-	//¶‘¶Šm”F(¶‘¶‚µ‚Ä‚¢‚é‚Ætrue)
+	//ã‚²ãƒƒã‚¿ãƒ¼å„ç¨®
+	//ç”Ÿå­˜ç¢ºèª(ç”Ÿå­˜ã—ã¦ã„ã‚‹ã¨true)
 	const bool IsAlive(void)const {return hp_ > 0;};
 
-	//Transform‚¢‚½‚¾‚«
+	//Transformã„ãŸã ã
 	const Transform& GetTransform(void)const;
 
 	const Transform* GetTransformEntity(void)const;
 
-	//ˆÊ’u
+	//ä½ç½®
 	const VECTOR GetPos(void)const;
-	//Šp“x
+	//è§’åº¦
 	const VECTOR GetRot(void)const;
-	//‘å‚«‚³
+	//å¤§ãã•
 	const VECTOR GetScl(void)const;
-	//–hŒä—Í
+	//é˜²å¾¡åŠ›
 	const float GetDef(void)const;
 
-	//ƒAƒjƒ[ƒVƒ‡ƒ“ŠÖ”
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³é–¢æ•°
 	void Anim(void);
-	//ƒAƒjƒ[ƒVƒ‡ƒ“ƒŠƒZƒbƒg
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒªã‚»ãƒƒãƒˆ
 	void ResetAnim(const ANIM _anim,const float _speed);
 
 protected:
 
-	int hp_;			//‘Ì—Í
-	Transform trans_;	//ˆÊ’uî•ñŠÖŒW
-	float def_;			//–hŒä—Í
+	int hp_;			//ä½“åŠ›
+	Transform trans_;	//ä½ç½®æƒ…å ±é–¢ä¿‚
+	float def_;			//é˜²å¾¡åŠ›
 
-	//ƒAƒjƒŠÖŒW
-	ANIM anim_;								//ƒAƒjƒƒXƒe[ƒg
-	std::unordered_map<ANIM, int> animNum_;	//ƒAƒjƒ[ƒVƒ‡ƒ“ƒiƒ“ƒo[Ši”[”z—ñB
-	int atcAnim_;							//ƒAƒ^ƒbƒ`‚·‚éƒAƒjƒ‚ğŠi”[
-	int animTotalTime_;						//ƒAƒjƒ[ƒVƒ‡ƒ“‚Ì‘Ä¶ŠÔ
-	float stepAnim_;						//ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶ŠÔ
-	float speedAnim_;						//ƒAƒjƒ[ƒVƒ‡ƒ“‘¬“x
+	//ã‚¢ãƒ‹ãƒ¡é–¢ä¿‚
+	ANIM anim_;								//ã‚¢ãƒ‹ãƒ¡ã‚¹ãƒ†ãƒ¼ãƒˆ
+	std::unordered_map<ANIM, int> animNum_;	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒŠãƒ³ãƒãƒ¼æ ¼ç´é…åˆ—ã€‚
+	int atcAnim_;							//ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ã‚¢ãƒ‹ãƒ¡ã‚’æ ¼ç´
+	int animTotalTime_;						//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ç·å†ç”Ÿæ™‚é–“
+	float stepAnim_;						//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿæ™‚é–“
+	float speedAnim_;						//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³é€Ÿåº¦
 
-	//ƒAƒjƒ[ƒVƒ‡ƒ“I—¹‚Ì“®‚«
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³çµ‚äº†æ™‚ã®å‹•ã
 	virtual void FinishAnim(void);
 };
 
