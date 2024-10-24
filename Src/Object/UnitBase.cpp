@@ -29,6 +29,7 @@ void UnitBase::Init(void)
 
 void UnitBase::Update(void)
 {
+
 }
 
 void UnitBase::Draw(void)
@@ -79,7 +80,7 @@ const float UnitBase::GetDef(void) const
 void UnitBase::Anim(void)
 {
 	// アニメーション再生
-// 経過時間の取得
+	// 経過時間の取得
 	float deltaTime = 1.0f / SceneManager::DEFAULT_FPS;
 	// アニメーション時間の進行
 	stepAnim_ += (speedAnim_ * deltaTime);
@@ -127,6 +128,20 @@ void UnitBase::FinishAnim(void)
 {
 	//ループ再生
 	stepAnim_ = 0.0f;
+}
+
+void UnitBase::CntUp(float _count)
+{
+	// 経過時間の取得
+	float deltaTime = 1.0f / SceneManager::DEFAULT_FPS;
+	_count += deltaTime;
+}
+
+void UnitBase::CntDown(float _count)
+{
+	// 経過時間の取得
+	float deltaTime = 1.0f / SceneManager::DEFAULT_FPS;
+	_count -= deltaTime;
 }
 
 

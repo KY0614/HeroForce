@@ -87,7 +87,6 @@ public:
 	void Anim(void);
 	//アニメーションリセット
 	void ResetAnim(const ANIM _anim,const float _speed);
-
 protected:
 
 	int hp_;			//体力
@@ -104,5 +103,9 @@ protected:
 
 	//アニメーション終了時の動き
 	virtual void FinishAnim(void);
+	//カウンタ増加
+	void CntUp(float _count);
+	//カウンタ減少
+	void CntDown(float _count);
 };
 
