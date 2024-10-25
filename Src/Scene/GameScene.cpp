@@ -30,7 +30,7 @@ void GameScene::Init(void)
 	Camera* camera = SceneManager::GetInstance().GetCamera();
 	//ƒJƒƒ‰‚Ì‘ÎÛÝ’è
 	camera->SetFollow(&playerB_->GetTransform());
-	camera->ChangeMode(Camera::MODE::FOLLOW_DELAY);
+	camera->ChangeMode(Camera::MODE::FOLLOW_SPRING);
 }
 
 void GameScene::Update(void)

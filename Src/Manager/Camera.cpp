@@ -126,7 +126,7 @@ void Camera::SetBeforeDrawFollow(void)
 void Camera::SetBeforeDrawFollowSpring(void)
 {
 	//ばね定数(ばねの強さ)
-	float POW_SPRING = 24.0f;
+	float POW_SPRING = 50.0f;
 
 	//ばね定数（ばねの抵抗）
 	float dampening = 2.0f * sqrt(POW_SPRING);
@@ -142,9 +142,13 @@ void Camera::SetBeforeDrawFollowSpring(void)
 
 	//追従対象の向き
 	Quaternion followRot = followTransform_->quaRot;
+	VECTOR zero = { 0.0f,0.0f,0.0f };
+
+	//カメラの方向を固定する用
+	Quaternion forward = Quaternion::Euler(zero);
 
 	//追従対象からカメラまでの相対座標
-	VECTOR relativeCPos = followRot.PosAxis(RELATIVE_F2C_POS_SPRING);
+	VECTOR relativeCPos = forward.PosAxis(RELATIVE_F2C_POS_FOLLOW);
 
 	//理想位置
 	VECTOR idealPos = VAdd(followPos, relativeCPos);
@@ -163,13 +167,13 @@ void Camera::SetBeforeDrawFollowSpring(void)
 	pos_ = VAdd(pos_, VScale(velocity_, delta));
 
 	//カメラ位置から注視点までの相対座標
-	VECTOR relativeTPos = followRot.PosAxis(RELATIVE_C2T_POS);
+	VECTOR relativeTPos = forward.PosAxis(RELATIVE_C2T_POS);
 
 	//注視点の更新
 	targetPos_ = VAdd(pos_, relativeTPos);
 
 	//カメラの上方向
-	cameraUp_ = followRot.PosAxis(rot_.GetUp());
+	cameraUp_ = forward.PosAxis(rot_.GetUp());
 }
 
 void Camera::SetBeforeDrawFollowDelay(void)
