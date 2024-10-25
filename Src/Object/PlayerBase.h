@@ -36,6 +36,11 @@ public:
     static constexpr float FRAME_SKILL2 = 0.5f;
 
     static constexpr int MAX_HP = 100;
+    //攻撃座標
+    static constexpr VECTOR COL_LOCAL_POS = { 0.0f,20.0f,0.0f };
+
+    //攻撃範囲
+    static constexpr float COL_ATK = SCALE * 200.0f;
 
 
 
@@ -73,9 +78,6 @@ protected:
     //アニメNo初期化
     void InitAnimNum(void);
 
-
-    //球体の色
-    unsigned int color_;
     //操作系（キーボード)
     void KeyBoardControl(void);
 
@@ -176,6 +178,16 @@ protected:
 
      float stickDeg_;
 
+
+
+
+
+
+
+     //デバッグ用
+     void InitDebug(void);
+     unsigned int color_Col_;
+     unsigned int color_Atk_;
    
 private:
 };

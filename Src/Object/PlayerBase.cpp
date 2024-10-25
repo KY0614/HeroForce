@@ -16,6 +16,7 @@ void PlayerBase::Destroy(void)
 
 void PlayerBase::SetParam(void)
 {
+	atk_.pos_ = VAdd(trans_.pos, COL_LOCAL_POS);
 	atk_.ResetCnt();
 	atk_.duration_ = FRAME_ATK_DURATION;
 	atk_.backlash_ = FRAME_ATK_BACKRASH;
@@ -27,6 +28,11 @@ void PlayerBase::SetParam(void)
 void PlayerBase::Init(void)
 {
 	SetParam();
+
+
+
+	InitDebug();
+
 
 	dodgeCdt_ = DODGE_CDT_MAX;
 	speedMove_ = 0.0f;
@@ -48,6 +54,9 @@ void PlayerBase::Init(void)
 		0.0f, AsoUtility::Deg2RadF(180.0f),
 		0.0f
 	);
+
+
+
 
 	trans_.Update();
 }
@@ -266,6 +275,9 @@ void PlayerBase::DrawDebug(void)
 	DrawFormatString(0, 0, 0xffffff
 		, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\nStick(%f)\nHP(%d)"
 		, atk_.cnt_, atk_.IsAttack(),atk_.IsBacklash(), frameDodge_,skillCnt_[SKILL::ONE],stickDeg_,hp_);
+
+	DrawSphere3D(VAdd(trans_.pos, {0.0f,20.0f,0.0f}), SCALE * 100, 8, color_Col_, color_Col_, false);
+	DrawSphere3D(atk_.pos_, COL_ATK, 8, color_Atk_, color_Atk_, false);
 }
 
 
@@ -282,6 +294,8 @@ void PlayerBase::Turn(float _deg, VECTOR _axis)
 
 void PlayerBase::Attack(void)
 {
+	const unsigned int ATK_COLOR = 0xff0000;
+	atk_.pos_ = VAdd(trans_.pos, COL_LOCAL_POS);
 	if (atk_.IsAttack()||atk_.IsBacklash())
 	{
 		Count(atk_.cnt_);
@@ -291,6 +305,15 @@ void PlayerBase::Attack(void)
 		atk_.ResetCnt();
 	}
 	
+
+	if (atk_.IsAttack())
+	{
+		color_Atk_ = ATK_COLOR;
+	}
+	else
+	{
+		color_Atk_ = 0x00ffff;
+	}
 }
 
 void PlayerBase::Dodge(void)
@@ -316,7 +339,7 @@ void PlayerBase::Dodge(void)
 	{
 		Count(dodgeCdt_);
 		ResetDodgeFrame();
-		color_ = 0xffffff;
+		color_Col_ = 0xffffff;
 	}
 }
 
@@ -341,5 +364,14 @@ void PlayerBase::Skill_2(void)
 void PlayerBase::Damage(void)
 {
 	hp_--;
+
+	const unsigned int  DMG_COLOR = 0x00ffff;
+	color_Col_ = DMG_COLOR;
+}
+
+void PlayerBase::InitDebug(void)
+{
+	color_Col_ = 0xffffff;
+	color_Atk_ = 0x00ffff;
 }
 
