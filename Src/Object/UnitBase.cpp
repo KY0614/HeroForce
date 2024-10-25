@@ -29,7 +29,6 @@ void UnitBase::Init(void)
 
 void UnitBase::Update(void)
 {
-
 }
 
 void UnitBase::Draw(void)
