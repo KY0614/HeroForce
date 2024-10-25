@@ -99,7 +99,11 @@
     <ClCompile Include="Src\Object\UnitBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="Src\Object\Enemy.cpp">
+=======
+    <ClCompile Include="Src\Object\PlayerBase.cpp">
+>>>>>>> Player
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Arrow.cpp">
