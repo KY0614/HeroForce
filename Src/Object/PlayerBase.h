@@ -28,8 +28,8 @@ public:
     static constexpr float SPEED_MOVE = 5.0f;
     static constexpr float SPEED_DEG = 5.0f;
     static constexpr float SPEED_DODGE = 15.0f;
-    static constexpr float FRAME_ATK_DURATION = 0.2f;
-    static constexpr float FRAME_ATK_BACKRASH = 0.4f;
+    static constexpr float FRAME_ATK_DURATION = 0.5f;
+    static constexpr float FRAME_ATK_BACKRASH = 0.1f;
     static constexpr float FRAME_DODGE_MAX = 0.43f;
     static constexpr float DODGE_CDT_MAX = 0.5f;
     static constexpr float FRAME_SKILL1 = 1.5f;
