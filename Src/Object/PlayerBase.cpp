@@ -16,11 +16,18 @@ void PlayerBase::Destroy(void)
 
 void PlayerBase::SetParam(void)
 {
+	atk_.ResetCnt();
+	atk_.duration_ = FRAME_ATK_DURATION;
+	atk_.backlash_ = FRAME_ATK_BACKRASH;
+	atk_.pow_ = 0;
 
+	hp_ = MAX_HP;
 }
 
 void PlayerBase::Init(void)
 {
+	SetParam();
+
 	dodgeCdt_ = DODGE_CDT_MAX;
 	speedMove_ = 0.0f;
 	ChangeControll(CNTL::KEYBOARD);
@@ -33,7 +40,7 @@ void PlayerBase::Init(void)
 	trans_.SetModel(
 		ResourceManager::GetInstance()
 		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_KNIGHT));
-	float scale = 0.5f;
+	float scale = SCALE;
 	trans_.scl = { scale, scale, scale };
 	trans_.pos = { 0.0f, 0.0f, 0.0f };
 	trans_.quaRot = Quaternion();
@@ -90,7 +97,7 @@ void PlayerBase::Draw(void)
 void PlayerBase::Move(float _deg, VECTOR _axis)
 {
 	speedMove_ = SPEED_MOVE;
-	if (!IsDodge() && !IsAtkAction())
+	if (!IsDodge() && !IsAtkAction()&&!IsSkill(SKILL::ONE))
 	{
 		ResetAnim(ANIM::WALK, SPEED_ANIM_RUN);
 		Turn(_deg, _axis);
@@ -157,7 +164,7 @@ void PlayerBase::KeyBoardControl(void)
 		Count(atk_.cnt_);
 	}
 
-	if (ins.IsTrgDown(KEY_INPUT_Q)&&!IsAtkAction()/*&&!IsSkill(SKILL::TWO)*/)
+	if (ins.IsTrgDown(KEY_INPUT_Q)&&!IsAtkAction()&&!IsDodge())
 	{
 		Count(skillCnt_[SKILL::ONE]);
 		ResetAnim(ANIM::SKILL_1,SPEED_ANIM);
@@ -257,8 +264,8 @@ void PlayerBase::DrawDebug(void)
 	//DrawSphere3D(trans_.pos, 20.0f, 8, 0x0, color_, true);
 	//’lŒ©‚é—p
 	DrawFormatString(0, 0, 0xffffff
-		, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\nStick(%f)"
-		, atk_.cnt_, atk_.IsAttack(),atk_.IsBacklash(), frameDodge_,skillCnt_[SKILL::ONE],stickDeg_);
+		, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\nStick(%f)\nHP(%d)"
+		, atk_.cnt_, atk_.IsAttack(),atk_.IsBacklash(), frameDodge_,skillCnt_[SKILL::ONE],stickDeg_,hp_);
 }
 
 
@@ -333,6 +340,6 @@ void PlayerBase::Skill_2(void)
 
 void PlayerBase::Damage(void)
 {
-	ResetAnim(ANIM::DAMAGE,SPEED_ANIM_RUN);
+	hp_--;
 }
 

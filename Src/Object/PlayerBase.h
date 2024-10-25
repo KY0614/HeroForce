@@ -21,6 +21,8 @@ public:
     static constexpr int SPEED_ANIM_DODGE = 30.0f;
     static constexpr int SPEED_ANIM_ATK = 50.0f;
 
+    static constexpr float SCALE = 0.2f;
+
 
     // 移動スピード
     static constexpr float SPEED_MOVE = 5.0f;
@@ -33,7 +35,7 @@ public:
     static constexpr float FRAME_SKILL1 = 1.5f;
     static constexpr float FRAME_SKILL2 = 0.5f;
 
-
+    static constexpr int MAX_HP = 100;
 
 
 
