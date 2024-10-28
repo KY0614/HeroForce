@@ -98,6 +98,7 @@ private:
 
 	//カメラモード
 	MODE mode_;
+	MODE currentMode_;
 
 	//カメラの位置
 	VECTOR pos_;

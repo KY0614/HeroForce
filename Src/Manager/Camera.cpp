@@ -31,7 +31,6 @@ void Camera::Init(void)
 
 void Camera::Update(void)
 {
-
 }
 
 void Camera::SetBeforeDraw(void)
@@ -123,8 +122,10 @@ void Camera::SetBeforeDrawFollowSpring(void)
 {
 	auto& ins = InputManager::GetInstance();
 
+	//Cキー押下でカメラを揺らす
 	if (ins.IsTrgDown(KEY_INPUT_C))
 	{
+		currentMode_ = mode_;
 		ChangeMode(MODE::SHAKE);
 	}
 
@@ -242,9 +243,9 @@ void Camera::ChangeMode(MODE mode)
 	//カメラの初期設定
 	//カメラを揺らす前の位置で揺れるようにしたいため外している
 	//SetDefault();
-
+	
 	//カメラモードの変更
-	mode_ = mode;
+  	mode_ = mode;
 
 	//変更時の初期化処理
 	switch (mode_)
