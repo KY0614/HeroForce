@@ -1,4 +1,5 @@
 #include<DxLib.h>
+#include<cmath>
 #include"../Application.h"
 #include"../Manager/Resource.h"
 #include"../Manager/InputManager.h"
@@ -28,9 +29,11 @@ void Enemy::Init(void)
 	//アニメーション番号の初期化
 	InitAnimNum();
 
-	//※デバッグ　仮置きアニメーション
+#ifdef DEBUG_ENEMY
 	animNum_.emplace(ANIM::SKILL_1, ANIM_SKILL_1);
 	animNum_.emplace(ANIM::SKILL_2, ANIM_SKILL_2);
+	targetPos_ = { -30.0f, 0.0f,-30.0f };
+#endif // DEBUG_ENEMY
 
 	ResetAnim(ANIM::IDLE, DEFAULT_SPEED_ANIM);
 
@@ -72,6 +75,19 @@ void Enemy::Update(void)
 	//アニメーション
 	Anim();
 
+#ifdef DEBUG_ENEMY
+	//入力用
+	InputManager& ins = InputManager::GetInstance();
+
+	if (ins.IsNew(KEY_INPUT_W)) { targetPos_.z+= 3.0f; }
+	if (ins.IsNew(KEY_INPUT_D)) { targetPos_.x+= 3.0f; }
+	if (ins.IsNew(KEY_INPUT_S)) { targetPos_.z-= 3.0f; }
+	if (ins.IsNew(KEY_INPUT_A)) { targetPos_.x-= 3.0f; }
+
+	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_Q)) { Damage(1, 10); }
+#endif // DEBUG_ENEMY
+
+
 	//やられているなら何もしない
 	if (!IsAlive()) { return; }
 
@@ -97,9 +113,6 @@ void Enemy::Update(void)
 		UpdateBreak();
 		break;
 	}
-
-	//※デバッグ　ダメージ処理
-	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_Q)) { Damage(1, 10); }
 
 	//モデル制御
 	trans_.Update();
@@ -133,31 +146,48 @@ void Enemy::InitAnimNum()
 
 void Enemy::UpdateNml(void)
 {
-	//攻撃クールダウンが終わったなら攻撃準備開始
-	if (!IsAtkCD())
+	//**********************************************************
+	//終了処理
+	//**********************************************************
+
+	//攻撃開始判定
+	if (IsInAtkStartRange())
 	{
-		//攻撃クールダウンカウンタ初期化
-		atkCdt_ = 0.0f;
-
-		//攻撃警告状態に遷移
+		//攻撃準備開始
 		ChangeState(STATE::ALERT);
-
-		return;
 	}
 
+	//**********************************************************
+	//動作処理
+	//**********************************************************
+
 	//待機アニメーション
-	if (moveSpeed_ == 0.0) { ResetAnim(ANIM::IDLE, DEFAULT_SPEED_ANIM); }
+	if (moveSpeed_ == 0.0)ResetAnim(ANIM::IDLE, DEFAULT_SPEED_ANIM);
+	//歩きアニメーション
+	else if (moveSpeed_ > 0.0f)ResetAnim(ANIM::WALK, DEFAULT_SPEED_ANIM);
+
 
 	//※いずれ消す
 	//クールダウンカウンタ
 	atkCdt_++;
 
-	//移動処理
-	Move();
+	//移動量の初期化
+	moveSpeed_ = 0.0f;
+	
+	//索敵
+	if (IsInSearchRange())
+	{
+		//移動処理
+		Move();
+	}
 }
 
 void Enemy::UpdateAlert(void)
 {
+	//**********************************************************
+	//終了処理
+	//**********************************************************
+
 	//警告カウンタが終わったなら攻撃開始
 	if (!IsAlertTime())
 	{
@@ -169,6 +199,10 @@ void Enemy::UpdateAlert(void)
 
 		return;
 	}
+
+	//**********************************************************
+	//動作処理
+	//**********************************************************
 
 	//クールダウンカウンタ
 	alertCnt_++;
@@ -183,6 +217,10 @@ void Enemy::UpdateAlert(void)
 
 void Enemy::UpdateAtk(void)
 {
+	//**********************************************************
+	//終了処理
+	//**********************************************************
+
 	//攻撃が終わっているなら状態遷移
 	if (nowSkill_.IsFinishMotion())
 	{
@@ -193,7 +231,7 @@ void Enemy::UpdateAtk(void)
 	}
 
 	//**********************************************************
-	//攻撃中の処理
+	//動作処理
 	//**********************************************************
 
 	//攻撃アニメーション
@@ -208,6 +246,11 @@ void Enemy::UpdateAtk(void)
 
 void Enemy::UpdateBreak(void)
 {
+	//**********************************************************
+	//終了処理
+	//**********************************************************
+
+	//休憩時間が終わったら
 	if (!IsBreak())
 	{
 		//攻撃休憩時間の初期化
@@ -218,6 +261,10 @@ void Enemy::UpdateBreak(void)
 		return;
 	}
 
+	//**********************************************************
+	//動作処理
+	//**********************************************************
+
 	//待機アニメーション
 	ResetAnim(ANIM::IDLE, DEFAULT_SPEED_ANIM);
 
@@ -225,12 +272,26 @@ void Enemy::UpdateBreak(void)
 	breakCnt_++;
 }
 
-void Enemy::Search(void)
+const VECTOR Enemy::GetTargetVec(void)const
 {
+	//標的への方向ベクトルを取得
+	VECTOR targetVec = VSub(targetPos_, trans_.pos);
+
+	//正規化
+	targetVec = VNorm(targetVec);
+
+	//Y座標は必要ないので要素を消す
+	targetVec = { targetVec.x,0.0f,targetVec.z };
+
+	//移動量を求める
+	VECTOR ret = VScale(targetVec, moveSpeed_);
+
+	return ret;
 }
 
 void Enemy::Draw(void)
 {
+#ifdef DEBUG_ENEMY
 	//デバッグ
 	DrawFormatString(0, Application::SCREEN_SIZE_Y - 16, 0xffffff, "EnemyHP = %d", hp_);
 	int statePos = Application::SCREEN_SIZE_Y - 32;
@@ -254,6 +315,13 @@ void Enemy::Draw(void)
 	}
 	//敵の当たり判定
 	DrawSphere3D(colPos_, colRadius_, 4, 0xffff00, 0xffff00, false);
+	//敵の索敵判定
+	DrawSphere3D(trans_.pos, SEARCH_RANGE, 2, IsInSearchRange() ? 0xff0000 : 0xffffff, IsInSearchRange() ? 0xff0000 : 0xffffff, false);
+	//敵の索敵判定
+	DrawSphere3D(trans_.pos, ATK_START_RANGE, 2, IsInAtkStartRange() ? 0xff0000 : 0xffffff, IsInAtkStartRange() ? 0x0000ff : 0xffffff, false);
+	//ターゲットの座標
+	DrawSphere3D(targetPos_, 3.0f, 10, 0x0000ff, 0x0000ff, true);
+#endif // DEBUG_ENEMY
 
 	//敵モデルの描画
 	MV1DrawModel(trans_.modelId);
@@ -263,43 +331,43 @@ void Enemy::Draw(void)
 	else if (nowSkill_.IsBacklash()) { DrawSphere3D(nowSkill_.pos_, nowSkillColRadius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
 }
 
+const bool Enemy::IsInSearchRange(void) const
+{
+	//標的への方向ベクトルを取得
+	VECTOR targetVec = VSub(targetPos_, trans_.pos);
+
+	//大きさを求める
+	float vecSize = hypot(targetVec.x, targetVec.z);
+
+	//判定
+	return SEARCH_RANGE - vecSize > 0;
+}
+
+const bool Enemy::IsInAtkStartRange(void) const
+{
+	//標的への方向ベクトルを取得
+	VECTOR targetVec = VSub(targetPos_, trans_.pos);
+
+	//大きさを求める
+	float vecSize = hypot(targetVec.x, targetVec.z);
+
+	//判定
+	return ATK_START_RANGE - vecSize > 0;
+}
+
 void Enemy::Move(void)
 {
-	//移動量の初期化
-	moveSpeed_ = 0.0f;
+	//移動速度の更新
+	moveSpeed_ = WALK_SPEED;
 
-	//入力用
-	InputManager& ins = InputManager::GetInstance();
+	//方向ベクトル取得
+	VECTOR targetVec = GetTargetVec();
 
-	//移動(デバッグ)
-	if (ins.IsNew(KEY_INPUT_UP)) { moveSpeed_ = WALK_SPEED; ProcessMove(moveSpeed_, 0.0f); }
-	if (ins.IsNew(KEY_INPUT_RIGHT)){ moveSpeed_ = WALK_SPEED; ProcessMove(moveSpeed_, 90.0f); }
-	if (ins.IsNew(KEY_INPUT_DOWN)){ moveSpeed_ = WALK_SPEED; ProcessMove(moveSpeed_, 180.0f); }
-	if (ins.IsNew(KEY_INPUT_LEFT)){ moveSpeed_ = WALK_SPEED; ProcessMove(moveSpeed_, 270.0f); }
-
-	//歩きアニメーション
-	if(moveSpeed_ > 0.0f)ResetAnim(ANIM::WALK, DEFAULT_SPEED_ANIM);
-}
-
-void Enemy::ProcessMove(const float _moveSpeed, const float _deg)
-{
-	//方向転換
-	Turn(_deg, AsoUtility::AXIS_Y);
-
-	//移動方向
-	VECTOR dir = trans_.quaRot.GetForward();
-
-	//移動量
-	VECTOR movePow = VScale(dir, _moveSpeed);
+	//回転
+	trans_.quaRot = trans_.quaRot.LookRotation(targetVec);
 
 	//移動
-	trans_.pos = VAdd(trans_.pos, movePow);
-}
-
-void Enemy::Turn(float _deg, VECTOR _axis)
-{
-	//trans_.quaRot = trans_.quaRot.Mult(trans_.quaRot.AngleAxis(AsoUtility::Deg2RadF(_deg), _axis));
-	trans_.quaRot = trans_.quaRot.AngleAxis(AsoUtility::Deg2RadF(_deg), _axis);
+	trans_.pos = VAdd(trans_.pos, targetVec);
 }
 
 void Enemy::InitSkill(void)

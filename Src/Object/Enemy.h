@@ -7,6 +7,8 @@ class Enemy : public UnitBase
 {
 public:
 
+#define DEBUG_ENEMY
+
 	//アニメーション番号
 	static constexpr int ANIM_IDLE = 14;	//待機アニメーション
 	static constexpr int ANIM_WALK = 93;	//歩きアニメーション
@@ -31,6 +33,10 @@ public:
 	//速度関係
 	static constexpr float WALK_SPEED = 2.0f;	//歩きの速度
 	static constexpr float RUN_SPEED = 4.0f;	//走りの速度
+
+	//範囲関係
+	static constexpr float SEARCH_RANGE = 120.0f;	//索敵判定の大きさ
+	static constexpr float ATK_START_RANGE = 50.0f;	//攻撃開始判定の大きさ
 
 	//スキル関係
 	static constexpr ATK SKILL_1 = { AsoUtility::VECTOR_ZERO,1.0f,60.0f,120.0f,0.0f };	//スキル１
@@ -82,6 +88,11 @@ public:
 	const bool IsBreak(void)const { return breakCnt_ < BREAK_TIME; }
 	//スタン中かどうかを返す
 	const bool IsStun(void)const { return stunDef_ > stunDefMax_; }
+
+	//索敵範囲に対象が入ったかを返す
+	const bool IsInSearchRange(void)const;
+	//攻撃開始範囲に入ったかを返す
+	const bool IsInAtkStartRange(void)const;
 
 	//敵自身の当たり判定座標を返す
 	//const VECTOR GetColPos(void)const { return colPos_; }
@@ -145,12 +156,16 @@ private:
 	VECTOR colPos_;		//敵自身の当たり判定座標
 	float colRadius_;	//敵自身の当たり判定半径
 
-	float moveSpeed_;	//移動量
+	float searchRange_;		//索敵範囲
+	float atkStartRange_;	//攻撃開始範囲
+	float moveSpeed_;		//移動量
 
 	int stunDefMax_;	//気絶防御値の最大値
 	int stunDef_;		//気絶防御値
 
 	float exp_;		//取得経験値
+
+	VECTOR targetPos_;	//※デバッグ　標的の座標
 
 	//更新(通常)
 	void UpdateNml(void);
@@ -161,23 +176,15 @@ private:
 	//更新(休憩)
 	void UpdateBreak(void);
 
-	//索敵
-	void Search(void);
+	/// <summary>
+	/// 標的のベクトルを返す
+	/// </summary>
+	/// <param name=""></param>
+	/// <returns>標的への方向ベクトル</returns>
+	const VECTOR GetTargetVec(void)const;
 
 	//移動
 	void Move(void);
-	/// <summary>
-	/// 移動処理
-	/// </summary>
-	/// <param name="_moveSpeed">移動距離</param>
-	/// <param name="_deg">移動方向(デグリー角)</param>
-	void ProcessMove(const float _moveSpeed, const float _deg);
-	/// <summary>
-	/// 方向転換
-	/// </summary>
-	/// <param name="_deg">回転方向(デグリー角)</param>
-	/// <param name="_axis">回転軸</param>
-	void Turn(const float _deg, const VECTOR _axis);
 
 	//敵の攻撃処理
 	void Attack(void);
