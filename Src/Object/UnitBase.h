@@ -20,11 +20,11 @@ public:
 
 	//攻撃中かどうか
 		const bool IsAttack(void)const { return 0 < cnt_ && cnt_ <= duration_; };
-	//後隙がどうか
+		//後隙がどうか
 		const bool IsBacklash(void)const { return 0 < (cnt_ - duration_) && (cnt_ - duration_) <= backlash_; };
-	//モーションが終了しているか
+		//モーションが終了しているか
 		const bool IsFinishMotion(void)const { return cnt_ > (duration_ + backlash_); };
-	//カウンターリセット
+		//カウンターリセット
 		void ResetCnt(void) { cnt_ = 0; };
 	};
 
@@ -69,7 +69,7 @@ public:
 
 	//ゲッター各種
 	//生存確認(生存しているとtrue)
-	const bool IsAlive(void)const {return hp_ > 0;};
+	const bool IsAlive(void)const { return hp_ > 0; };
 
 	//Transformいただき
 	const Transform& GetTransform(void)const;
@@ -88,7 +88,7 @@ public:
 	//アニメーション関数
 	void Anim(void);
 	//アニメーションリセット
-	void ResetAnim(const ANIM _anim,const float _speed);
+	void ResetAnim(const ANIM _anim, const float _speed);
 protected:
 
 	int hp_;			//体力

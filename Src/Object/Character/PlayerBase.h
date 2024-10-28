@@ -1,8 +1,8 @@
 #pragma once
-#include"../Utility/AsoUtility.h"
-#include"../Manager/SceneManager.h"
+#include"../../Utility/AsoUtility.h"
+#include"../../Manager/SceneManager.h"
 #include<map>
-#include "UnitBase.h"
+#include "../UnitBase.h"
 class PlayerBase:
     public UnitBase
 {

@@ -1,9 +1,9 @@
 #include<DxLib.h>
-#include"../Application.h"
-#include"../Manager/Resource.h"
-#include"../Manager/InputManager.h"
-#include"../Manager/ResourceManager.h"
-#include"../Utility/AsoUtility.h"
+#include"../../Application.h"
+#include"../../Manager/Resource.h"
+#include"../../Manager/InputManager.h"
+#include"../../Manager/ResourceManager.h"
+#include"../../Utility/AsoUtility.h"
 #include "Enemy.h"
 
 Enemy::Enemy()

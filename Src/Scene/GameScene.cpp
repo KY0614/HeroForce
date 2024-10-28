@@ -1,7 +1,8 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/Camera.h"
 #include "../Object/Grid.h"
-#include "../Object/PlayerBase.h"
+#include "../Object/Character/PlayerBase.h"
+#include"../Object/Character/Enemy.h"
 #include "../Object/Common/Transform.h"
 #include "GameScene.h"
 
@@ -21,9 +22,12 @@ void GameScene::Init(void)
 	grid_ = new Grid();
 	grid_->Init();	
 
-	//プレイヤーベース
-	playerB_ = new PlayerBase();
-	playerB_->Init();
+#ifdef _DEBUG_COL
+	playerTest_ = new PlayerBase();
+	playerTest_->Init();
+	enemyTest_ = new Enemy();
+	enemyTest_->Init();
+#endif
 
 
 	// カメラモード　：フリーカメラ
@@ -36,16 +40,28 @@ void GameScene::Init(void)
 void GameScene::Update(void)
 {
 	grid_->Update();
-	playerB_->Update();
+#ifdef _DEBUG_COL
+	playerTest_->Update();
+	enemyTest_->Update();
+#endif
 }
 
 void GameScene::Draw(void)
 {
 	grid_->Draw();
-	playerB_->Draw();
+#ifdef _DEBUG_COL
+	playerTest_->Draw();
+	enemyTest_->Draw();
+#endif
 }
 
 void GameScene::Release(void)
 {
 	delete grid_;
+#ifdef _DEBUG_COL
+	playerTest_->Destroy();
+	delete playerTest_;
+	enemyTest_->Destroy();
+	delete enemyTest_;
+#endif
 }

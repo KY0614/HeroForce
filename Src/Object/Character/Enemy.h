@@ -1,7 +1,7 @@
 #pragma once
 #include<vector>
-#include"../Utility/AsoUtility.h"
-#include "UnitBase.h"
+#include"../../Utility/AsoUtility.h"
+#include "../UnitBase.h"
 
 class Enemy : public UnitBase
 {
