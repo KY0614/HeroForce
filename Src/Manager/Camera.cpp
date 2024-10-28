@@ -46,7 +46,7 @@ void Camera::SetBeforeDraw(void)
 		break;
 
 	case Camera::MODE::FIXED_POINT:
-		//SetBeforeDrawFixedPoint();
+		SetBeforeDrawFixedPoint();
 		break;
 	case Camera::MODE::FREE:
 		SetBeforeDrawFree();
