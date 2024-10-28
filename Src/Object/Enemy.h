@@ -26,7 +26,6 @@ public:
 	static constexpr VECTOR  LOCAL_CENTER_POS = { 0.0f,20.0f,0.0f };
 
 	//攻撃関係
-	static constexpr float ATK_CDT = 120.0f;	//攻撃のクールダウンの時間※多分消す
 	static constexpr float ALERT_TIME = 120.0f;	//攻撃の警告時間
 	static constexpr float BREAK_TIME = 100.0f;	//攻撃の休憩時間
 
@@ -80,8 +79,6 @@ public:
 	//描画
 	void Draw(void)override;
 
-	//攻撃クールダウン中かどうかを返す(true:攻撃クールダウン中)	※多分消す
-	const bool IsAtkCD(void)const { return atkCdt_ < ATK_CDT; }
 	//警告時間中かどうかを返す
 	const bool IsAlertTime(void)const { return alertCnt_ < ALERT_TIME; }
 	//休憩時間中かどうかを返す
@@ -140,7 +137,6 @@ private:
 	
 	STATE state_;	//現在の状態
 
-	float atkCdt_;				//攻撃のクールダウンカウンタ ※多分消す
 	float alertCnt_;			//攻撃の警告時間カウンタ
 	float breakCnt_;			//攻撃の休憩時間カウンタ
 

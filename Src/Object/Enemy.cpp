@@ -9,7 +9,6 @@
 
 Enemy::Enemy()
 {
-	atkCdt_ = 0.0f;
 	exp_ = 1.0f;
 	hp_ = 5;
 	moveSpeed_ = 0.0f;
@@ -45,7 +44,6 @@ void Enemy::Init(void)
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::AngleAxis(AsoUtility::Deg2RadF(180.0f), AsoUtility::AXIS_Y);
 	state_ = STATE::NORMAL;
-	atkCdt_ = 0.0f;
 	alertCnt_ = 0.0f;
 	breakCnt_ = 0.0f;
 	stunDef_ = 0;
@@ -165,11 +163,6 @@ void Enemy::UpdateNml(void)
 	if (moveSpeed_ == 0.0)ResetAnim(ANIM::IDLE, DEFAULT_SPEED_ANIM);
 	//歩きアニメーション
 	else if (moveSpeed_ > 0.0f)ResetAnim(ANIM::WALK, DEFAULT_SPEED_ANIM);
-
-
-	//※いずれ消す
-	//クールダウンカウンタ
-	atkCdt_++;
 
 	//移動量の初期化
 	moveSpeed_ = 0.0f;
