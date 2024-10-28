@@ -43,9 +43,14 @@ public:
 	//減速
 	static constexpr float MOVE_DEC = 0.2f;
 
-	//移動範囲の画角(最小)
-	static constexpr float MOVE_SIZE_X = 300.0f;
-	static constexpr float MOVE_SIZE_Y = 320.0f - 80.0f;
+	// シェイク：時間
+	static constexpr float TIME_SHAKE = 1.0f;
+
+	// シェイク：幅
+	static constexpr float WIDTH_SHAKE = 3.0f;
+
+	// シェイク：スピード
+	static constexpr float SPEED_SHAKE = 30.0f;
 
 	//カメラモード
 	enum class MODE
@@ -55,7 +60,7 @@ public:
 		FREE,			//フリーモード
 		FOLLOW,			//追従モード
 		FOLLOW_SPRING,	//ばね付き追従モード
-		FOLLOW_DELAY
+		SHAKE			// カメラ揺らし
 	};
 
 	Camera(void);
@@ -69,6 +74,8 @@ public:
 	void SetBeforeDrawFree(void);
 	void SetBeforeDrawFollow(void);
 	void SetBeforeDrawFollowSpring(void);
+	void SetBeforeDrawShake(void);
+
 	void SetBeforeDrawFollowDelay(void);
 
 	void Draw(void);
@@ -83,12 +90,6 @@ public:
 	const void SetFollow(const Transform* follow);
 
 	bool IsCheckFollow(VECTOR centerPos1, VECTOR size1, VECTOR centerPos2, VECTOR size2);
-
-	//// 衝突判定
-	//bool IsCollisionRect(Vector2 stPos1, Vector2 edPos1, Vector2 stPos2, Vector2 edPos2);
-
-	////2Dの矩形同士の当たり判定
-	//bool IsCollisionRectCenter(Vector2 centerPos1, Vector2 size1, Vector2 centerPos2, Vector2 size2);
 
 private:
 
@@ -122,10 +123,12 @@ private:
 	//カメラシェイクさせるための準備
 	void SetShake(float intensity,float duration);
 
-	bool isVibrating;
-	float vibrationStrength;	//振動の強さ
-	int vibrationDuration;		//振動の持続時間
-	int currentVibrationTime;   //現在の振動時間
+	// 画面揺らし用
+	float stepShake_;
+
+	VECTOR defaultPos_;
+
+	VECTOR shakeDir_;
 	
 
 	//移動操作

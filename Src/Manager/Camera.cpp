@@ -1,3 +1,4 @@
+#include <EffekseerForDXLib.h>
 #include "../Application.h"
 #include "../Utility/AsoUtility.h"
 #include "../Application.h"
@@ -24,20 +25,13 @@ void Camera::Init(void)
 	//カメラの初期設定
 	SetDefault();
 
-	SetShake(0.0f, 0.0f);
-
 	moveSpeed_ = 0.0f;
-
-	 isVibrating = false;
-	 vibrationStrength = 0.1f; 
-	 vibrationDuration = 20;	
-	 currentVibrationTime = 0; 
 
 }
 
 void Camera::Update(void)
 {
-	Shake();
+
 }
 
 void Camera::SetBeforeDraw(void)
@@ -67,8 +61,8 @@ void Camera::SetBeforeDraw(void)
 		SetBeforeDrawFollowSpring();
 		break;
 
-	case Camera::MODE::FOLLOW_DELAY:
-		SetBeforeDrawFollowDelay();
+	case Camera::MODE::SHAKE:
+		SetBeforeDrawShake();
 		break;
 	}
 
@@ -79,6 +73,8 @@ void Camera::SetBeforeDraw(void)
 		cameraUp_
 	);
 
+	// DXライブラリのカメラとEffekseerのカメラを同期する。
+	//Effekseer_Sync3DSetting();
 }
 
 void Camera::SetBeforeDrawFixedPoint(void)
@@ -125,6 +121,13 @@ void Camera::SetBeforeDrawFollow(void)
 
 void Camera::SetBeforeDrawFollowSpring(void)
 {
+	auto& ins = InputManager::GetInstance();
+
+	if (ins.IsTrgDown(KEY_INPUT_C))
+	{
+		ChangeMode(MODE::SHAKE);
+	}
+
 	//ばね定数(ばねの強さ)
 	float POW_SPRING = 50.0f;
 
@@ -174,43 +177,89 @@ void Camera::SetBeforeDrawFollowSpring(void)
 
 	//カメラの上方向
 	cameraUp_ = forward.PosAxis(rot_.GetUp());
+
+}
+
+void Camera::SetBeforeDrawShake(void)
+{
+	// 一定時間カメラを揺らす
+	stepShake_ -= SceneManager::GetInstance().GetDeltaTime();
+
+	if (stepShake_ < 0.0f)
+	{
+		pos_ = defaultPos_;
+		ChangeMode(MODE::FOLLOW_SPRING);
+		return;
+	}
+
+	// -1.0f～1.0f
+	float f = sinf(stepShake_ * SPEED_SHAKE);
+
+	// -1000.0f～1000.0f
+	f *= 1000.0f;
+
+	// -1000 or 1000
+	int d = static_cast<int>(f);
+
+	// 0 or 1
+	int shake = d % 2;
+
+	// 0 or 2
+	shake *= 1;
+
+	// -1 or 1
+	shake -= 1;
+
+	// 移動量
+	VECTOR velocity = VScale(shakeDir_, (float)(shake)*WIDTH_SHAKE);
+
+	// 移動先座標
+	 pos_ = VAdd(defaultPos_, velocity);
+
+	//float pow = WIDTH_SHAKE * sinf(stepShake_ * SPEED_SHAKE);
+	//VECTOR velocity = VScale(shakeDir_, pow);
+	//VECTOR newPos = VAdd(defaultPos_, velocity);
+	//pos_ = newPos;
+
+	DrawFormatString(0, 40, 0xFFFFFF, "pos : %.2f,%.2f,%.2f", pos_);
+	DrawFormatString(0, 60, 0xFFFFFF, "pos : %.2f,%.2f,%.2f", targetPos_);
 }
 
 void Camera::SetBeforeDrawFollowDelay(void)
 {
-	int screenX = Application::SCREEN_SIZE_X;
-	int screenY = Application::SCREEN_SIZE_Y;
+	//int screenX = Application::SCREEN_SIZE_X;
+	//int screenY = Application::SCREEN_SIZE_Y;
 
-	//左上座標
-	int topL = (screenX / 2) - 150; 
-	//左下
-	int underL = screenX / 2 + 150; 
-	//右上
-	int topR = screenY / 2 - 80;
-	//右下
-	int underR = screenY / 2 + 80;
-
-
-	//カメラが移動し始める画角
-	DrawBox(topL, topR,
-		underL, underR,
-		0xFFFFFF, false);
+	////左上座標
+	//int topL = (screenX / 2) - 150; 
+	////左下
+	//int underL = screenX / 2 + 150; 
+	////右上
+	//int topR = screenY / 2 - 80;
+	////右下
+	//int underR = screenY / 2 + 80;
 
 
-	// 追従対象の位置
-	VECTOR followPos = followTransform_->pos;
-	VECTOR zero = { 0.0f,0.0f,0.0f };
+	////カメラが移動し始める画角
+	//DrawBox(topL, topR,
+	//	underL, underR,
+	//	0xFFFFFF, false);
 
-	// 追従対象の向き
-	Quaternion followRot = followTransform_->quaRot;
 
-	//
-	VECTOR pos2D = ConvWorldPosToScreenPos(followPos);
-	VECTOR pos3D = ConvScreenPosToWorldPos(pos2D);
+	//// 追従対象の位置
+	//VECTOR followPos = followTransform_->pos;
+	//VECTOR zero = { 0.0f,0.0f,0.0f };
 
-	DrawFormatString(0, 70, 0xFFFFFF, "SCREENSIZE X : %d,Y : %d", screenX, screenY);
-	DrawFormatString(0, 90, 0xFFFFFF, "WP2SP : %.2f,%.2f,%.2f", pos2D.x, pos2D.y, pos2D.z);
-	DrawFormatString(0, 110, 0xFFFFFF, "Player : %.2f,%.2f,%.2f", followPos.x, followPos.y, followPos.z);
+	//// 追従対象の向き
+	//Quaternion followRot = followTransform_->quaRot;
+
+	////
+	//VECTOR pos2D = ConvWorldPosToScreenPos(followPos);
+	//VECTOR pos3D = ConvScreenPosToWorldPos(pos2D);
+
+	//DrawFormatString(0, 70, 0xFFFFFF, "SCREENSIZE X : %d,Y : %d", screenX, screenY);
+	//DrawFormatString(0, 90, 0xFFFFFF, "WP2SP : %.2f,%.2f,%.2f", pos2D.x, pos2D.y, pos2D.z);
+	//DrawFormatString(0, 110, 0xFFFFFF, "Player : %.2f,%.2f,%.2f", followPos.x, followPos.y, followPos.z);
 
 
 	//auto& ins = InputManager::GetInstance();
@@ -226,37 +275,37 @@ void Camera::SetBeforeDrawFollowDelay(void)
 
 	//DrawLine3D(followPos, startPos, 0xff9999);
 
-	//カメラの方向を固定する用
-	Quaternion forward = Quaternion::Euler(zero);
+	////カメラの方向を固定する用
+	//Quaternion forward = Quaternion::Euler(zero);
 
 #pragma region 追従機能
-	// 画面境界を考慮してカメラの位置を調整
-	if (pos2D.x < -MOVE_SIZE_X/2
-		||pos2D.x > MOVE_SIZE_X/2) {
+	//// 画面境界を考慮してカメラの位置を調整
+	//if (pos2D.x < -MOVE_SIZE_X/2
+	//	||pos2D.x > MOVE_SIZE_X/2) {
 
-		zero = followPos;
+	//	zero = followPos;
 
-	}
+	//}
 
-	// 追従対象からカメラまでの相対座標
-	VECTOR relativeCPos = forward.PosAxis(RELATIVE_F2C_POS_FOLLOW);
+	//// 追従対象からカメラまでの相対座標
+	//VECTOR relativeCPos = forward.PosAxis(RELATIVE_F2C_POS_FOLLOW);
 
-	// カメラ位置の更新
-	pos_ = VAdd(zero, relativeCPos);
+	//// カメラ位置の更新
+	//pos_ = VAdd(zero, relativeCPos);
 
-	// カメラ位置から注視点までの相対座標
-	VECTOR relativeTPos = forward.PosAxis(RELATIVE_C2T_POS);
+	//// カメラ位置から注視点までの相対座標
+	//VECTOR relativeTPos = forward.PosAxis(RELATIVE_C2T_POS);
 
-	// 注視点の更新
-	targetPos_ = VAdd(pos_, relativeTPos);
+	//// 注視点の更新
+	//targetPos_ = VAdd(pos_, relativeTPos);
 
-	// カメラの上方向
-	cameraUp_ = forward.PosAxis(rot_.GetUp());
+	//// カメラの上方向
+	//cameraUp_ = forward.PosAxis(rot_.GetUp());
 #pragma endregion
 
 
-	DrawSphere3D(followPos, 20.0f, 10, 0x589763, 0x245354, false);
-	DrawSphere3D(targetPos_, 20.0f, 10, 0x00ff00, 0x00ff00, false);
+	//DrawSphere3D(followPos, 20.0f, 10, 0x589763, 0x245354, false);
+	//DrawSphere3D(targetPos_, 20.0f, 10, 0x00ff00, 0x00ff00, false);
 
 }
 
@@ -277,7 +326,7 @@ void Camera::ChangeMode(MODE mode)
 {
 
 	//カメラの初期設定
-	SetDefault();
+	//SetDefault();
 
 	//カメラモードの変更
 	mode_ = mode;
@@ -293,8 +342,10 @@ void Camera::ChangeMode(MODE mode)
 		break;
 	case Camera::MODE::FOLLOW_SPRING:
 		break;
-	case Camera::MODE::FOLLOW_DELAY:
-		break;
+	case Camera::MODE::SHAKE:
+		stepShake_ = TIME_SHAKE;
+		shakeDir_ = VNorm({ 0.7f, 0.7f ,0.0f });
+		defaultPos_ = pos_;
 	}
 
 }
@@ -303,51 +354,6 @@ const void Camera::SetFollow(const Transform* follow)
 {
 	followTransform_ = follow;
 }
-
-//bool Camera::IsCollisionRect(Vector2 stPos1, Vector2 edPos1, Vector2 stPos2, Vector2 edPos2)
-//{
-//	if (stPos1.x < edPos2.x
-//		&& stPos2.x < edPos1.x
-//		&& stPos1.y < edPos2.y
-//		&& stPos2.y < edPos1.y)
-//	{
-//		return true;
-//	}
-//
-//	return false;
-//}
-//
-//bool Camera::IsCollisionRectCenter(Vector2 centerPos1, Vector2 size1, Vector2 centerPos2, Vector2 size2)
-//{
-//	// 矩形1(左上座標、右上座標)
-//	Vector2 stPos1 = centerPos1;
-//	Vector2 edPos1 = centerPos1;
-//	Vector2 hSize1 = { size1.x / 2, size1.y / 2 };
-//
-//	stPos1.x -= hSize1.x;
-//	stPos1.y -= hSize1.y;
-//	edPos1.x += hSize1.x;
-//	edPos1.y += hSize1.y;
-//
-//	// 矩形２(左上座標、右上座標)
-//	Vector2 stPos2 = centerPos2;
-//	Vector2 edPos2 = centerPos2;
-//	Vector2 hSize2 = { size2.x / 2, size2.y / 2 };
-//
-//	stPos2.x -= hSize2.x;
-//	stPos2.y -= hSize2.y;
-//	edPos2.x += hSize2.x;
-//	edPos2.y += hSize2.y;
-//
-//	// 矩形同士の衝突判定
-//	// 矩形１の左よりも、矩形２の右が大きい
-//	// 矩形２の左よりも、矩形１の右が大きい
-//	if (IsCollisionRect(stPos1, edPos1, stPos2, edPos2))
-//	{
-//		return true;
-//	}
-//	return false;
-//}
 
 void Camera::SetDefault(void)
 {
@@ -366,16 +372,6 @@ void Camera::SetDefault(void)
 	rot_ = Quaternion::Identity();
 
 	velocity_ = AsoUtility::VECTOR_ZERO;
-
-}
-
-void Camera::Shake(void)
-{
-
-}
-
-void Camera::SetShake(float intensity, float duration)
-{
 
 }
 
