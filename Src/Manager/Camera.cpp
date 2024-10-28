@@ -206,7 +206,7 @@ void Camera::SetBeforeDrawShake(void)
 	int shake = d % 2;
 
 	// 0 or 2
-	shake *= 1;
+	shake *= 2;
 
 	// -1 or 1
 	shake -= 1;

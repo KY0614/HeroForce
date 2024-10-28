@@ -44,13 +44,13 @@ public:
 	static constexpr float MOVE_DEC = 0.2f;
 
 	// シェイク：時間
-	static constexpr float TIME_SHAKE = 1.0f;
+	static constexpr float TIME_SHAKE = 0.5f;
 
 	// シェイク：幅
-	static constexpr float WIDTH_SHAKE = 3.0f;
+	static constexpr float WIDTH_SHAKE = 5.0f;
 
 	// シェイク：スピード
-	static constexpr float SPEED_SHAKE = 30.0f;
+	static constexpr float SPEED_SHAKE = 40.0f;
 
 	//カメラモード
 	enum class MODE
