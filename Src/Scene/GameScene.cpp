@@ -1,5 +1,6 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/Camera.h"
+#include "../Manager/Collision.h"
 #include "../Object/Grid.h"
 #include "../Object/Character/PlayerBase.h"
 #include"../Object/Character/Enemy.h"
@@ -43,6 +44,7 @@ void GameScene::Update(void)
 #ifdef _DEBUG_COL
 	playerTest_->Update();
 	enemyTest_->Update();
+	Collision::Search(playerTest_, enemyTest_);
 #endif
 }
 
