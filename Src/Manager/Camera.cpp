@@ -5,7 +5,7 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Object/Common/Transform.h"
-#include "../Object/PlayerBase.h"
+#include "../Object/Character/PlayerBase.h"
 #include "Camera.h"
 
 Camera::Camera(void)
