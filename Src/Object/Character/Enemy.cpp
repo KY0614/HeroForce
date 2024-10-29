@@ -48,9 +48,11 @@ void Enemy::Init(void)
 	stunDef_ = 0;
 	colPos_ = VAdd(trans_.pos, LOCAL_CENTER_POS);
 
+	//“–‚½‚è”»’è‚Ìİ’è
+	radius_ = MY_COL_RADIUS;
 	//UŒ‚î•ñ‚Ì‰Šú‰»
 	InitSkill();
-	nowSkill_.ResetCnt();
+	atk_.ResetCnt();
 
 	trans_.Update();
 }
@@ -174,7 +176,7 @@ void Enemy::UpdateAlert(void)
 	alertCnt_++;
 
 	//¶¬‚ªI‚í‚Á‚Ä‚È‚¢‚È‚ç¶¬‚·‚é
-	if (nowSkill_.IsFinishMotion()) 
+	if (atk_.IsFinishMotion())
 	{
 		//ƒ‰ƒ“ƒ_ƒ€‚ÅUŒ‚¶¬
 		RandSkill();
@@ -184,7 +186,7 @@ void Enemy::UpdateAlert(void)
 void Enemy::UpdateAtk(void)
 {
 	//UŒ‚‚ªI‚í‚Á‚Ä‚¢‚é‚È‚çó‘Ô‘JˆÚ
-	if (nowSkill_.IsFinishMotion())
+	if (atk_.IsFinishMotion())
 	{
 		//‹xŒeó‘Ô‚É‘JˆÚ
 		ChangeState(STATE::BREAK);
@@ -200,7 +202,7 @@ void Enemy::UpdateAtk(void)
 	ResetAnim(nowSkillAnim_, DEFAULT_SPEED_ANIM);
 
 	//UŒ‚‚ÌƒJƒEƒ“ƒ^
-	nowSkill_.cnt_++;
+	atk_.cnt_++;
 
 	//UŒ‚ˆ—
 	Attack();
@@ -259,8 +261,8 @@ void Enemy::Draw(void)
 	MV1DrawModel(trans_.modelId);
 
 	//UŒ‚‚Ì•`‰æ
-	if (nowSkill_.IsAttack()) { DrawSphere3D(nowSkill_.pos_, nowSkillColRadius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
-	else if (nowSkill_.IsBacklash()) { DrawSphere3D(nowSkill_.pos_, nowSkillColRadius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
+	if (atk_.IsAttack()) { DrawSphere3D(atk_.pos_, nowSkillColRadius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
+	else if (atk_.IsBacklash()) { DrawSphere3D(atk_.pos_, nowSkillColRadius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
 }
 
 void Enemy::Move(void)
@@ -346,7 +348,7 @@ void Enemy::Attack(void)
 	VECTOR dir = trans_.quaRot.GetForward();
 
 	//À•W‚Ìİ’è
-	nowSkill_.pos_ = VAdd(colPos_, VScale(dir, nowSkillColRadius_));
+	atk_.pos_ = VAdd(colPos_, VScale(dir, nowSkillColRadius_));
 }
 
 void Enemy::RandSkill(void)
@@ -358,7 +360,7 @@ void Enemy::RandSkill(void)
 	int rand = GetRand(size - 1);
 
 	//ƒ‰ƒ“ƒ_ƒ€‚Å‚Æ‚Á‚Ä‚«‚½UŒ‚‚Ìí—Ş‚ğ¡‚©‚ç”­“®‚·‚éƒXƒLƒ‹‚Éİ’è
-	nowSkill_ = skills_[rand];
+	atk_ = skills_[rand];
 	nowSkillAnim_ = skillAnims_[rand];
 	nowSkillColRadius_ = skillColRadius_[rand];
 }

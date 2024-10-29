@@ -41,10 +41,35 @@ void GameScene::Init(void)
 void GameScene::Update(void)
 {
 	grid_->Update();
+
+	auto& col = Collision::GetInstance();
+
 #ifdef _DEBUG_COL
 	playerTest_->Update();
 	enemyTest_->Update();
-	Collision::Search(playerTest_, enemyTest_);
+
+	//プレイヤー攻撃判定
+	if (playerTest_->GetAtk().IsAttack())
+	{
+		if (col.IsHitAtk(playerTest_, enemyTest_))
+		{
+			enemyTest_->Damage(2, 4);
+		}
+	}
+
+	//敵の攻撃判定
+	//アタック中であり攻撃判定が終了していないとき
+	if (enemyTest_->GetAtk().IsAttack() && !enemyTest_->GetAtk().isHit_)
+	{
+		//攻撃が当たる範囲であり、プレイヤーが回避していないとき
+		if (col.IsHitAtk(enemyTest_, playerTest_) && !playerTest_->IsDodge())
+		{
+			//ダメージ
+			playerTest_->Damage();
+			//使用した攻撃を判定終了に
+			enemyTest_->SetIsHit(true);
+		}
+	}
 #endif
 }
 

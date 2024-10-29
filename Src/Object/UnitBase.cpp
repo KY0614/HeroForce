@@ -72,6 +72,16 @@ const float UnitBase::GetDef(void) const
 	return def_;
 }
 
+const UnitBase::ATK UnitBase::GetAtk(void) const
+{
+	return atk_;
+}
+
+const float UnitBase::GetRadius(void) const
+{
+	return radius_;
+}
+
 /// <summary>
 /// アニメーション関数
 /// </summary>
@@ -120,6 +130,11 @@ void UnitBase::ResetAnim(const ANIM _anim, const float _speed)
 
 	// 再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
+}
+
+void UnitBase::SetIsHit(const bool _flag)
+{
+	atk_.isHit_ = _flag;
 }
 
 //アニメ終了時の動き

@@ -23,6 +23,10 @@ void PlayerBase::SetParam(void)
 	atk_.pow_ = 0;
 
 	hp_ = MAX_HP;
+
+	//ìñÇΩÇËîªíËÇÃê›íË
+	radius_ = MY_COL_RADIUS;
+	atk_.radius_ = COL_ATK;
 }
 
 void PlayerBase::Init(void)
@@ -273,8 +277,8 @@ void PlayerBase::DrawDebug(void)
 	//DrawSphere3D(trans_.pos, 20.0f, 8, 0x0, color_, true);
 	//ílå©ÇÈóp
 	DrawFormatString(0, 0, 0xffffff
-		, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\nStick(%f)\nHP(%d)"
-		, atk_.cnt_, atk_.IsAttack(),atk_.IsBacklash(), frameDodge_,skillCnt_[SKILL::ONE],stickDeg_,hp_);
+		, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\nStick(%f)\nHP(%d)\nAtkPos={%.1f,%.1f,%.1f}"
+		, atk_.cnt_, atk_.IsAttack(),atk_.IsBacklash(), frameDodge_,skillCnt_[SKILL::ONE],stickDeg_,hp_,atk_.pos_.x,atk_.pos_.y,atk_.pos_.z);
 
 	DrawSphere3D(VAdd(trans_.pos, {0.0f,20.0f,0.0f}), SCALE * 100, 8, color_Col_, color_Col_, false);
 	DrawSphere3D(atk_.pos_, COL_ATK, 8, color_Atk_, color_Atk_, false);

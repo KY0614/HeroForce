@@ -41,6 +41,8 @@ public:
 
     //攻撃範囲
     static constexpr float COL_ATK = SCALE * 200.0f;
+    //自身の当たり判定半径
+    static constexpr float MY_COL_RADIUS = 20.0f;
 
 
 
@@ -52,6 +54,14 @@ public:
     void Init(void)override;
     void Update(void)override;
     void Draw(void)override;
+
+
+    //回避関連
+   //---------------------------------------
+   const  bool IsDodge(void) { return 0.0f < frameDodge_ && frameDodge_ < FRAME_DODGE_MAX; }
+
+   //ダメージ関数
+   void Damage(void);
     
 protected:
 
@@ -125,12 +135,9 @@ protected:
     void Attack(void);
     bool IsAtkAction(void) { return atk_.IsAttack() || atk_.IsBacklash(); }
 
-
-    ATK atk_;
     
     //回避関連
     //---------------------------------------
-    bool IsDodge(void) { return 0.0f<frameDodge_&&frameDodge_ < FRAME_DODGE_MAX; }
     //クールタイム中かどうか
     bool IsCoolDodge(void){return dodgeCdt_ < DODGE_CDT_MAX;}
     void Dodge(void);
@@ -169,8 +176,7 @@ protected:
 
      std::string skillNum_;
 
-     //ダメージ関数
-     void Damage(void);
+  
 
      int leftStickX_;
 

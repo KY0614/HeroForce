@@ -13,19 +13,23 @@ public:
 	struct ATK
 	{
 		VECTOR pos_;		//位置
+		float radius_;		//当たり判定の半径
 		float pow_;			//攻撃力
 		float duration_;	//持続時間（攻撃がどれくらい続くかを記述)
 		float backlash_;	//後隙（後隙がどれくらい続くかを記述)
 		float cnt_;			//カウンター
+		bool isHit_;
 
 	//攻撃中かどうか
 		const bool IsAttack(void)const { return 0 < cnt_ && cnt_ <= duration_; };
 		//後隙がどうか
 		const bool IsBacklash(void)const { return 0 < (cnt_ - duration_) && (cnt_ - duration_) <= backlash_; };
 		//モーションが終了しているか
-		const bool IsFinishMotion(void)const { return cnt_ > (duration_ + backlash_); };
+		const bool IsFinishMotion(void)const { return cnt_ > (duration_ + backlash_) && cnt_ > 0; };
 		//カウンターリセット
 		void ResetCnt(void) { cnt_ = 0; };
+		//攻撃判定が終了状態であるかを返却(true=当てた後)
+		const bool IsHit(void) { return isHit_; }
 	};
 
 	enum class ANIM
@@ -84,16 +88,27 @@ public:
 	const VECTOR GetScl(void)const;
 	//防御力
 	const float GetDef(void)const;
+	//攻撃関係
+	const ATK GetAtk(void)const;
+	//あたり判定
+	const float GetRadius(void)const;
 
 	//アニメーション関数
 	void Anim(void);
 	//アニメーションリセット
 	void ResetAnim(const ANIM _anim, const float _speed);
+
+	//攻撃関係
+	//isHit設定用（外部）
+	void SetIsHit(const bool _flag);
+
 protected:
 
 	int hp_;			//体力
 	Transform trans_;	//位置情報関係
+	float radius_;		//自身の当たり判定の半径
 	float def_;			//防御力
+	ATK atk_;			//現在のスキル
 
 	//アニメ関係
 	ANIM anim_;								//アニメステート

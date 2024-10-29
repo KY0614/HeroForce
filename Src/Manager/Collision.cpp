@@ -1,19 +1,36 @@
+#include"../Utility/AsoUtility.h"
 #include"../Object/UnitBase.h"
 #include"../Object/Character/PlayerBase.h"
 #include"../Object/Character/Enemy.h"
 #include "Collision.h"
 
-const bool Collision::IsHitAtk(const PlayerBase& _player, const Enemy& _enemy)
+Collision* Collision::instance_ = nullptr;
+
+
+void Collision::CreateInstance(void)
 {
-    return false;
+    if (instance_ == nullptr)
+    {
+        instance_ = new Collision();
+    }
 }
 
-const bool Collision::IsHitAtk(const Enemy& _enemy, const PlayerBase& _player)
+Collision& Collision::GetInstance(void)
 {
-    return false;
+    return *instance_;
+}
+void Collision::Init(void)
+{
+   
+}
+//UŒ‚‚ª“–‚½‚Á‚½‚©
+ // ˆø”‚ÍiUŒ‚‚µ‚½lAUŒ‚‘ÎÛj‚Ì‡
+const bool Collision::IsHitAtk(const UnitBase* _chaser, const UnitBase* _target)
+{
+    return AsoUtility::IsHitSpheres(_chaser->GetAtk().pos_, _chaser->GetAtk().radius_, _target->GetPos(), _target->GetRadius());
 }
 
-const bool Collision::Search(const UnitBase& _chaser, const UnitBase& _target)
+const bool Collision::Search(const UnitBase* _chaser, const UnitBase* _target)
 {
     return false;
 }
