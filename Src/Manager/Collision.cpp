@@ -34,3 +34,14 @@ const bool Collision::Search(const UnitBase* _chaser, const UnitBase* _target)
 {
     return false;
 }
+
+const bool Collision::Search(VECTOR _myPos, VECTOR _targetPos, float _rangeRadius) const
+{
+    //標的への方向ベクトルを取得
+    VECTOR targetVec = VSub(_targetPos, _myPos);
+
+    //大きさを求める
+    float vecSize = hypot(targetVec.x, targetVec.z);
+    //判定
+    return _rangeRadius - vecSize > 0;
+}
