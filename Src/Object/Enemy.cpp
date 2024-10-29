@@ -51,7 +51,6 @@ void Enemy::Init(void)
 
 	//攻撃情報の初期化
 	InitSkill();
-	nowSkill_.ResetCnt();
 
 	trans_.Update();
 }
@@ -149,7 +148,7 @@ void Enemy::UpdateNml(void)
 	//**********************************************************
 
 	//攻撃開始判定
-	if (IsInAtkStartRange())
+	if (Search(trans_.pos, targetPos_, ATK_START_RANGE))
 	{
 		//攻撃準備開始
 		ChangeState(STATE::ALERT);
@@ -168,7 +167,7 @@ void Enemy::UpdateNml(void)
 	moveSpeed_ = 0.0f;
 	
 	//索敵
-	if (IsInSearchRange())
+	if (Search(trans_.pos, targetPos_, SEARCH_RANGE))
 	{
 		//移動処理
 		Move();
@@ -200,8 +199,8 @@ void Enemy::UpdateAlert(void)
 	//クールダウンカウンタ
 	alertCnt_++;
 
-	//生成が終わってないなら生成する
-	if (nowSkill_.IsFinishMotion()) 
+	//一つも生成していないなら生成する
+	if (nowSkill_.front().IsFinishMotion())
 	{
 		//ランダムで攻撃生成
 		RandSkill();
@@ -214,8 +213,8 @@ void Enemy::UpdateAtk(void)
 	//終了処理
 	//**********************************************************
 
-	//攻撃が終わっているなら状態遷移
-	if (nowSkill_.IsFinishMotion())
+	//最後の攻撃が終わっているなら状態遷移
+	if (nowSkill_.back().IsFinishMotion())
 	{
 		//休憩状態に遷移
 		ChangeState(STATE::BREAK);
@@ -230,8 +229,11 @@ void Enemy::UpdateAtk(void)
 	//攻撃アニメーション
 	ResetAnim(nowSkillAnim_, DEFAULT_SPEED_ANIM);
 
-	//攻撃のカウンタ
-	nowSkill_.cnt_++;
+	for (auto& nowSkill : nowSkill_)
+	{
+		//攻撃のカウンタ
+		nowSkill.cnt_++;
+	}
 
 	//攻撃処理
 	Attack();
@@ -309,9 +311,9 @@ void Enemy::Draw(void)
 	//敵の当たり判定
 	DrawSphere3D(colPos_, colRadius_, 4, 0xffff00, 0xffff00, false);
 	//敵の索敵判定
-	DrawSphere3D(trans_.pos, SEARCH_RANGE, 2, IsInSearchRange() ? 0xff0000 : 0xffffff, IsInSearchRange() ? 0xff0000 : 0xffffff, false);
+	DrawSphere3D(trans_.pos, SEARCH_RANGE, 2, Search(trans_.pos,targetPos_,SEARCH_RANGE) ? 0xff0000 : 0xffffff, Search(trans_.pos, targetPos_, SEARCH_RANGE) ? 0xff0000 : 0xffffff, false);
 	//敵の索敵判定
-	DrawSphere3D(trans_.pos, ATK_START_RANGE, 2, IsInAtkStartRange() ? 0xff0000 : 0xffffff, IsInAtkStartRange() ? 0x0000ff : 0xffffff, false);
+	DrawSphere3D(trans_.pos, ATK_START_RANGE, 2, Search(trans_.pos, targetPos_, ATK_START_RANGE) ? 0xff0000 : 0xffffff, Search(trans_.pos, targetPos_, ATK_START_RANGE) ? 0x0000ff : 0xffffff, false);
 	//ターゲットの座標
 	DrawSphere3D(targetPos_, 3.0f, 10, 0x0000ff, 0x0000ff, true);
 #endif // DEBUG_ENEMY
@@ -319,33 +321,27 @@ void Enemy::Draw(void)
 	//敵モデルの描画
 	MV1DrawModel(trans_.modelId);
 
-	//攻撃の描画
-	if (nowSkill_.IsAttack()) { DrawSphere3D(nowSkill_.pos_, nowSkillColRadius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
-	else if (nowSkill_.IsBacklash()) { DrawSphere3D(nowSkill_.pos_, nowSkillColRadius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
+	for (auto& nowSkill : nowSkill_)
+	{
+		for (auto& skillColRadius : nowSkillColRadius_)
+		{
+			//攻撃の描画
+			if (nowSkill.IsAttack()) { DrawSphere3D(nowSkill.pos_, skillColRadius, 50.0f, 0xff0f0f, 0xff0f0f, true); }
+			else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, skillColRadius, 5.0f, 0xff0f0f, 0xff0f0f, false); }
+		}
+	}
 }
 
-const bool Enemy::IsInSearchRange(void) const
+const bool Enemy::Search(VECTOR _myPos, VECTOR _targetPos, float _rangeRadius) const
 {
 	//標的への方向ベクトルを取得
-	VECTOR targetVec = VSub(targetPos_, trans_.pos);
+	VECTOR targetVec = VSub(_targetPos, _myPos);
 
 	//大きさを求める
 	float vecSize = hypot(targetVec.x, targetVec.z);
 
 	//判定
-	return SEARCH_RANGE - vecSize > 0;
-}
-
-const bool Enemy::IsInAtkStartRange(void) const
-{
-	//標的への方向ベクトルを取得
-	VECTOR targetVec = VSub(targetPos_, trans_.pos);
-
-	//大きさを求める
-	float vecSize = hypot(targetVec.x, targetVec.z);
-
-	//判定
-	return ATK_START_RANGE - vecSize > 0;
+	return _rangeRadius - vecSize > 0;
 }
 
 void Enemy::Move(void)
@@ -406,8 +402,14 @@ void Enemy::Attack(void)
 	//前方向
 	VECTOR dir = trans_.quaRot.GetForward();
 
-	//座標の設定
-	nowSkill_.pos_ = VAdd(colPos_, VScale(dir, nowSkillColRadius_));
+	for (auto& nowSkill : nowSkill_)
+	{
+		for (auto& skillColRadius : nowSkillColRadius_)
+		{
+			//座標の設定
+			nowSkill.pos_ = VAdd(colPos_, VScale(dir, skillColRadius));
+		}
+	}
 }
 
 void Enemy::RandSkill(void)
@@ -418,8 +420,35 @@ void Enemy::RandSkill(void)
 	//スキルの数分からランダムを取る
 	int rand = GetRand(size - 1);
 
+	//**********************************************************
+	//使い終わった攻撃がある場合
+	//**********************************************************
+	
+	//使い終わった攻撃に上書き
+	for (auto& nowSkill : nowSkill_)
+	{
+		if (nowSkill.IsFinishMotion())
+		{
+			//上書き
+			nowSkill = skills_[rand];
+			
+			//カウンタの初期化
+			nowSkill.ResetCnt();
+
+			//処理終了
+			return;
+		}
+	}
+
+	//**********************************************************
+	//ない場合
+	//**********************************************************
+
 	//ランダムでとってきた攻撃の種類を今から発動するスキルに設定
-	nowSkill_ = skills_[rand];
+	nowSkill_.emplace_back(skills_[rand]);
 	nowSkillAnim_ = skillAnims_[rand];
-	nowSkillColRadius_ = skillColRadius_[rand];
+	nowSkillColRadius_.emplace_back(skillColRadius_[rand]);
+
+	//カウンタの初期化
+	nowSkill_.back().ResetCnt();
 }

@@ -86,10 +86,14 @@ public:
 	//スタン中かどうかを返す
 	const bool IsStun(void)const { return stunDef_ > stunDefMax_; }
 
-	//索敵範囲に対象が入ったかを返す
-	const bool IsInSearchRange(void)const;
-	//攻撃開始範囲に入ったかを返す
-	const bool IsInAtkStartRange(void)const;
+	/// <summary>
+	/// 目的の範囲に対象が入ったかを返す
+	/// </summary>
+	/// <param name="_myPos">自身の座標</param>
+	/// <param name="_targetPos">対象の座標</param>
+	/// <param name="_rangeRadius">範囲用の半径</param>
+	/// <returns></returns>
+	const bool Search(VECTOR _myPos, VECTOR _targetPos, float _rangeRadius)const;
 
 	//敵自身の当たり判定座標を返す
 	//const VECTOR GetColPos(void)const { return colPos_; }
@@ -98,7 +102,7 @@ public:
 	//const VECTOR GetNowSkillPos(void)const { return nowSkill_.pos_; }
 
 	//現在のスキルの当たり判定半径を返す
-	const float	GetNowSkillColRadius(void)const { return nowSkillColRadius_; }
+	const float	GetNowSkillColRadius(void)const { /*TODO*/ /*return nowSkillColRadius_;*/ }
 
 	//敵自身の当たり判定半径を返す
 	const float	GetMyColRadius(void)const { return colRadius_; }
@@ -141,13 +145,13 @@ private:
 	float breakCnt_;			//攻撃の休憩時間カウンタ
 
 	std::vector<ATK> skills_;			//スキルの種類
-	ATK nowSkill_;						//現在のスキル
+	std::vector<ATK> nowSkill_;			//現在のスキル
 	
 	std::vector<ANIM> skillAnims_;		//スキルに対応したアニメーション
 	ANIM nowSkillAnim_;					//現在のスキルアニメーション
 	
-	std::vector<float>skillColRadius_;	//スキルの当たり判定半径
-	float nowSkillColRadius_;			//現在のスキルの当たり判定半径
+	std::vector<float>skillColRadius_;		//スキルの当たり判定半径
+	std::vector<float> nowSkillColRadius_;	//現在のスキルの当たり判定半径
 	
 	VECTOR colPos_;		//敵自身の当たり判定座標
 	float colRadius_;	//敵自身の当たり判定半径
