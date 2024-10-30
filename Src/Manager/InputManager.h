@@ -44,6 +44,10 @@ public:
 		DOWN,
 		R_TRIGGER,
 		L_TRIGGER,
+		R_BUTTON,
+		L_BUTTON,
+		START_BUTTON,
+		SELECT_BUTTON,
 		MAX
 	};
 
