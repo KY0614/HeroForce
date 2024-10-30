@@ -5,6 +5,11 @@
 #include"../Manager/InputManager.h"
 #include"../Manager/ResourceManager.h"
 #include"../Utility/AsoUtility.h"
+#include"../../Application.h"
+#include"../../Manager/Resource.h"
+#include"../../Manager/InputManager.h"
+#include"../../Manager/ResourceManager.h"
+#include"../../Utility/AsoUtility.h"
 #include "Enemy.h"
 
 Enemy::Enemy()
@@ -49,8 +54,11 @@ void Enemy::Init(void)
 	stunDef_ = 0;
 	colPos_ = VAdd(trans_.pos, LOCAL_CENTER_POS);
 
+	//当たり判定の設定
+	radius_ = MY_COL_RADIUS;
 	//攻撃情報の初期化
 	InitSkill();
+	atk_.ResetCnt();
 
 	trans_.Update();
 }
@@ -199,8 +207,8 @@ void Enemy::UpdateAlert(void)
 	//クールダウンカウンタ
 	alertCnt_++;
 
-	//一つも生成していないなら生成する
-	if (nowSkill_.front().IsFinishMotion())
+	//生成が終わってないなら生成する
+	if (atk_.IsFinishMotion())
 	{
 		//ランダムで攻撃生成
 		RandSkill();
@@ -209,12 +217,8 @@ void Enemy::UpdateAlert(void)
 
 void Enemy::UpdateAtk(void)
 {
-	//**********************************************************
-	//終了処理
-	//**********************************************************
-
-	//最後の攻撃が終わっているなら状態遷移
-	if (nowSkill_.back().IsFinishMotion())
+	//攻撃が終わっているなら状態遷移
+	if (atk_.IsFinishMotion())
 	{
 		//休憩状態に遷移
 		ChangeState(STATE::BREAK);
@@ -234,6 +238,8 @@ void Enemy::UpdateAtk(void)
 		//攻撃のカウンタ
 		nowSkill.cnt_++;
 	}
+	//攻撃のカウンタ
+	atk_.cnt_++;
 
 	//攻撃処理
 	Attack();
@@ -330,6 +336,9 @@ void Enemy::Draw(void)
 			else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, skillColRadius, 5.0f, 0xff0f0f, 0xff0f0f, false); }
 		}
 	}
+	//攻撃の描画
+	if (atk_.IsAttack()) { DrawSphere3D(atk_.pos_, nowSkillColRadius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
+	else if (atk_.IsBacklash()) { DrawSphere3D(atk_.pos_, nowSkillColRadius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
 }
 
 const bool Enemy::Search(VECTOR _myPos, VECTOR _targetPos, float _rangeRadius) const
@@ -410,6 +419,8 @@ void Enemy::Attack(void)
 			nowSkill.pos_ = VAdd(colPos_, VScale(dir, skillColRadius));
 		}
 	}
+	//座標の設定
+	atk_.pos_ = VAdd(colPos_, VScale(dir, nowSkillColRadius_));
 }
 
 void Enemy::RandSkill(void)
@@ -446,6 +457,7 @@ void Enemy::RandSkill(void)
 
 	//ランダムでとってきた攻撃の種類を今から発動するスキルに設定
 	nowSkill_.emplace_back(skills_[rand]);
+	atk_ = skills_[rand];
 	nowSkillAnim_ = skillAnims_[rand];
 	nowSkillColRadius_.emplace_back(skillColRadius_[rand]);
 

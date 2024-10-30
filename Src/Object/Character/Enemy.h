@@ -1,7 +1,7 @@
 #pragma once
 #include<vector>
-#include"../Utility/AsoUtility.h"
-#include "UnitBase.h"
+#include"../../Utility/AsoUtility.h"
+#include "../UnitBase.h"
 
 class Enemy : public UnitBase
 {
@@ -44,6 +44,10 @@ public:
 	//スキルの当たり判定半径
 	static constexpr float SKILL_1_COL_RADIUS = 10.0f;	//スキル１
 	static constexpr float SKILL_2_COL_RADIUS = 24.0f;	//スキル２
+
+	//スキル関係
+	static constexpr ATK SKILL_1 = { AsoUtility::VECTOR_ZERO,SKILL_1_COL_RADIUS,1.0f,60.0f,120.0f,0.0f };	//スキル１
+	static constexpr ATK SKILL_2 = { AsoUtility::VECTOR_ZERO,SKILL_2_COL_RADIUS,5.0f,180.0f,300.0f,0.0f };	//スキル２
 
 	//敵自身の当たり判定半径
 	static constexpr float MY_COL_RADIUS = 20.0f;
