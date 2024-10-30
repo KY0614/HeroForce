@@ -51,10 +51,7 @@ void PlayerBase::Init(void)
 {
 	SetParam();
 
-
-
 	InitDebug();
-
 
 	dodgeCdt_ = DODGE_CDT_MAX;
 	speedMove_ = 0.0f;
@@ -65,11 +62,6 @@ void PlayerBase::Init(void)
 	ResetAnim(ANIM::WALK, SPEED_ANIM_IDLE);
 
 	//モデルの初期化
-	
-
-
-
-
 	trans_.Update();
 }
 
@@ -90,6 +82,7 @@ void PlayerBase::Update(void)
 	//回避
 	Dodge();
 
+	//それぞれの操作更新
 	switch (cntl_)
 	{
 	case PlayerBase::CNTL::KEYBOARD:
@@ -113,9 +106,10 @@ void PlayerBase::Update(void)
 	}
 
 
-	//攻撃中か毎フレーム判定する
-	//Attack();
+	//攻撃中か毎フレーム判定する;
 	Action(atk_);
+
+	//それぞれの攻撃座標の同期
 	SyncActPos(atk_, ATK_COL_LOCAL_POS);
 	SyncActPos(skills_[SKILL_NUM::ONE], SKILL1_COL_LOCAL_POS);
 	SyncActPos(skills_[SKILL_NUM::TWO], SKILL2_COL_LOCAL_POS);
@@ -263,7 +257,7 @@ void PlayerBase::GamePad(void)
 	}
 
 	//攻撃（攻撃アニメーションのフレームが0以下だったらフレームを設定）
-	if ( ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1,InputManager::JOYPAD_BTN::RIGHT) && !atk_.IsAttack() && !IsDodge())
+	if ( ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1,InputManager::JOYPAD_BTN::RIGHT) && !atk_.IsAttack() && !IsDodge()&&!IsSkillAll())
 	{
 		//アニメーション
 		ResetAnim(ANIM::UNIQUE_1, SPEED_ANIM_ATK);
@@ -317,7 +311,6 @@ void PlayerBase::Common(void)
 	//モデルの更新
 	trans_.Update();
 
-	
 }
 
 void PlayerBase::DrawDebug(void)
