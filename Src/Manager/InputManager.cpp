@@ -50,6 +50,9 @@ void InputManager::Init(void)
 	InputManager::GetInstance().Add(KEY_INPUT_RSHIFT);
 	InputManager::GetInstance().Add(KEY_INPUT_LSHIFT);
 
+	InputManager::GetInstance().Add(KEY_INPUT_L);
+
+	InputManager::GetInstance().Add(KEY_INPUT_B);
 
 
 	InputManager::MouseInfo info;

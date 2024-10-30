@@ -5,6 +5,9 @@
 class Grid;
 class PlayerBase;
 class Enemy;
+class StageBase;
+class SkyDome;
+class LevelBase;
 
 class GameScene : public SceneBase
 {
@@ -29,6 +32,12 @@ public:
 
 private:
 
+	//ステージ
+	StageBase* stage_;
+
+	//スカイドーム
+	SkyDome* sky_;
+
 	// グリッド線
 	Grid* grid_;
 	//プレイヤー
@@ -37,5 +46,7 @@ private:
 	//敵
 	std::vector<Enemy*> enemys_;
 	Enemy* enemyTest_;
+
+	LevelBase* level_;
 };
 
