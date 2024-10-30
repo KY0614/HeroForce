@@ -52,35 +52,14 @@ void GameScene::Update(void)
 {
 	grid_->Update();
 
-	auto& col = Collision::GetInstance();
 
 #ifdef _DEBUG_COL
 	playerTest_->Update();
 	enemyTest_->Update();
-
-	//プレイヤー攻撃判定
-	if (playerTest_->GetAtk().IsAttack())
-	{
-		if (col.IsHitAtk(playerTest_, enemyTest_))
-		{
-			enemyTest_->Damage(2, 4);
-		}
-	}
-
-	//敵の攻撃判定
-	//アタック中であり攻撃判定が終了していないとき
-	if (enemyTest_->GetAtk().IsAttack() && !enemyTest_->GetAtk().isHit_)
-	{
-		//攻撃が当たる範囲であり、プレイヤーが回避していないとき
-		if (col.IsHitAtk(enemyTest_, playerTest_) && !playerTest_->IsDodge())
-		{
-			//ダメージ
-			playerTest_->Damage();
-			//使用した攻撃を判定終了に
-			enemyTest_->SetIsHit(true);
-		}
-	}
 #endif
+
+	//あたり判定
+	Collision();
 }
 
 void GameScene::Draw(void)
@@ -107,5 +86,38 @@ void GameScene::Release(void)
 	delete playerTest_;
 	enemyTest_->Destroy();
 	delete enemyTest_;
+#endif
+}
+
+
+//当たり判定（他項目に干渉するもののみ）
+void GameScene::Collision(void)
+{
+	auto& col = Collision::GetInstance();
+
+
+#ifdef _DEBUG_COL
+	//プレイヤー攻撃判定
+	if (playerTest_->GetAtk().IsAttack())
+	{
+		if (col.IsHitAtk(playerTest_, enemyTest_))
+		{
+			enemyTest_->Damage(2, 4);
+		}
+	}
+
+	//敵の攻撃判定
+	//アタック中であり攻撃判定が終了していないとき
+	if (enemyTest_->GetAtk().IsAttack() && !enemyTest_->GetAtk().isHit_)
+	{
+		//攻撃が当たる範囲であり、プレイヤーが回避していないとき
+		if (col.IsHitAtk(enemyTest_, playerTest_) && !playerTest_->IsDodge())
+		{
+			//ダメージ
+			playerTest_->Damage();
+			//使用した攻撃を判定終了に
+			enemyTest_->SetIsHit(true);
+		}
+	}
 #endif
 }

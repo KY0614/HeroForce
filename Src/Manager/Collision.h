@@ -34,7 +34,7 @@ public:
 	/// <param name="_targetPos">対象の座標</param>
 	/// <param name="_rangeRadius">範囲用の半径</param>
 	/// <returns></returns>
-	const bool Search(VECTOR _myPos, VECTOR _targetPos, float _rangeRadius)const;
+	const bool Search(const VECTOR _myPos, const VECTOR _targetPos, const float _rangeRadius)const;
 
 private:
 	//コンストラクタ＆デストラクタ

@@ -35,7 +35,7 @@ const bool Collision::Search(const UnitBase* _chaser, const UnitBase* _target)
     return false;
 }
 
-const bool Collision::Search(VECTOR _myPos, VECTOR _targetPos, float _rangeRadius) const
+const bool Collision::Search(const VECTOR _myPos, const VECTOR _targetPos, const float _rangeRadius) const
 {
     //標的への方向ベクトルを取得
     VECTOR targetVec = VSub(_targetPos, _myPos);

@@ -48,5 +48,8 @@ private:
 	Enemy* enemyTest_;
 
 	LevelBase* level_;
+
+	//“–‚½‚è”»’èi‘¼€–Ú‚ÉŠ±Â‚·‚é‚à‚Ì‚Ì‚İj
+	void Collision(void);
 };
 
