@@ -51,6 +51,9 @@
     <ClInclude Include="Src\Object\Character\Enemy.h" />
     <ClInclude Include="Src\Object\Arrow.h" />
     <ClInclude Include="Src\Object\Character\PlayerBase.h" />
+    <ClInclude Include="Src\Object\Stage\SkyDome.h" />
+    <ClInclude Include="Src\Object\Stage\StageObject.h" />
+    <ClInclude Include="Src\Object\System\LevelBase.h" />
     <ClInclude Include="Src\Object\UnitBase.h" />
     <ClInclude Include="Src\Scene\GameScene.h" />
     <ClInclude Include="Src\Common\IntVector3.h" />

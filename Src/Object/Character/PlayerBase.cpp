@@ -104,7 +104,7 @@ void PlayerBase::Update(void)
 void PlayerBase::Draw(void)
 {
 	MV1DrawModel(trans_.modelId);
-	DrawDebug();
+	//DrawDebug();
 }
 
 void PlayerBase::Move(float _deg, VECTOR _axis)
