@@ -8,6 +8,16 @@ PlayerBase::PlayerBase(void)
 	atk_.duration_ = FRAME_ATK_DURATION;
 	atk_.backlash_ = FRAME_ATK_BACKRASH;
 	atk_.pow_ = 0;
+
+	skills_[SKILL_NUM::ONE].ResetCnt();
+	skills_[SKILL_NUM::ONE].duration_ = FRAME_SKILL1_DURATION;
+	skills_[SKILL_NUM::ONE].backlash_ = FRAME_ATK_BACKRASH;
+	skills_[SKILL_NUM::ONE].pow_ = 0;
+
+	skills_[SKILL_NUM::TWO].ResetCnt();
+	skills_[SKILL_NUM::TWO].duration_ = FRAME_SKILL2_DURATION;
+	skills_[SKILL_NUM::TWO].backlash_ = FRAME_ATK_BACKRASH;
+	skills_[SKILL_NUM::TWO].pow_ = 0;
 }
 
 void PlayerBase::Destroy(void)
@@ -16,11 +26,23 @@ void PlayerBase::Destroy(void)
 
 void PlayerBase::SetParam(void)
 {
-	atk_.pos_ = VAdd(trans_.pos, COL_LOCAL_POS);
+	atk_.pos_ = VAdd(trans_.pos, ATK_COL_LOCAL_POS);
 	atk_.ResetCnt();
 	atk_.duration_ = FRAME_ATK_DURATION;
 	atk_.backlash_ = FRAME_ATK_BACKRASH;
 	atk_.pow_ = 0;
+
+	trans_.SetModel(
+		ResourceManager::GetInstance()
+		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_KNIGHT));
+	float scale = SCALE;
+	trans_.scl = { scale, scale, scale };
+	trans_.pos = { 0.0f, 0.0f, 0.0f };
+	trans_.quaRot = Quaternion();
+	trans_.quaRotLocal = Quaternion::Euler(
+		0.0f, AsoUtility::Deg2RadF(180.0f),
+		0.0f
+	);
 
 	hp_ = MAX_HP;
 }
@@ -43,17 +65,7 @@ void PlayerBase::Init(void)
 	ResetAnim(ANIM::WALK, SPEED_ANIM_IDLE);
 
 	//モデルの初期化
-	trans_.SetModel(
-		ResourceManager::GetInstance()
-		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_KNIGHT));
-	float scale = SCALE;
-	trans_.scl = { scale, scale, scale };
-	trans_.pos = { 0.0f, 0.0f, 0.0f };
-	trans_.quaRot = Quaternion();
-	trans_.quaRotLocal = Quaternion::Euler(
-		0.0f, AsoUtility::Deg2RadF(180.0f),
-		0.0f
-	);
+	
 
 
 
@@ -63,18 +75,17 @@ void PlayerBase::Init(void)
 
 void PlayerBase::Update(void)
 {
-	//アニメーションの更新
-	Anim();
-
-	//モデルの更新
-	trans_.Update();
+	//共通処理
+	Common();
 
 	//停止状態の時のアニメーション
-	if (!IsMove() && !IsDodge() && !IsAtkAction() &&!IsSkill(SKILL::ONE))
+	if (!IsMove() && !IsDodge() && !IsAtkAction() && !IsSkillAll())
 	{
-		ResetAnim(ANIM::IDLE,SPEED_ANIM_IDLE);
+		ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 		speedMove_ = 0.0f;
 	}
+
+	
 
 	//回避
 	Dodge();
@@ -89,11 +100,29 @@ void PlayerBase::Update(void)
 		break;
 	}
 
+	switch (skillNo_)
+	{
+	case PlayerBase::SKILL_NUM::ONE:
+		Action(skills_[SKILL_NUM::ONE]);
+		break;
+	case PlayerBase::SKILL_NUM::TWO:
+		Action(skills_[SKILL_NUM::TWO]);
+		break;
+	default:
+		break;
+	}
+
 
 	//攻撃中か毎フレーム判定する
-	Attack();
+	//Attack();
+	Action(atk_);
+	SyncActPos(atk_, ATK_COL_LOCAL_POS);
+	SyncActPos(skills_[SKILL_NUM::ONE], SKILL1_COL_LOCAL_POS);
+	SyncActPos(skills_[SKILL_NUM::TWO], SKILL2_COL_LOCAL_POS);
 
-	Skill_1();
+
+
+
 
 }
 
@@ -103,10 +132,12 @@ void PlayerBase::Draw(void)
 	DrawDebug();
 }
 
+
+
 void PlayerBase::Move(float _deg, VECTOR _axis)
 {
 	speedMove_ = SPEED_MOVE;
-	if (!IsDodge() && !IsAtkAction()&&!IsSkill(SKILL::ONE))
+	if (!IsDodge() && !IsAtkAction()&&!IsSkillAll())
 	{
 		ResetAnim(ANIM::WALK, SPEED_ANIM_RUN);
 		Turn(_deg, _axis);
@@ -124,7 +155,8 @@ void PlayerBase::InitAnimNum(void)
 	animNum_.emplace(ANIM::WALK, RUN_NUM);
 	animNum_.emplace(ANIM::DODGE, DODGE_NUM);
 	animNum_.emplace(ANIM::UNIQUE_1, ATK_NUM);
-	animNum_.emplace(ANIM::SKILL_1, SKILL_NUM);
+	animNum_.emplace(ANIM::SKILL_1, SKILL_ONE_NUM);
+	animNum_.emplace(ANIM::SKILL_2, SKILL_TWO_NUM);
 }
 
 void PlayerBase::KeyBoardControl(void)
@@ -175,7 +207,7 @@ void PlayerBase::KeyBoardControl(void)
 
 	if (ins.IsTrgDown(KEY_INPUT_Q)&&!IsAtkAction()&&!IsDodge())
 	{
-		Count(skillCnt_[SKILL::ONE]);
+		Count(skillCnt_[SKILL_NUM::ONE]);
 		ResetAnim(ANIM::SKILL_1,SPEED_ANIM);
 	}
 
@@ -240,10 +272,20 @@ void PlayerBase::GamePad(void)
 	}
 
 	//スキル
-	if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP) && !IsAtkAction()/*&&!IsSkill(SKILL::TWO)*/)
+	if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP) && !IsAtkAction()&&!IsSkillAll())
 	{
-		Count(skillCnt_[SKILL::ONE]);
-		ResetAnim(ANIM::SKILL_1, SPEED_ANIM);
+		//アニメーション
+		SkillAnim();
+		Count(skills_[skillNo_].cnt_);
+	}
+
+	if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER)&&!IsSkillAll())
+	{
+		skillNo_ = static_cast<SKILL_NUM>(static_cast<int>(skillNo_) + 1);
+		if (skillNo_ == SKILL_NUM::MAX)
+		{
+			skillNo_ = SKILL_NUM::ONE;
+		}
 	}
 
 	//回避
@@ -267,17 +309,58 @@ void PlayerBase::ChangeControll(CNTL _cntl)
 	}
 }
 
+void PlayerBase::Common(void)
+{
+	//アニメーションの更新
+	Anim();
+
+	//モデルの更新
+	trans_.Update();
+
+	
+}
+
 void PlayerBase::DrawDebug(void)
 {
+	const unsigned int ATK_COLOR = 0xff0000;
 	//球体
 	//DrawSphere3D(trans_.pos, 20.0f, 8, 0x0, color_, true);
 	//値見る用
 	DrawFormatString(0, 0, 0xffffff
-		, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\nStick(%f)\nHP(%d)"
-		, atk_.cnt_, atk_.IsAttack(),atk_.IsBacklash(), frameDodge_,skillCnt_[SKILL::ONE],stickDeg_,hp_);
+		, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\nSkillNum(%d)\nStick(%f)\nHP(%d)"
+		, atk_.cnt_, atk_.IsAttack(),atk_.IsBacklash(), frameDodge_,skills_[SKILL_NUM::ONE].cnt_, skillNo_, stickDeg_, hp_);
 
 	DrawSphere3D(VAdd(trans_.pos, {0.0f,20.0f,0.0f}), SCALE * 100, 8, color_Col_, color_Col_, false);
 	DrawSphere3D(atk_.pos_, COL_ATK, 8, color_Atk_, color_Atk_, false);
+	DrawSphere3D(skills_[SKILL_NUM::ONE].pos_, COL_SKILL1, 8, color_skl1_, color_skl1_, false);
+	DrawSphere3D(skills_[SKILL_NUM::TWO].pos_, COL_SKILL2, 8, color_skl2_, color_skl2_, false);
+
+	if (atk_.IsAttack())
+	{
+		color_Atk_ = ATK_COLOR;
+	}
+	else
+	{
+		color_Atk_ = 0x00ffff;
+	}
+
+	if (skills_[SKILL_NUM::ONE].IsAttack())
+	{
+		color_skl1_ = ATK_COLOR;
+	}
+	else
+	{
+		color_skl1_ = 0x00ffff;
+	}
+
+	if (skills_[SKILL_NUM::TWO].IsAttack())
+	{
+		color_skl2_ = ATK_COLOR;
+	}
+	else
+	{
+		color_skl2_ = 0x00ffff;
+	}
 }
 
 
@@ -292,29 +375,31 @@ void PlayerBase::Turn(float _deg, VECTOR _axis)
 }
 
 
-void PlayerBase::Attack(void)
+void PlayerBase::Action(ATK& _act)
 {
-	const unsigned int ATK_COLOR = 0xff0000;
-	atk_.pos_ = VAdd(trans_.pos, COL_LOCAL_POS);
-	if (atk_.IsAttack()||atk_.IsBacklash())
+	if (_act.IsAttack() || _act.IsBacklash())
 	{
-		Count(atk_.cnt_);
-	}
-	else 
-	{
-		atk_.ResetCnt();
-	}
-	
-
-	if (atk_.IsAttack())
-	{
-		color_Atk_ = ATK_COLOR;
+		Count(_act.cnt_);
 	}
 	else
 	{
-		color_Atk_ = 0x00ffff;
+		_act.ResetCnt();
 	}
 }
+
+void PlayerBase::SyncActPos(ATK& _act,VECTOR _colPos)
+{
+	//追従対象の位置
+	VECTOR followPos = trans_.pos;
+
+	//追従対象の向き
+	Quaternion followRot = trans_.rot;
+
+	//追従対象の角度
+	VECTOR relativeActPos = followRot.PosAxis(_colPos);
+	_act.pos_ = VAdd(trans_.pos, relativeActPos);
+}
+
 
 void PlayerBase::Dodge(void)
 {
@@ -345,20 +430,27 @@ void PlayerBase::Dodge(void)
 
 void PlayerBase::Skill_1(void)
 {
-	skillNum_ = "Skill_1";
-	if (IsSkill(SKILL::ONE))
-	{
-		Count(skillCnt_[SKILL::ONE]);
-	}
-	else
-	{
-		skillCnt_[SKILL::ONE] = 0.0f;
-	}
 }
 
 void PlayerBase::Skill_2(void)
 {
-	skillNum_ = "Skill_2";
+}
+
+void PlayerBase::SkillAnim(void)
+{
+	switch (skillNo_)
+	{
+	case PlayerBase::SKILL_NUM::ONE:
+		ResetAnim(ANIM::SKILL_1, SPEED_ANIM_ATK);
+		break;
+	case PlayerBase::SKILL_NUM::TWO:
+		ResetAnim(ANIM::SKILL_2, SPEED_ANIM_ATK);
+		break;
+	case PlayerBase::SKILL_NUM::MAX:
+		break;
+	default:
+		break;
+	}
 }
 
 void PlayerBase::Damage(void)
@@ -373,5 +465,7 @@ void PlayerBase::InitDebug(void)
 {
 	color_Col_ = 0xffffff;
 	color_Atk_ = 0x00ffff;
+	color_skl1_ = 0x00ffff;
+	color_skl2_ = 0x00ffff;
 }
 
