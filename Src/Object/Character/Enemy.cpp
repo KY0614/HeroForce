@@ -196,11 +196,10 @@ void Enemy::UpdateNml(void)
 	moveSpeed_ = 0.0f;
 	
 	//索敵
-	if (isMove_)
-	{
-		//移動処理
-		Move();
-	}
+	if (!isMove_)return;
+
+	//移動処理
+	Move();
 }
 
 void Enemy::UpdateAlert(void)
@@ -334,7 +333,7 @@ void Enemy::Draw(void)
 
 const VECTOR Enemy::GetTargetVec(void)const
 {
-	//標的への方向ベクトルを取得
+	//標的への方向ベクトルを取得						※TODO:ベクトルはSceneGameからもらう
 	VECTOR targetVec = VSub(targetPos_, trans_.pos);
 
 	//正規化
