@@ -40,7 +40,7 @@ void Enemy::Init(void)
 	ResetAnim(ANIM::IDLE, DEFAULT_SPEED_ANIM);
 
 	//ã§í ÇÃïœêîÇÃèâä˙âª
-	trans_.scl = { MODEL_SIZE,MODEL_SIZE,MODEL_SIZE };
+	trans_.scl = { CHARACTER_SCALE,CHARACTER_SCALE,CHARACTER_SCALE };
 	trans_.pos = AsoUtility::VECTOR_ZERO;
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::AngleAxis(AsoUtility::Deg2RadF(180.0f), AsoUtility::AXIS_Y);

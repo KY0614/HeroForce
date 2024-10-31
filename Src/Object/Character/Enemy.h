@@ -23,11 +23,10 @@ public:
 	static constexpr float DEFAULT_SPEED_ANIM = 20.0f;	//デフォルトのアニメーション速度
 
 	//モデル関係
-	static constexpr float MODEL_SIZE = 0.3f;										//モデルの大きさ
-	static constexpr VECTOR  LOCAL_CENTER_POS = { 0.0f,100.0f * MODEL_SIZE,0.0f };	//モデルの中心座標への相対座標
+	static constexpr VECTOR  LOCAL_CENTER_POS = { 0.0f,100.0f * CHARACTER_SCALE,0.0f };	//モデルの中心座標への相対座標
 	
 	//敵自身の当たり判定半径
-	static constexpr float MY_COL_RADIUS = 100.0f * MODEL_SIZE;
+	static constexpr float MY_COL_RADIUS = 100.0f * CHARACTER_SCALE;
 
 	//攻撃関係
 	static constexpr float ALERT_TIME = 120.0f;	//攻撃の警告時間
@@ -38,8 +37,8 @@ public:
 	static constexpr float RUN_SPEED = 4.0f;	//走りの速度
 
 	//範囲関係
-	static constexpr float SEARCH_RANGE = 800.0f * MODEL_SIZE;		//索敵判定の大きさ
-	static constexpr float ATK_START_RANGE = 250.0f * MODEL_SIZE;	//攻撃開始判定の大きさ
+	static constexpr float SEARCH_RANGE = 800.0f * CHARACTER_SCALE;		//索敵判定の大きさ
+	static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//攻撃開始判定の大きさ
 
 	//スキルの当たり判定半径
 	static constexpr float SKILL_1_COL_RADIUS = 10.0f;	//スキル１
@@ -117,6 +116,9 @@ public:
 	/// <param name="_damage">ダメージ量</param>
 	/// <param name="_stunPow">スタン攻撃力</param>
 	void Damage(const int _damage, const int _stunPow);
+
+	//現在状態を返す
+	const STATE GetState(void) { return state_; }
 
 	/// <summary>
 	/// 状態遷移
