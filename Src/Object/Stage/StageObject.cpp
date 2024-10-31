@@ -56,18 +56,9 @@ void StageObject::Release()
 	MV1DeleteModel(transform_.modelId);
 }
 
-VECTOR StageObject::GetPos()
+Transform StageObject::GetTrans() const
 {
-	return transform_.pos;
+	return transform_;
 }
 
-VECTOR StageObject::GetRot()
-{
-	return transform_.rot;
-}
-
-VECTOR StageObject::GetScl()
-{
-	return transform_.scl;
-}
 

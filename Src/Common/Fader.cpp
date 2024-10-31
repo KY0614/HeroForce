@@ -32,7 +32,6 @@ void Fader::Init(void)
 
 void Fader::Update(void)
 {
-
 	if (isEnd_)
 	{
 		return;
@@ -74,6 +73,21 @@ void Fader::Update(void)
 		}
 		break;
 
+	case STATE::FADE_NOTICE:
+		alpha_ += SPEED_ALPHA;
+		if (alpha_ > NOTICE_ALPHA)
+		{
+			// フェード終了
+			alpha_ = NOTICE_ALPHA;
+			if (isPreEnd_)
+			{
+				// 1フレーム後(Draw後)に終了とする
+				isEnd_ = true;
+			}
+			isPreEnd_ = true;
+		}
+		break;
+
 	default:
 		return;
 	}
@@ -87,6 +101,8 @@ void Fader::Draw(void)
 	{
 	case STATE::NONE:
 		return;
+
+	case STATE::FADE_NOTICE:
 	case STATE::FADE_OUT:
 	case STATE::FADE_IN:
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)alpha_);

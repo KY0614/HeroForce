@@ -5,6 +5,10 @@ class Fader
 
 public:
 
+	// 通知時のアルファ値
+	static constexpr int NOTICE_ALPHA = 150;
+	static constexpr float NOTICE_SPEED_ALPHA = 2.0f;
+
 	// フェードが進む速さ
 	static constexpr float SPEED_ALPHA = 5.0f;
 
@@ -12,8 +16,9 @@ public:
 	enum class STATE
 	{
 		NONE, 
-		FADE_OUT,	// 徐々に暗転
-		FADE_IN		// 徐々に明転
+		FADE_OUT,		// 徐々に暗転
+		FADE_IN,		// 徐々に明転	
+		FADE_NOTICE		//レベルアップ通知用
 	};
 
 	// 状態の取得
@@ -25,11 +30,12 @@ public:
 	// 指定フェードを開始する
 	void SetFade(STATE state);
 
-	void Init(void);
-	void Update(void);
-	void Draw(void);
 
-private:
+	virtual void Init(void);
+	virtual void Update(void);
+	virtual void Draw(void);
+
+protected:
 
 	// 状態
 	STATE state_;
