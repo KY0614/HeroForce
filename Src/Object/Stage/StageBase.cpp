@@ -42,6 +42,8 @@ void StageBase::Draw(void)
 	{
 		object->Draw();
 	}
+
+	DebugDraw();
 }
 
 void StageBase::Release(void)
@@ -101,7 +103,6 @@ void StageBase::JsonLoad()
 	//モデル管理番号(初期値0)
 	int i = 0;
 
-
 	//0.地形
 	std::vector<StageObject*>terrains;
 	const auto& terrain = stageData["terrain"];
@@ -112,7 +113,7 @@ void StageBase::JsonLoad()
  		terrains.emplace_back(std::move(stageObj));
 	}
 
-	stageMdls_.emplace(MODEL_TYPE::TREE, terrains);
+	stageMdls_.emplace(MODEL_TYPE::TERRAIN, terrains);
 
 	i++;
 	//1.草
@@ -126,7 +127,7 @@ void StageBase::JsonLoad()
 
 	}
 
-	stageMdls_.emplace(MODEL_TYPE::TREE, bushs);
+	stageMdls_.emplace(MODEL_TYPE::BUSH, bushs);
 
 	i++;
 	//2.花
@@ -139,7 +140,7 @@ void StageBase::JsonLoad()
 		flowers.emplace_back(std::move(stageObj));
 	}
 
-	stageMdls_.emplace(MODEL_TYPE::TREE, flowers);
+	stageMdls_.emplace(MODEL_TYPE::FLOWWERS, flowers);
 
 	i++;
 	//3.岩1
@@ -152,7 +153,7 @@ void StageBase::JsonLoad()
 		rocks1.emplace_back(std::move(stageObj));
 	}
 
-	stageMdls_.emplace(MODEL_TYPE::TREE, rocks1);
+	stageMdls_.emplace(MODEL_TYPE::ROCK_01, rocks1);
 
 	i++;
 	//4.岩2
@@ -165,7 +166,7 @@ void StageBase::JsonLoad()
 		rocks2.emplace_back(std::move(stageObj));
 	}
 
-	stageMdls_.emplace(MODEL_TYPE::TREE, rocks2);
+	stageMdls_.emplace(MODEL_TYPE::ROCK_02, rocks2);
 
 	i++;
 	//5.切り株
@@ -178,7 +179,7 @@ void StageBase::JsonLoad()
 		stumps.emplace_back(std::move(stageObj));
 	}
 
-	stageMdls_.emplace(MODEL_TYPE::TREE, stumps);
+	stageMdls_.emplace(MODEL_TYPE::STUMP, stumps);
 
 	i++;
 	//6.木
@@ -194,6 +195,42 @@ void StageBase::JsonLoad()
 	stageMdls_.emplace(MODEL_TYPE::TREE, trees);
 
 	ifs.close();
+}
+
+void StageBase::DebugDraw()
+{
+	int divNum = 20;
+	int color = 0xff0000;
+	bool fill = false;
+
+	//岩01
+	std::vector<Transform> rocks1 = GetTtans(MODEL_TYPE::ROCK_01);
+	for (auto rock1 : rocks1)
+	{
+		DrawSphere3D(rock1.pos, ROCK01_COLI_RADIUS, divNum, color, color, fill);
+	}
+
+	//岩02
+	std::vector<Transform> rocks2 = GetTtans(MODEL_TYPE::ROCK_02);
+	for (auto rock2 : rocks2)
+	{
+		DrawSphere3D(rock2.pos, ROCK02_COLI_RADIUS, divNum, color, color, fill);
+	}
+
+	//切り株
+	std::vector<Transform> stumps = GetTtans(MODEL_TYPE::STUMP);
+	for (auto stump : stumps)
+	{
+		DrawSphere3D(stump.pos, STUMP_COLI_RADIUS, divNum, color, color, fill);
+	}
+
+	//木々
+	std::vector<Transform> trees = GetTtans(MODEL_TYPE::TREE);
+	for (auto tree : trees)
+	{
+		DrawSphere3D(tree.pos, TREE_COLI_RADIUS, divNum, color, color, fill);
+	}
+	
 }
 
 std::vector<Transform> StageBase::GetTtans(MODEL_TYPE type)
