@@ -7,6 +7,8 @@ class Enemy : public UnitBase
 {
 public:
 
+#define DEBUG_ENEMY
+
 	//アニメーション番号
 	static constexpr int ANIM_IDLE = 14;	//待機アニメーション
 	static constexpr int ANIM_WALK = 93;	//歩きアニメーション
@@ -24,13 +26,16 @@ public:
 	static constexpr VECTOR  LOCAL_CENTER_POS = { 0.0f,20.0f,0.0f };
 
 	//攻撃関係
-	static constexpr float ATK_CDT = 120.0f;	//攻撃のクールダウンの時間※多分消す
 	static constexpr float ALERT_TIME = 120.0f;	//攻撃の警告時間
 	static constexpr float BREAK_TIME = 100.0f;	//攻撃の休憩時間
 
 	//速度関係
 	static constexpr float WALK_SPEED = 2.0f;	//歩きの速度
 	static constexpr float RUN_SPEED = 4.0f;	//走りの速度
+
+	//範囲関係
+	static constexpr float SEARCH_RANGE = 120.0f;	//索敵判定の大きさ
+	static constexpr float ATK_START_RANGE = 50.0f;	//攻撃開始判定の大きさ
 
 	//スキルの当たり判定半径
 	static constexpr float SKILL_1_COL_RADIUS = 10.0f;	//スキル１
@@ -74,8 +79,6 @@ public:
 	//描画
 	void Draw(void)override;
 
-	//攻撃クールダウン中かどうかを返す(true:攻撃クールダウン中)	※多分消す
-	const bool IsAtkCD(void)const { return atkCdt_ < ATK_CDT; }
 	//警告時間中かどうかを返す
 	const bool IsAlertTime(void)const { return alertCnt_ < ALERT_TIME; }
 	//休憩時間中かどうかを返す
@@ -89,11 +92,8 @@ public:
 	//現在のスキルの座標を返す
 	//const VECTOR GetNowSkillPos(void)const { return nowSkill_.pos_; }
 
-	//現在のスキルの当たり判定半径を返す
-	const float	GetNowSkillColRadius(void)const { return nowSkillColRadius_; }
-
-	//敵自身の当たり判定半径を返す
-	const float	GetMyColRadius(void)const { return colRadius_; }
+	//現在のスキルの全配列を返す
+	const std::vector<ATK> GetAtks(void)const { return nowSkill_; }
 
 	//取得経験値を返す
 	const float GetExp(void)const { return exp_; }
@@ -109,7 +109,7 @@ public:
 	/// 状態遷移
 	/// </summary>
 	/// <param name="_state">遷移する状態</param>
-	void ChangeState(const STATE _state) { state_ = _state; }
+	void ChangeState(const STATE _state);
 
 protected:
 
@@ -129,27 +129,27 @@ private:
 	
 	STATE state_;	//現在の状態
 
-	float atkCdt_;				//攻撃のクールダウンカウンタ ※多分消す
 	float alertCnt_;			//攻撃の警告時間カウンタ
 	float breakCnt_;			//攻撃の休憩時間カウンタ
 
 	std::vector<ATK> skills_;			//スキルの種類
+	std::vector<ATK> nowSkill_;			//現在のスキル
 	
 	std::vector<ANIM> skillAnims_;		//スキルに対応したアニメーション
 	ANIM nowSkillAnim_;					//現在のスキルアニメーション
-	
-	std::vector<float>skillColRadius_;	//スキルの当たり判定半径
-	float nowSkillColRadius_;			//現在のスキルの当たり判定半径
-	
-	VECTOR colPos_;		//敵自身の当たり判定座標
-	float colRadius_;	//敵自身の当たり判定半径
+		
+	VECTOR colPos_;			//敵自身の当たり判定用の相対座標
 
-	float moveSpeed_;	//移動量
+	float searchRange_;		//索敵範囲
+	float atkStartRange_;	//攻撃開始範囲
+	float moveSpeed_;		//移動量
 
 	int stunDefMax_;	//気絶防御値の最大値
 	int stunDef_;		//気絶防御値
 
 	float exp_;		//取得経験値
+
+	VECTOR targetPos_;	//※デバッグ　標的の座標
 
 	//更新(通常)
 	void UpdateNml(void);
@@ -160,23 +160,15 @@ private:
 	//更新(休憩)
 	void UpdateBreak(void);
 
-	//索敵
-	void Search(void);
+	/// <summary>
+	/// 標的のベクトルを返す
+	/// </summary>
+	/// <param name=""></param>
+	/// <returns>標的への方向ベクトル</returns>
+	const VECTOR GetTargetVec(void)const;
 
 	//移動
 	void Move(void);
-	/// <summary>
-	/// 移動処理
-	/// </summary>
-	/// <param name="_moveSpeed">移動距離</param>
-	/// <param name="_deg">移動方向(デグリー角)</param>
-	void ProcessMove(const float _moveSpeed, const float _deg);
-	/// <summary>
-	/// 方向転換
-	/// </summary>
-	/// <param name="_deg">回転方向(デグリー角)</param>
-	/// <param name="_axis">回転軸</param>
-	void Turn(const float _deg, const VECTOR _axis);
 
 	//敵の攻撃処理
 	void Attack(void);
