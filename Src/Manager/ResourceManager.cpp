@@ -24,6 +24,14 @@ void ResourceManager::Init(void)
 
 	Resource res;
 
+
+	//レベル通知用
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Level-Up.png");
+	resourcesMap_.emplace(SRC::LEVEL_UP, res);
+
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "SelectUI.png");
+	resourcesMap_.emplace(SRC::SELECT_UI, res);
+
 	//モデル
 	// ********************************************************************
 	//魔法使い（プレイヤー）
@@ -94,7 +102,6 @@ void ResourceManager::Init(void)
 	//ステージ[木]
 	res = Resource(Resource::TYPE::MODEL, "Data/Model/Stage/Stage1/Tree_05.mv1");
 	resourcesMap_.emplace(SRC::TREE_05, res);
-
 
 }
 
