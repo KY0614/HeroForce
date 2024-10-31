@@ -101,9 +101,22 @@ void GameScene::Collision(void)
 
 
 	//敵側索敵
-	if (col.Search(enemyTest_->GetPos(), playerTest_->GetPos(), 2.0f))
+	if (col.Search(enemyTest_->GetPos(), playerTest_->GetPos(), enemyTest_->GetSearchRange()))
 	{
 		//移動を開始
+		enemyTest_->SetIsMove(true);
+	}
+	else
+	{
+		//移動を停止
+		enemyTest_->SetIsMove(false);
+	}
+
+
+	if (col.Search(enemyTest_->GetPos(), playerTest_->GetPos(), enemyTest_->GetAtkStartRange()))
+	{
+		//状態を変更
+		enemyTest_->ChangeState(Enemy::STATE::ALERT);
 	}
 
 	//プレイヤー攻撃判定
