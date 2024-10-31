@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Common\ImageFader.cpp" />
     <ClCompile Include="Src\Manager\Collision.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerBase.cpp" />
@@ -50,6 +51,7 @@
     <ClCompile Include="Src\Object\Stage\StageBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Common\ImageFader.h" />
     <ClInclude Include="Src\Manager\Collision.h" />
     <ClInclude Include="Src\Object\Character\Enemy.h" />
     <ClInclude Include="Src\Object\Arrow.h" />

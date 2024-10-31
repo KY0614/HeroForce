@@ -51,7 +51,7 @@ void GameScene::Init(void)
 void GameScene::Update(void)
 {
 	grid_->Update();
-
+	level_->Update();
 
 #ifdef _DEBUG_COL
 	playerTest_->Update();
@@ -76,6 +76,7 @@ void GameScene::Draw(void)
 
 void GameScene::Release(void)
 {
+	level_->Release();
 	delete level_;
 	delete sky_;
 	stage_->Release();

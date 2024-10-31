@@ -54,6 +54,8 @@ public:
 	//定数
 	// アニメーションの再生速度(仮）
 	static constexpr float SPEED_ANIM = 20.0f;
+	//キャラクター大きさ設定
+	static constexpr float CHARACTER_SCALE = 0.3f;
 
 
 	//コンストラクタ
