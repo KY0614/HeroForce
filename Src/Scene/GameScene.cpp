@@ -99,9 +99,13 @@ void GameScene::Collision(void)
 
 #ifdef _DEBUG_COL
 
+	auto ePos = enemyTest_->GetPos();
+	auto eAtk = enemyTest_->GetAtk();
+	auto pPos = playerTest_->GetPos();
+	auto pAtk = playerTest_->GetAtk();
 
 	//“G‘¤õ“G
-	if (col.Search(enemyTest_->GetPos(), playerTest_->GetPos(), enemyTest_->GetSearchRange()))
+	if (col.Search(ePos, pPos, enemyTest_->GetSearchRange()))
 	{
 		//ˆÚ“®‚ðŠJŽn
 		enemyTest_->SetIsMove(true);
@@ -113,7 +117,7 @@ void GameScene::Collision(void)
 	}
 
 
-	if (col.Search(enemyTest_->GetPos(), playerTest_->GetPos(), enemyTest_->GetAtkStartRange()))
+	if (col.Search(ePos, pPos, enemyTest_->GetAtkStartRange()))
 	{
 		//ó‘Ô‚ð•ÏX
 		enemyTest_->ChangeState(Enemy::STATE::ALERT);
@@ -121,7 +125,7 @@ void GameScene::Collision(void)
 
 	//ƒvƒŒƒCƒ„[UŒ‚”»’è
 	//UŒ‚’†‚Å‚ ‚è‚»‚ÌUŒ‚‚ªˆê“x‚à“–‚½‚Á‚Ä‚¢‚È‚¢‚©
-	if (playerTest_->GetAtk().IsAttack()&&!playerTest_->GetAtk().isHit_)
+	if (pAtk.IsAttack()&&!pAtk.isHit_)
 	{
 		//“–‚½‚è”»’è
 		if (col.IsHitAtk(playerTest_, enemyTest_))	
@@ -135,7 +139,7 @@ void GameScene::Collision(void)
 
 	//“G‚ÌUŒ‚”»’è
 	//ƒAƒ^ƒbƒN’†‚Å‚ ‚èUŒ‚”»’è‚ªI—¹‚µ‚Ä‚¢‚È‚¢‚Æ‚«
-	if (enemyTest_->GetAtk().IsAttack() && !enemyTest_->GetAtk().isHit_)
+	if (eAtk.IsAttack() && !eAtk.isHit_)
 	{
 		//UŒ‚‚ª“–‚½‚é”ÍˆÍ‚Å‚ ‚èAƒvƒŒƒCƒ„[‚ª‰ñ”ð‚µ‚Ä‚¢‚È‚¢‚Æ‚«
 		if (col.IsHitAtk(enemyTest_, playerTest_) && !playerTest_->IsDodge())
