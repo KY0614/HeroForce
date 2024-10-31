@@ -97,12 +97,25 @@ void GameScene::Collision(void)
 
 
 #ifdef _DEBUG_COL
-	//ƒvƒŒƒCƒ„[UŒ‚”»’è
-	if (playerTest_->GetAtk().IsAttack())
+
+
+	//“G‘¤õ“G
+	if (col.Search(enemyTest_->GetPos(), playerTest_->GetPos(), 2.0f))
 	{
-		if (col.IsHitAtk(playerTest_, enemyTest_))
+		//ˆÚ“®‚ðŠJŽn
+	}
+
+	//ƒvƒŒƒCƒ„[UŒ‚”»’è
+	//UŒ‚’†‚Å‚ ‚è‚»‚ÌUŒ‚‚ªˆê“x‚à“–‚½‚Á‚Ä‚¢‚È‚¢‚©
+	if (playerTest_->GetAtk().IsAttack()&&!playerTest_->GetAtk().isHit_)
+	{
+		//“–‚½‚è”»’è
+		if (col.IsHitAtk(playerTest_, enemyTest_))	
 		{
-			enemyTest_->Damage(2, 4);
+			//”í’e
+			enemyTest_->Damage(2, 4);				
+			//UŒ‚”»’è‚ÌI—¹
+			playerTest_->SetIsHit(true);			
 		}
 	}
 
@@ -119,5 +132,8 @@ void GameScene::Collision(void)
 			enemyTest_->SetIsHit(true);
 		}
 	}
+
 #endif
+
+
 }
