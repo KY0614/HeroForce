@@ -23,7 +23,8 @@ public:
     static constexpr int SPEED_ANIM_DODGE = 30.0f;
     static constexpr int SPEED_ANIM_ATK = 50.0f;
 
-    static constexpr float SCALE = 0.2f;
+    //プレイヤーの拡大率
+    static constexpr float SCALE = 0.5f;
 
 
     // 移動スピード
@@ -42,9 +43,12 @@ public:
 
     static constexpr int MAX_HP = 100;
     //攻撃座標
-    static constexpr VECTOR SKILL1_COL_LOCAL_POS = { 0.0f,20.0f,20.0f };
-    static constexpr VECTOR ATK_COL_LOCAL_POS = { 0.0f,20.0f,20.0f };
-    static constexpr VECTOR SKILL2_COL_LOCAL_POS = { 0.0f,20.0f,0.0f };
+    static constexpr VECTOR SKILL1_COL_LOCAL_POS = { 0.0f,100.0f,100.0f };
+    static constexpr VECTOR ATK_COL_LOCAL_POS = { 0.0f,100.0f,100.0f };
+    static constexpr VECTOR SKILL2_COL_LOCAL_POS = { 0.0f,100.0f,0.0f };
+
+    //プレイヤー自身の当たり判定
+    static constexpr VECTOR PLAYER_COL_LOCAL_POS = { 0.0f,100.0f,0.0f };
 
     //攻撃範囲
     static constexpr float COL_ATK = SCALE * 100.0f;
@@ -110,7 +114,7 @@ protected:
     CNTL cntl_;
 
     //コントローラー変更用関数
-    void ChangeControll(CNTL _cntl);
+    void ChangeControll(const CNTL _cntl);
 
     //プレイヤー(CPUとユーザー)共通処理
     void Common(void);
@@ -129,7 +133,7 @@ protected:
     void Action(ATK& _act);
 
     //攻撃座標の同期
-    void SyncActPos(ATK& _act,VECTOR _colPos);
+    void SyncActPos(ATK& _act,const VECTOR _colPos);
 
 
     //移動関連
@@ -142,22 +146,31 @@ protected:
     //移動スピード
     float speedMove_;
 
+    //動いてるかどうか
     bool IsMove(void) { return speedMove_ > 0; }
+
+    //プレイヤーの当たり判定座標
+    VECTOR colPos_;
 
     
 
 
     //攻撃
     //-------------------------------------
-
-    //攻撃処理
+    //攻撃中かどうか(UnitBaseで修正予定)
     bool IsAtkAction(void) { return atk_.IsAttack() || atk_.IsBacklash(); }
+
+    //攻撃可能かどうか
+    bool IsAtkable(void) { return!IsAtkAction() && !IsSkillAll() && !IsDodge(); }
 
 
     ATK atk_;
     
     //回避関連
     //---------------------------------------
+    //回避可能か
+    bool IsDodgeable(void) { return !IsDodge() && !IsAtkAction() && !IsCoolDodge(); }
+    //回避中かどうか
     bool IsDodge(void) { return 0.0f<frameDodge_&&frameDodge_ < FRAME_DODGE_MAX; }
     //クールタイム中かどうか
     bool IsCoolDodge(void){return dodgeCdt_ < DODGE_CDT_MAX;}
@@ -193,6 +206,9 @@ protected:
      bool IsSkillAction(SKILL_NUM _num) { return skills_[_num].IsAttack() || skills_[_num].IsBacklash(); }
      //すべてのスキルが使用中かどうか
      bool IsSkillAll(void) { return IsSkillAction(SKILL_NUM::ONE) || IsSkillAction(SKILL_NUM::TWO); }
+
+     //スキル使用可能かどうか
+     bool IsSkillable(void) { return !IsAtkAction() && !IsSkillAll() && !IsDodge(); }
 
 
      //スキルクールタイム中フラグ
