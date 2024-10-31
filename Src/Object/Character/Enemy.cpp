@@ -14,6 +14,7 @@ Enemy::Enemy()
 	hp_ = 5;
 	moveSpeed_ = 0.0f;
 	state_ = STATE::NORMAL;
+	anim_ = ANIM::NONE;
 }
 
 void Enemy::Destroy(void)
@@ -35,12 +36,11 @@ void Enemy::Init(void)
 	targetPos_ = { -30.0f, 0.0f,-30.0f };
 #endif // DEBUG_ENEMY
 
+	//アニメーションリセット
 	ResetAnim(ANIM::IDLE, DEFAULT_SPEED_ANIM);
 
-	float scl = 0.2f;
-
 	//共通の変数の初期化
-	trans_.scl = { scl,scl,scl };
+	trans_.scl = { MODEL_SIZE,MODEL_SIZE,MODEL_SIZE };
 	trans_.pos = AsoUtility::VECTOR_ZERO;
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::AngleAxis(AsoUtility::Deg2RadF(180.0f), AsoUtility::AXIS_Y);
@@ -69,6 +69,8 @@ void Enemy::SetParam(void)
 	exp_ = 1.0f;
 	hp_ = 5;
 	stunDefMax_ = 100;
+	searchRange_ = SEARCH_RANGE;
+	atkStartRange_ = ATK_START_RANGE;
 }
 
 void Enemy::Update(void)
@@ -177,13 +179,9 @@ void Enemy::UpdateNml(void)
 	//終了処理
 	//**********************************************************
 
-	//攻撃開始判定
-	if (Collision::GetInstance().Search(trans_.pos, targetPos_, ATK_START_RANGE))
-	{
-		//攻撃準備開始
-		ChangeState(STATE::ALERT);
-		return;
-	}
+
+	/*ゲームシーンにあります*/
+
 
 	//**********************************************************
 	//動作処理
@@ -198,7 +196,7 @@ void Enemy::UpdateNml(void)
 	moveSpeed_ = 0.0f;
 	
 	//索敵
-	if (Collision::GetInstance().Search(trans_.pos, targetPos_, SEARCH_RANGE))
+	if (isMove_)
 	{
 		//移動処理
 		Move();
@@ -313,9 +311,9 @@ void Enemy::Draw(void)
 	//敵の当たり判定
 	DrawSphere3D(colPos_, radius_, 4, 0xffff00, 0xffff00, false);
 	//敵の索敵判定
-	DrawSphere3D(trans_.pos, SEARCH_RANGE, 2, Collision::GetInstance().Search(trans_.pos,targetPos_,SEARCH_RANGE) ? 0xff0000 : 0xffffff, Collision::GetInstance().Search(trans_.pos, targetPos_, SEARCH_RANGE) ? 0xff0000 : 0xffffff, false);
+	DrawSphere3D(trans_.pos, searchRange_, 2, isMove_ ? 0xff0000 : 0xffffff, isMove_ ? 0xff0000 : 0xffffff, false);
 	//敵の索敵判定
-	DrawSphere3D(trans_.pos, ATK_START_RANGE, 2, Collision::GetInstance().Search(trans_.pos, targetPos_, ATK_START_RANGE) ? 0xff0000 : 0xffffff, Collision::GetInstance().Search(trans_.pos, targetPos_, ATK_START_RANGE) ? 0x0000ff : 0xffffff, false);
+	DrawSphere3D(trans_.pos, atkStartRange_, 2, state_ == STATE::ALERT ? 0xff0000 : 0xffffff, state_ == STATE::ALERT ? 0x0000ff : 0xffffff, false);
 	//ターゲットの座標
 	DrawSphere3D(targetPos_, 3.0f, 10, 0x0000ff, 0x0000ff, true);
 #endif // DEBUG_ENEMY
