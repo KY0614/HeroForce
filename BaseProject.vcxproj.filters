@@ -27,6 +27,9 @@
     <ClCompile Include="Src\Object\System\LevelBase.cpp" />
     <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
     <ClCompile Include="Src\Object\Stage\StageBase.cpp" />
+    <ClCompile Include="Src\Object\System\Carsor.cpp" />
+    <ClCompile Include="Src\Object\System\LevelupNotice.cpp" />
+    <ClCompile Include="Src\Object\System\PowerSelect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\Character\Enemy.h" />
@@ -112,6 +115,9 @@
     <ClInclude Include="Src\Object\System\LevelBase.h" />
     <ClInclude Include="Src\Object\Stage\StageObject.h" />
     <ClInclude Include="Src\Object\Stage\SkyDome.h" />
+    <ClInclude Include="Src\Object\System\Carsor.h" />
+    <ClInclude Include="Src\Object\System\LevelupNotice.h" />
+    <ClInclude Include="Src\Object\System\PowerSelect.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">
