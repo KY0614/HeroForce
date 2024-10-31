@@ -3,6 +3,7 @@
 #include <string>
 #include "../Lib/nlohmann/json.hpp"
 #include "../Common/Transform.h"
+#include "StageBase.h"
 
 // í∑Ç¢ÇÃÇ≈namespaceÇÃè»ó™
 using json = nlohmann::json;
@@ -15,13 +16,12 @@ public:
 	void Draw();
 	void Release();
 
-	VECTOR GetPos();
-	VECTOR GetRot();
-	VECTOR GetScl();
+	Transform GetTrans() const;
+
 
 private:
-	//int modelid_;
 
 	Transform transform_;
+
 
 };
