@@ -1,14 +1,10 @@
 #include<DxLib.h>
 #include<cmath>
-#include"../Application.h"
-#include"../Manager/Resource.h"
-#include"../Manager/InputManager.h"
-#include"../Manager/ResourceManager.h"
-#include"../Utility/AsoUtility.h"
 #include"../../Application.h"
 #include"../../Manager/Resource.h"
 #include"../../Manager/InputManager.h"
 #include"../../Manager/ResourceManager.h"
+#include"../../Manager/Collision.h"
 #include"../../Utility/AsoUtility.h"
 #include "Enemy.h"
 
@@ -69,7 +65,7 @@ void Enemy::SetParam(void)
 	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_AXEMAN));
 
 	//※個々で設定する
-	colRadius_ = MY_COL_RADIUS;
+	radius_ = MY_COL_RADIUS;
 	exp_ = 1.0f;
 	hp_ = 5;
 	stunDefMax_ = 100;
@@ -138,6 +134,32 @@ void Enemy::Damage(const int _damage, const int _stunPow)
 	if (!IsAlive()){ ResetAnim(ANIM::DEATH, DEFAULT_SPEED_ANIM); }
 }
 
+void Enemy::ChangeState(const STATE _state)
+{
+	//状態遷移
+	state_ = _state;
+
+	//状態遷移における初期化
+	switch (state_)
+	{
+	case Enemy::STATE::NORMAL:
+		break;
+	
+	case Enemy::STATE::ALERT:
+		//警告カウンタ初期化
+		alertCnt_ = 0.0f;
+		break;
+
+	case Enemy::STATE::ATTACK:
+		break;
+	
+	case Enemy::STATE::BREAK:
+		//攻撃休憩時間の初期化
+		breakCnt_ = 0;
+		break;
+	}
+}
+
 void Enemy::InitAnimNum()
 {
 	//共通アニメーション
@@ -156,10 +178,11 @@ void Enemy::UpdateNml(void)
 	//**********************************************************
 
 	//攻撃開始判定
-	if (Search(trans_.pos, targetPos_, ATK_START_RANGE))
+	if (Collision::GetInstance().Search(trans_.pos, targetPos_, ATK_START_RANGE))
 	{
 		//攻撃準備開始
 		ChangeState(STATE::ALERT);
+		return;
 	}
 
 	//**********************************************************
@@ -175,7 +198,7 @@ void Enemy::UpdateNml(void)
 	moveSpeed_ = 0.0f;
 	
 	//索敵
-	if (Search(trans_.pos, targetPos_, SEARCH_RANGE))
+	if (Collision::GetInstance().Search(trans_.pos, targetPos_, SEARCH_RANGE))
 	{
 		//移動処理
 		Move();
@@ -191,12 +214,8 @@ void Enemy::UpdateAlert(void)
 	//警告カウンタが終わったなら攻撃開始
 	if (!IsAlertTime())
 	{
-		//警告カウンタ初期化
-		alertCnt_ = 0.0f;
-
 		//攻撃状態に遷移
 		ChangeState(STATE::ATTACK);
-
 		return;
 	}
 
@@ -208,7 +227,7 @@ void Enemy::UpdateAlert(void)
 	alertCnt_++;
 
 	//生成が終わってないなら生成する
-	if (atk_.IsFinishMotion())
+	if (nowSkill_.front().IsFinishMotion())
 	{
 		//ランダムで攻撃生成
 		RandSkill();
@@ -218,11 +237,10 @@ void Enemy::UpdateAlert(void)
 void Enemy::UpdateAtk(void)
 {
 	//攻撃が終わっているなら状態遷移
-	if (atk_.IsFinishMotion())
+	if (nowSkill_.back().IsFinishMotion())
 	{
 		//休憩状態に遷移
 		ChangeState(STATE::BREAK);
-
 		return;
 	}
 
@@ -238,8 +256,6 @@ void Enemy::UpdateAtk(void)
 		//攻撃のカウンタ
 		nowSkill.cnt_++;
 	}
-	//攻撃のカウンタ
-	atk_.cnt_++;
 
 	//攻撃処理
 	Attack();
@@ -254,9 +270,6 @@ void Enemy::UpdateBreak(void)
 	//休憩時間が終わったら
 	if (!IsBreak())
 	{
-		//攻撃休憩時間の初期化
-		breakCnt_ = 0;
-
 		//通常状態に遷移
 		ChangeState(STATE::NORMAL);
 		return;
@@ -271,23 +284,6 @@ void Enemy::UpdateBreak(void)
 
 	//攻撃休憩時間カウンタ
 	breakCnt_++;
-}
-
-const VECTOR Enemy::GetTargetVec(void)const
-{
-	//標的への方向ベクトルを取得
-	VECTOR targetVec = VSub(targetPos_, trans_.pos);
-
-	//正規化
-	targetVec = VNorm(targetVec);
-
-	//Y座標は必要ないので要素を消す
-	targetVec = { targetVec.x,0.0f,targetVec.z };
-
-	//移動量を求める
-	VECTOR ret = VScale(targetVec, moveSpeed_);
-
-	return ret;
 }
 
 void Enemy::Draw(void)
@@ -315,11 +311,11 @@ void Enemy::Draw(void)
 		break;
 	}
 	//敵の当たり判定
-	DrawSphere3D(colPos_, colRadius_, 4, 0xffff00, 0xffff00, false);
+	DrawSphere3D(colPos_, radius_, 4, 0xffff00, 0xffff00, false);
 	//敵の索敵判定
-	DrawSphere3D(trans_.pos, SEARCH_RANGE, 2, Search(trans_.pos,targetPos_,SEARCH_RANGE) ? 0xff0000 : 0xffffff, Search(trans_.pos, targetPos_, SEARCH_RANGE) ? 0xff0000 : 0xffffff, false);
+	DrawSphere3D(trans_.pos, SEARCH_RANGE, 2, Collision::GetInstance().Search(trans_.pos,targetPos_,SEARCH_RANGE) ? 0xff0000 : 0xffffff, Collision::GetInstance().Search(trans_.pos, targetPos_, SEARCH_RANGE) ? 0xff0000 : 0xffffff, false);
 	//敵の索敵判定
-	DrawSphere3D(trans_.pos, ATK_START_RANGE, 2, Search(trans_.pos, targetPos_, ATK_START_RANGE) ? 0xff0000 : 0xffffff, Search(trans_.pos, targetPos_, ATK_START_RANGE) ? 0x0000ff : 0xffffff, false);
+	DrawSphere3D(trans_.pos, ATK_START_RANGE, 2, Collision::GetInstance().Search(trans_.pos, targetPos_, ATK_START_RANGE) ? 0xff0000 : 0xffffff, Collision::GetInstance().Search(trans_.pos, targetPos_, ATK_START_RANGE) ? 0x0000ff : 0xffffff, false);
 	//ターゲットの座標
 	DrawSphere3D(targetPos_, 3.0f, 10, 0x0000ff, 0x0000ff, true);
 #endif // DEBUG_ENEMY
@@ -329,28 +325,30 @@ void Enemy::Draw(void)
 
 	for (auto& nowSkill : nowSkill_)
 	{
-		for (auto& skillColRadius : nowSkillColRadius_)
-		{
-			//攻撃の描画
-			if (nowSkill.IsAttack()) { DrawSphere3D(nowSkill.pos_, skillColRadius, 50.0f, 0xff0f0f, 0xff0f0f, true); }
-			else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, skillColRadius, 5.0f, 0xff0f0f, 0xff0f0f, false); }
-		}
+		//攻撃の描画
+		if (nowSkill.IsAttack()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
+		else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
 	}
 	//攻撃の描画
-	if (atk_.IsAttack()) { DrawSphere3D(atk_.pos_, nowSkillColRadius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
-	else if (atk_.IsBacklash()) { DrawSphere3D(atk_.pos_, nowSkillColRadius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
+	//if (atk_.IsAttack()) { DrawSphere3D(atk_.pos_, nowSkillColRadius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
+	//else if (atk_.IsBacklash()) { DrawSphere3D(atk_.pos_, nowSkillColRadius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
 }
 
-const bool Enemy::Search(VECTOR _myPos, VECTOR _targetPos, float _rangeRadius) const
+const VECTOR Enemy::GetTargetVec(void)const
 {
 	//標的への方向ベクトルを取得
-	VECTOR targetVec = VSub(_targetPos, _myPos);
+	VECTOR targetVec = VSub(targetPos_, trans_.pos);
 
-	//大きさを求める
-	float vecSize = hypot(targetVec.x, targetVec.z);
+	//正規化
+	targetVec = VNorm(targetVec);
 
-	//判定
-	return _rangeRadius - vecSize > 0;
+	//Y座標は必要ないので要素を消す
+	targetVec = { targetVec.x,0.0f,targetVec.z };
+
+	//移動量を求める
+	VECTOR ret = VScale(targetVec, moveSpeed_);
+
+	return ret;
 }
 
 void Enemy::Move(void)
@@ -377,10 +375,6 @@ void Enemy::InitSkill(void)
 	//ここにスキルの数分アニメーションを格納させる
 	skillAnims_.emplace_back(ANIM::SKILL_1);
 	skillAnims_.emplace_back(ANIM::SKILL_2);
-
-	//ここにスキルの当たり判定半径を格納させる
-	skillColRadius_.emplace_back(SKILL_1_COL_RADIUS);
-	skillColRadius_.emplace_back(SKILL_2_COL_RADIUS);
 
 	//初期スキルを設定しておく
 	RandSkill();
@@ -413,14 +407,11 @@ void Enemy::Attack(void)
 
 	for (auto& nowSkill : nowSkill_)
 	{
-		for (auto& skillColRadius : nowSkillColRadius_)
-		{
-			//座標の設定
-			nowSkill.pos_ = VAdd(colPos_, VScale(dir, skillColRadius));
-		}
+		//座標の設定
+		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_));
 	}
 	//座標の設定
-	atk_.pos_ = VAdd(colPos_, VScale(dir, nowSkillColRadius_));
+	//atk_.pos_ = VAdd(colPos_, VScale(dir, nowSkillColRadius_));
 }
 
 void Enemy::RandSkill(void)
@@ -457,9 +448,8 @@ void Enemy::RandSkill(void)
 
 	//ランダムでとってきた攻撃の種類を今から発動するスキルに設定
 	nowSkill_.emplace_back(skills_[rand]);
-	atk_ = skills_[rand];
+	//atk_ = skills_[rand];
 	nowSkillAnim_ = skillAnims_[rand];
-	nowSkillColRadius_.emplace_back(skillColRadius_[rand]);
 
 	//カウンタの初期化
 	nowSkill_.back().ResetCnt();

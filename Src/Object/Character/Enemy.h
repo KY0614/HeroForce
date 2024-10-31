@@ -37,10 +37,6 @@ public:
 	static constexpr float SEARCH_RANGE = 120.0f;	//索敵判定の大きさ
 	static constexpr float ATK_START_RANGE = 50.0f;	//攻撃開始判定の大きさ
 
-	//スキル関係
-	static constexpr ATK SKILL_1 = { AsoUtility::VECTOR_ZERO,1.0f,60.0f,120.0f,0.0f };	//スキル１
-	static constexpr ATK SKILL_2 = { AsoUtility::VECTOR_ZERO,5.0f,180.0f,300.0f,0.0f };	//スキル２
-
 	//スキルの当たり判定半径
 	static constexpr float SKILL_1_COL_RADIUS = 10.0f;	//スキル１
 	static constexpr float SKILL_2_COL_RADIUS = 24.0f;	//スキル２
@@ -90,26 +86,14 @@ public:
 	//スタン中かどうかを返す
 	const bool IsStun(void)const { return stunDef_ > stunDefMax_; }
 
-	/// <summary>
-	/// 目的の範囲に対象が入ったかを返す
-	/// </summary>
-	/// <param name="_myPos">自身の座標</param>
-	/// <param name="_targetPos">対象の座標</param>
-	/// <param name="_rangeRadius">範囲用の半径</param>
-	/// <returns></returns>
-	const bool Search(VECTOR _myPos, VECTOR _targetPos, float _rangeRadius)const;
-
 	//敵自身の当たり判定座標を返す
 	//const VECTOR GetColPos(void)const { return colPos_; }
 
 	//現在のスキルの座標を返す
 	//const VECTOR GetNowSkillPos(void)const { return nowSkill_.pos_; }
 
-	//現在のスキルの当たり判定半径を返す
-	const float	GetNowSkillColRadius(void)const { /*TODO*/ /*return nowSkillColRadius_;*/ }
-
-	//敵自身の当たり判定半径を返す
-	const float	GetMyColRadius(void)const { return colRadius_; }
+	//現在のスキルの全配列を返す
+	const std::vector<ATK> GetAtks(void)const { return nowSkill_; }
 
 	//取得経験値を返す
 	const float GetExp(void)const { return exp_; }
@@ -125,7 +109,7 @@ public:
 	/// 状態遷移
 	/// </summary>
 	/// <param name="_state">遷移する状態</param>
-	void ChangeState(const STATE _state) { state_ = _state; }
+	void ChangeState(const STATE _state);
 
 protected:
 
@@ -153,12 +137,8 @@ private:
 	
 	std::vector<ANIM> skillAnims_;		//スキルに対応したアニメーション
 	ANIM nowSkillAnim_;					//現在のスキルアニメーション
-	
-	std::vector<float>skillColRadius_;		//スキルの当たり判定半径
-	std::vector<float> nowSkillColRadius_;	//現在のスキルの当たり判定半径
-	
-	VECTOR colPos_;		//敵自身の当たり判定座標
-	float colRadius_;	//敵自身の当たり判定半径
+		
+	VECTOR colPos_;			//敵自身の当たり判定用の相対座標
 
 	float searchRange_;		//索敵範囲
 	float atkStartRange_;	//攻撃開始範囲
