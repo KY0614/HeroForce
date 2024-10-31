@@ -1,8 +1,8 @@
 #pragma once
-#include"../Utility/AsoUtility.h"
-#include"../Manager/SceneManager.h"
+#include"../../Utility/AsoUtility.h"
+#include"../../Manager/SceneManager.h"
 #include<map>
-#include "UnitBase.h"
+#include "../UnitBase.h"
 class PlayerBase:
     public UnitBase
 {
@@ -50,6 +50,9 @@ public:
     static constexpr float COL_ATK = SCALE * 100.0f;
     static constexpr float COL_SKILL1 = SCALE * 150.0f;
     static constexpr float COL_SKILL2 = SCALE * 200.0f;
+    static constexpr float COL_ATK = SCALE * 200.0f;
+    //自身の当たり判定半径
+    static constexpr float MY_COL_RADIUS = 20.0f;
 
 
 
@@ -59,8 +62,16 @@ public:
     void Destroy(void)override;
     virtual void SetParam(void);
     void Init(void)override;
-    virtual void Update(void)override;
-    virtual void Draw(void)override;
+    void Update(void)override;
+    void Draw(void)override;
+
+
+    //回避関連
+   //---------------------------------------
+   const  bool IsDodge(void) { return 0.0f < frameDodge_ && frameDodge_ < FRAME_DODGE_MAX; }
+
+   //ダメージ関数
+   void Damage(void);
     
 protected:
 
@@ -153,12 +164,9 @@ protected:
     //攻撃処理
     bool IsAtkAction(void) { return atk_.IsAttack() || atk_.IsBacklash(); }
 
-
-    ATK atk_;
     
     //回避関連
     //---------------------------------------
-    bool IsDodge(void) { return 0.0f<frameDodge_&&frameDodge_ < FRAME_DODGE_MAX; }
     //クールタイム中かどうか
     bool IsCoolDodge(void){return dodgeCdt_ < DODGE_CDT_MAX;}
     void Dodge(void);
@@ -209,8 +217,7 @@ protected:
 
      std::string skillNum_;
 
-     //ダメージ関数
-     void Damage(void);
+  
 
      int leftStickX_;
 
