@@ -5,6 +5,7 @@
 #include "../Scene/GameScene.h"
 #include "ResourceManager.h"
 #include "Camera.h"
+#include"Collision.h"
 #include "SceneManager.h"
 
 SceneManager* SceneManager::instance_ = nullptr;
@@ -25,6 +26,9 @@ SceneManager& SceneManager::GetInstance(void)
 
 void SceneManager::Init(void)
 {
+
+	//îªíËÇÃê∂ê¨
+	Collision::CreateInstance();
 
 	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;

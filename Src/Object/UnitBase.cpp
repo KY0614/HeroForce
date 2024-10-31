@@ -72,6 +72,16 @@ const float UnitBase::GetDef(void) const
 	return def_;
 }
 
+const UnitBase::ATK UnitBase::GetAtk(void) const
+{
+	return atk_;
+}
+
+const float UnitBase::GetRadius(void) const
+{
+	return radius_;
+}
+
 /// <summary>
 /// アニメーション関数
 /// </summary>
@@ -79,7 +89,7 @@ const float UnitBase::GetDef(void) const
 void UnitBase::Anim(void)
 {
 	// アニメーション再生
-// 経過時間の取得
+	// 経過時間の取得
 	float deltaTime = 1.0f / SceneManager::DEFAULT_FPS;
 	// アニメーション時間の進行
 	stepAnim_ += (speedAnim_ * deltaTime);
@@ -122,11 +132,30 @@ void UnitBase::ResetAnim(const ANIM _anim, const float _speed)
 	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
 }
 
+void UnitBase::SetIsHit(const bool _flag)
+{
+	atk_.isHit_ = _flag;
+}
+
 //アニメ終了時の動き
 void UnitBase::FinishAnim(void)
 {
 	//ループ再生
 	stepAnim_ = 0.0f;
+}
+
+void UnitBase::CntUp(float _count)
+{
+	// 経過時間の取得
+	float deltaTime = 1.0f / SceneManager::DEFAULT_FPS;
+	_count += deltaTime;
+}
+
+void UnitBase::CntDown(float _count)
+{
+	// 経過時間の取得
+	float deltaTime = 1.0f / SceneManager::DEFAULT_FPS;
+	_count -= deltaTime;
 }
 
 

@@ -1,50 +1,60 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ソース ファイル">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="ヘッダー ファイル">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="リソース ファイル">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="ソース ファイル\Common">
-      <UniqueIdentifier>{17ebc4b5-4894-4fd2-b50b-bd2b8ed18bdb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Manager">
-      <UniqueIdentifier>{7f661b68-2ac1-46f0-a72e-2c5b31d1c61f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Object">
-      <UniqueIdentifier>{600f44ad-e11e-4fc6-b165-fde3b508648d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Scene">
-      <UniqueIdentifier>{1c6f465c-0c6c-4886-b758-f7e0681f0a4a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Utility">
-      <UniqueIdentifier>{e2873e1a-e651-4a1d-9c66-b9823792c6aa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Common">
-      <UniqueIdentifier>{16171512-ac06-49c0-8668-623c501b7833}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Manager">
-      <UniqueIdentifier>{c46d3100-17c5-4849-839b-754795e9709b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Object">
-      <UniqueIdentifier>{604e2437-eac4-4057-ad42-8b1af55e7c79}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Scene">
-      <UniqueIdentifier>{438a9bb0-9805-48c9-8cb7-8da84d09f24e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Utility">
-      <UniqueIdentifier>{92d9e735-7050-4ee3-b223-779bcd3392de}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="Src\Object\Character\Enemy.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerBase.cpp" />
+    <ClCompile Include="Src\Object\Arrow.cpp" />
+    <ClCompile Include="Src\Object\UnitBase.cpp" />
+    <ClCompile Include="Src\Scene\GameScene.cpp" />
+    <ClCompile Include="Src\Common\IntVector3.cpp" />
+    <ClCompile Include="Src\Object\Common\Transform.cpp" />
+    <ClCompile Include="Src\Application.cpp" />
+    <ClCompile Include="Src\Common\Fader.cpp" />
+    <ClCompile Include="Src\Common\Quaternion.cpp" />
+    <ClCompile Include="Src\Common\Vector2.cpp" />
+    <ClCompile Include="Src\main.cpp" />
+    <ClCompile Include="Src\Manager\Camera.cpp" />
+    <ClCompile Include="Src\Manager\InputManager.cpp" />
+    <ClCompile Include="Src\Manager\Resource.cpp" />
+    <ClCompile Include="Src\Manager\ResourceManager.cpp" />
+    <ClCompile Include="Src\Manager\SceneManager.cpp" />
+    <ClCompile Include="Src\Object\Grid.cpp" />
+    <ClCompile Include="Src\Scene\SceneBase.cpp" />
+    <ClCompile Include="Src\Scene\TitleScene.cpp" />
+    <ClCompile Include="Src\Utility\AsoUtility.cpp" />
+    <ClCompile Include="Src\Manager\Collision.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
+    <ClCompile Include="Src\Object\System\LevelBase.cpp" />
+    <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageBase.cpp" />
+    <ClCompile Include="Src\Object\System\Carsor.cpp" />
+    <ClCompile Include="Src\Object\System\LevelupNotice.cpp" />
+    <ClCompile Include="Src\Object\System\PowerSelect.cpp" />
+    <ClCompile Include="Src\Common\ImageFader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\Enemy.h" />
+    <ClInclude Include="Src\Object\Arrow.h" />
+    <ClInclude Include="Src\Object\UnitBase.h" />
+    <ClInclude Include="Src\Scene\GameScene.h" />
+    <ClInclude Include="Src\Common\IntVector3.h" />
+    <ClInclude Include="Src\Object\Common\Transform.h" />
+    <ClInclude Include="Src\Application.h" />
+    <ClInclude Include="Src\Common\Fader.h" />
+    <ClInclude Include="Src\Common\Quaternion.h" />
+    <ClInclude Include="Src\Common\Vector2.h" />
+    <ClInclude Include="Src\main.h" />
+    <ClInclude Include="Src\Manager\Camera.h" />
+    <ClInclude Include="Src\Manager\InputManager.h" />
+    <ClInclude Include="Src\Manager\Resource.h" />
+    <ClInclude Include="Src\Manager\ResourceManager.h" />
+    <ClInclude Include="Src\Manager\SceneManager.h" />
+    <ClInclude Include="Src\Object\Grid.h" />
+    <ClInclude Include="Src\Scene\SceneBase.h" />
+    <ClInclude Include="Src\Scene\TitleScene.h" />
+    <ClInclude Include="Src\Utility\AsoUtility.h" />
+    <ClInclude Include="Src\Object\Character\PlayerBase.h" />
+    <ClInclude Include="Src\Manager\Collision.h" />
     <ClCompile Include="Src\Application.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -99,12 +109,17 @@
     <ClCompile Include="Src\Object\UnitBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\PlayerBase.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Object\Arrow.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClInclude Include="Src\Object\Stage\StageBase.h" />
+    <ClInclude Include="Src\Object\System\LevelBase.h" />
+    <ClInclude Include="Src\Object\Stage\StageObject.h" />
+    <ClInclude Include="Src\Object\Stage\SkyDome.h" />
+    <ClInclude Include="Src\Object\System\Carsor.h" />
+    <ClInclude Include="Src\Object\System\LevelupNotice.h" />
+    <ClInclude Include="Src\Object\System\PowerSelect.h" />
+    <ClInclude Include="Src\Common\ImageFader.h" />
     <ClCompile Include="Src\Object\PlayerCpu.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -162,6 +177,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\UnitBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Object\Arrow.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Arrow.h">

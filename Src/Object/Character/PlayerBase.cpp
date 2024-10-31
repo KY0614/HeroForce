@@ -1,6 +1,6 @@
-#include"../Manager/InputManager.h"
-#include"../Manager/SceneManager.h"
-#include"../Manager/ResourceManager.h"
+#include"../../Manager/InputManager.h"
+#include"../../Manager/SceneManager.h"
+#include"../../Manager/ResourceManager.h"
 #include "PlayerBase.h"
 
 
@@ -55,6 +55,10 @@ void PlayerBase::SetParam(void)
 	);
 
 	hp_ = MAX_HP;
+
+	//“–‚½‚è”»’è‚Ìİ’è
+	radius_ = MY_COL_RADIUS;
+	atk_.radius_ = COL_ATK;
 }
 
 void PlayerBase::Init(void)

@@ -19,9 +19,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Common\ImageFader.cpp" />
+    <ClCompile Include="Src\Manager\Collision.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerBase.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
+    <ClCompile Include="Src\Object\System\Carsor.cpp" />
+    <ClCompile Include="Src\Object\System\LevelBase.cpp" />
+    <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
     <ClCompile Include="Src\Object\PlayerCpu.cpp" />
     <ClCompile Include="Src\Object\PlayerBase.cpp" />
     <ClCompile Include="Src\Object\Arrow.cpp" />
+    <ClCompile Include="Src\Object\System\LevelupNotice.cpp" />
+    <ClCompile Include="Src\Object\System\PowerSelect.cpp" />
     <ClCompile Include="Src\Object\UnitBase.cpp" />
     <ClCompile Include="Src\Scene\GameScene.cpp" />
     <ClCompile Include="Src\Common\IntVector3.cpp" />
@@ -40,8 +50,20 @@
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Scene\TitleScene.cpp" />
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Common\ImageFader.h" />
+    <ClInclude Include="Src\Manager\Collision.h" />
+    <ClInclude Include="Src\Object\Character\Enemy.h" />
+    <ClInclude Include="Src\Object\Arrow.h" />
+    <ClInclude Include="Src\Object\Character\PlayerBase.h" />
+    <ClInclude Include="Src\Object\Stage\SkyDome.h" />
+    <ClInclude Include="Src\Object\Stage\StageObject.h" />
+    <ClInclude Include="Src\Object\System\Carsor.h" />
+    <ClInclude Include="Src\Object\System\LevelBase.h" />
+    <ClInclude Include="Src\Object\System\LevelupNotice.h" />
+    <ClInclude Include="Src\Object\System\PowerSelect.h" />
     <ClInclude Include="Src\Object\PlayerCpu.h" />
     <ClInclude Include="Src\Object\Arrow.h" />
     <ClInclude Include="Src\Object\PlayerBase.h" />
@@ -63,6 +85,7 @@
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Scene\TitleScene.h" />
     <ClInclude Include="Src\Utility\AsoUtility.h" />
+    <ClInclude Include="Src\Object\Stage\StageBase.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -151,7 +174,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir)Src/Lib/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -187,7 +210,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir)Src/Lib/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
