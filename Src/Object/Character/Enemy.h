@@ -22,8 +22,12 @@ public:
 	//アニメーション速度
 	static constexpr float DEFAULT_SPEED_ANIM = 20.0f;	//デフォルトのアニメーション速度
 
-	//モデルの中心座標への相対座標
-	static constexpr VECTOR  LOCAL_CENTER_POS = { 0.0f,20.0f,0.0f };
+	//モデル関係
+	static constexpr float MODEL_SIZE = 0.3f;										//モデルの大きさ
+	static constexpr VECTOR  LOCAL_CENTER_POS = { 0.0f,100.0f * MODEL_SIZE,0.0f };	//モデルの中心座標への相対座標
+	
+	//敵自身の当たり判定半径
+	static constexpr float MY_COL_RADIUS = 100.0f * MODEL_SIZE;
 
 	//攻撃関係
 	static constexpr float ALERT_TIME = 120.0f;	//攻撃の警告時間
@@ -34,8 +38,8 @@ public:
 	static constexpr float RUN_SPEED = 4.0f;	//走りの速度
 
 	//範囲関係
-	static constexpr float SEARCH_RANGE = 120.0f;	//索敵判定の大きさ
-	static constexpr float ATK_START_RANGE = 50.0f;	//攻撃開始判定の大きさ
+	static constexpr float SEARCH_RANGE = 800.0f * MODEL_SIZE;		//索敵判定の大きさ
+	static constexpr float ATK_START_RANGE = 250.0f * MODEL_SIZE;	//攻撃開始判定の大きさ
 
 	//スキルの当たり判定半径
 	static constexpr float SKILL_1_COL_RADIUS = 10.0f;	//スキル１
@@ -44,9 +48,6 @@ public:
 	//スキル関係
 	static constexpr ATK SKILL_1 = { AsoUtility::VECTOR_ZERO,SKILL_1_COL_RADIUS,1.0f,60.0f,120.0f,0.0f };	//スキル１
 	static constexpr ATK SKILL_2 = { AsoUtility::VECTOR_ZERO,SKILL_2_COL_RADIUS,5.0f,180.0f,300.0f,0.0f };	//スキル２
-
-	//敵自身の当たり判定半径
-	static constexpr float MY_COL_RADIUS = 20.0f;
 
 	//現在状態
 	enum class STATE
@@ -98,6 +99,18 @@ public:
 	//取得経験値を返す
 	const float GetExp(void)const { return exp_; }
 
+	//索敵範囲を返す
+	const float GetSearchRange(void) { return searchRange_; }
+
+	//攻撃開始範囲を返す
+	const float GetAtkStartRange(void) { return atkStartRange_; }
+
+	/// <summary>
+	/// 移動状態を変更
+	/// </summary>
+	/// <param name="_isMove">移動するどうか(true:移動する)</param>
+	void SetIsMove(const bool _isMove) { isMove_ = _isMove; }
+
 	/// <summary>
 	/// ダメージ
 	/// </summary>
@@ -143,6 +156,7 @@ private:
 	float searchRange_;		//索敵範囲
 	float atkStartRange_;	//攻撃開始範囲
 	float moveSpeed_;		//移動量
+	bool isMove_;			//移動しているかどうか(true:移動中)
 
 	int stunDefMax_;	//気絶防御値の最大値
 	int stunDef_;		//気絶防御値
