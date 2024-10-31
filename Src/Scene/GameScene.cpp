@@ -2,6 +2,7 @@
 #include "../Manager/Camera.h"
 #include "../Object/Grid.h"
 #include "../Object/PlayerBase.h"
+#include "../Object/PlayerCpu.h"
 #include "../Object/Common/Transform.h"
 #include "GameScene.h"
 
@@ -25,6 +26,9 @@ void GameScene::Init(void)
 	playerB_ = new PlayerBase();
 	playerB_->Init();
 
+	//playerCpu_ = new PlayerCpu();
+	//playerCpu_->Init();
+
 
 	// カメラモード　：フリーカメラ
 	Camera* camera = SceneManager::GetInstance().GetCamera();
@@ -37,12 +41,14 @@ void GameScene::Update(void)
 {
 	grid_->Update();
 	playerB_->Update();
+	//playerCpu_->Update();
 }
 
 void GameScene::Draw(void)
 {
 	grid_->Draw();
 	playerB_->Draw();
+	//playerCpu_->Draw();
 }
 
 void GameScene::Release(void)

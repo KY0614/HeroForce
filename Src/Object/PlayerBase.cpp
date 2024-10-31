@@ -223,7 +223,7 @@ void PlayerBase::KeyBoardControl(void)
 
 	if (ins.IsTrgDown(KEY_INPUT_Q)&&IsSkillable())
 	{
-		Count(skillCnt_[SKILL_NUM::ONE]);
+		Count(skills_[skillNo_].cnt_);
 		ResetAnim(ANIM::SKILL_1,SPEED_ANIM);
 	}
 

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\PlayerCpu.cpp" />
     <ClCompile Include="Src\Object\PlayerBase.cpp" />
     <ClCompile Include="Src\Object\Arrow.cpp" />
     <ClCompile Include="Src\Object\UnitBase.cpp" />
@@ -41,6 +42,9 @@
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\PlayerCpu.h" />
+    <ClInclude Include="Src\Object\Arrow.h" />
+    <ClInclude Include="Src\Object\PlayerBase.h" />
     <ClInclude Include="Src\Object\UnitBase.h" />
     <ClInclude Include="Src\Scene\GameScene.h" />
     <ClInclude Include="Src\Common\IntVector3.h" />

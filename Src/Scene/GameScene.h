@@ -1,5 +1,6 @@
 #pragma once
 #include"../Object/PlayerBase.h"
+#include"../Object/PlayerCpu.h"
 #include "SceneBase.h"
 
 class Grid;
@@ -25,5 +26,6 @@ private:
 	Grid* grid_;
 	//プレイヤー（テスト）
 	PlayerBase* playerB_;
+	PlayerCpu* playerCpu_;
 };
 

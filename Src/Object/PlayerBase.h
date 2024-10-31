@@ -200,8 +200,6 @@ protected:
      /// </summary>
      /// <param name="_frameSkillNo">スキルフレーム最大値(今はスキル1か2)</param>
      /// <returns>スキル中/スキル中でない</returns>
-     bool IsSkill1Action(void) { return skills_[SKILL_NUM::ONE].IsAttack() || skills_[SKILL_NUM::ONE].IsBacklash(); }
-     bool IsSkill2Action(void) { return skills_[SKILL_NUM::TWO].IsAttack() || skills_[SKILL_NUM::TWO].IsBacklash(); }
 
      bool IsSkillAction(SKILL_NUM _num) { return skills_[_num].IsAttack() || skills_[_num].IsBacklash(); }
      //すべてのスキルが使用中かどうか
@@ -216,15 +214,6 @@ protected:
 
      //スキルごとに再生するアニメーションを決める
      void SkillAnim(void);
-
-     //スキル持続時間
-     std::map<SKILL_NUM,float> skillCnt_;
-
-     //スキルクールタイム
-     std::map<SKILL_NUM,float> skillCdt_;
-
-     std::string skillNum_;
-
      //ダメージ関数
      void Damage(void);
 
