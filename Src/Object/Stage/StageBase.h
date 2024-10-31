@@ -11,6 +11,12 @@ class StageBase
 {
 public:
 
+	//衝突判定用定数
+	static constexpr float ROCK01_COLI_RADIUS = 50.0f;	//岩1
+	static constexpr float ROCK02_COLI_RADIUS = 50.0f;	//岩2
+	static constexpr float STUMP_COLI_RADIUS = 40.0f;	//切り株
+	static constexpr float TREE_COLI_RADIUS = 40.0f;	//木々
+
 	enum class MODEL_TYPE
 	{
 		BUSH,
@@ -48,6 +54,9 @@ public:
 
 	//JSON読み込み
 	void JsonLoad();
+
+	//デバッグ用描画
+	void DebugDraw();
 
 	//ゲッター
 	std::vector<Transform>
