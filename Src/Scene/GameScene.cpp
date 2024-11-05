@@ -66,7 +66,7 @@ void GameScene::Update(void)
 void GameScene::Draw(void)
 {
 	sky_->Draw();
-	grid_->Draw();
+	//grid_->Draw();
 #ifdef _DEBUG_COL
 	playerTest_->Draw();
 	enemyTest_->Draw();
