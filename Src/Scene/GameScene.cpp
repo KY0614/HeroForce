@@ -50,11 +50,12 @@ void GameScene::Init(void)
 
 void GameScene::Update(void)
 {
-	grid_->Update();
+	//grid_->Update();
 	level_->Update();
 
 #ifdef _DEBUG_COL
 	playerTest_->Update();
+	enemyTest_->SetTargetPos(playerTest_->GetPos());
 	enemyTest_->Update();
 #endif
 
@@ -131,7 +132,7 @@ void GameScene::Collision(void)
 		if (col.IsHitAtk(playerTest_, enemyTest_))	
 		{
 			//”í’e
-			enemyTest_->Damage(2, 4);				
+			enemyTest_->Damage(5, 4);				
 			//UŒ‚”»’è‚ÌI—¹
 			playerTest_->SetIsHit(true);			
 		}
