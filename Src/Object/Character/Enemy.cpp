@@ -434,6 +434,9 @@ void Enemy::RandSkill(void)
 			//カウンタの初期化
 			nowSkill.ResetCnt();
 
+			//ヒット判定の初期化
+			nowSkill_.back().isHit_ = false;
+
 			//処理終了
 			return;
 		}
@@ -450,4 +453,7 @@ void Enemy::RandSkill(void)
 
 	//カウンタの初期化
 	nowSkill_.back().ResetCnt();
+
+	//ヒット判定の初期化
+	nowSkill_.back().isHit_ = false;
 }
