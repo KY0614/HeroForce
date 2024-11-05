@@ -111,6 +111,12 @@ public:
 	void SetIsMove(const bool _isMove) { isMove_ = _isMove; }
 
 	/// <summary>
+	/// 標的の座標を取得
+	/// </summary>
+	/// <param name="_targetPos">標的の座標</param>
+	void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; }
+
+	/// <summary>
 	/// ダメージ
 	/// </summary>
 	/// <param name="_damage">ダメージ量</param>
