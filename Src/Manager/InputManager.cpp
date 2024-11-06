@@ -314,10 +314,10 @@ InputManager::JOYPAD_IN_STATE InputManager::GetJPadInputState(JOYPAD_NO no)
 		ret.ButtonsNew[idx] = d.Buttons[4];//L_BOTTON
 
 		idx = static_cast<int>(JOYPAD_BTN::START_BUTTON);
-		ret.ButtonsNew[idx] = d.Buttons[7];//L_BOTTON
+		ret.ButtonsNew[idx] = d.Buttons[7];//START_BUTTON
 
 		idx = static_cast<int>(JOYPAD_BTN::SELECT_BUTTON);
-		ret.ButtonsNew[idx] = d.Buttons[6];//L_BOTTON
+		ret.ButtonsNew[idx] = d.Buttons[6];//SELECT_BOTTON
 
 		// 左スティック
 		ret.AKeyLX = d.X;

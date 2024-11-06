@@ -1,7 +1,6 @@
 #include"../Manager/InputManager.h"
 #include"../Manager/SceneManager.h"
 #include"../Manager/ResourceManager.h"
-#include "./PlayerCpu.h"
 #include "./PlayableChara/AxeMan.h"
 #include "PlayerBase.h"
 
@@ -496,13 +495,13 @@ void PlayerBase::ChangeState(STATE _state)
 	state_ = _state;
 	switch (state_)
 	{
-	case PlayerCpu::STATE::NORMAL:
+	case STATE::NORMAL:
 		break;
-	case PlayerCpu::STATE::ATTACK:
+	case STATE::ATTACK:
 		break;
-	case PlayerCpu::STATE::BREAK:
+	case STATE::BREAK:
 		break;
-	case PlayerCpu::STATE::MAX:
+	case STATE::MAX:
 		break;
 	default:
 		break;
