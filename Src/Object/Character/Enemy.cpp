@@ -40,7 +40,7 @@ void Enemy::Init(void)
 	ResetAnim(ANIM::IDLE, DEFAULT_SPEED_ANIM);
 
 	//共通の変数の初期化
-	trans_.scl = { MODEL_SIZE,MODEL_SIZE,MODEL_SIZE };
+	trans_.scl = { CHARACTER_SCALE,CHARACTER_SCALE,CHARACTER_SCALE };
 	trans_.pos = AsoUtility::VECTOR_ZERO;
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::AngleAxis(AsoUtility::Deg2RadF(180.0f), AsoUtility::AXIS_Y);
@@ -196,11 +196,10 @@ void Enemy::UpdateNml(void)
 	moveSpeed_ = 0.0f;
 	
 	//索敵
-	if (isMove_)
-	{
-		//移動処理
-		Move();
-	}
+	if (!isMove_)return;
+
+	//移動処理
+	Move();
 }
 
 void Enemy::UpdateAlert(void)
@@ -334,7 +333,7 @@ void Enemy::Draw(void)
 
 const VECTOR Enemy::GetTargetVec(void)const
 {
-	//標的への方向ベクトルを取得
+	//標的への方向ベクトルを取得						※TODO:ベクトルはSceneGameからもらう
 	VECTOR targetVec = VSub(targetPos_, trans_.pos);
 
 	//正規化

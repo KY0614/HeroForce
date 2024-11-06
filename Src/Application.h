@@ -7,8 +7,12 @@ class Application
 public:
 
 	// スクリーンサイズ
-	static constexpr int SCREEN_SIZE_X = 1024;
-	static constexpr int SCREEN_SIZE_Y = 640;
+	static constexpr int SCREEN_SIZE_X = 1920;
+	static constexpr int SCREEN_SIZE_Y = 1080;
+
+	//FPS
+	static constexpr int DEFAULT_FPS = 60;
+	static constexpr float frameRate = 1000 / 60;
 
 	// データパス関連
 	//-------------------------------------------
@@ -43,6 +47,10 @@ public:
 	bool IsReleaseFail(void) const;
 
 private:
+
+	//フレーム固定用
+	int currentFrame_;	//現在のフレームを保存
+	int lastFrame_;		//最後に実行したフレームを保存
 
 	// 静的インスタンス
 	static Application* instance_;
