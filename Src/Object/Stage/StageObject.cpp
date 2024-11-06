@@ -61,4 +61,14 @@ Transform StageObject::GetTrans() const
 	return transform_;
 }
 
+void StageObject::SetRadius(const float radius)
+{
+	radius_ = radius;
+}
+
+float StageObject::GetRadius() const
+{
+	return radius_;
+}
+
 

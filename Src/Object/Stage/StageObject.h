@@ -16,12 +16,13 @@ public:
 	void Draw();
 	void Release();
 
+	void SetRadius(const float radius);
+	float GetRadius() const;
 	Transform GetTrans() const;
-
 
 private:
 
 	Transform transform_;
-
+	float radius_;
 
 };

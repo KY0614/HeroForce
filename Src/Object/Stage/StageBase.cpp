@@ -151,6 +151,7 @@ void StageBase::JsonLoad()
 		auto stageObj = new StageObject(Data, mdlId_[i]);
 		objs_.emplace_back(std::move(stageObj));
 		rocks1.emplace_back(std::move(stageObj));
+		
 	}
 
 	stageMdls_.emplace(MODEL_TYPE::ROCK_01, rocks1);
@@ -241,4 +242,30 @@ std::vector<Transform> StageBase::GetTtans(MODEL_TYPE type)
 		ret.push_back(obj->GetTrans());
 	}
 	return ret;
+}
+
+float StageBase::GetRadius(MODEL_TYPE type)
+{
+	switch (type)
+	{
+	case MODEL_TYPE::ROCK_01:
+		return ROCK01_COLI_RADIUS;
+		break;
+
+	case MODEL_TYPE::ROCK_02:
+		return ROCK02_COLI_RADIUS;
+		break;
+
+	case MODEL_TYPE::STUMP:
+		return STUMP_COLI_RADIUS;
+		break;
+
+	case MODEL_TYPE::TREE:
+		return TREE_COLI_RADIUS;
+		break;
+
+	default:
+		return 0.0f;
+		break;
+	}
 }

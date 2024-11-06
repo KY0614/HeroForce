@@ -62,6 +62,8 @@ public:
 	std::vector<Transform>
 		GetTtans(MODEL_TYPE type);
 
+	float GetRadius(MODEL_TYPE type);
+
 protected:
 
 	std::vector<int> mdlId_;			//ƒ‚ƒfƒ‹•Û‘¶
