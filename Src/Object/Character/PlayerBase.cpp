@@ -423,7 +423,7 @@ void PlayerBase::DrawDebug(void)
 {
 	const unsigned int ATK_COLOR = 0xff0000;
 	//‹…‘Ì
-	//DrawSphere3D(trans_.pos, 20.0f, 8, 0x0, color_, true);
+	DrawSphere3D(trans_.pos, 20.0f, 8, 0x0, 0xff0000, true);
 	//’lŒ©‚é—p
 	DrawFormatString(0, 0, 0xffffff
 		, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\nSkillNum(%d)\nStick(%f)\nHP(%d)"

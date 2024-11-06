@@ -6,6 +6,7 @@
 
 Application* Application::instance_ = nullptr;
 
+//ファイル指定パス
 const std::string Application::PATH_IMAGE = "Data/Image/";
 const std::string Application::PATH_MODEL = "Data/Model/";
 const std::string Application::PATH_ENEMY = "Data/Model/Enemy/";
@@ -57,6 +58,9 @@ void Application::Init(void)
 	// シーン管理初期化
 	SceneManager::CreateInstance();
 
+	//FPS用初期化
+	currentFrame_ = 0;
+	lastFrame_ = 0;
 }
 
 void Application::Run(void)
@@ -69,7 +73,16 @@ void Application::Run(void)
 	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
 	{
 
-		inputManager.Update();
+		Sleep(1);	//システムに処理を返す
+		currentFrame_ = GetNowCount();	//現在のフレーム数を獲得
+
+		//現在のフレームと最後の実行フレームの差分が一定値を超えたら更新処理を行う。
+		if (currentFrame_ - lastFrame_ >= frameRate)
+		{
+			lastFrame_ = currentFrame_;	//フレームの更新
+			InputManager::GetInstance().Update();
+			sceneManager.Update();	//更新
+		}
 		sceneManager.Update();
 
 		sceneManager.Draw();
