@@ -36,7 +36,7 @@ void LevelupNotice::Update()
 {
 	float speed = 0.001f;	//Šg‘åƒXƒs[ƒh;
 	float max = 1.2f;		//Šg‘å”{—¦
-	int timeLimit = 1.5 * SceneManager::DEFAULT_FPS;
+	int timeLimit = 1.5 * Application::DEFAULT_FPS;
 
 	switch (state_)
 	{

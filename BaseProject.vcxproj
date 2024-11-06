@@ -19,10 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Common\ImageFader.cpp" />
+    <ClCompile Include="Src\Manager\Collision.cpp" />
+    <ClCompile Include="Src\Object\Character\Enemy.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerBase.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
+    <ClCompile Include="Src\Object\System\Carsor.cpp" />
     <ClCompile Include="Src\Object\System\LevelBase.cpp" />
     <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
     <ClCompile Include="Src\Object\Arrow.cpp" />
+    <ClCompile Include="Src\Object\System\LevelupNotice.cpp" />
+    <ClCompile Include="Src\Object\System\PowerSelect.cpp" />
     <ClCompile Include="Src\Object\UnitBase.cpp" />
     <ClCompile Include="Src\Scene\GameScene.cpp" />
     <ClCompile Include="Src\Common\IntVector3.cpp" />
@@ -44,6 +51,17 @@
     <ClCompile Include="Src\Object\Stage\StageBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Common\ImageFader.h" />
+    <ClInclude Include="Src\Manager\Collision.h" />
+    <ClInclude Include="Src\Object\Character\Enemy.h" />
+    <ClInclude Include="Src\Object\Arrow.h" />
+    <ClInclude Include="Src\Object\Character\PlayerBase.h" />
+    <ClInclude Include="Src\Object\Stage\SkyDome.h" />
+    <ClInclude Include="Src\Object\Stage\StageObject.h" />
+    <ClInclude Include="Src\Object\System\Carsor.h" />
+    <ClInclude Include="Src\Object\System\LevelBase.h" />
+    <ClInclude Include="Src\Object\System\LevelupNotice.h" />
+    <ClInclude Include="Src\Object\System\PowerSelect.h" />
     <ClInclude Include="Src\Object\UnitBase.h" />
     <ClInclude Include="Src\Scene\GameScene.h" />
     <ClInclude Include="Src\Common\IntVector3.h" />
