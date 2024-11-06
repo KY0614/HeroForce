@@ -1,4 +1,4 @@
-#include"../Manager/SceneManager.h"
+#include"../Application.h"
 #include "UnitBase.h"
 
 UnitBase::UnitBase(void)
@@ -90,7 +90,7 @@ void UnitBase::Anim(void)
 {
 	// アニメーション再生
 	// 経過時間の取得
-	float deltaTime = 1.0f / SceneManager::DEFAULT_FPS;
+	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	// アニメーション時間の進行
 	stepAnim_ += (speedAnim_ * deltaTime);
 	if (stepAnim_ > animTotalTime_)
@@ -147,14 +147,14 @@ void UnitBase::FinishAnim(void)
 void UnitBase::CntUp(float _count)
 {
 	// 経過時間の取得
-	float deltaTime = 1.0f / SceneManager::DEFAULT_FPS;
+	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	_count += deltaTime;
 }
 
 void UnitBase::CntDown(float _count)
 {
 	// 経過時間の取得
-	float deltaTime = 1.0f / SceneManager::DEFAULT_FPS;
+	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	_count -= deltaTime;
 }
 

@@ -274,7 +274,7 @@ void PlayerBase::ChangeControll(CNTL _cntl)
 void PlayerBase::DrawDebug(void)
 {
 	//‹…‘Ì
-	//DrawSphere3D(trans_.pos, 20.0f, 8, 0x0, color_, true);
+	DrawSphere3D(trans_.pos, 20.0f, 8, 0x0, 0xff0000, true);
 	//’lŒ©‚é—p
 	DrawFormatString(0, 0, 0xffffff
 		, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\nStick(%f)\nHP(%d)\nAtkPos={%.1f,%.1f,%.1f}"
