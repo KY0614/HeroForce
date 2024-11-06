@@ -37,8 +37,8 @@ public:
 	static constexpr float RUN_SPEED = 4.0f;	//走りの速度
 
 	//範囲関係
-	static constexpr float SEARCH_RANGE = 800.0f * CHARACTER_SCALE;		//索敵判定の大きさ
-	static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//攻撃開始判定の大きさ
+	static constexpr float SEARCH_RANGE = 1000.0f * CHARACTER_SCALE;		//索敵判定の大きさ
+	static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
 
 	//スキルの当たり判定半径
 	static constexpr float SKILL_1_COL_RADIUS = 10.0f;	//スキル１
@@ -57,12 +57,6 @@ public:
 		,BREAK			//休憩
 		,MAX
 	};
-
-	//攻撃の種類
-	//enum class ATK_PAT
-	//{
-
-	//};
 
 	//コンストラクタ
 	Enemy();
@@ -85,12 +79,6 @@ public:
 	const bool IsBreak(void)const { return breakCnt_ < BREAK_TIME; }
 	//スタン中かどうかを返す
 	const bool IsStun(void)const { return stunDef_ > stunDefMax_; }
-
-	//敵自身の当たり判定座標を返す
-	//const VECTOR GetColPos(void)const { return colPos_; }
-
-	//現在のスキルの座標を返す
-	//const VECTOR GetNowSkillPos(void)const { return nowSkill_.pos_; }
 
 	//現在のスキルの全配列を返す
 	const std::vector<ATK> GetAtks(void)const { return nowSkill_; }
@@ -143,6 +131,15 @@ protected:
 	//スキルの初期化
 	virtual void InitSkill(void);
 
+	//敵の攻撃処理
+	virtual void Attack(void);
+
+	//スキル1
+	virtual void Skill_1(void);
+
+	//スキル2
+	virtual void Skill_2(void);
+
 	//アニメーション終了時の動き
 	void FinishAnim(void)override;
 
@@ -192,8 +189,6 @@ private:
 	//移動
 	void Move(void);
 
-	//敵の攻撃処理
-	void Attack(void);
 	//スキルのランダム生成
 	void RandSkill(void);
 };
