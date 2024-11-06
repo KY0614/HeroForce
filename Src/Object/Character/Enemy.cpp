@@ -411,6 +411,14 @@ void Enemy::Attack(void)
 	//atk_.pos_ = VAdd(colPos_, VScale(dir, nowSkillColRadius_));
 }
 
+void Enemy::Skill_1(void)
+{
+}
+
+void Enemy::Skill_2(void)
+{
+}
+
 void Enemy::RandSkill(void)
 {
 	//ƒXƒLƒ‹‚Ì”
