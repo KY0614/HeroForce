@@ -83,7 +83,7 @@ void Application::Run(void)
 			InputManager::GetInstance().Update();
 			sceneManager.Update();	//XV
 		}
-		sceneManager.Update();
+		//sceneManager.Update();
 
 		sceneManager.Draw();
 
