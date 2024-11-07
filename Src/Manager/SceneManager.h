@@ -14,7 +14,16 @@ public:
 	{
 		NONE,
 		TITLE,
-		GAME
+		SELECT,
+		GAME,
+		CLEAR,
+	};
+
+	//ƒRƒ“ƒgƒ[ƒ‰Œn“
+	enum class CNTL
+	{
+		KEYBOARD
+		, PAD
 	};
 	
 	//’è”

@@ -36,6 +36,7 @@ void GameScene::Init(void)
 #ifdef _DEBUG_COL
 	playerTest_ = new PlayerBase();
 	playerTest_->Init();
+	playerTest_->ChangeControll(SceneManager::CNTL::KEYBOARD);
 	enemyTest_ = new Enemy();
 	enemyTest_->Init();
 #endif

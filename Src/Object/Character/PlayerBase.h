@@ -62,6 +62,9 @@ public:
 
    //ダメージ関数
    void Damage(void);
+
+   //コントローラー変更用関数
+   void ChangeControll(SceneManager::CNTL _cntl);
     
 protected:
 
@@ -79,12 +82,6 @@ protected:
         ,TWO
     };
 
-    enum class CNTL
-    {
-        KEYBOARD
-        ,PAD
-    };
-
     //アニメNo初期化
     void InitAnimNum(void);
 
@@ -94,10 +91,7 @@ protected:
     //ゲームパッド
     void GamePad(void);
 
-    CNTL cntl_;
-
-    //コントローラー変更用関数
-    void ChangeControll(CNTL _cntl);
+    SceneManager::CNTL cntl_;
 
     //デバッグ用関数
     void DrawDebug(void);
