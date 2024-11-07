@@ -14,6 +14,7 @@ public:
 	{
 		NONE,
 		TITLE,
+		SELECT,
 		GAME
 	};
 	

@@ -31,6 +31,7 @@
     <ClCompile Include="Src\Object\System\LevelupNotice.cpp" />
     <ClCompile Include="Src\Object\System\PowerSelect.cpp" />
     <ClCompile Include="Src\Common\ImageFader.cpp" />
+    <ClCompile Include="Src\Scene\SelectScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\Character\Enemy.h" />
@@ -120,6 +121,7 @@
     <ClInclude Include="Src\Object\System\LevelupNotice.h" />
     <ClInclude Include="Src\Object\System\PowerSelect.h" />
     <ClInclude Include="Src\Common\ImageFader.h" />
+    <ClInclude Include="Src\Scene\SelectScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">
