@@ -15,7 +15,7 @@ public:
 
 	//アニメーション番号
 	static constexpr int ANIM_IDLE = 14;	//待機アニメーション
-	static constexpr int ANIM_WALK = 93;	//歩きアニメーション
+	static constexpr int ANIM_WALK = 93;	//歩きアニメーション+
 	static constexpr int ANIM_RUN = 54;		//走りアニメーション
 	static constexpr int ANIM_DAMAGE = 39;	//ダメージアニメーション
 	static constexpr int ANIM_DEATH = 24;	//やられアニメーション
