@@ -30,29 +30,29 @@ void SelectScene::Init(void)
 
 void SelectScene::Update(void)
 {
-	KeyKonfigSetting();
+KeyKonfigSetting();
 
-	// シーン遷移
-	InputManager& ins = InputManager::GetInstance();
-	if (ins.IsTrgDown(KEY_INPUT_SPACE))
-	{
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
-	}
+// シーン遷移
+InputManager& ins = InputManager::GetInstance();
+if (ins.IsTrgDown(KEY_INPUT_SPACE))
+{
+	SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+}
 
-	//選択中の種類ごとの更新処理
-	switch (select_)
-	{
-	case SELECT::NUMBER:
-		NumberUpdate();
-		break;
+//選択中の種類ごとの更新処理
+switch (select_)
+{
+case SELECT::NUMBER:
+	NumberUpdate();
+	break;
 
-	case SELECT::ROLE:
-		RoleUpdate();
-		break;
+case SELECT::ROLE:
+	RoleUpdate();
+	break;
 
-	default:
-		break;
-	}
+default:
+	break;
+}
 }
 
 void SelectScene::Draw(void)
@@ -62,7 +62,7 @@ void SelectScene::Draw(void)
 
 	Vector2 mPos = ins.GetMousePos();
 
-	DrawString(0, 0,"select",0xFFFFFF);
+	DrawString(0, 0, "select", 0xFFFFFF);
 	DrawFormatString(Application::SCREEN_SIZE_X / 2,
 		Application::SCREEN_SIZE_Y / 2,
 		0xFFFFFF,
@@ -72,7 +72,7 @@ void SelectScene::Draw(void)
 	switch (select_)
 	{
 	case SelectScene::SELECT::NUMBER:
-		DrawString(Application::SCREEN_SIZE_X/2, 0, "number", 0xFFFFFF);
+		DrawString(Application::SCREEN_SIZE_X / 2, 0, "number", 0xFFFFFF);
 		break;
 	case SelectScene::SELECT::ROLE:
 		DrawString(Application::SCREEN_SIZE_X / 2, 0, "role", 0xFFFFFF);
@@ -103,27 +103,30 @@ void SelectScene::NumberUpdate(void)
 	{
 	case SelectScene::KEY_CONFIG::NONE:
 		break;
-	
+
 	case SelectScene::KEY_CONFIG::UP:
 		Move({ 0.0f,-10.0f,0.0f });
 		break;
-	
+
 	case SelectScene::KEY_CONFIG::DOWN:
 		Move({ 0.0f,10.0f,0.0f });
 		break;
-	
+
 	case SelectScene::KEY_CONFIG::LEFT:
+		Move({ -10.0f,0.0f,0.0f });
 		break;
-	
+
 	case SelectScene::KEY_CONFIG::RIGHT:
+		Move({ 10.0f,0.0f,0.0f });
 		break;
-	
+
 	case SelectScene::KEY_CONFIG::DECIDE:
 		break;
-	
+
 	default:
 		break;
 	}
+
 }
 
 void SelectScene::RoleUpdate(void)
@@ -152,12 +155,12 @@ void SelectScene::ProcessSelect(void)
 void SelectScene::KeyKonfigSetting(void)
 {
 	auto& ins = InputManager::GetInstance();
-	if (GetJoypadNum() == 0 && CheckHitKeyAll() == 0)
-	{
-		key = KEY_CONFIG::NONE;
-	}
+	//if (GetJoypadNum() == 0 && CheckHitKeyAll() == 0)
+	//{
+	//	key = KEY_CONFIG::NONE;
+	//}
 
-
+	key = KEY_CONFIG::NONE;
 
 	// 左スティックの横軸
 	int leftStickX_ = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLX;
@@ -195,15 +198,4 @@ void SelectScene::Move(VECTOR pos)
 	pos_.x += pos.x;
 	pos_.y += pos.y;
 	pos_.z += pos.z;
-	//speedMove_ = SPEED_MOVE;
-	//if (!IsDodge() && !IsAtkAction() && !IsSkill(SKILL::ONE))
-	//{
-	//	ResetAnim(ANIM::WALK, SPEED_ANIM_RUN);
-	//	Turn(_deg, _axis);
-	//	VECTOR dir = trans_.GetForward();
-	//	//移動方向
-	//	VECTOR movePow = VScale(dir, speedMove_);
-	//	//移動処理
-	//	trans_.pos = VAdd(trans_.pos, movePow);
-	//}
 }
