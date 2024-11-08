@@ -1,8 +1,13 @@
 #pragma once
+#include<DxLib.h>
+
 class DataBank
 {
-	//cppやSceneをまたぎ扱う情報等を保存するcpp呼ぶんだと
+	//cppやSceneをまたぎ扱う情報等を保存する
 public:
+
+	static constexpr int PLAYER_NUM = 4;
+
 	// インスタンスの生成
 	static void CreateInstance(void);
 
@@ -16,10 +21,6 @@ public:
 	// リソースの破棄
 	void Destroy(void);
 private:
-	//プレイヤーの位置座標
-
-
-
 	
 	// 静的インスタンス
 	static DataBank* instance_;
