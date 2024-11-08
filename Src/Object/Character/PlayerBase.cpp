@@ -20,16 +20,6 @@ void PlayerBase::Init(void)
 #ifdef DEBUG_ON
 	InitDebug();
 #endif // DEBUG_ON
-
-
-	//colPos_ = VAdd(trans_.pos, VScale(PLAYER_COL_LOCAL_POS, CHARACTER_SCALE));
-
-	//InitAct(ATK_ACT::ATK,FRAME_ATK_DURATION,FRAME_ATK_BACKRASH);
-	//InitAct(ATK_ACT::SKILL1,FRAME_SKILL1_DURATION, FRAME_SKILL1_BACKRASH);
-	//InitAct(ATK_ACT::SKILL2, FRAME_SKILL2_DURATION, FRAME_SKILL2_BACKRASH);
-
-
-
 	skillNo_ = SKILL_NUM::ONE;
 
 	dodgeCdt_ = DODGE_CDT_MAX;
@@ -42,7 +32,7 @@ void PlayerBase::Init(void)
 
 	//アニメーション初期化
 	InitAnimNum();
-	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
+	//ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 
 	//それぞれの攻撃座標の同期
 	SyncActPos(acts_[ATK_ACT::ATK], ATK_COL_LOCAL_POS);
@@ -58,7 +48,7 @@ void PlayerBase::Update(void)
 	switch (mode_)
 	{
 	case PlayerBase::PLAY_MODE::USER:
-		ModeUserUpdate();
+		UserUpdate();
 		break;
 	case PlayerBase::PLAY_MODE::CPU:
 		CpuUpdate();
@@ -91,12 +81,6 @@ void PlayerBase::Update(void)
 #endif // DEBUG_ON
 
 }
-
-void PlayerBase::UserUpdate(void)
-{
-	
-}
-
 void PlayerBase::CpuUpdate(void)
 {
 	switch (state_)
@@ -139,7 +123,7 @@ void PlayerBase::Move(float _deg, VECTOR _axis)
 	}
 }
 
-void PlayerBase::ModeUserUpdate(void)
+void PlayerBase::UserUpdate(void)
 {
 	//停止状態の時のアニメーション
 	if (!IsMove() && !IsDodge() && !IsAtkAction() && !IsSkillAll())
@@ -175,11 +159,6 @@ void PlayerBase::ModeUserUpdate(void)
 	Dodge();
 
 	Action(ATK_ACT::ATK);
-
-}
-
-void PlayerBase::ModeCpuUpdate(void)
-{
 
 }
 
@@ -714,8 +693,5 @@ void PlayerBase::BreakUpdate(void)
 		ChangeState(STATE::NORMAL);
 		return;
 	}
-
 	breakCnt_ += deltaTIme;
-
-
 }

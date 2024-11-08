@@ -25,6 +25,7 @@ void PlAxe::SetParam(void)
 		0.0f, AsoUtility::Deg2RadF(180.0f),
 		0.0f
 	);
+	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 
 	hp_ = MAX_HP;
 

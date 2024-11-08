@@ -6,7 +6,6 @@
 
 
 //#define DEBUG_ON
-class AxeMan;
 class PlayerBase:
     public UnitBase
 {
@@ -107,7 +106,7 @@ public:
     virtual void SetParam(void);
     void Init(void)override;
    void Update(void)override;
-   virtual void UserUpdate(void);
+   //virtual void UserUpdate(void);
    virtual void CpuUpdate(void);
     void Draw(void)override;
 
@@ -210,7 +209,7 @@ protected:
     //USER関係
     //------------------------------------------------
     //ユーザーがいるときの更新
-    void ModeUserUpdate(void);
+    void UserUpdate(void);
 
     //操作系（キーボード)
     void KeyBoardControl(void);
@@ -228,7 +227,6 @@ protected:
     //-------------------------------------------------
 
     //CPUのアップデート
-    void ModeCpuUpdate(void);
 
     void ActUpdate(ATK_ACT _act);
 
