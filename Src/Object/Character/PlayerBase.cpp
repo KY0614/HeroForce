@@ -1,20 +1,8 @@
 #include"../Manager/InputManager.h"
 #include"../Manager/SceneManager.h"
 #include"../Manager/ResourceManager.h"
-#include "./PlayableChara/AxeMan.h"
+#include "./PlayableChara/PlAxeMan.h"
 #include "PlayerBase.h"
-
-
-#define DEBUG_ON
-
-//PlayerBase::PlayerBase(PLAY_MODE _mode, ROLE _role)
-//{
-//
-//	
-//
-//
-//
-//}
 
 void PlayerBase::Destroy(void)
 {
@@ -23,30 +11,6 @@ void PlayerBase::Destroy(void)
 
 void PlayerBase::SetParam(void)
 {
-	//acts_[ATK_ACT::ATK].pos_ = VAdd(trans_.pos, ATK_COL_LOCAL_POS);
-	//acts_[ATK_ACT::ATK].ResetCnt();
-	//acts_[ATK_ACT::ATK].duration_ = FRAME_ATK_DURATION;
-	//acts_[ATK_ACT::ATK].backlash_ = FRAME_ATK_BACKRASH;
-	//acts_[ATK_ACT::ATK].pow_ = 0;
-
-	//trans_.SetModel(
-	//	ResourceManager::GetInstance()
-	//	.LoadModelDuplicate(ResourceManager::SRC::PLAYER_KNIGHT));
-	//float scale = CHARACTER_SCALE;
-	//trans_.scl = { scale, scale, scale };
-	//trans_.pos = { 0.0f, 0.0f, 0.0f };
-	//trans_.quaRot = Quaternion();
-	//trans_.quaRotLocal = Quaternion::Euler(
-	//	0.0f, AsoUtility::Deg2RadF(180.0f),
-	//	0.0f
-	//);
-
-	//hp_ = MAX_HP;
-
-	////当たり判定の設定
-	//radius_ = MY_COL_RADIUS;
-	//acts_[ATK_ACT::ATK].radius_ = COL_ATK;
-
 	
 }
 
@@ -427,7 +391,7 @@ void PlayerBase::Common(void)
 
 	
 }
-
+#ifdef DEBUG_ON
 void PlayerBase::DrawDebug(void)
 {
 	const unsigned int ATK_COLOR = 0xff0000;
@@ -437,7 +401,7 @@ void PlayerBase::DrawDebug(void)
 	DrawFormatString(0, 0, 0xffffff
 		, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\nSkillNum(%d)\nStick(%f)\nHP(%d)"
 		, acts_[ATK_ACT::ATK].cnt_, acts_[ATK_ACT::ATK].IsAttack(), acts_[ATK_ACT::ATK].IsBacklash()
-		, frameDodge_,acts_[ATK_ACT::SKILL2].cnt_, skillNo_, stickDeg_, hp_);
+		, frameDodge_, acts_[ATK_ACT::SKILL2].cnt_, skillNo_, stickDeg_, hp_);
 
 	DrawSphere3D(colPos_, CHARACTER_SCALE * 100, 8, color_Col_, color_Col_, false);
 	DrawSphere3D(acts_[ATK_ACT::ATK].pos_, COL_ATK, 8, color_Atk_, color_Atk_, false);
@@ -447,9 +411,9 @@ void PlayerBase::DrawDebug(void)
 	//プレイヤーの当たり判定
 	DrawSphere3D(colPos_, radius_, 4, 0xffff00, 0xffff00, false);
 	//プレイヤーの索敵判定
-	DrawSphere3D(trans_.pos, searchRange_, 2, isMove_ ? 0xff0000 : 0xffffff,isMove_ ? 0xff0000 : 0xffffff, false);
+	DrawSphere3D(trans_.pos, searchRange_, 2, isMove_ ? 0xff0000 : 0xffffff, isMove_ ? 0xff0000 : 0xffffff, false);
 	//プレイヤーの索敵判定
-	DrawSphere3D(targetPos_, 20, 2,  0x0000ff ,0xffffff ,false);
+	DrawSphere3D(targetPos_, 20, 2, 0x0000ff, 0xffffff, false);
 
 
 	if (acts_[ATK_ACT::ATK].IsAttack())
@@ -479,6 +443,7 @@ void PlayerBase::DrawDebug(void)
 		color_skl2_ = 0x00ffff;
 	}
 }
+#endif // DEBUG_ON
 
 VECTOR PlayerBase::GetTargetVec(void)
 {
@@ -608,11 +573,11 @@ void PlayerBase::Dodge(void)
 	}
 }
 
-void PlayerBase::Skill_1(void)
+void PlayerBase::Skill_One(void)
 {
 }
 
-void PlayerBase::Skill_2(void)
+void PlayerBase::Skill_Two(void)
 {
 }
 
@@ -645,6 +610,7 @@ void PlayerBase::Damage(void)
 	
 }
 
+#ifdef DEBUG_ON
 void PlayerBase::InitDebug(void)
 {
 	color_Col_ = 0xffffff;
@@ -652,7 +618,7 @@ void PlayerBase::InitDebug(void)
 	color_skl1_ = 0x00ffff;
 	color_skl2_ = 0x00ffff;
 }
-
+#endif // DEBUG_ON
 
 
 

@@ -3,12 +3,27 @@
 #include"../Manager/SceneManager.h"
 #include<map>
 #include "../UnitBase.h"
+
+
+//#define DEBUG_ON
 class AxeMan;
 class PlayerBase:
     public UnitBase
 {
 public:
+#ifdef DEBUG_ON
+    void InitDebug(void);
+    unsigned int color_Col_;
+    unsigned int color_Atk_;
+    unsigned int color_skl1_;
+    unsigned int color_skl2_;
+
+#endif // DEBUG_ON
+    //デバッグ用
    
+
+
+
     //各アニメーション番号
     static constexpr int IDLE_NUM = 36;
     static constexpr int WALK_NUM = 72;
@@ -145,8 +160,6 @@ public:
 protected:
     VECTOR GetTargetVec(void);
     VECTOR targetPos_;
-
-    AxeMan* axeMan_;
     //状態
     STATE state_;
 
@@ -307,10 +320,10 @@ protected:
     //-----------------------------------------
     SKILL_NUM skillNo_;
     //スキル1
-    virtual void Skill_1(void);
+    virtual void Skill_One(void);
 
      //スキル2
-     virtual void Skill_2(void);
+     virtual void Skill_Two(void);
 
      //スキル
      //virtual void Skill(void);
@@ -359,13 +372,7 @@ protected:
 
 
 
-     //デバッグ用
-     void InitDebug(void);
-     unsigned int color_Col_;
-     unsigned int color_Atk_;
-     unsigned int color_skl1_;
-     unsigned int color_skl2_;
-   
+     
 private:
     ATK_ACT preAtk_;
 

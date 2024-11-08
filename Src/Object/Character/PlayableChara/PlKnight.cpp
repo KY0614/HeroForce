@@ -1,4 +1,4 @@
-#include "Knight.h"
+#include "PlKnight.h"
 PlKnight::PlKnight(PLAY_MODE _mode) :PlayerBase(_mode) { mode_ = _mode; }
 
 
