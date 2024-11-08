@@ -19,6 +19,10 @@ public:
 	//敵自身の当たり判定半径
 	static constexpr float MY_COL_RADIUS = 100.0f * CHARACTER_SCALE;
 
+	//敵ステータス
+	static constexpr int HP_MAX = 5;			//敵の最大体力
+	static constexpr int STUN_DEF_MAX = 100;	//敵の最大スタン防御値
+
 	//速度関係
 	static constexpr float WALK_SPEED = 2.0f;	//歩きの速度
 	static constexpr float RUN_SPEED = 4.0f;	//走りの速度
@@ -26,7 +30,6 @@ public:
 	//範囲関係
 	static constexpr float SEARCH_RANGE = 1000.0f * CHARACTER_SCALE;		//索敵判定の大きさ
 	static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
-
 
 	//スキルの当たり判定半径
 	static constexpr float SKILL_1_COL_RADIUS = 10.0f;	//スキル１

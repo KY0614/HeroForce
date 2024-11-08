@@ -14,7 +14,7 @@ void EneAxe::SetParam(void)
 	colPos_ = VAdd(trans_.pos, localCenterPos_);
 	hp_ = 5;
 	walkSpeed_ = WALK_SPEED;
-	stunDefMax_ = 100;
+	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
 	atkStartRange_ = ATK_START_RANGE;
 }
