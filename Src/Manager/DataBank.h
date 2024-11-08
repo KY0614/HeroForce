@@ -16,6 +16,11 @@ public:
 	// リソースの破棄
 	void Destroy(void);
 private:
+	//プレイヤーの位置座標
+
+
+
+	
 	// 静的インスタンス
 	static DataBank* instance_;
 

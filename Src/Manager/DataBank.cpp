@@ -1,5 +1,7 @@
 #include "DataBank.h"
 
+DataBank* DataBank::instance_ = nullptr;
+
 void DataBank::CreateInstance(void)
 {
 }
