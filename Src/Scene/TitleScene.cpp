@@ -1,4 +1,4 @@
-#include <string>
+//#include <string>
 #include <DxLib.h>
 #include "../Application.h"
 #include "../Utility/AsoUtility.h"

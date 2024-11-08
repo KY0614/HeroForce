@@ -3,12 +3,15 @@
 #include "../Manager/Collision.h"
 #include "../Object/Grid.h"
 #include "../Object/Character/PlayerBase.h"
+#include "../Object/Character/PlayableChara/AxeMan.h"
 #include"../Object/Character/Enemy.h"
 #include "../Object/Common/Transform.h"
 #include "../Object/Stage/StageBase.h"
 #include "../Object/Stage/SkyDome.h"
 #include "../Object/System/LevelBase.h"
 #include "GameScene.h"
+
+#define   _DEBUG_COL
 
 GameScene::GameScene(void)
 {
@@ -34,12 +37,15 @@ void GameScene::Init(void)
 	grid_->Init();	
 
 #ifdef _DEBUG_COL
-	playerTest_ = new PlayerBase();
+	playerTest_ = new AxeMan(PlayerBase::PLAY_MODE::USER);
 	playerTest_->Init();
 	playerTest_->ChangeControll(SceneManager::CNTL::KEYBOARD);
 	enemyTest_ = new Enemy();
 	enemyTest_->Init();
 #endif
+
+	//playerCpu_ = new PlayerCpu();
+	//playerCpu_->Init();
 
 
 	// カメラモード　：フリーカメラ
@@ -74,6 +80,8 @@ void GameScene::Draw(void)
 #endif
 	stage_->Draw();
 	level_->Draw();
+
+	playerTest_->DrawDebug();
 }
 
 void GameScene::Release(void)
@@ -123,6 +131,14 @@ void GameScene::Collision(void)
 	{
 		//状態を変更
 		enemyTest_->ChangeState(Enemy::STATE::ALERT);
+	}
+
+
+	//プレイヤー側索敵
+	if (col.Search(playerTest_->GetPos(), enemyTest_->GetPos(), playerTest_->GetAtkStartRange()))
+	{
+		//状態を変更
+		playerTest_->ChangeState(PlayerBase::STATE::ATTACK);
 	}
 
 	//プレイヤー攻撃判定

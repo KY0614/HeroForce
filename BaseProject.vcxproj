@@ -19,6 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\PlayableChara\Archer.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Knight.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Mage.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\AxeMan.cpp" />
     <ClCompile Include="Src\Manager\DataBank.cpp" />
     <ClCompile Include="Src\Common\ImageFader.cpp" />
     <ClCompile Include="Src\Manager\Collision.cpp" />
