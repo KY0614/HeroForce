@@ -1,20 +1,20 @@
 #include "Mage.h"
 
-Mage::Mage(PLAY_MODE _mode) :PlayerBase(_mode) { mode_ = _mode; }
+PlMage::PlMage(PLAY_MODE _mode) :PlayerBase(_mode) { mode_ = _mode; }
 
 
-void Mage::SetParam(void)
+void PlMage::SetParam(void)
 {
 }
 
-void Mage::AtkFunc(void)
+void PlMage::AtkFunc(void)
 {
 }
 
-void Mage::Skill1Func(void)
+void PlMage::Skill1Func(void)
 {
 }
 
-void Mage::Skill2Func(void)
+void PlMage::Skill2Func(void)
 {
 }

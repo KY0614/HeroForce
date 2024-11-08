@@ -1,11 +1,11 @@
 #pragma once
 #include "../PlayerBase.h"
-class Archer :
+class PlArcher :
     public PlayerBase
 {
 public:
-    Archer(PLAY_MODE _mode);
-    ~Archer(void) = default;
+    PlArcher(PLAY_MODE _mode);
+    ~PlArcher(void) = default;
     void SetParam(void)override;
 
 protected:

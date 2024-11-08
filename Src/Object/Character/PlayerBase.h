@@ -65,7 +65,6 @@ public:
     //--------------------------------------------------------
     //範囲関係
     static constexpr float SEARCH_RANGE = 800.0f * CHARACTER_SCALE;		//索敵判定の大きさ
-    static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//攻撃開始判定の大きさ
     static constexpr float SEARCH_RADIUS = 400.0f;
 
 
@@ -128,10 +127,24 @@ public:
    //状態変更
    void ChangeState(const STATE _state);
 
+   //CPUの状態セッタ
+   void SetState(STATE _state) { state_ = _state; }
+
    //デバッグ用関数
    void DrawDebug(void);
+
+   //CPUの移動セッタ
+   void SetIsMove(bool _isMove) { isMove_ = _isMove; }
+
+   //プレイヤーのモードゲッタ(CPUかUSERか)
+   PLAY_MODE GetPlayMode(void) { return mode_; }
+
+   //状態ゲッタ
+   STATE GetState(void) { return state_; }
     
 protected:
+    VECTOR GetTargetVec(void);
+    VECTOR targetPos_;
 
     AxeMan* axeMan_;
     //状態
@@ -239,6 +252,9 @@ protected:
     //-------------------------------------
     //移動処理
     void Move(float _deg, VECTOR _axis);
+
+    //CPU移動
+    void CpuMove(void);
     //方向処理
     void Turn(float _deg, VECTOR _axis);
 
@@ -247,6 +263,9 @@ protected:
 
     //動いてるかどうか
     bool IsMove(void) { return moveSpeed_ > 0.0f; }
+
+    //CPU用
+    bool isMove_;
 
     //プレイヤーの当たり判定座標
     VECTOR colPos_;
@@ -262,7 +281,7 @@ protected:
     //攻撃中かどうか(UnitBaseで修正予定)
     bool IsAtkAction(void) { return acts_[ATK_ACT::ATK].IsAttack() || acts_[ATK_ACT::ATK].IsBacklash(); }
 
-    //攻撃可能かどうか
+    //攻撃可能かどうか(true:可能)
     bool IsAtkable(void) { return!IsAtkAction() && !IsSkillAll() && !IsDodge(); }
 
     
@@ -348,5 +367,8 @@ protected:
      unsigned int color_skl2_;
    
 private:
+    ATK_ACT preAtk_;
+
+    float breakCnt_;
 };
 

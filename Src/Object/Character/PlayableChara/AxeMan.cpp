@@ -1,9 +1,9 @@
 #include"../Manager/ResourceManager.h"
 #include "AxeMan.h"
 
-AxeMan::AxeMan(PLAY_MODE _mode) : PlayerBase(_mode) { mode_ = _mode; }
+PlAxe::PlAxe(PLAY_MODE _mode) : PlayerBase(_mode) { mode_ = _mode; }
 
-void AxeMan::SetParam(void)
+void PlAxe::SetParam(void)
 {
 	acts_[ATK_ACT::ATK].pos_ = VAdd(trans_.pos, ATK_COL_LOCAL_POS);
 	acts_[ATK_ACT::ATK].ResetCnt();
@@ -19,7 +19,7 @@ void AxeMan::SetParam(void)
 		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_AXEMAN));
 	float scale = CHARACTER_SCALE;
 	trans_.scl = { scale, scale, scale };
-	trans_.pos = { 0.0f, 0.0f, 0.0f };
+	trans_.pos = { -220.0f, 0.0f, 0.0f };
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::Euler(
 		0.0f, AsoUtility::Deg2RadF(180.0f),
@@ -31,16 +31,18 @@ void AxeMan::SetParam(void)
 	//ìñÇΩÇËîªíËÇÃê›íË
 	radius_ = MY_COL_RADIUS;
 	acts_[ATK_ACT::ATK].radius_ = COL_ATK;
+
+	atkStartRange_ = ATK_START_RANGE;
 }
 
-void AxeMan::AtkFunc(void)
+void PlAxe::AtkFunc(void)
 {
 }
 
-void AxeMan::Skill1Func(void)
+void PlAxe::Skill1Func(void)
 {
 }
 
-void AxeMan::Skill2Func(void)
+void PlAxe::Skill2Func(void)
 {
 }

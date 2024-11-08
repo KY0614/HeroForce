@@ -1,20 +1,20 @@
 #include "Knight.h"
-Knight::Knight(PLAY_MODE _mode) :PlayerBase(_mode) { mode_ = _mode; }
+PlKnight::PlKnight(PLAY_MODE _mode) :PlayerBase(_mode) { mode_ = _mode; }
 
 
-void Knight::SetParam(void)
+void PlKnight::SetParam(void)
 {
 }
 
-void Knight::AtkFunc(void)
+void PlKnight::AtkFunc(void)
 {
 }
 
-void Knight::Skill1Func(void)
+void PlKnight::Skill1Func(void)
 {
 }
 
-void Knight::Skill2Func(void)
+void PlKnight::Skill2Func(void)
 {
 }
 

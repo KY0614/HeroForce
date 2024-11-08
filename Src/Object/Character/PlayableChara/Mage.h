@@ -1,11 +1,11 @@
 #pragma once
 #include "../PlayerBase.h"
-class Mage :
+class PlMage :
     public PlayerBase
 {
 public:
-    Mage(PLAY_MODE _mode);
-    ~Mage(void) = default;
+    PlMage(PLAY_MODE _mode);
+    ~PlMage(void) = default;
     void SetParam(void)override;
 
 protected:
