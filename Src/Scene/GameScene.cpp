@@ -5,6 +5,7 @@
 #include "../Object/Character/PlayerBase.h"
 #include "../Object/Character/PlayableChara/AxeMan.h"
 #include"../Object/Character/Enemy.h"
+#include"../Object/Character/EnemySort/EneAxe.h"
 #include "../Object/Common/Transform.h"
 #include "../Object/Stage/StageBase.h"
 #include "../Object/Stage/SkyDome.h"
@@ -37,10 +38,10 @@ void GameScene::Init(void)
 	grid_->Init();	
 
 #ifdef _DEBUG_COL
-	playerTest_ = new AxeMan(PlayerBase::PLAY_MODE::USER);
+	playerTest_ = new PlAxe(PlayerBase::PLAY_MODE::USER);
 	playerTest_->Init();
 	playerTest_->ChangeControll(SceneManager::CNTL::KEYBOARD);
-	enemyTest_ = new Enemy();
+	enemyTest_ = new EneAxe();
 	enemyTest_->Init();
 #endif
 

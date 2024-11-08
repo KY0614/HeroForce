@@ -5,7 +5,7 @@
 #include "PlayerBase.h"
 
 
-#define DEBUG_ON
+//#define DEBUG_ON
 
 //PlayerBase::PlayerBase(PLAY_MODE _mode, ROLE _role)
 //{
@@ -70,7 +70,7 @@ void PlayerBase::Init(void)
 
 	dodgeCdt_ = DODGE_CDT_MAX;
 	moveSpeed_ = 0.0f;
-	ChangeControll(CNTL::KEYBOARD);
+	ChangeControll(SceneManager::CNTL::KEYBOARD);
 
 	searchRange_ = SEARCH_RANGE;
 
@@ -414,9 +414,9 @@ void PlayerBase::ChangeControll(SceneManager::CNTL _cntl)
 	cntl_ = _cntl;
 	switch (cntl_)
 	{
-	case PlayerBase::CNTL::KEYBOARD:
+	case SceneManager::CNTL::KEYBOARD:
 		break;
-	case PlayerBase::CNTL::PAD:
+	case SceneManager::CNTL::PAD:
 		break;
 	}
 }
