@@ -123,8 +123,8 @@ protected:
 	//アニメーション終了時の動き
 	virtual void FinishAnim(void);
 	//カウンタ増加
-	void CntUp(float _count);
+	void CntUp(float& _count);
 	//カウンタ減少
-	void CntDown(float _count);
+	void CntDown(float& _count);
 };
 
