@@ -93,10 +93,10 @@ void PlayerBase::Update(void)
 {
 	switch (mode_)
 	{
-	case PlayerBase::PLAY_MODE::USER:
+	case SceneManager::PLAY_MODE::USER:
 		ModeUserUpdate();
 		break;
-	case PlayerBase::PLAY_MODE::CPU:
+	case SceneManager::PLAY_MODE::CPU:
 		CpuUpdate();
 		break;
 	default:

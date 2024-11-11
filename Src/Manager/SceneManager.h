@@ -9,6 +9,8 @@ class SceneManager
 
 public:
 
+	static constexpr int PLAYER_NUM = 4;	//プレイヤー人数
+
 	// シーン管理用
 	enum class SCENE_ID
 	{
@@ -22,8 +24,26 @@ public:
 	//コントローラ系統
 	enum class CNTL
 	{
-		KEYBOARD
-		, PAD
+		KEYBOARD,
+		PAD
+	};
+
+
+	//プレイヤーモード
+	enum class PLAY_MODE
+	{
+		USER,
+		CPU,
+		MAX
+	};
+
+	//役職
+	enum class ROLE
+	{
+		KNIGHT,
+		AXEMAN,
+		MAGE,
+		ARCHER
 	};
 	
 	//定数

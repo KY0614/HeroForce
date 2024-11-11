@@ -68,25 +68,7 @@ public:
     static constexpr float SEARCH_RADIUS = 400.0f;
 
 
-
-    //プレイヤーモード
-    enum class PLAY_MODE
-    {
-        USER
-        , CPU
-        , MAX
-    };
-
-    enum class ROLE
-    {
-        KNIGHT
-        , AXEMAN
-        , MAGE
-        , ARCHER
-    };
-
-
-    PlayerBase(PLAY_MODE _mode) :mode_(_mode){}
+    PlayerBase(SceneManager::PLAY_MODE _mode) :mode_(_mode){}
     ~PlayerBase(void) = default;
     void Destroy(void)override;
     virtual void SetParam(void);
@@ -137,7 +119,7 @@ public:
    void SetIsMove(bool _isMove) { isMove_ = _isMove; }
 
    //プレイヤーのモードゲッタ(CPUかUSERか)
-   PLAY_MODE GetPlayMode(void) { return mode_; }
+   SceneManager::PLAY_MODE GetPlayMode(void) { return mode_; }
 
    //状態ゲッタ
    STATE GetState(void) { return state_; }
@@ -155,7 +137,7 @@ protected:
     STATE state_;
 
     //役割
-    ROLE role_;
+    SceneManager::ROLE role_;
 
     ATK skill1_;
     ATK skill2_;
@@ -167,7 +149,7 @@ protected:
     float searchRange_;		
 
     //プレイヤーがCPUかUSERか判別
-    PLAY_MODE mode_;
+    SceneManager::PLAY_MODE mode_;
 
     enum class ATK_ACT
     {
