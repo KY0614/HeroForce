@@ -56,9 +56,11 @@ public:
 
 	void ProcessSelect(void);
 
-	void KeyKonfigSetting(void);
+	//キー入力とコントローラ入力を共通化
+	void KeyConfigSetting(void);
 
-	void Move(VECTOR pos);
+	//カーソルの移動量
+	void MoveCursor(float pow ,VECTOR dir);
 
 private:
 
@@ -69,5 +71,9 @@ private:
 	KEY_CONFIG key;
 
 	VECTOR pos_;
+
+	int img_;
+
+	void Load(void);
 };
 
