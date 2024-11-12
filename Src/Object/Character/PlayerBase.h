@@ -4,8 +4,7 @@
 #include<map>
 #include "../UnitBase.h"
 
-
-//#define DEBUG_ON
+#define DEBUG_ON
 class PlayerBase:
     public UnitBase
 {
@@ -24,6 +23,7 @@ public:
 
 
     //各アニメーション番号
+    static constexpr int T_POSE_NUM = 64;
     static constexpr int IDLE_NUM = 36;
     static constexpr int WALK_NUM = 72;
     static constexpr int RUN_NUM = 49;
@@ -81,9 +81,13 @@ public:
     static constexpr float SEARCH_RANGE = 800.0f * CHARACTER_SCALE;		//索敵判定の大きさ
     static constexpr float SEARCH_RADIUS = 400.0f;
 
+    //プレイヤー追従範囲
+    static constexpr float FOLLOW_PLAYER_RADIUS = 100.0f * CHARACTER_SCALE;
+
 
 
     //プレイヤーモード
+    //SceneManangerに移動
     enum class PLAY_MODE
     {
         USER
@@ -91,6 +95,8 @@ public:
         , MAX
     };
 
+
+    //SceneManangerに移動
     enum class ROLE
     {
         KNIGHT
@@ -133,32 +139,44 @@ public:
    void Damage(void);
 
    //攻撃開始判定
-   float GetAtkStartRange(void) { return atkStartRange_; }
+   const float GetAtkStartRange(void) { return atkStartRange_; }
 
    //索敵判定
-   float GetSearchRange(void) { return searchRange_; }
+   const float GetSearchRange(void) { return searchRange_; }
 
    //状態変更
    void ChangeState(const STATE _state);
 
    //CPUの状態セッタ
-   void SetState(STATE _state) { state_ = _state; }
+   void SetState(const STATE _state) { state_ = _state; }
 
    //デバッグ用関数
    void DrawDebug(void);
 
    //CPUの移動セッタ
-   void SetIsMove(bool _isMove) { isMove_ = _isMove; }
+   void SetIsMove(const bool _isMove) { isMove_ = _isMove; }
 
    //プレイヤーのモードゲッタ(CPUかUSERか)
    PLAY_MODE GetPlayMode(void) { return mode_; }
 
    //状態ゲッタ
    STATE GetState(void) { return state_; }
+
+   //敵サーチセッタ
+   void SetisEnemySerch(const bool _isEnemySerch) { isEnemySerch_ = _isEnemySerch; }
+
+   //追従対象をセット
+   void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; }
     
 protected:
-    VECTOR GetTargetVec(void);
-    VECTOR targetPos_;
+   VECTOR GetTargetVec(VECTOR _targetPos);
+
+    //ユーザー1追従用の座標
+    VECTOR userOnePos_;
+
+    //敵をサーチしたかしてないか
+    bool isEnemySerch_;
+
     //状態
     STATE state_;
 
@@ -206,6 +224,9 @@ protected:
     //それぞれのアクションの初期化
     void InitAct(ATK_ACT _act,float _dulation,float _backlash);
 
+    //攻撃変更用
+    void ChangeAtk(const ATK_ACT _act);
+
     //USER関係
     //------------------------------------------------
     //ユーザーがいるときの更新
@@ -248,15 +269,15 @@ protected:
     //カウント関数
     void Count(float& _cnt)
     { 
-         _cnt += SceneManager::GetInstance().GetDeltaTime(); 
+        _cnt += SceneManager::GetInstance().GetDeltaTime(); 
     }
 
 
     //各アクションの共通処理
-    void Action(ATK_ACT _act);
+    void Action(void);
 
     //攻撃座標の同期
-    void SyncActPos(ATK& _act,const VECTOR _colPos);
+    void SyncActPos(VECTOR _localPos);
 
 
     //移動関連
@@ -265,7 +286,7 @@ protected:
     void Move(float _deg, VECTOR _axis);
 
     //CPU移動
-    void CpuMove(void);
+    void CpuMove(VECTOR _targetPos);
     //方向処理
     void Turn(float _deg, VECTOR _axis);
 
@@ -290,7 +311,7 @@ protected:
     //攻撃
     //-------------------------------------
     //攻撃中かどうか(UnitBaseで修正予定)
-    bool IsAtkAction(void) { return acts_[ATK_ACT::ATK].IsAttack() || acts_[ATK_ACT::ATK].IsBacklash(); }
+    bool IsAtkAction(void) { return atk_.IsAttack() || atk_.IsBacklash(); }
 
     //攻撃可能かどうか(true:可能)
     bool IsAtkable(void) { return!IsAtkAction() && !IsSkillAll() && !IsDodge(); }
@@ -331,8 +352,8 @@ protected:
      /// <param name="_frameSkillNo">スキルフレーム最大値(今はスキル1か2)</param>
      /// <returns>スキル中/スキル中でない</returns>
 
-     bool IsSkillAction(SKILL_NUM _num) { return acts_[static_cast<ATK_ACT>(_num)].IsAttack() 
-           || acts_[static_cast<ATK_ACT>(_num)].IsBacklash(); }
+     bool IsSkillAction(SKILL_NUM _num) { return atk_.IsAttack() 
+           || atk_.IsBacklash(); }
      //すべてのスキルが使用中かどうか
      bool IsSkillAll(void) { return IsSkillAction(SKILL_NUM::ONE) || IsSkillAction(SKILL_NUM::TWO); }
 
@@ -355,7 +376,7 @@ protected:
 
      std::map<SKILL_NUM, ATK> skills_;
 
-     std::map<ATK_ACT, ATK> acts_;
+     ATK_ACT act_;
 
      //とりあえずランダムに攻撃を決める
      void RandAct(void);
@@ -375,5 +396,7 @@ private:
     ATK_ACT preAtk_;
 
     float breakCnt_;
+
+    VECTOR targetPos_;
 };
 
