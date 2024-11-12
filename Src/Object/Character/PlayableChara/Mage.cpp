@@ -1,6 +1,6 @@
 #include "Mage.h"
 
-PlMage::PlMage(PLAY_MODE _mode) :PlayerBase(_mode) { mode_ = _mode; }
+PlMage::PlMage(SceneManager::PLAY_MODE _mode) :PlayerBase(_mode) { mode_ = _mode; }
 
 
 void PlMage::SetParam(void)
