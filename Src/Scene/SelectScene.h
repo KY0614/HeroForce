@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneBase.h"
 #include "../Object/Common/Transform.h"
+#include "../Manager/SceneManager.h"
 
 
 class SelectScene :public SceneBase
@@ -14,8 +15,10 @@ public:
 		ROLE		//役職
 	};
 
-	enum class CONTROL
+	//入力デバイス
+	enum class DEVICE
 	{
+		NONE,
 		KEY,
 		PAD
 	};
@@ -59,14 +62,26 @@ public:
 	//キー入力とコントローラ入力を共通化
 	void KeyConfigSetting(void);
 
+	//カーソル移動処理
+	void ProcessCursor(void);
+
 	//カーソルの移動量
 	void MoveCursor(float pow ,VECTOR dir);
 
+	//今使用している入力デバイスを取得する
+	DEVICE GetDevice(void);
+
+	//プレイヤーが参加するときに使用したデバイス
+	DEVICE GetJoinDevice(void);
+
+	void SetDevice(DEVICE device);
+
 private:
+	int playerNum_[SceneManager::PLAYER_NUM];
 
 	SELECT select_;
 
-	CONTROL ctrl_;
+	DEVICE device_;
 
 	KEY_CONFIG key;
 
@@ -74,6 +89,7 @@ private:
 
 	int img_;
 
+	//読み込み用関数
 	void Load(void);
 };
 

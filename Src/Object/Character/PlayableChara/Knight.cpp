@@ -1,5 +1,5 @@
 #include "Knight.h"
-PlKnight::PlKnight(PLAY_MODE _mode) :PlayerBase(_mode) { mode_ = _mode; }
+PlKnight::PlKnight(SceneManager::PLAY_MODE _mode) :PlayerBase(_mode) { mode_ = _mode; }
 
 
 void PlKnight::SetParam(void)

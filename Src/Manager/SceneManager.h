@@ -17,9 +17,6 @@ public:
 		NONE,
 		TITLE,
 		SELECT,
-<<<<<<< HEAD
-		GAME
-=======
 		GAME,
 		CLEAR,
 	};
@@ -47,7 +44,6 @@ public:
 		AXEMAN,
 		MAGE,
 		ARCHER
->>>>>>> main
 	};
 	
 	//’è”

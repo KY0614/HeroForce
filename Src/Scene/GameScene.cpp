@@ -38,7 +38,7 @@ void GameScene::Init(void)
 	grid_->Init();	
 
 #ifdef _DEBUG_COL
-	playerTest_ = new PlAxe(PlayerBase::PLAY_MODE::USER);
+	playerTest_ = new PlAxe(SceneManager::PLAY_MODE::USER);
 	playerTest_->Init();
 	playerTest_->ChangeControll(SceneManager::CNTL::KEYBOARD);
 	enemyTest_ = new EneAxe();

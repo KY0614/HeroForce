@@ -1,5 +1,5 @@
 #include "Archer.h"
-PlArcher::PlArcher(PLAY_MODE _mode) :PlayerBase(_mode) { mode_ = _mode; }
+PlArcher::PlArcher(SceneManager::PLAY_MODE _mode) :PlayerBase(_mode) { mode_ = _mode; }
 
 void PlArcher::SetParam(void)
 {

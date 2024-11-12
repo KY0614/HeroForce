@@ -6,7 +6,7 @@ class PlAxe :
 public:
     static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//UŒ‚ŠJn”»’è‚Ì‘å‚«‚³
 
-    PlAxe(PLAY_MODE _mode);
+    PlAxe(SceneManager::PLAY_MODE _mode);
     ~PlAxe(void) = default;
     void SetParam(void)override;
 protected:

@@ -4,7 +4,7 @@ class PlArcher :
     public PlayerBase
 {
 public:
-    PlArcher(PLAY_MODE _mode);
+    PlArcher(SceneManager::PLAY_MODE _mode);
     ~PlArcher(void) = default;
     void SetParam(void)override;
 
