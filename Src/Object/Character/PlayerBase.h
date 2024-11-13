@@ -84,29 +84,7 @@ public:
     //プレイヤー追従範囲
     static constexpr float FOLLOW_PLAYER_RADIUS = 100.0f * CHARACTER_SCALE;
 
-
-
-    //プレイヤーモード
-    //SceneManangerに移動
-    enum class PLAY_MODE
-    {
-        USER
-        , CPU
-        , MAX
-    };
-
-
-    //SceneManangerに移動
-    enum class ROLE
-    {
-        KNIGHT
-        , AXEMAN
-        , MAGE
-        , ARCHER
-    };
-
-
-    PlayerBase(PLAY_MODE _mode) :mode_(_mode){}
+    PlayerBase(SceneManager::PLAY_MODE _mode) :mode_(_mode){}
     ~PlayerBase(void) = default;
     void Destroy(void)override;
     virtual void SetParam(void);
@@ -157,7 +135,7 @@ public:
    void SetIsMove(const bool _isMove) { isMove_ = _isMove; }
 
    //プレイヤーのモードゲッタ(CPUかUSERか)
-   PLAY_MODE GetPlayMode(void) { return mode_; }
+   SceneManager::PLAY_MODE GetPlayMode(void) { return mode_; }
 
    //状態ゲッタ
    STATE GetState(void) { return state_; }
@@ -167,6 +145,11 @@ public:
 
    //追従対象をセット
    void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; }
+    
+    
+
+   //コントローラー変更用関数
+   void ChangeControll(SceneManager::CNTL _cntl);
     
 protected:
    VECTOR GetTargetVec(VECTOR _targetPos);
@@ -181,7 +164,7 @@ protected:
     STATE state_;
 
     //役割
-    ROLE role_;
+    SceneManager::ROLE role_;
 
     ATK skill1_;
     ATK skill2_;
@@ -193,7 +176,7 @@ protected:
     float searchRange_;		
 
     //プレイヤーがCPUかUSERか判別
-    PLAY_MODE mode_;
+    SceneManager::PLAY_MODE mode_;
 
     enum class ATK_ACT
     {
@@ -208,14 +191,6 @@ protected:
         ONE = 1
         , TWO = 2
         ,MAX
-    };
-
-   
-
-    enum class CNTL
-    {
-        KEYBOARD
-        ,PAD
     };
 
     //アニメNo初期化
@@ -238,11 +213,7 @@ protected:
     //ゲームパッド
     void GamePad(void);
 
-    CNTL cntl_;
-
-    //コントローラー変更用関数
-    void ChangeControll(const CNTL _cntl);
-    //------------------------------------------------
+    SceneManager::CNTL cntl_;
 
     //CPU
     //-------------------------------------------------

@@ -28,7 +28,7 @@ void PlayerBase::Init(void)
 
 	dodgeCdt_ = DODGE_CDT_MAX;
 	moveSpeed_ = 0.0f;
-	ChangeControll(CNTL::KEYBOARD);
+	ChangeControll(SceneManager::CNTL::KEYBOARD);
 
 	searchRange_ = SEARCH_RANGE;
 
@@ -67,10 +67,10 @@ void PlayerBase::Update(void)
 
 	switch (mode_)
 	{
-	case PlayerBase::PLAY_MODE::USER:
-		UserUpdate();
+	case SceneManager::PLAY_MODE::USER:
+		ModeUserUpdate();
 		break;
-	case PlayerBase::PLAY_MODE::CPU:
+	case SceneManager::PLAY_MODE::CPU:
 		CpuUpdate();
 		break;
 	default:
@@ -143,10 +143,10 @@ void PlayerBase::UserUpdate(void)
 	//それぞれの操作更新
 	switch (cntl_)
 	{
-	case PlayerBase::CNTL::KEYBOARD:
+	case  SceneManager::CNTL::KEYBOARD:
 		KeyBoardControl();
 		break;
-	case PlayerBase::CNTL::PAD:
+	case  SceneManager::CNTL::PAD:
 		GamePad();
 		break;
 	}
@@ -247,7 +247,7 @@ void PlayerBase::KeyBoardControl(void)
 	DINPUT_JOYSTATE input;
 	if (GetJoypadInputState(DX_INPUT_PAD1)&&CheckHitKeyAll() < 0)
 	{
-		ChangeControll(CNTL::PAD);
+		ChangeControll(SceneManager::CNTL::PAD);
 	}
 	//前
 	if (ins.IsNew(KEY_INPUT_W))
@@ -314,7 +314,7 @@ void PlayerBase::GamePad(void)
 	auto& ins = InputManager::GetInstance();
 	if (GetJoypadNum() == 0)
 	{
-		ChangeControll(CNTL::KEYBOARD);
+		ChangeControll(SceneManager::CNTL::KEYBOARD);
 	}
 
 	// 左スティックの横軸
@@ -385,15 +385,14 @@ void PlayerBase::GamePad(void)
 	}
 }
 
-void PlayerBase::ChangeControll(const CNTL _cntl)
+void PlayerBase::ChangeControll(SceneManager::CNTL _cntl)
 {
-	//if (cntl_ == _cntl) { return; }
 	cntl_ = _cntl;
 	switch (cntl_)
 	{
-	case PlayerBase::CNTL::KEYBOARD:
+	case SceneManager::CNTL::KEYBOARD:
 		break;
-	case PlayerBase::CNTL::PAD:
+	case SceneManager::CNTL::PAD:
 		break;
 	}
 }

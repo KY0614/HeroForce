@@ -5,6 +5,7 @@
 #include "../Object/Character/PlayerBase.h"
 #include "../Object/Character/PlayableChara/PlAxeMan.h"
 #include"../Object/Character/Enemy.h"
+#include"../Object/Character/EnemySort/EneAxe.h"
 #include "../Object/Common/Transform.h"
 #include "../Object/Stage/StageBase.h"
 #include "../Object/Stage/SkyDome.h"
@@ -39,7 +40,8 @@ void GameScene::Init(void)
 #ifdef _DEBUG_COL
 	playerTest_ = new PlAxe(PlayerBase::PLAY_MODE::USER);
 	playerTest_->Init();
-	enemyTest_ = new Enemy();
+	playerTest_->ChangeControll(SceneManager::CNTL::KEYBOARD);
+	enemyTest_ = new EneAxe();
 	enemyTest_->Init();
 #endif
 

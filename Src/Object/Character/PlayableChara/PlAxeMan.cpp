@@ -1,7 +1,7 @@
 #include"../Manager/ResourceManager.h"
 #include "PlAxeMan.h"
 
-PlAxe::PlAxe(PLAY_MODE _mode) : PlayerBase(_mode) { mode_ = _mode; }
+PlAxe::PlAxe(SceneManager::PLAY_MODE _mode) : PlayerBase(_mode) { mode_ = _mode; }
 
 void PlAxe::SetParam(void)
 {

@@ -31,10 +31,12 @@
     <ClCompile Include="Src\Object\System\LevelupNotice.cpp" />
     <ClCompile Include="Src\Object\System\PowerSelect.cpp" />
     <ClCompile Include="Src\Common\ImageFader.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlAxeMan.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlMage.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlKnight.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlArcher.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\AxeMan.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Mage.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Knight.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Archer.cpp" />
+    <ClCompile Include="Src\Manager\DataBank.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneAxe.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\Character\Enemy.h" />
@@ -124,10 +126,12 @@
     <ClInclude Include="Src\Object\System\LevelupNotice.h" />
     <ClInclude Include="Src\Object\System\PowerSelect.h" />
     <ClInclude Include="Src\Common\ImageFader.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlAxeMan.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlMage.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlKnight.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlArcher.h" />
+    <ClInclude Include="Src\Manager\DataBank.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Archer.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\AxeMan.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Knight.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Mage.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\EneAxe.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">

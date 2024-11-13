@@ -4,7 +4,7 @@ class PlMage :
     public PlayerBase
 {
 public:
-    PlMage(PLAY_MODE _mode);
+    PlMage(SceneManager::PLAY_MODE _mode);
     ~PlMage(void) = default;
     void SetParam(void)override;
 
