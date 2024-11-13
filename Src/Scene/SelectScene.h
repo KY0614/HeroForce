@@ -117,6 +117,7 @@ private:
 
 	int color_;
 	int num;
+	int role;
 
 	//“Ç‚İ‚İ—pŠÖ”
 	void Load(void);
