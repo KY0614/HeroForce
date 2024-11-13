@@ -122,9 +122,11 @@ void SelectScene::NumberUpdate(void)
 			IsHitRect(rc[i], ins.GetMousePos(), 20)*/)
 		{
 			rc[i].color_ = 0xFF9999;
+			num = i + 1;
 			//左クリック押下で役職選択へ
 			if (ins.IsTrgMouseLeft())
 			{
+				data.Input(SceneManager::CNTL::KEYBOARD, i);
 				num = i + 1;
 				rc[i].color_ = 0xFF0000;
 				ChangeSelect(SELECT::ROLE);
@@ -160,6 +162,35 @@ void SelectScene::RoleUpdate(void)
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 	}
 
+#ifdef DEBUG_RECT
+	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+	{
+		rc[i] = { 250,300,200,200 };
+		rc[i].pos.x = (rc[i].pos.x * i) + 250;
+
+		if (IsHitRect(rc[i], ins.GetMousePos(), 20) /*||
+			IsHitRect(rc[i], ins.GetMousePos(), 20) ||
+			IsHitRect(rc[i], ins.GetMousePos(), 20) ||
+			IsHitRect(rc[i], ins.GetMousePos(), 20)*/)
+		{
+			rc[i].color_ = 0x99FF99;
+			num = i + 1;
+			//左クリック押下で役職選択へ
+			if (ins.IsTrgMouseLeft())
+			{
+				//data.Input(SceneManager::CNTL::KEYBOARD, i);
+				num = i + 1;
+				rc[i].color_ = 0xFF0000;
+				ChangeSelect(SELECT::ROLE);
+			}
+		}
+		else {
+			rc[i].color_ = 0x00FF00;
+		}
+
+	}
+#endif // DEBUG_RECT
+
 	//カーソル移動処理
 	ProcessCursor();
 }
@@ -187,6 +218,7 @@ void SelectScene::DrawDebug(void)
 		0xFFFFFF,
 		"%d",
 		key);
+	DrawFormatString(Application::SCREEN_SIZE_X / 2, 20, 0xFFFFFF, "number : %d", num);
 
 	//マウス用
 	DrawCircle(mPos.x, mPos.y, 20, 0x341685, true);
@@ -198,7 +230,7 @@ void SelectScene::DrawDebug(void)
 		break;
 	case SelectScene::SELECT::ROLE:
 		DrawString(Application::SCREEN_SIZE_X / 2, 0, "role", 0xFFFFFF);
-		DrawFormatString(Application::SCREEN_SIZE_X / 2, 20, 0xFFFFFF, "number : %d",num);
+		
 
 		break;
 

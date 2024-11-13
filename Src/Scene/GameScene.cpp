@@ -3,7 +3,7 @@
 #include "../Manager/Collision.h"
 #include "../Object/Grid.h"
 #include "../Object/Character/PlayerBase.h"
-#include "../Object/Character/PlayableChara/AxeMan.h"
+#include "../Object/Character/PlayableChara/PlAxeMan.h"
 #include"../Object/Character/Enemy.h"
 #include"../Object/Character/EnemySort/EneAxe.h"
 #include "../Object/Common/Transform.h"
