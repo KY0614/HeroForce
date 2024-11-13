@@ -1,4 +1,4 @@
-#include "Mage.h"
+#include "PlMage.h"
 
 PlMage::PlMage(SceneManager::PLAY_MODE _mode) :PlayerBase(_mode) { mode_ = _mode; }
 
