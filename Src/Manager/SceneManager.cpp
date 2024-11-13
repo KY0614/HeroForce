@@ -7,6 +7,7 @@
 #include "ResourceManager.h"
 #include "Camera.h"
 #include"Collision.h"
+#include"DataBank.h"
 #include "SceneManager.h"
 
 SceneManager* SceneManager::instance_ = nullptr;
@@ -30,6 +31,7 @@ void SceneManager::Init(void)
 
 	//îªíËÇÃê∂ê¨
 	Collision::CreateInstance();
+	DataBank::CreateInstance();
 
 	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;
@@ -143,6 +145,7 @@ void SceneManager::Destroy(void)
 
 	delete instance_;
 
+	DataBank::GetInstance().Destroy();
 }
 
 void SceneManager::ChangeScene(SCENE_ID nextId)
