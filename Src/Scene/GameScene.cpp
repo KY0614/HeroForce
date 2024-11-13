@@ -3,7 +3,7 @@
 #include "../Manager/Collision.h"
 #include "../Object/Grid.h"
 #include "../Object/Character/PlayerBase.h"
-#include "../Object/Character/PlayableChara/AxeMan.h"
+#include "../Object/Character/PlayableChara/PlAxeMan.h"
 #include"../Object/Character/Enemy.h"
 #include "../Object/Common/Transform.h"
 #include "../Object/Stage/StageBase.h"
@@ -37,7 +37,7 @@ void GameScene::Init(void)
 	grid_->Init();	
 
 #ifdef _DEBUG_COL
-	playerTest_ = new AxeMan(PlayerBase::PLAY_MODE::USER);
+	playerTest_ = new PlAxe(PlayerBase::PLAY_MODE::USER);
 	playerTest_->Init();
 	enemyTest_ = new Enemy();
 	enemyTest_->Init();
@@ -133,27 +133,47 @@ void GameScene::Collision(void)
 	}
 
 
-	//プレイヤー側索敵
-	if (col.Search(playerTest_->GetPos(), enemyTest_->GetPos(), playerTest_->GetAtkStartRange()))
+	//プレイヤーがCPUの時だけサーチしたい
+	if (playerTest_->GetPlayMode() == PlayerBase::PLAY_MODE::CPU)
 	{
-		//状態を変更
-		playerTest_->ChangeState(PlayerBase::STATE::ATTACK);
-	}
-
-	//プレイヤー攻撃判定
-	//攻撃中でありその攻撃が一度も当たっていないか
-	if (pAtk.IsAttack()&&!pAtk.isHit_)
-	{
-		//当たり判定
-		if (col.IsHitAtk(playerTest_, enemyTest_))	
+		//プレイヤー側索敵
+		if (col.Search(pPos, ePos, playerTest_->GetSearchRange())&&enemyTest_->IsAlive())
 		{
-			//被弾
-			enemyTest_->Damage(5, 4);				
-			//攻撃判定の終了
-			playerTest_->SetIsHit(true);			
+			//敵をサーチしたかを返す
+			playerTest_->SetisEnemySerch(true);
+			playerTest_->SetTargetPos(ePos);
 		}
-	}
+		else if(!enemyTest_->IsAlive())
+		{
+			//敵をサーチしたかを返す
+			playerTest_->SetisEnemySerch(false);
+		}
 
+		if (col.Search(playerTest_->GetPos(), enemyTest_->GetPos(), playerTest_->GetAtkStartRange()) 
+			&& playerTest_->GetState() == PlayerBase::STATE::NORMAL
+			&&enemyTest_->IsAlive())
+		{
+			//状態を変更
+			playerTest_->ChangeState(PlayerBase::STATE::ATTACK);
+		}
+
+	}
+		//プレイヤー攻撃判定
+		//攻撃中でありその攻撃が一度も当たっていないか
+		if (pAtk.IsAttack() && !pAtk.isHit_)
+		{
+			//当たり判定
+			if (col.IsHitAtk(playerTest_, enemyTest_))
+			{
+				//被弾
+				enemyTest_->Damage(5, 4);
+				//攻撃判定の終了
+				playerTest_->SetIsHit(true);
+			}
+		}
+
+	
+	
 	//敵の攻撃判定
 	//アタック中であり攻撃判定が終了していないとき
 	if (eAtk.IsAttack() && !eAtk.isHit_)

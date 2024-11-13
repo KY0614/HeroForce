@@ -151,39 +151,10 @@ void PlayerBase::UserUpdate(void)
 		break;
 	}
 
-	////共通処理
-	//switch (skillNo_)
-	//{
-	//case PlayerBase::SKILL_NUM::ONE:
-	//	ChangeAtk(ATK_ACT::SKILL1);
-	//	break;
-	//case PlayerBase::SKILL_NUM::TWO:
-	//	ChangeAtk(ATK_ACT::SKILL2);
-	//	break;
-	//default:
-	//	break;
-	//}
-
-	//switch (act_)
-	//{
-	//case PlayerBase::ATK_ACT::ATK:
-	//	//アニメーション
-	//	ResetAnim(ANIM::UNIQUE_1, SPEED_ANIM_ATK);
-	//	//カウンタ開始
-	//	break;
-	//case PlayerBase::ATK_ACT::SKILL1:
-	//	//アニメーション
-	//	ResetAnim(ANIM::SKILL_1, SPEED_ANIM_ATK);
-	//	break;
-	//case PlayerBase::ATK_ACT::SKILL2:
-	//	//アニメーション
-	//	ResetAnim(ANIM::SKILL_2, SPEED_ANIM_ATK);
-	//	break;
-	//}
-
 	//回避
 	Dodge();
 
+	//アクション判定
 	Action();
 
 }
@@ -745,22 +716,20 @@ void PlayerBase::AtkUpdate(void)
 		case PlayerBase::ATK_ACT::ATK:
 			if (IsAtkable())
 			{
-				ResetAnim(ANIM::UNIQUE_1, SPEED_ANIM_ATK);
-				//Action(ATK_ACT::ATK);
+				ResetAnim(ANIM::UNIQUE_1, SPEED_ANIM_ATK);		
 			}
 			break;
 		case PlayerBase::ATK_ACT::SKILL1:
 			if (IsSkillable())
 			{
 				ResetAnim(ANIM::SKILL_1, SPEED_ANIM_ATK);
-				//Action(ATK_ACT::SKILL1);
+
 			}
 			break;
 		case PlayerBase::ATK_ACT::SKILL2:
 			if (IsSkillable())
 			{
 				ResetAnim(ANIM::SKILL_2, SPEED_ANIM_ATK);
-				//Action(ATK_ACT::SKILL2);
 			}
 			break;
 		default:
