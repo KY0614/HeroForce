@@ -1,12 +1,14 @@
 #include"../../../Manager/Resource.h"
 #include"../../../Manager/ResourceManager.h"
+#include"../../Arrow.h"
 #include"../Enemy.h"
-#include "EneAxe.h"
+#include "EneArcher.h"
 
-void EneAxe::SetParam(void)
+void EneArcher::SetParam(void)
 {
 	//モデル読み込み
-	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_AXEMAN));
+	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_ARCHER));
+	//arrowMdlId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::);	※TODO矢のモデル
 
 	//※個々で設定する
 	radius_ = MY_COL_RADIUS;
@@ -19,7 +21,7 @@ void EneAxe::SetParam(void)
 	atkStartRange_ = ATK_START_RANGE;
 }
 
-void EneAxe::InitAnimNum(void)
+void EneArcher::InitAnimNum(void)
 {
 	//共通アニメーション初期化
 	Enemy::InitAnimNum();
@@ -27,9 +29,10 @@ void EneAxe::InitAnimNum(void)
 	//固有アニメーション初期化
 	animNum_.emplace(ANIM::SKILL_1, ANIM_SKILL_ONE);
 	animNum_.emplace(ANIM::SKILL_2, ANIM_SKILL_TWO);
+	animNum_.emplace(ANIM::UNIQUE_1, ANIM_RELOAD);
 }
 
-void EneAxe::InitSkill(void)
+void EneArcher::InitSkill(void)
 {
 	//ここにスキルの数分格納させる
 	skills_.emplace_back(SKILL_ONE);
@@ -43,7 +46,7 @@ void EneAxe::InitSkill(void)
 	RandSkill();
 }
 
-void EneAxe::Attack(void)
+void EneArcher::Attack(void)
 {
 	//現在のスキルの確認
 	if (nowSkill_.front().radius_ == SKILL_ONE.radius_
@@ -64,7 +67,7 @@ void EneAxe::Attack(void)
 	}
 }
 
-void EneAxe::Skill_One(void)
+void EneArcher::Skill_One(void)
 {
 	//前方向
 	VECTOR dir = trans_.quaRot.GetForward();
@@ -76,7 +79,7 @@ void EneAxe::Skill_One(void)
 	}
 }
 
-void EneAxe::Skill_Two(void)
+void EneArcher::Skill_Two(void)
 {
 	//前方向
 	VECTOR dir = trans_.quaRot.GetForward();
@@ -88,7 +91,12 @@ void EneAxe::Skill_Two(void)
 	}
 }
 
-void EneAxe::InitChangeState(void)
+void EneArcher::CreateArrow(void)
+{
+	
+}
+
+void EneArcher::InitChangeState(void)
 {
 	switch (state_)
 	{

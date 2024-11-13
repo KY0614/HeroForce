@@ -1,7 +1,7 @@
 #pragma once
-#include"../Enemy.h"
+#include "../Enemy.h"
 
-class EneAxe : public Enemy
+class EneMage : public Enemy
 {
 public:
 	//****************************************************************
@@ -9,22 +9,22 @@ public:
 	//****************************************************************
 
 	//アニメーション番号(キャラ固有)
-	static constexpr int ANIM_SKILL_ONE = 9;	//スキル1アニメーション
-	static constexpr int ANIM_SKILL_TWO = 11;	//スキル2アニメーション
+	static constexpr int ANIM_SKILL_ONE = 75;	//スキル1アニメーション
+	static constexpr int ANIM_SKILL_TWO = 78;	//スキル2アニメーション
+	static constexpr int ANIM_CHARGE = 79;		//溜めアニメーション(固有アニメーション)
 
 	//モデル関係
 	static constexpr VECTOR  LOCAL_CENTER_POS = { 0.0f,100.0f * CHARACTER_SCALE,0.0f };	//モデルの中心座標への相対座標
 
 	//攻撃関係
-	static constexpr float ALERT_TIME = 2.0f;	//攻撃の警告時間
-	static constexpr float BREAK_TIME = 3.0f;	//攻撃の休憩時間
+	static constexpr float ALERT_TIME = 2.5f;	//攻撃の警告時間
+	static constexpr float BREAK_TIME = 4.0f;	//攻撃の休憩時間
 
 	//敵自身の当たり判定半径
 	static constexpr float MY_COL_RADIUS = 100.0f * CHARACTER_SCALE;
 
 	//敵ステータス
-	static constexpr int HP_MAX = 170;			//敵の最大体力
-	static constexpr int DEF = 120;
+	static constexpr int HP_MAX = 3;			//敵の最大体力
 	static constexpr int STUN_DEF_MAX = 100;	//敵の最大スタン防御値
 
 	//速度関係
@@ -32,17 +32,21 @@ public:
 	static constexpr float RUN_SPEED = 4.0f;	//走りの速度
 
 	//範囲関係
-	static constexpr float SEARCH_RANGE = 1000.0f * CHARACTER_SCALE;		//索敵判定の大きさ
+	static constexpr float SEARCH_RANGE = 1500.0f * CHARACTER_SCALE;		//索敵判定の大きさ
 	static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
 
 	//スキルの当たり判定半径
-	static constexpr float SKILL_ONE_COL_RADIUS = 10.0f;	//スキル１
-	static constexpr float SKILL_TWO_COL_RADIUS = 24.0f;	//スキル２
+	static constexpr float SKILL_ONE_COL_RADIUS = 20.0f;	//スキル１の当たり判定
+	static constexpr float SKILL_TWO_COL_RADIUS = 50.0f;	//スキル２の当たり判定
+
+	//スキルの射程
+	static constexpr float SKILL_ONE_RANGE = 40.0f;	//スキル１の射程
+	static constexpr float SKILL_TWO_RANGE = 80.0f;	//スキル２の射程
 
 	//スキル関係
-	static constexpr ATK SKILL_ONE = { AsoUtility::VECTOR_ZERO,SKILL_ONE_COL_RADIUS,1.0f,1.0f,2.0f,0.0f };	//スキル１
-	static constexpr ATK SKILL_TWO = { AsoUtility::VECTOR_ZERO,SKILL_TWO_COL_RADIUS,5.0f,2.0f,3.0f,0.0f };	//スキル２
-	
+	static constexpr ATK SKILL_ONE = { AsoUtility::VECTOR_ZERO,SKILL_ONE_COL_RADIUS,1.0f,2.0f,2.0f,0.0f };	//スキル１
+	static constexpr ATK SKILL_TWO = { AsoUtility::VECTOR_ZERO,SKILL_TWO_COL_RADIUS,5.0f,2.0f,5.0f,0.0f };	//スキル２
+
 private:
 	//****************************************************************
 	//関数
@@ -58,7 +62,7 @@ private:
 	void InitSkill(void)override;
 
 	//警告時間中かどうかを返す
-	const bool IsAlertTime(void)const override{ return alertCnt_ < ALERT_TIME; }
+	const bool IsAlertTime(void)const override { return alertCnt_ < ALERT_TIME; }
 	//休憩時間中かどうかを返す
 	const bool IsBreak(void)const override { return breakCnt_ < BREAK_TIME; }
 
@@ -70,6 +74,9 @@ private:
 
 	//スキル2
 	void Skill_Two(void)override;
+
+	//アニメーション終了時の動き
+	void FinishAnim(void)override;
 
 	//状態遷移における初期化処理
 	void InitChangeState(void)override;

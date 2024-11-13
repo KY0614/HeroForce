@@ -15,7 +15,7 @@ public:
 
 	//アニメーション番号
 	static constexpr int ANIM_IDLE = 14;	//待機アニメーション
-	static constexpr int ANIM_WALK = 93;	//歩きアニメーション+
+	static constexpr int ANIM_WALK = 93;	//歩きアニメーション
 	static constexpr int ANIM_RUN = 54;		//走りアニメーション
 	static constexpr int ANIM_DAMAGE = 39;	//ダメージアニメーション
 	static constexpr int ANIM_DEATH = 24;	//やられアニメーション
@@ -42,7 +42,7 @@ public:
 	//****************************************************************
 
 	//コンストラクタ
-	Enemy();
+	Enemy() = default;
 	//デストラクタ
 	~Enemy() = default;
 
@@ -80,10 +80,13 @@ public:
 	void SetIsMove(const bool _isMove) { isMove_ = _isMove; }
 
 	/// <summary>
-	/// 標的の座標を取得
+	/// 標的の座標を変更
 	/// </summary>
 	/// <param name="_targetPos">標的の座標</param>
 	void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; }
+
+	//標的の方向に向く
+	void LookTargetVec(void);
 
 	/// <summary>
 	/// ダメージ
@@ -150,22 +153,19 @@ protected:
 	virtual void Attack(void) = 0;
 
 	//スキル1
-	virtual void Skill_1(void);
+	virtual void Skill_One(void);
 
 	//スキル2
-	virtual void Skill_2(void);
+	virtual void Skill_Two(void);
 
 	//スキルのランダム生成
 	void RandSkill(void);
 
 	//アニメーション終了時の動き
-	void FinishAnim(void)override;
+	virtual void FinishAnim(void)override;
 
-private:
-
-	//****************************************************************
-	//メンバ関数
-	//****************************************************************
+	//状態遷移における初期化処理
+	virtual void InitChangeState(void);
 
 	//更新(通常)
 	void UpdateNml(void);

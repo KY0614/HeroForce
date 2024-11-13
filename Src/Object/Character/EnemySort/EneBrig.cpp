@@ -1,12 +1,12 @@
 #include"../../../Manager/Resource.h"
 #include"../../../Manager/ResourceManager.h"
 #include"../Enemy.h"
-#include "EneAxe.h"
+#include "EneBrig.h"
 
-void EneAxe::SetParam(void)
+void EneBrig::SetParam(void)
 {
 	//モデル読み込み
-	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_AXEMAN));
+	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_BRIGANT));
 
 	//※個々で設定する
 	radius_ = MY_COL_RADIUS;
@@ -19,7 +19,7 @@ void EneAxe::SetParam(void)
 	atkStartRange_ = ATK_START_RANGE;
 }
 
-void EneAxe::InitAnimNum(void)
+void EneBrig::InitAnimNum(void)
 {
 	//共通アニメーション初期化
 	Enemy::InitAnimNum();
@@ -29,7 +29,7 @@ void EneAxe::InitAnimNum(void)
 	animNum_.emplace(ANIM::SKILL_2, ANIM_SKILL_TWO);
 }
 
-void EneAxe::InitSkill(void)
+void EneBrig::InitSkill(void)
 {
 	//ここにスキルの数分格納させる
 	skills_.emplace_back(SKILL_ONE);
@@ -43,7 +43,7 @@ void EneAxe::InitSkill(void)
 	RandSkill();
 }
 
-void EneAxe::Attack(void)
+void EneBrig::Attack(void)
 {
 	//現在のスキルの確認
 	if (nowSkill_.front().radius_ == SKILL_ONE.radius_
@@ -64,7 +64,7 @@ void EneAxe::Attack(void)
 	}
 }
 
-void EneAxe::Skill_One(void)
+void EneBrig::Skill_One(void)
 {
 	//前方向
 	VECTOR dir = trans_.quaRot.GetForward();
@@ -76,7 +76,7 @@ void EneAxe::Skill_One(void)
 	}
 }
 
-void EneAxe::Skill_Two(void)
+void EneBrig::Skill_Two(void)
 {
 	//前方向
 	VECTOR dir = trans_.quaRot.GetForward();
@@ -88,7 +88,7 @@ void EneAxe::Skill_Two(void)
 	}
 }
 
-void EneAxe::InitChangeState(void)
+void EneBrig::InitChangeState(void)
 {
 	switch (state_)
 	{

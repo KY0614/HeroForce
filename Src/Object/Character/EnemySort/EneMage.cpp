@@ -1,12 +1,12 @@
 #include"../../../Manager/Resource.h"
 #include"../../../Manager/ResourceManager.h"
 #include"../Enemy.h"
-#include "EneAxe.h"
+#include "EneMage.h"
 
-void EneAxe::SetParam(void)
+void EneMage::SetParam(void)
 {
 	//モデル読み込み
-	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_AXEMAN));
+	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MAGE));
 
 	//※個々で設定する
 	radius_ = MY_COL_RADIUS;
@@ -19,7 +19,7 @@ void EneAxe::SetParam(void)
 	atkStartRange_ = ATK_START_RANGE;
 }
 
-void EneAxe::InitAnimNum(void)
+void EneMage::InitAnimNum(void)
 {
 	//共通アニメーション初期化
 	Enemy::InitAnimNum();
@@ -27,9 +27,10 @@ void EneAxe::InitAnimNum(void)
 	//固有アニメーション初期化
 	animNum_.emplace(ANIM::SKILL_1, ANIM_SKILL_ONE);
 	animNum_.emplace(ANIM::SKILL_2, ANIM_SKILL_TWO);
+	animNum_.emplace(ANIM::UNIQUE_1, ANIM_CHARGE);
 }
 
-void EneAxe::InitSkill(void)
+void EneMage::InitSkill(void)
 {
 	//ここにスキルの数分格納させる
 	skills_.emplace_back(SKILL_ONE);
@@ -43,7 +44,7 @@ void EneAxe::InitSkill(void)
 	RandSkill();
 }
 
-void EneAxe::Attack(void)
+void EneMage::Attack(void)
 {
 	//現在のスキルの確認
 	if (nowSkill_.front().radius_ == SKILL_ONE.radius_
@@ -64,7 +65,7 @@ void EneAxe::Attack(void)
 	}
 }
 
-void EneAxe::Skill_One(void)
+void EneMage::Skill_One(void)
 {
 	//前方向
 	VECTOR dir = trans_.quaRot.GetForward();
@@ -76,7 +77,7 @@ void EneAxe::Skill_One(void)
 	}
 }
 
-void EneAxe::Skill_Two(void)
+void EneMage::Skill_Two(void)
 {
 	//前方向
 	VECTOR dir = trans_.quaRot.GetForward();
@@ -88,7 +89,21 @@ void EneAxe::Skill_Two(void)
 	}
 }
 
-void EneAxe::InitChangeState(void)
+void EneMage::FinishAnim(void)
+{
+	//共通アニメーションの終了処理
+	Enemy::FinishAnim();
+
+	switch (anim_)
+	{
+	case UnitBase::ANIM::UNIQUE_1:
+		//ループ再生
+		stepAnim_ = 0;
+		break;
+	}
+}
+
+void EneMage::InitChangeState(void)
 {
 	switch (state_)
 	{
@@ -99,8 +114,8 @@ void EneAxe::InitChangeState(void)
 		//向きを改めて設定
 		trans_.quaRot = trans_.quaRot.LookRotation(GetTargetVec());
 
-		//待機アニメーション
-		ResetAnim(ANIM::IDLE, SPEED_ANIM);
+		//溜めアニメーション
+		ResetAnim(ANIM::UNIQUE_1, SPEED_ANIM);
 
 		//警告カウンタ初期化
 		alertCnt_ = 0.0f;

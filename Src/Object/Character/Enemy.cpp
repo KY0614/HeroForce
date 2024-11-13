@@ -8,14 +8,6 @@
 #include"../../Utility/AsoUtility.h"
 #include "Enemy.h"
 
-Enemy::Enemy()
-{
-	hp_ = 5;
-	moveSpeed_ = 0.0f;
-	state_ = STATE::NORMAL;
-	anim_ = ANIM::NONE;
-}
-
 void Enemy::Destroy(void)
 {
 	animNum_.clear();
@@ -97,15 +89,24 @@ void Enemy::Update(void)
 	trans_.Update();
 }
 
+void Enemy::LookTargetVec(void)
+{
+	//方向ベクトル取得
+	VECTOR targetVec = GetTargetVec();
+
+	//向き回転
+	trans_.quaRot = trans_.quaRot.LookRotation(targetVec);
+}
+
 void Enemy::Damage(const int _damage, const int _stunPow)
 {
 	//既にやられているなら処理しない
 	if (!IsAlive()) { return; }
 
-	//ダメージ
+	//ダメージカウント
 	hp_ -= _damage;
 
-	//スタン値
+	//スタン値カウント
 	stunDef_ += _stunPow;
 
 	//やられたら死亡アニメーション
@@ -116,26 +117,9 @@ void Enemy::ChangeState(const STATE _state)
 {
 	//状態遷移
 	state_ = _state;
-
+	
 	//状態遷移における初期化
-	switch (state_)
-	{
-	case Enemy::STATE::NORMAL:
-		break;
-	
-	case Enemy::STATE::ALERT:
-		//警告カウンタ初期化
-		alertCnt_ = 0.0f;
-		break;
-
-	case Enemy::STATE::ATTACK:
-		break;
-	
-	case Enemy::STATE::BREAK:
-		//攻撃休憩時間の初期化
-		breakCnt_ = 0;
-		break;
-	}
+	InitChangeState();
 }
 
 void Enemy::InitAnimNum()
@@ -155,9 +139,7 @@ void Enemy::UpdateNml(void)
 	//終了処理
 	//**********************************************************
 
-
 	/*ゲームシーンにあります*/
-
 
 	//**********************************************************
 	//動作処理
@@ -197,7 +179,7 @@ void Enemy::UpdateAlert(void)
 	//**********************************************************
 
 	//クールダウンカウンタ
-	alertCnt_++;
+	CntUp(alertCnt_);
 
 	//生成が終わってないなら生成する
 	if (nowSkill_.front().IsFinishMotion())
@@ -227,7 +209,7 @@ void Enemy::UpdateAtk(void)
 	for (auto& nowSkill : nowSkill_)
 	{
 		//攻撃のカウンタ
-		nowSkill.cnt_++;
+		CntUp(nowSkill.cnt_);
 	}
 
 	//攻撃処理
@@ -256,7 +238,7 @@ void Enemy::UpdateBreak(void)
 	ResetAnim(ANIM::IDLE, SPEED_ANIM);
 
 	//攻撃休憩時間カウンタ
-	breakCnt_++;
+	CntUp(breakCnt_);
 }
 
 void Enemy::Draw(void)
@@ -302,9 +284,6 @@ void Enemy::Draw(void)
 		if (nowSkill.IsAttack()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
 		else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
 	}
-	//攻撃の描画
-	//if (atk_.IsAttack()) { DrawSphere3D(atk_.pos_, nowSkillColRadius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
-	//else if (atk_.IsBacklash()) { DrawSphere3D(atk_.pos_, nowSkillColRadius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
 }
 
 const VECTOR Enemy::GetTargetVec(void)const
@@ -332,7 +311,7 @@ void Enemy::Move(void)
 	//方向ベクトル取得
 	VECTOR targetVec = GetTargetVec();
 
-	//回転
+	//向き回転
 	trans_.quaRot = trans_.quaRot.LookRotation(targetVec);
 
 	//移動
@@ -359,20 +338,36 @@ void Enemy::FinishAnim(void)
 	}
 }
 
-
-void Enemy::Skill_1(void)
+void Enemy::InitChangeState(void)
 {
-	//前方向
-	VECTOR dir = trans_.quaRot.GetForward();
-
-	for (auto& nowSkill : nowSkill_)
+	switch (state_)
 	{
-		//座標の設定
-		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_));
+	case Enemy::STATE::NORMAL:
+		break;
+
+	case Enemy::STATE::ALERT:
+		//向きを改めて設定
+		trans_.quaRot = trans_.quaRot.LookRotation(GetTargetVec());
+
+		//待機アニメーション
+		ResetAnim(ANIM::IDLE, SPEED_ANIM);
+
+		//警告カウンタ初期化
+		alertCnt_ = 0.0f;
+		break;
+
+	case Enemy::STATE::ATTACK:
+		break;
+
+	case Enemy::STATE::BREAK:
+		//攻撃休憩時間の初期化
+		breakCnt_ = 0;
+		break;
 	}
 }
 
-void Enemy::Skill_2(void)
+
+void Enemy::Skill_One(void)
 {
 	//前方向
 	VECTOR dir = trans_.quaRot.GetForward();
@@ -380,7 +375,19 @@ void Enemy::Skill_2(void)
 	for (auto& nowSkill : nowSkill_)
 	{
 		//座標の設定
-		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_));
+		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_ + radius_));
+	}
+}
+
+void Enemy::Skill_Two(void)
+{
+	//前方向
+	VECTOR dir = trans_.quaRot.GetForward();
+
+	for (auto& nowSkill : nowSkill_)
+	{
+		//座標の設定
+		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_ + radius_));
 	}
 }
 
@@ -403,6 +410,7 @@ void Enemy::RandSkill(void)
 		{
 			//上書き
 			nowSkill = skills_[rand];
+			nowSkillAnim_ = skillAnims_[rand];
 			
 			//カウンタの初期化
 			nowSkill.ResetCnt();
@@ -421,7 +429,6 @@ void Enemy::RandSkill(void)
 
 	//ランダムでとってきた攻撃の種類を今から発動するスキルに設定
 	nowSkill_.emplace_back(skills_[rand]);
-	//atk_ = skills_[rand];
 	nowSkillAnim_ = skillAnims_[rand];
 
 	//カウンタの初期化
