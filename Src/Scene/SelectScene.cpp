@@ -1,3 +1,4 @@
+#include <vector>
 #include "../Application.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
@@ -33,6 +34,9 @@ void SelectScene::Init(void)
 	key = KEY_CONFIG::NONE;
 
 	SetDevice(DEVICE::NONE);
+
+	color_ = 0xFF0000;	//赤
+
 }
 
 void SelectScene::Update(void)
@@ -71,12 +75,7 @@ void SelectScene::Draw(void)
 	auto& ins = InputManager::GetInstance();
 	InputManager::JOYPAD_IN_STATE pad = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
 
-	Vector2 mPos = ins.GetMousePos();
-
 	DrawDebug();
-
-	//マウス用
-	DrawCircle(mPos.x, mPos.y, 20, 0xFF0000, true);
 
 	//キーとコントローラー用
 	switch (device_)
@@ -116,6 +115,25 @@ void SelectScene::NumberUpdate(void)
 	//カーソル移動処理
 	ProcessCursor();
 
+#ifdef DEBUG_RECT
+	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+	{
+		rc[i] = { 250,300,200,200 };
+		rc[i].pos.x = (rc[i].pos.x * i) + 250;
+
+	}
+
+	if (IsHitRect(rc[0], ins.GetMousePos(), 20) ||
+		IsHitRect(rc[1], ins.GetMousePos(), 20) ||
+		IsHitRect(rc[2], ins.GetMousePos(), 20) ||
+		IsHitRect(rc[3], ins.GetMousePos(), 20))
+	{
+		color_ = 0xFF9999;
+	}
+	else {
+		color_ = 0xFF0000;
+	}
+#endif // DEBUG_RECT
 
 	//if (GetJoinDevice() == DEVICE::KEY)
 	//{
@@ -146,6 +164,19 @@ void SelectScene::RoleUpdate(void)
 
 void SelectScene::DrawDebug(void)
 {
+	InputManager& ins = InputManager::GetInstance();
+	Vector2 mPos = ins.GetMousePos();
+
+#ifdef DEBUG_RECT
+
+	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+	{
+		rc[i].Draw(color_);
+		DrawFormatString(rc[i].pos.x, rc[i].pos.y,
+			0xFFFFFF, "%d", i + 1);
+	}
+
+#endif // DEBUG_RECT
 
 	DrawString(0, 0, "select", 0xFFFFFF);
 	DrawString(0, 800, "緑：パッド入力,ピンク：キー入力", 0xFFFFFF);
@@ -155,6 +186,9 @@ void SelectScene::DrawDebug(void)
 		"%d",
 		key);
 
+	//マウス用
+	DrawCircle(mPos.x, mPos.y, 20, 0x341685, true);
+
 	switch (select_)
 	{
 	case SelectScene::SELECT::NUMBER:
@@ -162,6 +196,9 @@ void SelectScene::DrawDebug(void)
 		break;
 	case SelectScene::SELECT::ROLE:
 		DrawString(Application::SCREEN_SIZE_X / 2, 0, "role", 0xFFFFFF);
+
+		size_t size = playerNum_.size();
+		DrawFormatString(Application::SCREEN_SIZE_X / 2 , 20, 0xFFFFFF, "number : %d", size);
 		break;
 	default:
 		break;
@@ -222,11 +259,17 @@ void SelectScene::KeyConfigSetting(void)
 	{
 		key = KEY_CONFIG::LEFT;
 	}	
-	
-	if (ins.IsNew(KEY_INPUT_LEFT) ||
-		ins.IsNew(KEY_INPUT_A))
+
+	if (leftStickX_ < -1)
 	{
 		key = KEY_CONFIG::LEFT;
+		SetDevice(DEVICE::PAD);
+	}
+	
+	if (ins.IsNew(KEY_INPUT_RIGHT) ||
+		ins.IsNew(KEY_INPUT_D))
+	{
+		key = KEY_CONFIG::RIGHT;
 		SetDevice(DEVICE::KEY);
 	}
 
@@ -315,6 +358,19 @@ void SelectScene::SetDevice(DEVICE device)
 	device_ = device;
 }
 
+bool SelectScene::IsHitRect(Rect& rc, Vector2 pos, int r)
+{
+	auto diffX = pos.x - rc.pos.x;	//終点から始点を引く
+	auto diffY = pos.y - rc.pos.y;	//終点から始点を引く
+	if (fabsf(diffX) > r + rc.w / 2 ||
+		fabsf(diffY) > r + rc.h / 2) {
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
 void SelectScene::Load(void)
 {
 	//画像読み込み
@@ -323,4 +379,13 @@ void SelectScene::Load(void)
 	{
 		return;
 	}
+}
+
+void SelectScene::Rect::Draw(unsigned int color)
+{
+	DxLib::DrawBox(
+		(int)Left(),
+		(int)Top() ,
+		(int)Right() ,
+		(int)Bottom(), color, true);
 }
