@@ -14,7 +14,7 @@ public:
 	{
 		VECTOR pos_;		//位置
 		float radius_;		//当たり判定の半径
-		float pow_;			//攻撃力
+		float pow_;			//技威力
 		float duration_;	//持続時間（攻撃がどれくらい続くかを記述)
 		float backlash_;	//後隙（後隙がどれくらい続くかを記述)
 		float cnt_;			//カウンター
@@ -110,6 +110,7 @@ protected:
 	Transform trans_;	//位置情報関係
 	float radius_;		//自身の当たり判定の半径
 	float def_;			//防御力
+	float atkPow_;		//攻撃力
 	ATK atk_;			//現在のスキル
 
 	//アニメ関係
