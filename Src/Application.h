@@ -1,14 +1,22 @@
 #pragma once
 #include <string>
 
+#define DEBUG_SCREEN
+
 class Application
 {
 
 public:
-
+#ifdef DEBUG_SCREEN
+	static constexpr int SCREEN_SIZE_X = 800;
+	static constexpr int SCREEN_SIZE_Y = 600;
+#else
 	// スクリーンサイズ
 	static constexpr int SCREEN_SIZE_X = 1920;
 	static constexpr int SCREEN_SIZE_Y = 1080;
+#endif // DEBUG_SCREEN
+
+
 
 	//FPS
 	static constexpr int DEFAULT_FPS = 60;
