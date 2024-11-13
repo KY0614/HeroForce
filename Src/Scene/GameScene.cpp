@@ -3,7 +3,7 @@
 #include "../Manager/Collision.h"
 #include "../Object/Grid.h"
 #include "../Object/Character/PlayerBase.h"
-#include "../Object/Character/PlayableChara/AxeMan.h"
+#include "../Object/Character/PlayableChara/PlAxeMan.h"
 #include"../Object/Character/Enemy.h"
 #include"../Object/Character/EnemySort/EneAxe.h"
 #include "../Object/Common/Transform.h"
@@ -38,7 +38,7 @@ void GameScene::Init(void)
 	grid_->Init();	
 
 #ifdef _DEBUG_COL
-	playerTest_ = new PlAxe(PlayerBase::PLAY_MODE::USER);
+	playerTest_ = new PlAxe(SceneManager::PLAY_MODE::USER);
 	playerTest_->Init();
 	playerTest_->ChangeControll(SceneManager::CNTL::KEYBOARD);
 	enemyTest_ = new EneAxe();
