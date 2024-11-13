@@ -6,6 +6,7 @@ class PlKnight :
 public:
     static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//UŒ‚ŠJn”»’è‚Ì‘å‚«‚³
     PlKnight(PLAY_MODE _mode);
+    PlKnight(SceneManager::PLAY_MODE _mode);
     ~PlKnight(void) = default;
     void SetParam(void)override;
 
