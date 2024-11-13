@@ -37,6 +37,7 @@ void SelectScene::Init(void)
 
 	color_ = 0xFF0000;	//赤
 
+	num = 0;
 }
 
 void SelectScene::Update(void)
@@ -106,12 +107,6 @@ void SelectScene::NumberUpdate(void)
 	InputManager& ins = InputManager::GetInstance();
 	DataBank& data = DataBank::GetInstance();
 
-	//左クリック押下で役職選択へ
-	if (ins.IsTrgMouseLeft())
-	{
-		ChangeSelect(SELECT::ROLE);
-	}
-
 	//カーソル移動処理
 	ProcessCursor();
 
@@ -121,17 +116,24 @@ void SelectScene::NumberUpdate(void)
 		rc[i] = { 250,300,200,200 };
 		rc[i].pos.x = (rc[i].pos.x * i) + 250;
 
-	}
+		if (IsHitRect(rc[i], ins.GetMousePos(), 20) /*||
+			IsHitRect(rc[i], ins.GetMousePos(), 20) ||
+			IsHitRect(rc[i], ins.GetMousePos(), 20) ||
+			IsHitRect(rc[i], ins.GetMousePos(), 20)*/)
+		{
+			rc[i].color_ = 0xFF9999;
+			//左クリック押下で役職選択へ
+			if (ins.IsTrgMouseLeft())
+			{
+				num = i + 1;
+				rc[i].color_ = 0xFF0000;
+				ChangeSelect(SELECT::ROLE);
+			}
+		}
+		else {
+			rc[i].color_ = 0xFF0000;
+		}
 
-	if (IsHitRect(rc[0], ins.GetMousePos(), 20) ||
-		IsHitRect(rc[1], ins.GetMousePos(), 20) ||
-		IsHitRect(rc[2], ins.GetMousePos(), 20) ||
-		IsHitRect(rc[3], ins.GetMousePos(), 20))
-	{
-		color_ = 0xFF9999;
-	}
-	else {
-		color_ = 0xFF0000;
 	}
 #endif // DEBUG_RECT
 
@@ -171,7 +173,7 @@ void SelectScene::DrawDebug(void)
 
 	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
 	{
-		rc[i].Draw(color_);
+		rc[i].Draw(rc[i].color_);
 		DrawFormatString(rc[i].pos.x, rc[i].pos.y,
 			0xFFFFFF, "%d", i + 1);
 	}
@@ -196,10 +198,10 @@ void SelectScene::DrawDebug(void)
 		break;
 	case SelectScene::SELECT::ROLE:
 		DrawString(Application::SCREEN_SIZE_X / 2, 0, "role", 0xFFFFFF);
+		DrawFormatString(Application::SCREEN_SIZE_X / 2, 20, 0xFFFFFF, "number : %d",num);
 
-		size_t size = playerNum_.size();
-		DrawFormatString(Application::SCREEN_SIZE_X / 2 , 20, 0xFFFFFF, "number : %d", size);
 		break;
+
 	default:
 		break;
 	}

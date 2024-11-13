@@ -7,7 +7,7 @@ public:
 
 
 
-	enum class KeyAction
+	enum class KEY_ACTION
 	{
 		UP,
 		DOWN,
@@ -15,7 +15,8 @@ public:
 		RIGHT,
 		DECIDE,
 		CANCEL,
-		ATK,
+		SKILL_ONE,
+		SKILL_TWO,
 		
 		MAX_ACTION
 	};
@@ -28,8 +29,12 @@ public:
 	void Update(void);
 	void Release(void);
 
+
+
 	void SetInput(void);
 
 private:
+
+	KEY_ACTION keyAction_;
 };
 

@@ -18,22 +18,12 @@ public:
 		Rect(float x, float y, int inw, int inh) :
 			pos(x, y), w(inw), h(inh) {}
 
-		//void SetCenter(float x, float y) {
-		//	pos.x = x;
-		//	pos.y = y;
-		//}
-		//void SetCenter(const Vector2& inpos) {
-		//	pos.x = inpos.x;
-		//	pos.y = inpos.y;
-		//}
-		//Vector2 Center() {
-		//	return pos;
-		//}
-
 		float Left() { return pos.x - w / 2; }
 		float Top() { return pos.y - h / 2; }
 		float Right() { return pos.x + w / 2; }
 		float Bottom() { return pos.y + h / 2; }
+
+		int color_;
 
 		void Draw(unsigned int color);//©•ª‚Ì‹éŒ`‚ğ•`‰æ‚·‚é
 	};
@@ -111,7 +101,7 @@ public:
 	bool IsHitRect(Rect& rc, Vector2 pos , int r);
 
 private:
-	std::vector<int>playerNum_;
+	int playerNum_[SceneManager::PLAYER_NUM];
 
 	SELECT select_;
 
@@ -126,6 +116,7 @@ private:
 	Rect rc[SceneManager::PLAYER_NUM];
 
 	int color_;
+	int num;
 
 	//“Ç‚İ‚İ—pŠÖ”
 	void Load(void);
