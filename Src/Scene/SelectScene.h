@@ -11,6 +11,7 @@ public:
 
 	#define DEBUG_RECT
 
+	//四角形を描画するために必要なもの
 	struct Rect {
 		Vector2 pos;
 		int w, h;
@@ -33,14 +34,6 @@ public:
 	{
 		NUMBER,		//人数
 		ROLE		//役職
-	};
-
-	//入力デバイス
-	enum class DEVICE
-	{
-		NONE,
-		KEY,
-		PAD
 	};
 
 	// キーコンフィグ
@@ -89,30 +82,34 @@ public:
 	void MoveCursor(float pow ,VECTOR dir);
 
 	//今使用している入力デバイスを取得する
-	DEVICE GetDevice(void);
+	SceneManager::CNTL GetDevice(void);
 
 	//プレイヤーが参加するときに使用したデバイス
-	DEVICE GetJoinDevice(void);
+	bool GetJoinDevice(void);
 
 	//入力デバイス変更(もうちょっといい実装方法がありそう)
-	void SetDevice(DEVICE device);
+	void ChangeDevice(SceneManager::CNTL device);
 
 	//矩形と円の当たり判定(デバッグ用)
 	bool IsHitRect(Rect& rc, Vector2 pos , int r);
 
+	//キー入力とパッド入力の制御
+	void ControllKey(void);
+
 private:
-	int playerNum_[SceneManager::PLAYER_NUM];
+	//std::vector<SceneManager::ROLE> playerNum_[SceneManager::PLAYER_NUM];
 
 	SELECT select_;
 
-	DEVICE device_;
+	SceneManager::CNTL device_;
 
 	KEY_CONFIG key;
 
-	VECTOR pos_;
+	//座標
+	VECTOR kPos_;	//キーカーソル用座標
+	VECTOR cPos_;	//コントローラーカーソル用座標
 
-	int img_;
-
+	//四角形
 	Rect rc[SceneManager::PLAYER_NUM];
 
 	int color_;
