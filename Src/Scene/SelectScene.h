@@ -33,6 +33,7 @@ public:
 	enum class SELECT 
 	{
 		NUMBER,		//人数
+		OPERATION,	//1Pをキーボード操作にするかどうか
 		ROLE		//役職
 	};
 
@@ -58,11 +59,15 @@ public:
 	void Draw(void) override;
 	void Release(void) override;
 
-	//人数選択中の処理
-	void NumberUpdate(void);
+	//更新処理関連-----------------------------------------------
+	
+	void NumberUpdate(void);		//人数選択中の処理
+	
+	void OperationUpdate(void);		//操作方法選択中の処理(1Pのみ)
 
-	//役職選択中の処理
-	void RoleUpdate(void);
+	void RoleUpdate(void);			//役職選択中の処理
+
+	//-----------------------------------------------------------
 
 	//デバッグ描画
 	void DrawDebug(void);
@@ -97,7 +102,7 @@ public:
 	void ControllKey(void);
 
 private:
-	//std::vector<SceneManager::ROLE> playerNum_;
+	int playerNum_[SceneManager::PLAYER_NUM];
 
 	SELECT select_;
 
@@ -109,12 +114,16 @@ private:
 	VECTOR kPos_;	//キーカーソル用座標
 	VECTOR cPos_;	//コントローラーカーソル用座標
 
+	//デバッグ用-------------------------------
+
 	//四角形
 	Rect rc[SceneManager::PLAYER_NUM];
 
 	int color_;
 	int num;
+	int opr;
 	int role;
+	//-----------------------------------------
 
 	//読み込み用関数
 	void Load(void);
