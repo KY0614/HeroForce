@@ -102,7 +102,8 @@ public:
 	void ControllKey(void);
 
 private:
-	int playerNum_[SceneManager::PLAYER_NUM];
+	//int playerNum_[SceneManager::PLAYER_NUM];
+	int playerNum_;
 
 	SELECT select_;
 

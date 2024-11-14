@@ -38,6 +38,8 @@ void SelectScene::Init(void)
 
 	color_ = 0xFF0000;	//赤
 
+	playerNum_ = 0;
+
 	num = 0;
 	opr = 0;
 	role = 0;
@@ -62,7 +64,7 @@ void SelectScene::Update(void)
 	//選択中の種類ごとの更新処理
 	switch (select_)
 	{
-	case SELECT::NUMBER:
+	case SELECT::NUMBER:  
 		NumberUpdate();
 		break;
 
@@ -144,6 +146,7 @@ void SelectScene::NumberUpdate(void)
 
 				//選択した数表示用
 				num = i + 1;
+				playerNum_ = i;
 
 				//押下したときの色
 				rc[i].color_ = 0xFF0000;
