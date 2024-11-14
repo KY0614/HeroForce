@@ -97,7 +97,7 @@ public:
 	void ControllKey(void);
 
 private:
-	//std::vector<SceneManager::ROLE> playerNum_[SceneManager::PLAYER_NUM];
+	//std::vector<SceneManager::ROLE> playerNum_;
 
 	SELECT select_;
 

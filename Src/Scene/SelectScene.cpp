@@ -46,11 +46,8 @@ void SelectScene::Update(void)
 	//キーの設定
 	KeyConfigSetting();
 
-	//どちらかを操作しているときにもう片方を操作sできないように制御
+	//どちらかを操作しているときにもう片方を操作できないように制御
 	ControllKey();
-
-	//入力デバイスの取得
-	//GetDevice();
 
 	//// シーン遷移
 	//InputManager& ins = InputManager::GetInstance();
