@@ -33,10 +33,7 @@ void PlayerBase::Init(void)
 {
 	SetParam();
 
-
-
 	InitDebug();
-
 
 	dodgeCdt_ = DODGE_CDT_MAX;
 	speedMove_ = 0.0f;
@@ -92,7 +89,6 @@ void PlayerBase::Update(void)
 		GamePad();
 		break;
 	}
-
 
 	//UŒ‚’†‚©–ˆƒtƒŒ[ƒ€”»’è‚·‚é
 	Attack();

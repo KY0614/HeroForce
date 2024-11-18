@@ -121,6 +121,7 @@ void LevelBase::Load(void)
 {
 	fader_ = new Fader();
 	fader_->Init();
+	fader_->SetAlpha(Fader::LITTLE_ALPHA);
 
 	notice_ = new LevelupNotice();
 	notice_->Init();
@@ -162,7 +163,7 @@ void LevelBase::CheckExp()
 
 		//画面全体のフェード処理の設定
 		fader_->SetFade
-		(Fader::STATE::FADE_NOTICE);
+		(Fader::STATE::SET_FADE_OUT);
 		
 		//通知に移る			
 		SetState(STATE::NOTICE);
