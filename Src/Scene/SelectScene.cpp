@@ -29,8 +29,8 @@ void SelectScene::Init(void)
 
 	KeyConfigSetting();
 
-	kPos_ = { Application::SCREEN_SIZE_X/2,Application::SCREEN_SIZE_Y / 2,0.0f };
-	cPos_ = { Application::SCREEN_SIZE_X/2,Application::SCREEN_SIZE_Y / 2,0.0f };
+	kPos_ = { Application::SCREEN_SIZE_X/2,Application::SCREEN_SIZE_Y / 2 };
+	cPos_ = { Application::SCREEN_SIZE_X/2,Application::SCREEN_SIZE_Y / 2 };
 
 	key = KEY_CONFIG::NONE;
 
@@ -88,26 +88,7 @@ void SelectScene::Draw(void)
 
 	DrawDebug();
 
-	DrawCircle(kPos_.x, kPos_.y, 20, 0xFF00FF, true);
-	DrawCircle(cPos_.x, cPos_.y, 20, 0x00FF00, true);
 
-	//キーとコントローラー用
-	//switch (device_)
-	//{
-	//case SelectScene::SceneManager::CNTL::NONE:
-	//	break;	
-	//
-	//case SelectScene::SceneManager::CNTL::KEYBORD:
-	//	DrawCircle(kPos_.x, kPos_.y, 20, 0xFF00FF, true);
-	//	break;
-	//
-	//case SelectScene::SceneManager::CNTL::PAD:
-	//	DrawCircle(cPos_.x, cPos_.y, 20, 0x00FF00, true);
-	//	break;
-	//
-	//default:
-	//	break;
-	//}
 }
 
 void SelectScene::Release(void)
@@ -120,44 +101,52 @@ void SelectScene::NumberUpdate(void)
 	DataBank& data = DataBank::GetInstance();
 
 	//カーソル移動処理
-	ProcessCursor();
+	//ProcessCursor();
 
 #ifdef DEBUG_RECT
-	int RECT_SPACE = 100;
-	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+	int PRI_SPACE = 100;
+	int RECT_SCALE = 300;
+	int SCALE = 150;
+	int PRI_W = 100;
+	int plusCol = 100;
+
+	//四角形の座標と大きさ、色を決める
+	rc = { 750,450,RECT_SCALE,RECT_SCALE };
+	triL = { 450,450 ,SCALE,SCALE };
+	triR = { 1050,450 ,SCALE,SCALE };
+
+	triL.pos.x = rc.pos.x - SCALE - PRI_SPACE;
+	triR.pos.x = rc.pos.x + SCALE + PRI_SPACE;
+	rc.color_ = GetColor(255, 168, 168);
+	triL.color_ = GetColor(255, 255, 64);
+	triR.color_ = GetColor(255, 255, 64);
+
+	//カーソルと四角形の当たり判定
+	if (ins.IsTrgDown(KEY_INPUT_RIGHT))
 	{
-		//四角形の座標と大きさを決め、1個ずつ右にずらす
-		rc[i] = { 350,450,200,200 };
-		rc[i].pos.x += ((RECT_SPACE + rc[i].w)  * i);
-
-		//カーソルと四角形の当たり判定
-		if (IsHitRect(rc[i], ins.GetMousePos(), 20))
+		num = playerNum_ + 1;
+		//左クリック押下で役職選択へ
+		if (key == KEY_CONFIG::DECIDE)
 		{
-			rc[i].color_ = 0xFF9999;
-			num = i + 1;
-			//左クリック押下で役職選択へ
-			if (ins.IsTrgMouseLeft())
-			{
-				//プレイヤー人数の設定
-				data.Input(SceneManager::PLAY_MODE::USER, i);
+			//プレイヤー人数の設定
+			data.Input(SceneManager::PLAY_MODE::USER, 1);
 
-				//CPU人数の設定(CPUは１人から３人)
-				data.Input(SceneManager::PLAY_MODE::CPU, (SceneManager::PLAYER_NUM - 1) - i);
+			//CPU人数の設定(CPUは１人から３人)
+			data.Input(SceneManager::PLAY_MODE::CPU, (SceneManager::PLAYER_NUM - 1) - 1);
 
-				//選択した数表示用
-				num = i + 1;
-				playerNum_ = i;
+			//選択した数表示用
+			num = playerNum_ + 1;
+			playerNum_ = playerNum_;
 
-				//押下したときの色
-				rc[i].color_ = 0xFF0000;
-				ChangeSelect(SELECT::OPERATION);
-			}
+			//押下したときの色
+			rc.color_ = 0xFF0000;
+			ChangeSelect(SELECT::OPERATION);
 		}
-		else {
-			rc[i].color_ = 0xFF0000;
-		}
-
 	}
+	else if (ins.IsTrgDown(KEY_INPUT_LEFT)) {
+		rc.color_ = 0xFF0000;
+	}
+
 #endif // DEBUG_RECT
 
 }
@@ -172,31 +161,31 @@ void SelectScene::OperationUpdate(void)
 
 #ifdef DEBUG_RECT
 	int RECT_SPACE = 150;
-	for (int i = 0; i < 2; i++)
-	{
-		//四角形の座標と大きさを決め、1個ずつ右にずらす
-		rc[i] = { 500,450,200,200 };
-		rc[i].pos.x += ((RECT_SPACE + rc[i].w) * i);
+	//for (int i = 0; i < 2; i++)
+	//{
+	//	//四角形の座標と大きさを決め、1個ずつ右にずらす
+	//	rc[i] = { 500,450,200,200 };
+	//	rc[i].pos.x += ((RECT_SPACE + rc[i].w) * i);
 
-		//カーソルと四角形の当たり判定
-		if (IsHitRect(rc[i], ins.GetMousePos(), 20))
-		{
-			rc[i].color_ = 0xFF9999;
-			opr = i + 1;
-			//左クリック押下で役職選択へ
-			if (ins.IsTrgMouseLeft())
-			{
-				//1Pだけ操作方法変更可能
-				data.Input(static_cast<SceneManager::CNTL>(i), 0);
-				ChangeSelect(SELECT::ROLE);
-				opr = i + 1;
-			}
-		}
-		else {
-			rc[i].color_ = 0xFF0000;
-		}
+	//	//カーソルと四角形の当たり判定
+	//	if (IsHitRect(rc[i], ins.GetMousePos(), 20))
+	//	{
+	//		rc[i].color_ = 0xFF9999;
+	//		opr = i + 1;
+	//		//左クリック押下で役職選択へ
+	//		if (ins.IsTrgMouseLeft())
+	//		{
+	//			//1Pだけ操作方法変更可能
+	//			data.Input(static_cast<SceneManager::CNTL>(i), 0);
+	//			ChangeSelect(SELECT::ROLE);
+	//			opr = i + 1;
+	//		}
+	//	}
+	//	else {
+	//		rc[i].color_ = 0xFF0000;
+	//	}
 
-	}
+	//}
 #endif // DEBUG_RECT
 
 }
@@ -208,34 +197,34 @@ void SelectScene::RoleUpdate(void)
 	
 #ifdef DEBUG_RECT
 	int RECT_SPACE = 100;
-	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
-	{
-		//四角形の座標と大きさを決め、1個ずつ右にずらす
-		rc[i] = { 350,450,200,200 };
-		rc[i].pos.x += ((RECT_SPACE + rc[i].w) * i);
+	//for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+	//{
+	//	//四角形の座標と大きさを決め、1個ずつ右にずらす
+	//	rc[i] = { 350,450,200,200 };
+	//	rc[i].pos.x += ((RECT_SPACE + rc[i].w) * i);
 
-		if (IsHitRect(rc[i], ins.GetMousePos(), 20) )
-		{
-			rc[i].color_ = 0x99FF99;
-			role = i + 1;
-			//左クリック押下で役職選択へ
-			if (ins.IsTrgMouseLeft())
-			{
-				//iは役職の種類
-				data.Input(static_cast<SceneManager::ROLE>(i), 1);
+	//	if (IsHitRect(rc[i], ins.GetMousePos(), 20) )
+	//	{
+	//		rc[i].color_ = 0x99FF99;
+	//		role = i + 1;
+	//		//左クリック押下で役職選択へ
+	//		if (ins.IsTrgMouseLeft())
+	//		{
+	//			//iは役職の種類
+	//			data.Input(static_cast<SceneManager::ROLE>(i), 1);
 
-				role = i + 1;
-				rc[i].color_ = 0xFF0000;
+	//			role = i + 1;
+	//			rc[i].color_ = 0xFF0000;
 
-				//ゲームシーンへ
-				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
-			}
-		}
-		else {
-			rc[i].color_ = 0x00FF00;
-		}
+	//			//ゲームシーンへ
+	//			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+	//		}
+	//	}
+	//	else {
+	//		rc[i].color_ = 0x00FF00;
+	//	}
 
-	}
+	//}
 #endif // DEBUG_RECT
 
 	//カーソル移動処理
@@ -250,44 +239,54 @@ void SelectScene::DrawDebug(void)
 #ifdef DEBUG_RECT
 	//選択用の四角形と選択している種類または数字を表示する
 
-	//人数選択
-	if (select_ != SELECT::OPERATION)
+	switch (select_)
 	{
-		for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
-		{
-			rc[i].Draw(rc[i].color_);
-			DrawFormatString(rc[i].pos.x, rc[i].pos.y,
-				0xFFFFFF, "%d", i + 1);
-		}
-	}
-	else {//入力選択
-		for (int i = 0; i < 2; i++)
-		{
-			rc[i].Draw(rc[i].color_);
-			DrawFormatString(rc[0].pos.x, rc[0].pos.y,
-				0xFFFFFF, "key");
-			DrawFormatString(rc[1].pos.x, rc[1].pos.y,
-				0xFFFFFF, "pad");
-		}
-	}
-	//役職選択
-	if (select_ == SELECT::ROLE)
-	{
-		for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
-		{
-			rc[i].Draw(rc[i].color_);
-			DrawFormatString(rc[0].pos.x, rc[0].pos.y,
-				0xFFFFFF, "KNIGHT");
-			DrawFormatString(rc[1].pos.x, rc[1].pos.y,
-				0xFFFFFF, "AXEMAN");
-			DrawFormatString(rc[2].pos.x, rc[2].pos.y,
-				0xFFFFFF, "MAGE");
-			DrawFormatString(rc[3].pos.x, rc[3].pos.y,
-				0xFFFFFF, "ARCHER");
-		}
-	}
-	
+	case SelectScene::SELECT::NUMBER:
+		rc.Draw(rc.color_);
 
+			rc.Draw(rc.color_);
+			DrawFormatString(rc.pos.x, rc.pos.y,
+				0xFFFFFF, "%d", playerNum_ + 1);
+
+			DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
+				0xFF9999, "プレイ人数選択中");
+		
+		break;
+
+	case SelectScene::SELECT::OPERATION:
+
+			rc.Draw(rc.color_);
+			DrawFormatString(rc.pos.x, rc.pos.y,
+				0xFFFFFF, "key");
+			DrawFormatString(rc.pos.x, rc.pos.y,
+				0xFFFFFF, "pad");
+
+			DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
+				0xFF9999, "1P操作方法選択中");
+		
+		break;
+
+	case SelectScene::SELECT::ROLE:
+		for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+		{
+			rc.Draw(rc.color_);
+			DrawFormatString(rc.pos.x, rc.pos.y,
+				0xFFFFFF, "KNIGHT");
+			DrawFormatString(rc.pos.x, rc.pos.y,
+				0xFFFFFF, "AXEMAN");
+			DrawFormatString(rc.pos.x, rc.pos.y,
+				0xFFFFFF, "MAGE");
+			DrawFormatString(rc.pos.x, rc.pos.y,
+				0xFFFFFF, "ARCHER");
+
+			DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
+				0x99FF99, "役職選択中");
+		}
+		break;
+
+	default:
+		break;
+	}
 #endif // DEBUG_RECT
 
 	DrawString(0, 800, "緑：パッド入力,ピンク：キー入力", 0xFFFFFF);
@@ -302,8 +301,9 @@ void SelectScene::DrawDebug(void)
 	DrawFormatString(Application::SCREEN_SIZE_X / 2, 20, 0xFFFFFF, "operation : %d", opr);
 	DrawFormatString(Application::SCREEN_SIZE_X / 2, 40, 0xFFFFFF, "role : %d", role);
 
-	//マウス用
-	DrawCircle(mPos.x, mPos.y, 20, 0x341685, true);
+	triL.LeftDraw(triL.color_);
+	triR.RightDraw(triR.color_);
+
 }
 
 void SelectScene::ChangeSelect(SELECT select)
@@ -331,6 +331,7 @@ void SelectScene::KeyConfigSetting(void)
 	switch (GetDevice())
 	{
 	case SceneManager::CNTL::KEYBOARD:
+		//キーの押下判定
 		if (ins.IsNew(KEY_INPUT_UP) ||
 			ins.IsNew(KEY_INPUT_W))
 		{
@@ -355,6 +356,12 @@ void SelectScene::KeyConfigSetting(void)
 			key = KEY_CONFIG::RIGHT;
 			ChangeDevice(SceneManager::CNTL::KEYBOARD);
 		}
+
+		if (ins.IsTrgDown(KEY_INPUT_SPACE))
+		{
+			key = KEY_CONFIG::DECIDE;
+			ChangeDevice(SceneManager::CNTL::KEYBOARD);
+		}
 		break;
 
 	case SceneManager::CNTL::PAD:
@@ -376,6 +383,11 @@ void SelectScene::KeyConfigSetting(void)
 		{
 			key = KEY_CONFIG::RIGHT;
 		}
+		if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_BUTTON))
+		{
+			key = KEY_CONFIG::DECIDE;
+		}
+
 		break;
 	default:
 		break;
@@ -425,33 +437,15 @@ void SelectScene::MoveCursor(float pow, VECTOR dir)
 	if (device_ == SceneManager::CNTL::PAD) {
 		cPos_.x += dir.x * pow;
 		cPos_.y += dir.y * pow;
-		cPos_.z += dir.z * pow;
 	}
 	else{
 		kPos_.x += dir.x * pow;
 		kPos_.y += dir.y * pow;
-		kPos_.z += dir.z * pow;
 	}
 }
 
 SceneManager::CNTL SelectScene::GetDevice(void)
 {
-	//DEVICE currentDv = device_;
-	//KEYBORD_CONFIG currentKey = key;
-
-	//if (currentDv != device_)
-	//{
-	//	device_ = currentDv;
-	//}
-
-	//if (GetJoypadInputState(DX_INPUT_PAD1) != 0 && CheckHitKeyAll() <= 0)
-	//{
-	//	device_ = SceneManager::CNTL::PAD;
-	//}
-	//else if (CheckHitKeyAll() != 0) {
-	//	device_ = SceneManager::CNTL::KEYBORD;
-	//}
-
 	return device_;
 }
 
@@ -522,4 +516,28 @@ void SelectScene::Rect::Draw(unsigned int color)
 		(int)Top() ,
 		(int)Right() ,
 		(int)Bottom(), color, true);
+}
+
+void SelectScene::Tri::LeftDraw(unsigned int color)
+{
+	DxLib::DrawTriangle(
+		(int)LeftX_L(),
+		(int)LeftY_L(),
+		(int)TopX_L(),
+		(int)TopY_L(),
+		(int)RightX_L(),
+		(int)RightY_L(),
+		 color, true);
+}
+
+void SelectScene::Tri::RightDraw(unsigned int color)
+{
+	DxLib::DrawTriangle(
+		(int)LeftX_R(),
+		(int)LeftY_R(),
+		(int)TopX_R(),
+		(int)TopY_R(),
+		(int)RightX_R(),
+		(int)RightY_R(),
+		color, true);
 }

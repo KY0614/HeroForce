@@ -29,6 +29,35 @@ public:
 		void Draw(unsigned int color);//自分の矩形を描画する
 	};
 
+	struct Tri {
+		Vector2 pos;
+		int w, h;	//w:底辺,h:高さ	
+		Tri() : pos(0, 0), w(0), h(0) {}
+		Tri(float x, float y, int inw, int inh) :
+			pos(x, y), w(inw), h(inh) {}
+
+		//?の三点のx,y座標
+		float LeftX_L() { return pos.x + h / 2;}
+		float LeftY_L() { return pos.y + w / 2;}
+		float TopX_L()  { return pos.x - h / 2;}
+		float TopY_L()  { return pos.y; }
+		float RightX_L(){ return pos.x + h / 2;}
+		float RightY_L(){ return pos.y - w / 2;}
+
+		//?の三点のx,y座標
+		float LeftX_R() { return pos.x - h / 2; }
+		float LeftY_R() { return pos.y + w / 2; }
+		float TopX_R() { return pos.x + h / 2; }
+		float TopY_R() { return pos.y; }
+		float RightX_R() { return pos.x - h / 2; }
+		float RightY_R() { return pos.y - w / 2; }
+
+		int color_;
+
+		void LeftDraw(unsigned int color);//三角形を描画する
+		void RightDraw(unsigned int color);//三角形を描画する
+	};
+
 	//選択している種類
 	enum class SELECT 
 	{
@@ -112,13 +141,16 @@ private:
 	KEY_CONFIG key;
 
 	//座標
-	VECTOR kPos_;	//キーカーソル用座標
-	VECTOR cPos_;	//コントローラーカーソル用座標
+	Vector2 kPos_;	//キーカーソル用座標
+	Vector2 cPos_;	//コントローラーカーソル用座標
 
 	//デバッグ用-------------------------------
 
 	//四角形
-	Rect rc[SceneManager::PLAYER_NUM];
+	Rect rc;
+
+	Tri triL;
+	Tri triR;
 
 	int color_;
 	int num;
