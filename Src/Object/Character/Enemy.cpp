@@ -92,7 +92,7 @@ void Enemy::Update(void)
 void Enemy::LookTargetVec(void)
 {
 	//方向ベクトル取得
-	VECTOR targetVec = GetTargetVec();
+	VECTOR targetVec = GetMovePow2Target();
 
 	//向き回転
 	trans_.quaRot = trans_.quaRot.LookRotation(targetVec);
@@ -286,7 +286,7 @@ void Enemy::Draw(void)
 	}
 }
 
-const VECTOR Enemy::GetTargetVec(void)const
+const VECTOR Enemy::GetMovePow2Target(void)const
 {
 	//標的への方向ベクトルを取得						※TODO:targetPosはSceneGameからもらう
 	VECTOR targetVec = VSub(targetPos_, trans_.pos);
@@ -309,7 +309,7 @@ void Enemy::Move(void)
 	moveSpeed_ = walkSpeed_;
 
 	//方向ベクトル取得
-	VECTOR targetVec = GetTargetVec();
+	VECTOR targetVec = GetMovePow2Target();
 
 	//向き回転
 	trans_.quaRot = trans_.quaRot.LookRotation(targetVec);
@@ -347,7 +347,7 @@ void Enemy::InitChangeState(void)
 
 	case Enemy::STATE::ALERT:
 		//向きを改めて設定
-		trans_.quaRot = trans_.quaRot.LookRotation(GetTargetVec());
+		trans_.quaRot = trans_.quaRot.LookRotation(GetMovePow2Target());
 
 		//待機アニメーション
 		ResetAnim(ANIM::IDLE, SPEED_ANIM);
@@ -368,18 +368,6 @@ void Enemy::InitChangeState(void)
 
 
 void Enemy::Skill_One(void)
-{
-	//前方向
-	VECTOR dir = trans_.quaRot.GetForward();
-
-	for (auto& nowSkill : nowSkill_)
-	{
-		//座標の設定
-		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_ + radius_));
-	}
-}
-
-void Enemy::Skill_Two(void)
 {
 	//前方向
 	VECTOR dir = trans_.quaRot.GetForward();

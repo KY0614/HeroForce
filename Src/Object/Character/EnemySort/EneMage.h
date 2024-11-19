@@ -10,7 +10,6 @@ public:
 
 	//アニメーション番号(キャラ固有)
 	static constexpr int ANIM_SKILL_ONE = 75;	//スキル1アニメーション
-	static constexpr int ANIM_SKILL_TWO = 78;	//スキル2アニメーション
 	static constexpr int ANIM_CHARGE = 79;		//溜めアニメーション(固有アニメーション)
 
 	//モデル関係
@@ -24,7 +23,9 @@ public:
 	static constexpr float MY_COL_RADIUS = 100.0f * CHARACTER_SCALE;
 
 	//敵ステータス
-	static constexpr int HP_MAX = 3;			//敵の最大体力
+	static constexpr int HP_MAX = 140;			//敵の最大体力
+	static constexpr float ATK_POW = 0.0f;		//敵の攻撃
+	static constexpr float DEF = 150.0f;		//敵の防御
 	static constexpr int STUN_DEF_MAX = 100;	//敵の最大スタン防御値
 
 	//速度関係
@@ -37,15 +38,12 @@ public:
 
 	//スキルの当たり判定半径
 	static constexpr float SKILL_ONE_COL_RADIUS = 20.0f;	//スキル１の当たり判定
-	static constexpr float SKILL_TWO_COL_RADIUS = 50.0f;	//スキル２の当たり判定
 
 	//スキルの射程
 	static constexpr float SKILL_ONE_RANGE = 40.0f;	//スキル１の射程
-	static constexpr float SKILL_TWO_RANGE = 80.0f;	//スキル２の射程
 
 	//スキル関係
-	static constexpr ATK SKILL_ONE = { AsoUtility::VECTOR_ZERO,SKILL_ONE_COL_RADIUS,1.0f,2.0f,2.0f,0.0f };	//スキル１
-	static constexpr ATK SKILL_TWO = { AsoUtility::VECTOR_ZERO,SKILL_TWO_COL_RADIUS,5.0f,2.0f,5.0f,0.0f };	//スキル２
+	static constexpr ATK SKILL_ONE = { AsoUtility::VECTOR_ZERO,SKILL_ONE_COL_RADIUS,0.0f,4.0f,2.0f,0.0f };	//スキル１
 
 private:
 	//****************************************************************
@@ -71,9 +69,6 @@ private:
 
 	//スキル1
 	void Skill_One(void)override;
-
-	//スキル2
-	void Skill_Two(void)override;
 
 	//アニメーション終了時の動き
 	void FinishAnim(void)override;
