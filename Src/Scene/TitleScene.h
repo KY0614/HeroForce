@@ -25,6 +25,9 @@ private:
 	// タイトルロゴ
 	int imgTitleLogo_;
 
+	//ウィンドウの数を指定
+	int windowNum_;
+
 	// スカイドーム用のダミー
 	Transform spaceDomeTran_;
 

@@ -34,6 +34,7 @@ void InputManager::Init(void)
 
 	InputManager::GetInstance().Add(KEY_INPUT_Q);
 	InputManager::GetInstance().Add(KEY_INPUT_E);
+	InputManager::GetInstance().Add(KEY_INPUT_B);
 
 	InputManager::GetInstance().Add(KEY_INPUT_W);
 	InputManager::GetInstance().Add(KEY_INPUT_S);
@@ -50,6 +51,9 @@ void InputManager::Init(void)
 	InputManager::GetInstance().Add(KEY_INPUT_RSHIFT);
 	InputManager::GetInstance().Add(KEY_INPUT_LSHIFT);
 
+	InputManager::GetInstance().Add(KEY_INPUT_L);
+
+	InputManager::GetInstance().Add(KEY_INPUT_B);
 
 
 	InputManager::MouseInfo info;
@@ -302,6 +306,18 @@ InputManager::JOYPAD_IN_STATE InputManager::GetJPadInputState(JOYPAD_NO no)
 
 		idx = static_cast<int>(JOYPAD_BTN::L_TRIGGER);
 		ret.ButtonsNew[idx] = x.LeftTrigger; // L_TRIGGER
+
+		idx = static_cast<int>(JOYPAD_BTN::R_BUTTON);
+		ret.ButtonsNew[idx] = d.Buttons[5];//R_BOTTON
+
+		idx = static_cast<int>(JOYPAD_BTN::L_BUTTON);
+		ret.ButtonsNew[idx] = d.Buttons[4];//L_BOTTON
+
+		idx = static_cast<int>(JOYPAD_BTN::START_BUTTON);
+		ret.ButtonsNew[idx] = d.Buttons[7];//START_BUTTON
+
+		idx = static_cast<int>(JOYPAD_BTN::SELECT_BUTTON);
+		ret.ButtonsNew[idx] = d.Buttons[6];//SELECT_BOTTON
 
 		// 左スティック
 		ret.AKeyLX = d.X;

@@ -127,6 +127,7 @@ protected:
 	VECTOR localCenterPos_;	//敵中央の相対座標
 	VECTOR colPos_;			//敵自身の当たり判定用の相対座標
 
+	float walkSpeed_;		//敵ごとの歩く速度
 	float moveSpeed_;		//移動量
 	bool isMove_;			//移動しているかどうか(true:移動中)
 

@@ -19,14 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Object\Character\EnemySort\EneArcher.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneAxe.cpp" />
-    <ClCompile Include="Src\Object\Character\EnemySort\EneBrig.cpp" />
-    <ClCompile Include="Src\Object\Character\EnemySort\EneMage.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\Archer.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\Knight.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\Mage.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\AxeMan.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\PlArcher.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\PlKnight.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\PlMage.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\PlAxeMan.cpp" />
     <ClCompile Include="Src\Manager\DataBank.cpp" />
     <ClCompile Include="Src\Common\ImageFader.cpp" />
     <ClCompile Include="Src\Manager\Collision.cpp" />
@@ -57,6 +54,7 @@
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Scene\TitleScene.cpp" />
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Manager\DataBank.h" />
@@ -64,14 +62,11 @@
     <ClInclude Include="Src\Manager\Collision.h" />
     <ClInclude Include="Src\Object\Character\Enemy.h" />
     <ClInclude Include="Src\Object\Arrow.h" />
-    <ClInclude Include="Src\Object\Character\EnemySort\EneArcher.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneAxe.h" />
-    <ClInclude Include="Src\Object\Character\EnemySort\EneBrig.h" />
-    <ClInclude Include="Src\Object\Character\EnemySort\EneMage.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\Archer.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\AxeMan.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\Knight.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\Mage.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\PlArcher.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\PlAxeMan.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\PlKnight.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\PlMage.h" />
     <ClInclude Include="Src\Object\Character\PlayerBase.h" />
     <ClInclude Include="Src\Object\Stage\SkyDome.h" />
     <ClInclude Include="Src\Object\Stage\StageObject.h" />
@@ -97,6 +92,7 @@
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Scene\TitleScene.h" />
     <ClInclude Include="Src\Utility\AsoUtility.h" />
+    <ClInclude Include="Src\Object\Stage\StageBase.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -185,7 +181,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir)Src/Lib/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -221,7 +217,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir)Src/Lib/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>

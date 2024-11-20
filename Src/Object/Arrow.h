@@ -52,8 +52,12 @@ public:
 private:
 	//位置情報
 	Transform trans_;
+	//攻撃対象
+	VECTOR targetPos_;
 	//状態
 	STATE state_;
+	//攻撃力
+	float atkPow_;
 	//速度
 	float speed_;
 	//生存判定
@@ -61,6 +65,8 @@ private:
 
 	//移動処理
 	void Move(void);
+	//状況変位
+	void ChangeState(const STATE _state) { state_ = _state; }
 	//生存フラグ設定
 	void SetIsAlive(const bool _flag) { isAlive_ = _flag; }
 };
