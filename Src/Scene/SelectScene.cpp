@@ -1,4 +1,5 @@
 #include <vector>
+#include<algorithm>
 #include "../Application.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
@@ -43,23 +44,25 @@ void SelectScene::Init(void)
 	num = 0;
 	opr = 0;
 	role = 0;
+
+	//デバッグ用------------------------------------------------
+
+	triL.color_ = GetColor(255, 255, 64);
+	triR.color_ = GetColor(255, 255, 64);
+
+	triL = { 450,450 ,150,150 ,false };
+	triR = { 1050,450 ,150,150 ,false };
 }
 
 void SelectScene::Update(void)
 {
+	playerNum_ = std::clamp(playerNum_, 0, 4);
 
 	//キーの設定
 	KeyConfigSetting();
 
 	//どちらかを操作しているときにもう片方を操作できないように制御
 	ControllKey();
-
-	//// シーン遷移
-	//InputManager& ins = InputManager::GetInstance();
-	//if (ins.IsTrgDown(KEYBORD_INPUT_SPACE))
-	//{
-	//	SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
-	//}
 
 	//選択中の種類ごとの更新処理
 	switch (select_)
@@ -86,9 +89,8 @@ void SelectScene::Draw(void)
 	auto& ins = InputManager::GetInstance();
 	InputManager::JOYPAD_IN_STATE pad = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
 
+	//デバッグ描画
 	DrawDebug();
-
-
 }
 
 void SelectScene::Release(void)
@@ -112,19 +114,37 @@ void SelectScene::NumberUpdate(void)
 
 	//四角形の座標と大きさ、色を決める
 	rc = { 750,450,RECT_SCALE,RECT_SCALE };
-	triL = { 450,450 ,SCALE,SCALE };
-	triR = { 1050,450 ,SCALE,SCALE };
+
 
 	triL.pos.x = rc.pos.x - SCALE - PRI_SPACE;
 	triR.pos.x = rc.pos.x + SCALE + PRI_SPACE;
-	rc.color_ = GetColor(255, 168, 168);
-	triL.color_ = GetColor(255, 255, 64);
-	triR.color_ = GetColor(255, 255, 64);
+
+	rc.color_ = GetColor(255, 0, 0);
+
+	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
+	triR.color_ = (triR.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
+
+	if (triR.isToggle_ &&
+		ins.IsTrgDown(KEY_INPUT_RIGHT))
+	{
+		triR.color_ = GetColor(255, 255, 255);
+		playerNum_++;
+	}
+	if (triL.isToggle_ &&
+		ins.IsTrgDown(KEY_INPUT_LEFT))
+	{
+		triR.color_ = GetColor(255, 255, 255);
+		playerNum_--;
+	}
 
 	//カーソルと四角形の当たり判定
-	if (ins.IsTrgDown(KEY_INPUT_RIGHT))
+	if (ins.IsTrgDown(KEY_INPUT_RIGHT)	&&
+		!triR.isToggle_)
 	{
-		num = playerNum_ + 1;
+		num += playerNum_ + 1;
+		triR.isToggle_ = true;
+		triL.isToggle_ = false;
+
 		//左クリック押下で役職選択へ
 		if (key == KEY_CONFIG::DECIDE)
 		{
@@ -143,8 +163,12 @@ void SelectScene::NumberUpdate(void)
 			ChangeSelect(SELECT::OPERATION);
 		}
 	}
-	else if (ins.IsTrgDown(KEY_INPUT_LEFT)) {
-		rc.color_ = 0xFF0000;
+	
+	if (ins.IsTrgDown(KEY_INPUT_LEFT) &&
+		!triL.isToggle_)
+	{
+		triR.isToggle_ = false;
+		triL.isToggle_ = true;
 	}
 
 #endif // DEBUG_RECT
@@ -300,6 +324,9 @@ void SelectScene::DrawDebug(void)
 	DrawFormatString(Application::SCREEN_SIZE_X / 2, 0, 0xFFFFFF, "number : %d", num);
 	DrawFormatString(Application::SCREEN_SIZE_X / 2, 20, 0xFFFFFF, "operation : %d", opr);
 	DrawFormatString(Application::SCREEN_SIZE_X / 2, 40, 0xFFFFFF, "role : %d", role);
+
+	DrawFormatString(Application::SCREEN_SIZE_X / 2, 60, 0xFFFFFF, "L : %d", triL.isToggle_);
+	DrawFormatString(Application::SCREEN_SIZE_X / 2, 80, 0xFFFFFF, "R : %d", triR.isToggle_);
 
 	triL.LeftDraw(triL.color_);
 	triR.RightDraw(triR.color_);

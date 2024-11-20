@@ -29,12 +29,16 @@ public:
 		void Draw(unsigned int color);//自分の矩形を描画する
 	};
 
+	//三角形
 	struct Tri {
 		Vector2 pos;
 		int w, h;	//w:底辺,h:高さ	
-		Tri() : pos(0, 0), w(0), h(0) {}
-		Tri(float x, float y, int inw, int inh) :
-			pos(x, y), w(inw), h(inh) {}
+		bool isToggle_;
+
+		//初期化子
+		Tri() : pos(0, 0), w(0), h(0) ,isToggle_(false) {}
+		Tri(float x, float y, int inw, int inh,bool isT) :
+			pos(x, y), w(inw), h(inh), isToggle_(isT) {}
 
 		//?の三点のx,y座標
 		float LeftX_L() { return pos.x + h / 2;}
@@ -98,9 +102,6 @@ public:
 
 	//-----------------------------------------------------------
 
-	//デバッグ描画
-	void DrawDebug(void);
-
 	//選択するもの(人数or役職)の種類を変える
 	void ChangeSelect(SELECT select);
 
@@ -122,16 +123,22 @@ public:
 	bool GetJoinDevice(void);
 
 	//入力デバイス変更(もうちょっといい実装方法がありそう)
-	void ChangeDevice(SceneManager::CNTL device);
-
-	//矩形と円の当たり判定(デバッグ用)
-	bool IsHitRect(Rect& rc, Vector2 pos , int r);
+	void ChangeDevice(SceneManager::CNTL device);	
 
 	//キー入力とパッド入力の制御
 	void ControllKey(void);
 
+	//デバッグ関連--------------------------------------------------------
+
+	//デバッグ描画
+	void DrawDebug(void);
+
+	//矩形と円の当たり判定(デバッグ用)
+	bool IsHitRect(Rect& rc, Vector2 pos, int r);
+
+	//--------------------------------------------------------------------
+
 private:
-	//int playerNum_[SceneManager::PLAYER_NUM];
 	int playerNum_;
 
 	SELECT select_;
@@ -144,11 +151,12 @@ private:
 	Vector2 kPos_;	//キーカーソル用座標
 	Vector2 cPos_;	//コントローラーカーソル用座標
 
-	//デバッグ用-------------------------------
+	//デバッグ関連-------------------------------
 
 	//四角形
 	Rect rc;
 
+	//三角形
 	Tri triL;
 	Tri triR;
 
