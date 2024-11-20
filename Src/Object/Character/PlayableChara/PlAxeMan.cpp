@@ -5,14 +5,7 @@ PlAxe::PlAxe(SceneManager::PLAY_MODE _mode) : PlayerBase(_mode) { mode_ = _mode;
 
 void PlAxe::SetParam(void)
 {
-	//acts_[ATK_ACT::ATK].pos_ = VAdd(trans_.pos, ATK_COL_LOCAL_POS);
-	//acts_[ATK_ACT::ATK].ResetCnt();
-	//acts_[ATK_ACT::ATK].duration_ = FRAME_ATK_DURATION;
-	//acts_[ATK_ACT::ATK].backlash_ = FRAME_ATK_BACKRASH;
-	//acts_[ATK_ACT::ATK].pow_ = 0;
-
-	InitAct(ATK_ACT::SKILL1, FRAME_SKILL1_DURATION, FRAME_SKILL1_BACKRASH);
-	InitAct(ATK_ACT::SKILL2, FRAME_SKILL2_DURATION, FRAME_SKILL2_BACKRASH);
+	InitAct();
 
 	trans_.SetModel(
 		ResourceManager::GetInstance()
@@ -35,6 +28,33 @@ void PlAxe::SetParam(void)
 
 	atkStartRange_ = ATK_START_RANGE;
 }
+void PlAxe::InitAct(void)
+{
+	//範囲
+	colRadius_.emplace(ATK_ACT::ATK, COL_ATK);
+	colRadius_.emplace(ATK_ACT::SKILL1, COL_SKILL1);
+	colRadius_.emplace(ATK_ACT::SKILL2, COL_SKILL2);
+
+	//座標
+	colLocalPos_.emplace(ATK_ACT::ATK, ATK_COL_LOCAL_POS);
+	colLocalPos_.emplace(ATK_ACT::SKILL1, SKILL1_COL_LOCAL_POS);
+	colLocalPos_.emplace(ATK_ACT::SKILL2, SKILL2_COL_LOCAL_POS);
+
+	//持続時間
+	dulationMax_.emplace(ATK_ACT::ATK,FRAME_ATK_DURATION);
+	dulationMax_.emplace(ATK_ACT::SKILL1,FRAME_SKILL1_DURATION);
+	dulationMax_.emplace(ATK_ACT::SKILL2,FRAME_SKILL2_DURATION);
+
+	//後隙
+	backLashMax_.emplace(ATK_ACT::ATK,FRAME_ATK_BACKRASH);
+	backLashMax_.emplace(ATK_ACT::SKILL1,FRAME_SKILL1_BACKRASH);
+	backLashMax_.emplace(ATK_ACT::SKILL2,FRAME_SKILL2_BACKRASH);
+
+	//クールタイム
+	coolTimeMax_[static_cast<int>(ATK_ACT::ATK)] = ATK_COOLTIME;
+	coolTimeMax_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_COOLTIME;
+	coolTimeMax_[static_cast<int>(ATK_ACT::SKILL2)] = SKILL_TWO_COOLTIME;
+}
 
 void PlAxe::AtkFunc(void)
 {
@@ -46,4 +66,5 @@ void PlAxe::Skill1Func(void)
 
 void PlAxe::Skill2Func(void)
 {
+
 }

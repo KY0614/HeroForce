@@ -1,6 +1,7 @@
 #include"../Manager/ResourceManager.h"
+#include"../Manager/SceneManager.h"
 #include "PlKnight.h"
-PlKnight::PlKnight(PLAY_MODE _mode) :PlayerBase(_mode) { mode_ = _mode; }
+PlKnight::PlKnight(SceneManager::PLAY_MODE _mode) :PlayerBase(_mode) { mode_ = _mode; }
 
 
 void PlKnight::SetParam(void)
@@ -11,8 +12,7 @@ void PlKnight::SetParam(void)
 	//acts_[ATK_ACT::ATK].backlash_ = FRAME_ATK_BACKRASH;
 	//acts_[ATK_ACT::ATK].pow_ = 0;
 
-	InitAct(ATK_ACT::SKILL1, FRAME_SKILL1_DURATION, FRAME_SKILL1_BACKRASH);
-	InitAct(ATK_ACT::SKILL2, FRAME_SKILL2_DURATION, FRAME_SKILL2_BACKRASH);
+	InitAct();
 
 	trans_.SetModel(
 		ResourceManager::GetInstance()
