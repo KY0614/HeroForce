@@ -1,5 +1,7 @@
 #include <chrono>
 #include <DxLib.h>
+#include<cassert>
+
 #include "../Common/Fader.h"
 #include "../Scene/TitleScene.h"
 #include "../Scene/GameScene.h"
@@ -39,8 +41,11 @@ void SceneManager::Init(void)
 	fader_->Init();
 
 	// カメラ
-	camera_ = new Camera();
-	camera_->Init();
+	cameras_.push_back(std::make_unique<Camera>());
+	for (auto& c : cameras_)
+	{
+		c.get()->Init();
+	}
 
 	scene_ = new TitleScene();
 	scene_->Init();
@@ -56,6 +61,9 @@ void SceneManager::Init(void)
 	// 初期シーンの設定
 	DoChangeScene(SCENE_ID::TITLE);
 
+	//メインウィンドウを追加
+	subWindowH_.push_back(NULL);
+	activeWindowNum_ = 1;	//メインをアクティブにするので初期値１
 }
 
 void SceneManager::Init3D(void)
@@ -84,10 +92,7 @@ void SceneManager::Init3D(void)
 void SceneManager::Update(void)
 {
 
-	if (scene_ == nullptr)
-	{
-		return;
-	}
+	if (scene_ == nullptr)return;
 
 	// デルタタイム
 	auto nowTime = std::chrono::system_clock::now();
@@ -106,29 +111,54 @@ void SceneManager::Update(void)
 	}
 
 	// カメラ更新
-	camera_->Update();
-
+	for (auto& c : cameras_)
+	{
+		c.get()->Update();
+	}
 }
 
 void SceneManager::Draw(void)
 {
-	
+	//カウンタ（配列要素数)
+	int cnt = 0;
+
 	// 描画先グラフィック領域の指定
 	// (３Ｄ描画で使用するカメラの設定などがリセットされる)
 	SetDrawScreen(DX_SCREEN_BACK);
 
-	// 画面を初期化
-	ClearDrawScreen();
+	for (HWND hwnd : subWindowH_)
+	{
+		//カウンタがウィンドウのアクティブ数を超えたら終了
+		if (cnt >= activeWindowNum_)return;
 
-	// カメラ設定
-	camera_->SetBeforeDraw();
+		//フロントバッファの画像を消去
+		ClearDrawScreen();
 
-	// 描画
-	scene_->Draw();
+		if (hwnd)
+		{
+			SetScreenFlipTargetWindow(hwnd); // 追加ウィンドウをターゲットに設定
 
-	// 暗転・明転
-	fader_->Draw();
+		}
+		else
+		{
+			SetScreenFlipTargetWindow(NULL); // メインウィンドウをターゲットに設定
+		}
+		//カメラの描画
+		cameras_[cnt].get()->SetBeforeDraw();
 
+		//ゲーム内容描画
+		// 描画
+		scene_->Draw();
+
+
+		// 暗転・明転
+		fader_->Draw();
+
+		//フロントバッファに書き出し
+		ScreenFlip();
+		//カウンタ増加
+		cnt++;
+	}
 }
 
 void SceneManager::Destroy(void)
@@ -139,8 +169,11 @@ void SceneManager::Destroy(void)
 
 	delete fader_;
 
-	camera_->Release();
-	delete camera_;
+	// カメラ
+	for (auto& c : cameras_)
+	{
+		c.get()->Release();
+	}
 
 	delete instance_;
 
@@ -170,10 +203,18 @@ float SceneManager::GetDeltaTime(void) const
 	//return 1.0f / 60.0f;
 	return deltaTime_;
 }
-
-Camera* SceneManager::GetCamera(void) const
+//カメラ情報（全体）を取得
+std::vector<std::unique_ptr<Camera>> SceneManager::GetCameras(void) const
 {
-	return camera_;
+	return cameras_;
+}
+/// <summary>
+/// ウィンドウの状態を変化させる
+/// </summary>
+/// <param name="_mode"></param>
+void SceneManager::SetSubWindowH(HWND _mode)
+{
+	subWindowH_.push_back(_mode);
 }
 
 SceneManager::SceneManager(void)
@@ -188,10 +229,7 @@ SceneManager::SceneManager(void)
 	isSceneChanging_ = false;
 
 	// デルタタイム
-	deltaTime_ = 1.0f / 60.0f;
-
-	camera_ = nullptr;
-	
+	deltaTime_ = 1.0f / 60.0f;	
 }
 
 void SceneManager::ResetDeltaTime(void)
@@ -219,10 +257,26 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	switch (sceneId_)
 	{
 	case SCENE_ID::TITLE:
+		ChangeWindowMode(Application::WINDOW::HIDE);
 		scene_ = new TitleScene();
 		break;	
 	
 	case SCENE_ID::GAME:
+		//ウィンドウの設定
+		int num = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
+		SetActiveNum(num);
+		ChangeWindowMode(Application::WINDOW::SHOW);
+		SetWindowPram();
+
+		//すでに一つは生成されているので初期値は①
+		for (int i = 1; i < num; i++)
+		{
+			//生成及び初期化
+			auto c = std::unique_ptr<Camera>();
+			c.get()->Init();
+			//格納
+			cameras_.push_back(c);
+		}
 		scene_ = new GameScene();
 		break;
 	}
@@ -264,4 +318,47 @@ void SceneManager::Fade(void)
 
 }
 
+//ウィンドウのサイズ及び位置設定
+void SceneManager::SetWindowPram(void)
+{
+	const int DISPLAY_X = 1920;
+	const int DISPLAY_Y = 1080;
 
+
+	//配列の要素数なのです初期値０
+	int cnt = 0;
+
+	int posX = 0;
+	int posY = 0;
+
+	int sizeX = DISPLAY_X;
+	int sizeY = DISPLAY_Y;
+
+	if (activeWindowNum_ != 1)sizeX /= 2;
+	if (activeWindowNum_ > 2)sizeY /= 2;
+
+	for (HWND hwnd : subWindowH_)
+	{
+		//cntは配列の要素数を表すのでactiveWindow未満の間だけ
+		if (cnt >= activeWindowNum_)return;
+		cnt++;
+
+		if (cnt == 1)
+		{
+			SetWindowSize(sizeX - 15, sizeY - 30);
+			SetWindowPosition(posX, posY);
+		}
+		else
+		{
+			SetWindowPos(hwnd, NULL, posX, posY, sizeX, sizeY, NULL);
+			//MoveWindow(hwnd, posX, posY, sizeX, sizeY, true);
+		}
+		posX += sizeX;
+
+		if (cnt == 2)
+		{
+			posY += sizeY;
+			posX = 0;
+		}
+	}
+}
