@@ -11,8 +11,9 @@ public:
 	//****************************************************************
 
 	//アニメーション番号(キャラ固有)
-	static constexpr int ANIM_SKILL_ONE = 7;	//スキル1アニメーション
-	static constexpr int ANIM_RELOAD = 6;		//弾補充アニメーション(固有アニメーション)
+	static constexpr int ANIM_SKILL_ONE = 95;	//スキル1アニメーション
+	static constexpr int ANIM_AIMING = 5;		//構えアニメーション(固有アニメーション1)
+	static constexpr int ANIM_RELOAD = 6;		//弾補充アニメーション(固有アニメーション2)
 
 	//モデル関係
 	static constexpr VECTOR  LOCAL_CENTER_POS = { 0.0f,100.0f * CHARACTER_SCALE,0.0f };	//モデルの中心座標への相対座標
@@ -46,7 +47,6 @@ public:
 
 	//弓矢関係
 	static constexpr int ARROW_SIZE_MAX = 5;	//矢の最大保持数
-	//static constexpr int SHOT_ARROW_NUM = 4;	//一度発射する矢の個数
 	static constexpr float RELOAD_TIME = 5.0f;	//矢のリロード時間
 
 private:
@@ -85,6 +85,9 @@ private:
 	//矢のリロード
 	void ReloadArrow(void);
 
+	//アニメーション終了時の動き
+	void FinishAnim(void)override;
+
 	//状態遷移における初期化処理
 	void InitChangeState(void)override;
 	
@@ -99,10 +102,10 @@ private:
 	//変数
 	//****************************************************************
 
-	int arrowMdlId_;					//矢のモデル
-	std::vector<Arrow*> arrow_;			//弓矢
-	bool isShotArrow_;					//矢を放ったかの判定(true:放った)
-	int arrowCnt_;						//矢の使用個数カウンタ
-	float reloadCnt_;					//矢のリロード時間
+	int arrowMdlId_;							//矢のモデル
+	std::vector<std::shared_ptr<Arrow>> arrow_;	//弓矢
+	bool isShotArrow_;							//矢を放ったかの判定(true:放った)
+	int arrowCnt_;								//矢の使用個数カウンタ
+	float reloadCnt_;							//矢のリロード時間
 };
 

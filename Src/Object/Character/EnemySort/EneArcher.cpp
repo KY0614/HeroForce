@@ -33,7 +33,8 @@ void EneArcher::InitAnimNum(void)
 
 	//固有アニメーション初期化
 	animNum_.emplace(ANIM::SKILL_1, ANIM_SKILL_ONE);
-	animNum_.emplace(ANIM::UNIQUE_1, ANIM_RELOAD);
+	animNum_.emplace(ANIM::UNIQUE_1, ANIM_AIMING);
+	animNum_.emplace(ANIM::UNIQUE_2, ANIM_RELOAD);
 }
 
 void EneArcher::InitSkill(void)
@@ -62,27 +63,18 @@ void EneArcher::Attack(void)
 		//スキル1発動
 		Skill_One();
 	}
-}
+
 
 void EneArcher::Skill_One(void)
 {
-	//向きと座標を改めて設定
-	trans_.quaRot = trans_.quaRot.LookRotation(GetMovePow2Target());
-	arrow_.back()->SetQuaRot(trans_.quaRot);
-	arrow_.back()->SetPos(trans_.pos);
+	//矢を生成
+	CreateArrow();
 
 	//矢を放つ
-	arrow_.back()->ChangeState(Arrow::STATE::SHOT);
+	arrow_.back().get()->ChangeState(Arrow::STATE::SHOT);
 
 	//矢を放った
 	isShotArrow_ = true;
-}
-
-void EneArcher::RandSkill(void)
-{
-	Enemy::RandSkill();
-
-	CreateArrow();
 }
 
 void EneArcher::CreateArrow(void)
@@ -94,7 +86,7 @@ void EneArcher::CreateArrow(void)
 		{
 			//矢の情報を上書き
 			arrow = nullptr;
-			arrow = new Arrow();
+			arrow = std::make_shared<Arrow>();
 			arrow->Init(arrowMdlId_, trans_, 10.0f);
 
 			//カウント増加
@@ -105,7 +97,7 @@ void EneArcher::CreateArrow(void)
 	}
 
 	//新しく配列を追加
-	Arrow* arrow = new Arrow();
+	std::shared_ptr<Arrow> arrow = std::make_shared<Arrow>();
 	arrow->Init(arrowMdlId_, trans_, 10.0f);
 
 	//配列に格納
@@ -129,7 +121,20 @@ void EneArcher::ReloadArrow(void)
 	CntUp(reloadCnt_);
 
 	//リロードアニメーション
-	ResetAnim(ANIM::UNIQUE_1, SPEED_ANIM);
+	ResetAnim(ANIM::UNIQUE_2, SPEED_ANIM);
+}
+
+void EneArcher::FinishAnim(void)
+{
+	//共通アニメーションの終了処理
+	Enemy::FinishAnim();
+
+	switch (anim_)
+	{
+	case UnitBase::ANIM::UNIQUE_1:
+	case UnitBase::ANIM::UNIQUE_2:
+		break;
+	}
 }
 
 void EneArcher::InitChangeState(void)
@@ -140,8 +145,11 @@ void EneArcher::InitChangeState(void)
 		break;
 
 	case Enemy::STATE::ALERT:
+		//向きを改めて設定
+		trans_.quaRot = trans_.quaRot.LookRotation(GetMovePow2Target());
+
 		//待機アニメーション
-		ResetAnim(ANIM::IDLE, SPEED_ANIM);
+		ResetAnim(ANIM::UNIQUE_1, SPEED_ANIM);
 
 		//警告カウンタ初期化
 		alertCnt_ = 0.0f;
@@ -170,10 +178,10 @@ void EneArcher::Update(void)
 	for (int a = 0 ; a < arrowSize ; a++)
 	{
 		//攻撃状態が終わったら矢を破壊
-		if (!nowSkill_[a].IsAttack())arrow_[a]->Destroy();
+		if (!nowSkill_[a].IsAttack())arrow_[a].get()->Destroy();
 
 		//更新
-		arrow_[a]->Update(nowSkill_[a]);
+		arrow_[a].get()->Update(nowSkill_[a]);
 	}
 }
 
@@ -213,6 +221,6 @@ void EneArcher::Draw(void)
 
 	for (int s = 0; s < arrowSize; s++)
 	{
-		arrow_[s]->Draw();
+		arrow_[s].get()->Draw();
 	}
 }

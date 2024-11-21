@@ -1,7 +1,7 @@
 #include"../Manager/InputManager.h"
 #include"../Manager/SceneManager.h"
 #include"../Manager/ResourceManager.h"
-#include "./PlayableChara/AxeMan.h"
+#include "./PlayableChara/PlAxeMan.h"
 #include "PlayerBase.h"
 
 

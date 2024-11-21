@@ -1,4 +1,6 @@
 #pragma once
+
+#include"UnitBase.h"
 #include"Common/Transform.h"
 
 class Arrow
@@ -6,8 +8,9 @@ class Arrow
 public:
 
 	//定数
-	static constexpr VECTOR ARROW_LOCAL_POS = { 0.0f,5.0f,0.0f };	//打ち始めに違和感がないように調整
-	static constexpr float GRAVITY = 0.2f;		//重力
+	static constexpr VECTOR ARROW_LOCAL_POS = { 15.0f,30.0f,50.0f };	//打ち始めに違和感がないように調整
+	static constexpr float GRAVITY = 0.2f;			//重力
+	static constexpr float START_UP_ANGLE = 10.0f;	//最初の上アングル
 
 	enum class STATE
 	{
@@ -17,18 +20,34 @@ public:
 		END,
 	};
 
-	//モデルID、発生位置、行き先,方向
+	//モデルID、発生位置、行き先,方向,対象位置,攻撃力
 	Arrow(void);	
 	~Arrow(void) = default;
 
-	void Init(const int _mdlId, const Transform& _trans);
-	void Update(void);
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="_mdlId">矢のモデルID</param>
+	/// <param name="_trans">アーチャーの位置情報等</param>
+	/// <param name="_speed">速度</param>
+	void Init(const int _mdlId, const Transform& _trans, const float _speed);
+	void Update(UnitBase::ATK& _atk);
 	void Draw(void);
 	void Release();
 	void Destroy(void);
 
+	const VECTOR GetPos(void)const { return trans_.pos; }
 	const bool GetIsAlive(void)const { return isAlive_; }
 	const STATE GetState(void)const { return state_; }
+
+	//状況変位
+	void ChangeState(const STATE _state) { state_ = _state; }
+
+	////回転方向制御
+	//void SetQuaRot(const Quaternion& _quaRot) { trans_.quaRot = _quaRot; }
+
+	////位置設定
+	//void SetPos(const VECTOR& _pos) { trans_.pos = _pos; }
 
 private:
 	//位置情報
