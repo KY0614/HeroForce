@@ -57,10 +57,7 @@ public:
 	void Attack(void)override;
 
 	//スキル1
-	void Skill_1(void)override;
-
-	//スキル2
-	void Skill_2(void)override;
+	void Skill_One(void)override;
 
 };
 

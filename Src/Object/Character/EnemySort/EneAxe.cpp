@@ -52,31 +52,11 @@ void EneAxe::Attack(void)
 		&& nowSkill_.front().pow_ == SKILL_1.pow_)
 	{
 		//スキル1発動
-		Skill_1();
-	}
-	else if (nowSkill_.front().radius_ == SKILL_2.radius_
-		&& nowSkill_.front().backlash_ == SKILL_2.backlash_
-		&& nowSkill_.front().duration_ == SKILL_2.duration_
-		&& nowSkill_.front().pow_ == SKILL_2.pow_)
-	{
-		//スキル2発動
-		Skill_2();
+		Skill_One();
 	}
 }
 
-void EneAxe::Skill_1(void)
-{
-	//前方向
-	VECTOR dir = trans_.quaRot.GetForward();
-
-	for (auto& nowSkill : nowSkill_)
-	{
-		//座標の設定
-		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_));
-	}
-}
-
-void EneAxe::Skill_2(void)
+void EneAxe::Skill_One(void)
 {
 	//前方向
 	VECTOR dir = trans_.quaRot.GetForward();

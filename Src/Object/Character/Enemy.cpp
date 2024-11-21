@@ -307,7 +307,7 @@ void Enemy::Draw(void)
 	//else if (atk_.IsBacklash()) { DrawSphere3D(atk_.pos_, nowSkillColRadius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
 }
 
-const VECTOR Enemy::GetTargetVec(void)const
+const VECTOR Enemy::GetMovePow2Target(void)const
 {
 	//標的への方向ベクトルを取得						※TODO:targetPosはSceneGameからもらう
 	VECTOR targetVec = VSub(targetPos_, trans_.pos);
@@ -330,7 +330,7 @@ void Enemy::Move(void)
 	moveSpeed_ = walkSpeed_;
 
 	//方向ベクトル取得
-	VECTOR targetVec = GetTargetVec();
+	VECTOR targetVec = GetMovePow2Target();
 
 	//回転
 	trans_.quaRot = trans_.quaRot.LookRotation(targetVec);
@@ -360,7 +360,7 @@ void Enemy::FinishAnim(void)
 }
 
 
-void Enemy::Skill_1(void)
+void Enemy::Skill_One(void)
 {
 	//前方向
 	VECTOR dir = trans_.quaRot.GetForward();
@@ -371,19 +371,6 @@ void Enemy::Skill_1(void)
 		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_));
 	}
 }
-
-void Enemy::Skill_2(void)
-{
-	//前方向
-	VECTOR dir = trans_.quaRot.GetForward();
-
-	for (auto& nowSkill : nowSkill_)
-	{
-		//座標の設定
-		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_));
-	}
-}
-
 void Enemy::RandSkill(void)
 {
 	//スキルの数
