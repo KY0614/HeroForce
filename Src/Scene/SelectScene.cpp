@@ -1,4 +1,5 @@
 #include <vector>
+#include <math.h>
 #include<algorithm>
 #include "../Application.h"
 #include "../Manager/SceneManager.h"
@@ -41,7 +42,7 @@ void SelectScene::Init(void)
 
 	playerNum_ = 0;
 
-	num = 0;
+	num_ = 0;
 	opr = 0;
 	role = 0;
 
@@ -52,11 +53,14 @@ void SelectScene::Init(void)
 
 	triL = { 450,450 ,150,150 ,false };
 	triR = { 1050,450 ,150,150 ,false };
+
+	time_ = 0.0f;
+	interval_ = 0.0f;
 }
 
 void SelectScene::Update(void)
 {
-	playerNum_ = std::clamp(playerNum_, 0, 4);
+	
 
 	//キーの設定
 	KeyConfigSetting();
@@ -101,6 +105,7 @@ void SelectScene::NumberUpdate(void)
 {
 	InputManager& ins = InputManager::GetInstance();
 	DataBank& data = DataBank::GetInstance();
+	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
 
 	//カーソル移動処理
 	//ProcessCursor();
@@ -109,39 +114,61 @@ void SelectScene::NumberUpdate(void)
 	int PRI_SPACE = 100;
 	int RECT_SCALE = 300;
 	int SCALE = 150;
-	int PRI_W = 100;
-	int plusCol = 100;
 
 	//四角形の座標と大きさ、色を決める
 	rc = { 750,450,RECT_SCALE,RECT_SCALE };
-
 
 	triL.pos.x = rc.pos.x - SCALE - PRI_SPACE;
 	triR.pos.x = rc.pos.x + SCALE + PRI_SPACE;
 
 	rc.color_ = GetColor(255, 0, 0);
 
+	//三角形のボタンがONだったら緑にOFFだったら黄色に
 	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
 	triR.color_ = (triR.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
 
 	if (triR.isToggle_ &&
-		ins.IsTrgDown(KEY_INPUT_RIGHT))
+		key == KEY_CONFIG::RIGHT)
 	{
-		triR.color_ = GetColor(255, 255, 255);
-		playerNum_++;
+		if (!press_) {
+			triR.color_ = GetColor(255, 255, 255);
+			playerNum_ += 1;
+
+			press_ = true;
+		}
+
+		//キーが押されている間経過時間を加算していく
+		time_ += delta;
+
+		//経過時間がある一定時間経った場合
+		if (time_ > SELECT_TIME )
+		{
+			//インターバルを設ける
+			interval_ += delta;
+
+			//2秒ごとにプレイ人数を１ずつ増やしていく
+			(interval_ > INTERVAL_TIME) ? interval_ = 0.0f ,playerNum_ += 1: interval_;
+		}
 	}
+	else
+	{
+		press_ = false;
+		time_ = 0.0f;
+		interval_ = INTERVAL_TIME;
+	}
+
 	if (triL.isToggle_ &&
 		ins.IsTrgDown(KEY_INPUT_LEFT))
 	{
-		triR.color_ = GetColor(255, 255, 255);
+		triL.color_ = GetColor(255, 255, 255);
 		playerNum_--;
 	}
 
 	//カーソルと四角形の当たり判定
-	if (ins.IsTrgDown(KEY_INPUT_RIGHT)	&&
-		!triR.isToggle_)
+	if (!triR.isToggle_	&&
+		ins.IsTrgDown(KEY_INPUT_RIGHT))
 	{
-		num += playerNum_ + 1;
+		num_ += playerNum_ + 1;
 		triR.isToggle_ = true;
 		triL.isToggle_ = false;
 
@@ -155,7 +182,7 @@ void SelectScene::NumberUpdate(void)
 			data.Input(SceneManager::PLAY_MODE::CPU, (SceneManager::PLAYER_NUM - 1) - 1);
 
 			//選択した数表示用
-			num = playerNum_ + 1;
+			num_ = playerNum_ + 1;
 			playerNum_ = playerNum_;
 
 			//押下したときの色
@@ -164,12 +191,16 @@ void SelectScene::NumberUpdate(void)
 		}
 	}
 	
-	if (ins.IsTrgDown(KEY_INPUT_LEFT) &&
-		!triL.isToggle_)
+	if (!triL.isToggle_	&&
+		ins.IsTrgDown(KEY_INPUT_LEFT) )
 	{
 		triR.isToggle_ = false;
 		triL.isToggle_ = true;
 	}
+
+	//プレイ人数の範囲内に数値を収める
+	playerNum_ = std::clamp(playerNum_, 0, 30);	//１～４人プレイなので0～3まで
+
 
 #endif // DEBUG_RECT
 
@@ -270,11 +301,17 @@ void SelectScene::DrawDebug(void)
 
 			rc.Draw(rc.color_);
 			DrawFormatString(rc.pos.x, rc.pos.y,
-				0xFFFFFF, "%d", playerNum_ + 1);
+				0xFFFFFF, "%d", playerNum_);
 
 			DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
 				0xFF9999, "プレイ人数選択中");
-		
+			
+			DrawFormatString(0, 0,
+				0xFFFFFF, "time : %.2f",time_);
+			
+			DrawFormatString(rc.pos.x, rc.pos.y - 20,
+				0xFFFFFF, "%.2f",interval_);
+
 		break;
 
 	case SelectScene::SELECT::OPERATION:
@@ -321,7 +358,7 @@ void SelectScene::DrawDebug(void)
 		"%d",
 		key);
 
-	DrawFormatString(Application::SCREEN_SIZE_X / 2, 0, 0xFFFFFF, "number : %d", num);
+	DrawFormatString(Application::SCREEN_SIZE_X / 2, 0, 0xFFFFFF, "number : %d", num_);
 	DrawFormatString(Application::SCREEN_SIZE_X / 2, 20, 0xFFFFFF, "operation : %d", opr);
 	DrawFormatString(Application::SCREEN_SIZE_X / 2, 40, 0xFFFFFF, "role : %d", role);
 
@@ -381,6 +418,32 @@ void SelectScene::KeyConfigSetting(void)
 			ins.IsNew(KEY_INPUT_D))
 		{
 			key = KEY_CONFIG::RIGHT;
+			ChangeDevice(SceneManager::CNTL::KEYBOARD);
+		}
+
+		//キーの押下判定
+		if (ins.IsTrgDown(KEY_INPUT_UP) ||
+			ins.IsTrgDown(KEY_INPUT_W))
+		{
+			key = KEY_CONFIG::UP_TRG;
+			ChangeDevice(SceneManager::CNTL::KEYBOARD);
+		}
+		if (ins.IsTrgDown(KEY_INPUT_DOWN) ||
+			ins.IsTrgDown(KEY_INPUT_S))
+		{
+			key = KEY_CONFIG::DOWN_TRG;
+			ChangeDevice(SceneManager::CNTL::KEYBOARD);
+		}
+		if (ins.IsTrgDown(KEY_INPUT_LEFT) ||
+			ins.IsTrgDown(KEY_INPUT_A))
+		{
+			key = KEY_CONFIG::LEFT_TRG;
+			ChangeDevice(SceneManager::CNTL::KEYBOARD);
+		}
+		if (ins.IsTrgDown(KEY_INPUT_RIGHT) ||
+			ins.IsTrgDown(KEY_INPUT_D))
+		{
+			key = KEY_CONFIG::RIGHT_TRG;
 			ChangeDevice(SceneManager::CNTL::KEYBOARD);
 		}
 
@@ -535,6 +598,8 @@ void SelectScene::Load(void)
 {
 
 }
+
+//デバッグ用の図形描画------------------------------------------------------------------------
 
 void SelectScene::Rect::Draw(unsigned int color)
 {

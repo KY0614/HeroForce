@@ -11,6 +11,9 @@ public:
 
 	#define DEBUG_RECT
 
+	static constexpr float SELECT_TIME = 3.0f;
+	static constexpr float INTERVAL_TIME = 1.5f;
+
 	//四角形を描画するために必要なもの
 	struct Rect {
 		Vector2 pos;
@@ -78,6 +81,12 @@ public:
 		DOWN,
 		LEFT,
 		RIGHT,
+
+		UP_TRG,
+		DOWN_TRG,
+		LEFT_TRG,
+		RIGHT_TRG,
+
 		DECIDE
 	};
 
@@ -161,9 +170,14 @@ private:
 	Tri triR;
 
 	int color_;
-	int num;
+	int num_;
 	int opr;
 	int role;
+
+	float time_;
+	bool press_;
+	bool hold_;
+	float interval_;
 	//-----------------------------------------
 
 	//読み込み用関数
