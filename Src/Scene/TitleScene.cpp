@@ -6,6 +6,7 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/Camera.h"
+#include "../Manager/DataBank.h"
 #include "TitleScene.h"
 
 TitleScene::TitleScene(void)
@@ -19,9 +20,9 @@ TitleScene::~TitleScene(void)
 
 void TitleScene::Init(void)
 {
-
+	windowNum_ = 1;
 	// カメラモード：定点カメラ
-	SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FIXED_POINT);
+	SceneManager::GetInstance().GetCameras()[0]->ChangeMode(Camera::MODE::FIXED_POINT);
 }
 
 void TitleScene::Update(void)
@@ -29,9 +30,25 @@ void TitleScene::Update(void)
 
 	// シーン遷移
 	InputManager& ins = InputManager::GetInstance();
+	SceneManager& mng = SceneManager::GetInstance();
+	DataBank& data = DataBank::GetInstance();
+
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+		data.Input(DataBank::INFO::USER_NUM, windowNum_);
+		mng.ChangeScene(SceneManager::SCENE_ID::GAME);
+	}
+
+	if (ins.IsTrgDown(KEY_INPUT_RIGHT))
+	{
+		windowNum_++;
+		if (windowNum_ > SceneManager::PLAYER_NUM)windowNum_ = SceneManager::PLAYER_NUM;
+	}
+
+	if (ins.IsTrgDown(KEY_INPUT_LEFT))
+	{
+		windowNum_--;
+		if (windowNum_ < 1)windowNum_ = 1;
 	}
 }
 
@@ -40,7 +57,7 @@ void TitleScene::Draw(void)
 
 	// ロゴ描画
 	DrawLogo();
-
+	DrawFormatString(400, 400, 0xffffff, "%d", windowNum_);
 }
 
 void TitleScene::Release(void)

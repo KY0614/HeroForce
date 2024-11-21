@@ -1,9 +1,11 @@
+#include<memory>
+
 #include "../Manager/SceneManager.h"
 #include "../Manager/Camera.h"
 #include "../Manager/Collision.h"
 #include "../Object/Grid.h"
 #include "../Object/Character/PlayerBase.h"
-#include "../Object/Character/PlayableChara/AxeMan.h"
+#include "../Object/Character/PlayableChara/PlAxeMan.h"
 #include"../Object/Character/Enemy.h"
 #include"../Object/Character/EnemySort/EneAxe.h"
 #include "../Object/Common/Transform.h"
@@ -12,7 +14,11 @@
 #include "../Object/System/LevelBase.h"
 #include "GameScene.h"
 
-#define   _DEBUG_COL
+
+
+#include "../Manager/InputManager.h"
+
+
 
 GameScene::GameScene(void)
 {
@@ -38,22 +44,33 @@ void GameScene::Init(void)
 	grid_->Init();	
 
 #ifdef _DEBUG_COL
-	playerTest_ = new PlAxe(PlayerBase::PLAY_MODE::USER);
+	playerTest_ = new PlAxe(SceneManager::PLAY_MODE::USER);
 	playerTest_->Init();
 	playerTest_->ChangeControll(SceneManager::CNTL::KEYBOARD);
 	enemyTest_ = new EneAxe();
 	enemyTest_->Init();
 #endif
 
-	//playerCpu_ = new PlayerCpu();
-	//playerCpu_->Init();
+	//プレイヤー設定
+	for (int i = 0; i < PLAYER_NUM; i++)
+	{
+		players_[i] = std::make_unique<PlAxe>(SceneManager::PLAY_MODE::USER);
+		players_[i].get()->Init();
+	}
+
+	//敵の生成(とりあえず一体だけ)
+	std::unique_ptr<Enemy> e=std::make_unique<EneAxe>();
+	e.get()->Init();
+	enemys_.push_back(std::move(e));
 
 
-	// カメラモード　：フリーカメラ
-	Camera* camera = SceneManager::GetInstance().GetCamera();
-	//カメラの対象設定
-	camera->SetFollow(&playerTest_->GetTransform());
-	camera->ChangeMode(Camera::MODE::FOLLOW_SPRING);
+	//カメラの設定
+	auto cameras = SceneManager::GetInstance().GetCameras();
+	for (int i = 0; i < cameras.size(); i++)
+	{
+		cameras[i].get()->SetFollow(&players_[i].get()->GetTransform());
+		cameras[i].get()->ChangeMode(Camera::MODE::FOLLOW_SPRING);
+	}
 }
 
 void GameScene::Update(void)
@@ -61,11 +78,29 @@ void GameScene::Update(void)
 	//grid_->Update();
 	level_->Update();
 
+	//プレイヤー①だけを動かしています
+	players_[0].get()->Update();
+
+	for (auto& e : enemys_)
+	{
+		e.get()->Update();
+	}
+	
+
 #ifdef _DEBUG_COL
 	playerTest_->Update();
 	enemyTest_->SetTargetPos(playerTest_->GetPos());
 	enemyTest_->Update();
 #endif
+
+	auto& ins = InputManager::GetInstance();
+	auto& mng = SceneManager::GetInstance();
+	//スペース推したらタイトルに戻る
+	if (ins.IsTrgDown(KEY_INPUT_SPACE))
+	{
+		mng.ReturnSolo();
+		mng.ChangeScene(SceneManager::SCENE_ID::TITLE);
+	}
 
 	//あたり判定
 	Collision();
@@ -79,10 +114,16 @@ void GameScene::Draw(void)
 	playerTest_->Draw();
 	enemyTest_->Draw();
 #endif
+	for (auto& p : players_)
+		p.get()->Draw();
+
+	for (auto& e : enemys_)
+	{
+		e.get()->Draw();
+	}
+
 	stage_->Draw();
 	level_->Draw();
-
-	playerTest_->DrawDebug();
 }
 
 void GameScene::Release(void)
@@ -93,6 +134,19 @@ void GameScene::Release(void)
 	stage_->Release();
 	delete stage_;
 	delete grid_;
+
+	SceneManager::GetInstance().ResetCameras();
+
+	for (auto& p : players_)
+	{
+		p.get()->Destroy();
+	}
+
+	for (auto& e : enemys_)
+	{
+		e.get()->Destroy();
+	}
+
 #ifdef _DEBUG_COL
 	playerTest_->Destroy();
 	delete playerTest_;

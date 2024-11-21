@@ -52,9 +52,9 @@ public:
 	//初期化
 	void Init(void)override;
 	//更新
-	void Update(void)override;
+	virtual void Update(void)override;
 	//描画
-	void Draw(void)override;
+	virtual void Draw(void)override;
 
 	//警告時間中かどうかを返す(純粋仮想関数)
 	virtual const bool IsAlertTime(void)const = 0;
@@ -115,6 +115,9 @@ protected:
 	float alertCnt_;			//攻撃の警告時間カウンタ
 	float breakCnt_;			//攻撃の休憩時間カウンタ
 
+	float walkSpeed_;		//敵ごとの歩く速度
+	float runSpeed_;		//敵ごとの走る速度
+
 	std::vector<ATK> skills_;			//スキルの種類
 	std::vector<ATK> nowSkill_;			//現在のスキル
 
@@ -155,9 +158,6 @@ protected:
 	//スキル1
 	virtual void Skill_One(void);
 
-	//スキル2
-	virtual void Skill_Two(void);
-
 	//スキルのランダム生成
 	void RandSkill(void);
 
@@ -174,14 +174,14 @@ protected:
 	//更新(攻撃)
 	void UpdateAtk(void);
 	//更新(休憩)
-	void UpdateBreak(void);
+	virtual void UpdateBreak(void);
 
 	/// <summary>
-	/// 標的のベクトルを返す
+	/// 標的までのベクトル速度を返す
 	/// </summary>
 	/// <param name=""></param>
 	/// <returns>標的への方向ベクトル</returns>
-	const VECTOR GetTargetVec(void)const;
+	const VECTOR GetMovePow2Target(void)const;
 
 	//移動
 	void Move(void);

@@ -1,5 +1,11 @@
 #pragma once
 #include <chrono>
+#include<windows.h>
+#include<vector>
+
+#include"../Application.h"
+#include"Camera.h"
+
 class SceneBase;
 class Fader;
 class Camera;
@@ -72,15 +78,35 @@ public:
 	float GetDeltaTime(void) const;
 
 	// カメラの取得
-	Camera* GetCamera(void) const;
+	std::vector<std::shared_ptr<Camera>> GetCameras(void) const;
+	//カメラを一つに戻す
+	void ResetCameras(void);
+
+	//ウィンドウセッター
+	void SetSubWindowH(HWND _mode);
+	//モードを変える
+	void ChangeWindowMode(const Application::WINDOW _mode);
+	//フルスクに戻す
+	void ReturnSolo(void);
+
+	//ウィンドウの位置やサイズの調整
+	void SetWindowPram(void);
+
+	//使用するウィンドウの数のゲッター
+	const int GetActiveNum(void) { return activeWindowNum_; }
+	//上記のセッター
+	void SetActiveNum(const int _num) { activeWindowNum_ = _num; }
 
 private:
-
 	// 静的インスタンス
 	static SceneManager* instance_;
 
-	SCENE_ID sceneId_;
-	SCENE_ID waitSceneId_;
+	//ウィンドウ関係
+	std::vector<HWND> subWindowH_;	//ウィンドウハンドルの全体管理(動的配列)
+	int activeWindowNum_;			//使用するウィンドウの数
+
+	SCENE_ID sceneId_;				//現在のシーン状態
+	SCENE_ID waitSceneId_;			//次のシーン
 
 	// フェード
 	Fader* fader_;
@@ -89,7 +115,7 @@ private:
 	SceneBase* scene_;
 
 	// カメラ
-	Camera* camera_;
+	std::vector<std::shared_ptr<Camera>> cameras_;
 
 	// シーン遷移中判定
 	bool isSceneChanging_;

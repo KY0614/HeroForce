@@ -1,5 +1,5 @@
 #include"../Manager/ResourceManager.h"
-#include "AxeMan.h"
+#include "PlAxeMan.h"
 
 PlAxe::PlAxe(SceneManager::PLAY_MODE _mode) : PlayerBase(_mode) { mode_ = _mode; }
 
