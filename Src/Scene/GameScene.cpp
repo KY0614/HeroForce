@@ -1,4 +1,4 @@
-#include<memory>
+
 
 #include "../Manager/SceneManager.h"
 #include "../Manager/Camera.h"
@@ -55,12 +55,12 @@ void GameScene::Init(void)
 	for (int i = 0; i < PLAYER_NUM; i++)
 	{
 		players_[i] = std::make_unique<PlAxe>(SceneManager::PLAY_MODE::USER);
-		players_[i].get()->Init();
+		players_[i]->Init();
 	}
 
 	//“G‚Ì¶¬(‚Æ‚è‚ ‚¦‚¸ˆê‘Ì‚¾‚¯)
 	std::unique_ptr<Enemy> e=std::make_unique<EneAxe>();
-	e.get()->Init();
+	e->Init();
 	enemys_.push_back(std::move(e));
 
 
@@ -68,8 +68,8 @@ void GameScene::Init(void)
 	auto cameras = SceneManager::GetInstance().GetCameras();
 	for (int i = 0; i < cameras.size(); i++)
 	{
-		cameras[i].get()->SetFollow(&players_[i].get()->GetTransform());
-		cameras[i].get()->ChangeMode(Camera::MODE::FOLLOW_SPRING);
+		cameras[i]->SetFollow(&players_[i]->GetTransform());
+		cameras[i]->ChangeMode(Camera::MODE::FOLLOW_SPRING);
 	}
 }
 
@@ -79,11 +79,11 @@ void GameScene::Update(void)
 	level_->Update();
 
 	//ƒvƒŒƒCƒ„[‡@‚¾‚¯‚ğ“®‚©‚µ‚Ä‚¢‚Ü‚·
-	players_[0].get()->Update();
+	players_[0]->Update();
 
 	for (auto& e : enemys_)
 	{
-		e.get()->Update();
+		e->Update();
 	}
 	
 
@@ -115,11 +115,11 @@ void GameScene::Draw(void)
 	enemyTest_->Draw();
 #endif
 	for (auto& p : players_)
-		p.get()->Draw();
+		p->Draw();
 
 	for (auto& e : enemys_)
 	{
-		e.get()->Draw();
+		e->Draw();
 	}
 
 	stage_->Draw();
@@ -139,12 +139,12 @@ void GameScene::Release(void)
 
 	for (auto& p : players_)
 	{
-		p.get()->Destroy();
+		p->Destroy();
 	}
 
 	for (auto& e : enemys_)
 	{
-		e.get()->Destroy();
+		e->Destroy();
 	}
 
 #ifdef _DEBUG_COL

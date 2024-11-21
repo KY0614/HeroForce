@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneBase.h"
 #include<vector>
+#include<memory>
 
 class Grid;
 class PlayerBase;

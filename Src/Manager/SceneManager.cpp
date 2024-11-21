@@ -2,6 +2,7 @@
 #include <DxLib.h>
 #include<cassert>
 
+
 #include "../Common/Fader.h"
 #include "../Scene/TitleScene.h"
 #include "../Scene/GameScene.h"
@@ -41,11 +42,9 @@ void SceneManager::Init(void)
 	fader_->Init();
 
 	// カメラ
-	cameras_.push_back(std::make_shared<Camera>());
-	for (auto& c : cameras_)
-	{
-		c.get()->Init();
-	}
+	std::shared_ptr<Camera>c = std::make_shared<Camera>();
+	c->Init();
+	cameras_.push_back(std::move(c));
 
 	scene_ = new TitleScene();
 	scene_->Init();
@@ -113,7 +112,7 @@ void SceneManager::Update(void)
 	// カメラ更新
 	for (auto& c : cameras_)
 	{
-		c.get()->Update();
+		c->Update();
 	}
 }
 
@@ -144,7 +143,7 @@ void SceneManager::Draw(void)
 			SetScreenFlipTargetWindow(NULL); // メインウィンドウをターゲットに設定
 		}
 		//カメラの描画
-		cameras_[cnt].get()->SetBeforeDraw();
+		cameras_[cnt]->SetBeforeDraw();
 
 		//ゲーム内容描画
 		// 描画
@@ -172,7 +171,7 @@ void SceneManager::Destroy(void)
 	// カメラ
 	for (auto& c : cameras_)
 	{
-		c.get()->Release();
+		c->Release();
 	}
 
 	delete instance_;
@@ -311,7 +310,7 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 		{
 			//生成及び初期化
 			auto c = std::make_shared<Camera>();
-			c.get()->Init();
+			c->Init();
 			//格納
 			cameras_.push_back(std::move(c));
 		}

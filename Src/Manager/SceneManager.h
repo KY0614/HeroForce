@@ -2,6 +2,7 @@
 #include <chrono>
 #include<windows.h>
 #include<vector>
+#include<memory>
 
 #include"../Application.h"
 #include"Camera.h"
