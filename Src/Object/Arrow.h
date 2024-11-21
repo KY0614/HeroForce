@@ -65,8 +65,6 @@ private:
 
 	//ˆÚ“®ˆ—
 	void Move(void);
-	//ó‹µ•ÏˆÊ
-	void ChangeState(const STATE _state) { state_ = _state; }
 	//¶‘¶ƒtƒ‰ƒOİ’è
 	void SetIsAlive(const bool _flag) { isAlive_ = _flag; }
 };

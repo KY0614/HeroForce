@@ -378,7 +378,6 @@ void Enemy::Skill_One(void)
 		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_ + radius_));
 	}
 }
-
 void Enemy::RandSkill(void)
 {
 	//ƒXƒLƒ‹‚Ì”

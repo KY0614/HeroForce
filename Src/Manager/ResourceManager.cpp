@@ -59,7 +59,7 @@ void ResourceManager::Init(void)
 	resourcesMap_.emplace(SRC::ENEMY_BRIGANT, res);
 
 	//弓使い（敵）
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_ENEMY + "Skeleton_Archer1.mv1");
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ENEMY + "Enemy_Archer1.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_ARCHER, res);
 
 	//斧使い（敵）
