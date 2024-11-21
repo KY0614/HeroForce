@@ -4,6 +4,7 @@
 #include<vector>
 
 #include"../Application.h"
+#include"Camera.h"
 
 class SceneBase;
 class Fader;
@@ -77,7 +78,9 @@ public:
 	float GetDeltaTime(void) const;
 
 	// カメラの取得
-	std::vector<std::unique_ptr<Camera>> GetCameras(void) const;
+	std::vector<std::shared_ptr<Camera>> GetCameras(void) const;
+	//カメラを一つに戻す
+	void ResetCameras(void);
 
 	//ウィンドウセッター
 	void SetSubWindowH(HWND _mode);
@@ -112,7 +115,7 @@ private:
 	SceneBase* scene_;
 
 	// カメラ
-	std::vector<std::unique_ptr<Camera>> cameras_;
+	std::vector<std::shared_ptr<Camera>> cameras_;
 
 	// シーン遷移中判定
 	bool isSceneChanging_;

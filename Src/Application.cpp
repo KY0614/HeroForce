@@ -65,7 +65,7 @@ void Application::Init(void)
 	for (int i = 0; i < SUBWINDOW_NUM; i++)
 	{
 		InitWindows(i);
-		SceneManager::GetInstance().SetSubWindowH(hWnd); // SceneManagerに用意するHWND subWindowH_変数にセットする関数
+		SceneManager::GetInstance().SetSubWindowH(hWnd_); // SceneManagerに用意するHWND subWindowH_変数にセットする関数
 	}
 
 	//FPS用初期化
@@ -186,7 +186,7 @@ void Application::InitWindows(const int _num)
 	}
 	RECT windowRect = { 0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y };
 	AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
-	hWnd = CreateWindow(
+	hWnd_ = CreateWindow(
 		szClassNme[_num],
 		windowName,
 		WS_OVERLAPPEDWINDOW,
@@ -195,8 +195,8 @@ void Application::InitWindows(const int _num)
 		NULL, NULL, hInstance, NULL
 	);
 	//表示状態を設定する
-	ShowWindow(hWnd, static_cast<int>(WINDOW::HIDE));
-	UpdateWindow(hWnd);
+	ShowWindow(hWnd_, static_cast<int>(WINDOW::HIDE));
+	UpdateWindow(hWnd_);
 }
 
 Application::Application(void)

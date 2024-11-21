@@ -1,3 +1,5 @@
+#include<memory>
+
 #include "../Manager/SceneManager.h"
 #include "../Manager/Camera.h"
 #include "../Manager/Collision.h"
@@ -16,7 +18,7 @@
 
 #include "../Manager/InputManager.h"
 
-#define   _DEBUG_COL
+
 
 GameScene::GameScene(void)
 {
@@ -59,7 +61,7 @@ void GameScene::Init(void)
 	//“G‚Ì¶¬(‚Æ‚è‚ ‚¦‚¸ˆê‘Ì‚¾‚¯)
 	std::unique_ptr<Enemy> e=std::make_unique<EneAxe>();
 	e.get()->Init();
-	enemys_.push_back(e);
+	enemys_.push_back(std::move(e));
 
 
 	//ƒJƒƒ‰‚Ìİ’è
@@ -122,8 +124,6 @@ void GameScene::Draw(void)
 
 	stage_->Draw();
 	level_->Draw();
-
-	playerTest_->DrawDebug();
 }
 
 void GameScene::Release(void)
@@ -135,6 +135,7 @@ void GameScene::Release(void)
 	delete stage_;
 	delete grid_;
 
+	SceneManager::GetInstance().ResetCameras();
 
 	for (auto& p : players_)
 	{

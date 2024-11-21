@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include<windows.h>
 
 class Application
 {
@@ -82,7 +83,7 @@ public:
 private:
 
 	//ウィンドウハンドル
-	HWND hWnd;
+	HWND hWnd_;
 
 	//フレーム固定用
 	int currentFrame_;	//現在のフレームを保存

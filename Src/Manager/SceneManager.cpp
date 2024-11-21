@@ -41,7 +41,7 @@ void SceneManager::Init(void)
 	fader_->Init();
 
 	// カメラ
-	cameras_.push_back(std::make_unique<Camera>());
+	cameras_.push_back(std::make_shared<Camera>());
 	for (auto& c : cameras_)
 	{
 		c.get()->Init();
@@ -204,10 +204,22 @@ float SceneManager::GetDeltaTime(void) const
 	return deltaTime_;
 }
 //カメラ情報（全体）を取得
-std::vector<std::unique_ptr<Camera>> SceneManager::GetCameras(void) const
+std::vector<std::shared_ptr<Camera>> SceneManager::GetCameras(void) const
 {
 	return cameras_;
 }
+//カメラを要素数①になるまで削除する
+void SceneManager::ResetCameras(void)
+{
+	auto size = cameras_.size();
+	//末尾から消していくので最後の一つが残るように調整
+	size -= 1;
+	for (int i = 0; i < size; i++)
+	{
+		cameras_.pop_back();
+	}
+}
+
 /// <summary>
 /// ウィンドウの状態を変化させる
 /// </summary>
@@ -215,6 +227,32 @@ std::vector<std::unique_ptr<Camera>> SceneManager::GetCameras(void) const
 void SceneManager::SetSubWindowH(HWND _mode)
 {
 	subWindowH_.push_back(_mode);
+}
+
+//ウィンドウの状態を変える
+void SceneManager::ChangeWindowMode(const Application::WINDOW _mode)
+{
+	int cnt = 1;
+	for (HWND hwnd : subWindowH_)
+	{
+		if (cnt > activeWindowNum_)return;
+		if (cnt == 1)
+		{
+			cnt++;
+			continue;
+		}
+		ShowWindow(hwnd, static_cast<int>(_mode));
+
+		cnt++;
+	}
+}
+//フルスクリーンに戻す
+void SceneManager::ReturnSolo(void)
+{
+	//画面枚数を一枚に戻す
+	SetActiveNum(1);
+	//フルスクに戻る
+	SetWindowSize(1960, 1080);
 }
 
 SceneManager::SceneManager(void)
@@ -272,10 +310,10 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 		for (int i = 1; i < num; i++)
 		{
 			//生成及び初期化
-			auto c = std::unique_ptr<Camera>();
+			auto c = std::make_shared<Camera>();
 			c.get()->Init();
 			//格納
-			cameras_.push_back(c);
+			cameras_.push_back(std::move(c));
 		}
 		scene_ = new GameScene();
 		break;
