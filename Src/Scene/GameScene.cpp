@@ -182,7 +182,7 @@ void GameScene::Collision(void)
 	}
 
 
-	if (col.Search(ePos, pPos, enemyTest_->GetAtkStartRange()))
+	if (col.Search(ePos, pPos, enemyTest_->GetAtkStartRange())&&enemyTest_->GetState()==Enemy::STATE::NORMAL)
 	{
 		//ó‘Ô‚ð•ÏX
 		enemyTest_->ChangeState(Enemy::STATE::ALERT);
