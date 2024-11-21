@@ -76,9 +76,6 @@ private:
 	//スキル1
 	void Skill_One(void)override;
 
-	//スキルのランダム生成
-	void RandSkill(void)override;
-
 	//矢の生成
 	void CreateArrow(void);
 

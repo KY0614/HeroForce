@@ -63,7 +63,7 @@ void EneArcher::Attack(void)
 		//ƒXƒLƒ‹1”­“®
 		Skill_One();
 	}
-
+}
 
 void EneArcher::Skill_One(void)
 {
