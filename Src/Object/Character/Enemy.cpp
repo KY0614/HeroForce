@@ -359,6 +359,10 @@ void Enemy::FinishAnim(void)
 	}
 }
 
+void Enemy::InitChangeState(void)
+{
+}
+
 
 void Enemy::Skill_One(void)
 {
