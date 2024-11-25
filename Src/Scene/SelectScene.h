@@ -177,6 +177,8 @@ private:
 	Tri triL;
 	Tri triR;
 
+	bool isSelected_;;
+
 	//DrawFormatString‚Ég‚¤—p---------
 	
 	int color;	//F

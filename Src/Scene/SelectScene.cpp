@@ -57,6 +57,8 @@ void SelectScene::Init(void)
 
 	time_ = 0.0f;
 	interval_ = 0.0f;
+
+	isSelected_ = false;
 }
 
 void SelectScene::Update(void)
@@ -128,21 +130,6 @@ void SelectScene::NumberUpdate(void)
 	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
 	triR.color_ = (triR.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
 
-	//選択する三角形
-	if (!triR.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::RIGHT)
-	{
-		triR.isToggle_ = true;
-		triL.isToggle_ = false;
-	}
-
-	if (!triL.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::LEFT)
-	{
-		triR.isToggle_ = false;
-		triL.isToggle_ = true;
-	}
-
 	//右の三角形がONの時にキーの右に値する入力をすると
 	if (triR.isToggle_ &&
 		GetKeyConfig() == KEY_CONFIG::RIGHT)
@@ -185,7 +172,6 @@ void SelectScene::NumberUpdate(void)
 	if (triL.isToggle_ &&
 		GetKeyConfig() == KEY_CONFIG::LEFT)
 	{
-
 		//キーの入力を押下された瞬間だけ得たい
 		if (!press_)
 		{
@@ -237,6 +223,22 @@ void SelectScene::NumberUpdate(void)
 		rc.color_ = 0xFF0000;
 		ChangeSelect(SELECT::OPERATION);
 	}
+
+	//選択する三角形
+	if (!triR.isToggle_ &&
+		GetKeyConfig() == KEY_CONFIG::RIGHT)
+	{
+		triR.isToggle_ = true;
+		triL.isToggle_ = false;
+	}
+
+	if (!triL.isToggle_ &&
+		GetKeyConfig() == KEY_CONFIG::LEFT)
+	{
+		triR.isToggle_ = false;
+		triL.isToggle_ = true;
+	}
+
 
 #endif // DEBUG_RECT
 
