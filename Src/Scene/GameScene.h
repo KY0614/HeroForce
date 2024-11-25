@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneBase.h"
+#include"../Common/Fader.h"
 #include<vector>
 #include<memory>
 
@@ -39,6 +40,9 @@ private:
 	//スカイドーム
 	SkyDome* sky_;
 
+	//フェーダー
+	std::weak_ptr<Fader>fader_;
+
 	// グリッド線
 	Grid* grid_;
 	//プレイヤー
@@ -50,7 +54,16 @@ private:
 
 	LevelBase* level_;
 
+	//ゲームシーンのフェーズ遷移中判定
+	bool isPhaseChanging_;
+
 	//当たり判定（他項目に干渉するもののみ）
 	void Collision(void);
+
+	//フェーズ遷移
+	void ChangPhase(void);
+
+	//フェード
+	void Fade(void);
 };
 

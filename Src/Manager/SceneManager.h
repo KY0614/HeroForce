@@ -6,6 +6,7 @@
 
 #include"../Application.h"
 #include"Camera.h"
+#include"../Common/Fader.h"
 
 class SceneBase;
 class Fader;
@@ -83,6 +84,11 @@ public:
 	//カメラを一つに戻す
 	void ResetCameras(void);
 
+	//フェード取得
+	std::weak_ptr<Fader>GetFader(void);
+
+	//ウィンドウ関係
+	// ************************************************************************
 	//ウィンドウセッター
 	void SetSubWindowH(HWND _mode);
 	//モードを変える
@@ -110,7 +116,7 @@ private:
 	SCENE_ID waitSceneId_;			//次のシーン
 
 	// フェード
-	Fader* fader_;
+	std::shared_ptr<Fader> fader_;
 
 	// 各種シーン
 	SceneBase* scene_;

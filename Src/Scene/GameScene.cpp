@@ -1,5 +1,3 @@
-
-
 #include "../Manager/SceneManager.h"
 #include "../Manager/Camera.h"
 #include "../Manager/Collision.h"
@@ -22,6 +20,10 @@
 
 GameScene::GameScene(void)
 {
+	stage_ = nullptr;
+	sky_ = nullptr;
+	level_ = nullptr;
+	isPhaseChanging_ = false;
 }
 
 GameScene::~GameScene(void)
@@ -71,10 +73,21 @@ void GameScene::Init(void)
 		cameras[i]->SetFollow(&players_[i]->GetTransform());
 		cameras[i]->ChangeMode(Camera::MODE::FOLLOW_SPRING);
 	}
+
+	//フェーダーの取得
+	fader_ = SceneManager::GetInstance().GetFader();
 }
 
 void GameScene::Update(void)
 {
+	//フェーズ遷移中
+	if (isPhaseChanging_)
+	{
+		//フェードをかける
+		Fade();
+		return;
+	}
+
 	//grid_->Update();
 	level_->Update();
 
@@ -114,6 +127,7 @@ void GameScene::Draw(void)
 	playerTest_->Draw();
 	enemyTest_->Draw();
 #endif
+
 	for (auto& p : players_)
 		p->Draw();
 
@@ -227,4 +241,12 @@ void GameScene::Collision(void)
 #endif
 
 
+}
+
+void GameScene::ChangPhase(void)
+{
+}
+
+void GameScene::Fade(void)
+{
 }

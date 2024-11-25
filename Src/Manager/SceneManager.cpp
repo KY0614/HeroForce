@@ -2,8 +2,6 @@
 #include <DxLib.h>
 #include<cassert>
 
-
-#include "../Common/Fader.h"
 #include "../Scene/TitleScene.h"
 #include "../Scene/GameScene.h"
 #include "ResourceManager.h"
@@ -38,7 +36,7 @@ void SceneManager::Init(void)
 	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;
 
-	fader_ = new Fader();
+	fader_ = std::make_shared<Fader>();
 	fader_->Init();
 
 	// カメラ
@@ -166,8 +164,6 @@ void SceneManager::Destroy(void)
 	scene_->Release();
 	delete scene_;
 
-	delete fader_;
-
 	// カメラ
 	for (auto& c : cameras_)
 	{
@@ -219,6 +215,11 @@ void SceneManager::ResetCameras(void)
 	}
 }
 
+std::weak_ptr<Fader> SceneManager::GetFader(void)
+{
+	return fader_;
+}
+
 /// <summary>
 /// ウィンドウの状態を変化させる
 /// </summary>
@@ -264,7 +265,6 @@ SceneManager::SceneManager(void)
 	fader_ = nullptr;
 
 	isSceneChanging_ = false;
-
 	// デルタタイム
 	deltaTime_ = 1.0f / 60.0f;	
 }
