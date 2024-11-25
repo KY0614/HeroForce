@@ -11,8 +11,11 @@ public:
 
 	#define DEBUG_RECT
 
-	static constexpr float SELECT_TIME = 3.0f;
-	static constexpr float INTERVAL_TIME = 1.5f;
+	//キー押下経過時間
+	static constexpr float SELECT_TIME = 2.0f;
+
+	//インターバル上限
+	static constexpr float INTERVAL_TIME = 1.0f;
 
 	//四角形を描画するために必要なもの
 	struct Rect {
@@ -43,7 +46,7 @@ public:
 		Tri(float x, float y, int inw, int inh,bool isT) :
 			pos(x, y), w(inw), h(inh), isToggle_(isT) {}
 
-		//?の三点のx,y座標
+		//左の三点のx,y座標
 		float LeftX_L() { return pos.x + h / 2;}
 		float LeftY_L() { return pos.y + w / 2;}
 		float TopX_L()  { return pos.x - h / 2;}
@@ -51,7 +54,7 @@ public:
 		float RightX_L(){ return pos.x + h / 2;}
 		float RightY_L(){ return pos.y - w / 2;}
 
-		//?の三点のx,y座標
+		//右の三点のx,y座標
 		float LeftX_R() { return pos.x - h / 2; }
 		float LeftY_R() { return pos.y + w / 2; }
 		float TopX_R() { return pos.x + h / 2; }
@@ -114,8 +117,6 @@ public:
 	//選択するもの(人数or役職)の種類を変える
 	void ChangeSelect(SELECT select);
 
-	void ProcessSelect(void);
-
 	//キー入力とコントローラ入力を共通化
 	void KeyConfigSetting(void);
 
@@ -128,14 +129,17 @@ public:
 	//今使用している入力デバイスを取得する
 	SceneManager::CNTL GetDevice(void);
 
-	//プレイヤーが参加するときに使用したデバイス
-	bool GetJoinDevice(void);
-
 	//入力デバイス変更(もうちょっといい実装方法がありそう)
 	void ChangeDevice(SceneManager::CNTL device);	
 
 	//キー入力とパッド入力の制御
-	void ControllKey(void);
+	void ControllDevice(void);
+
+	//ゲッター	----------------------------------------------------------
+
+	bool GetJoinDevice(void);	//プレイヤーが参加するときに使用したデバイス
+
+	KEY_CONFIG GetKeyConfig(void);	//入力キーを取得
 
 	//デバッグ関連--------------------------------------------------------
 
@@ -148,13 +152,17 @@ public:
 	//--------------------------------------------------------------------
 
 private:
+	//プレイヤー人数
 	int playerNum_;
 
+	//選択中の種類
 	SELECT select_;
 
+	//デバイス
 	SceneManager::CNTL device_;
 
-	KEY_CONFIG key;
+	//キーコンフィグ
+	KEY_CONFIG key_;
 
 	//座標
 	Vector2 kPos_;	//キーカーソル用座標
@@ -169,15 +177,26 @@ private:
 	Tri triL;
 	Tri triR;
 
-	int color_;
-	int num_;
-	int opr;
-	int role;
+	//DrawFormatStringに使う用---------
+	
+	int color;	//色
+	
+	int num_;	//人数
+	
+	bool opr;	//1Pの入力タイプ
+	
+	int role;	//職種
+	//---------------------------------
 
+	//キーを何秒押しているか
 	float time_;
+
+	//キーが押されているか
 	bool press_;
-	bool hold_;
+
+	//人数を一定間隔で加算していくためのインターバル用時間(加算して次加算するまでの間)
 	float interval_;
+
 	//-----------------------------------------
 
 	//読み込み用関数
