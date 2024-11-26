@@ -161,8 +161,7 @@ void SelectScene::NumberUpdate(void)
 				interval_ = 0.0f ,playerNum_ += 1: interval_;
 		}
 	}
-	else if(ins.IsTrgUp(KEY_INPUT_RIGHT) ||
-		ins.IsTrgUp(KEY_INPUT_D))
+	else if(triR.isToggle_)
 	{
 		press_ = false;
 		time_ = 0.0f;
@@ -199,8 +198,7 @@ void SelectScene::NumberUpdate(void)
 				interval_ = 0.0f, playerNum_ -= 1 : interval_;
 		}
 	}
-	else if (ins.IsTrgUp(KEY_INPUT_LEFT) ||
-		ins.IsTrgUp(KEY_INPUT_A))
+	else if (triL.isToggle_)
 	{
 		press_ = false;
 		time_ = 0.0f;
