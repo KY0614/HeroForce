@@ -115,6 +115,10 @@ void GameScene::Update(void)
 		mng.ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
 
+	if (ins.IsTrgDown(KEY_INPUT_RETURN))
+	{
+		ChangePhase();
+	}
 	//‚ ‚½‚è”»’è
 	Collision();
 }
@@ -243,10 +247,35 @@ void GameScene::Collision(void)
 
 }
 
-void GameScene::ChangPhase(void)
+void GameScene::ChangePhase(void)
 {
+	isPhaseChanging_ = true;
+	fader_.lock()->SetFade(Fader::STATE::FADE_OUT);
 }
 
 void GameScene::Fade(void)
 {
+
+	Fader::STATE fState = fader_.lock()->GetState();
+	switch (fState)
+	{
+	case Fader::STATE::FADE_IN:
+		// –¾“]’†
+		if (fader_.lock()->IsEnd())	//–¾“]I—¹
+		{
+			// –¾“]‚ªI—¹‚µ‚½‚çAƒtƒF[ƒhˆ—I—¹
+			fader_.lock()->SetFade(Fader::STATE::NONE);
+			isPhaseChanging_ = false;
+		}
+		break;
+	case Fader::STATE::FADE_OUT:
+		// ˆÃ“]’†
+		if (fader_.lock()->IsEnd())	//ˆÃ“]I—¹
+		{
+			//‚±‚±‚Ìˆ—‚ðƒtƒF[ƒY‘JˆÚ‚ª‚í‚©‚è‚â‚·‚¢‚æ‚¤‚È‚â‚ÂŽn“®‚É•Ï‚¦‚éB
+			// ˆÃ“]‚©‚ç–¾“]‚Ö
+			fader_.lock()->SetFade(Fader::STATE::FADE_IN);
+		}
+		break;
+	}
 }

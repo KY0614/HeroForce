@@ -61,7 +61,7 @@ private:
 	void Collision(void);
 
 	//フェーズ遷移
-	void ChangPhase(void);
+	void ChangePhase(void);
 
 	//フェード
 	void Fade(void);
