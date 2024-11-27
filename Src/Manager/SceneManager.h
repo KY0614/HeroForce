@@ -84,8 +84,6 @@ public:
 	//カメラを一つに戻す
 	void ResetCameras(void);
 
-	//フェード取得
-	std::weak_ptr<Fader>GetFader(void);
 
 	//ウィンドウ関係
 	// ************************************************************************
@@ -116,7 +114,7 @@ private:
 	SCENE_ID waitSceneId_;			//次のシーン
 
 	// フェード
-	std::shared_ptr<Fader> fader_;
+	std::unique_ptr<Fader> fader_;
 
 	// 各種シーン
 	SceneBase* scene_;

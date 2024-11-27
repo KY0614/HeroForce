@@ -74,8 +74,8 @@ void GameScene::Init(void)
 		cameras[i]->ChangeMode(Camera::MODE::FOLLOW_SPRING);
 	}
 
-	//フェーダーの取得
-	fader_ = SceneManager::GetInstance().GetFader();
+	//フェーダーの作成
+	fader_ = std::make_unique<Fader>();
 }
 
 void GameScene::Update(void)
@@ -83,6 +83,7 @@ void GameScene::Update(void)
 	//フェーズ遷移中
 	if (isPhaseChanging_)
 	{
+		fader_->Update();
 		//フェードをかける
 		Fade();
 		return;
@@ -142,6 +143,8 @@ void GameScene::Draw(void)
 
 	stage_->Draw();
 	level_->Draw();
+
+	fader_->Draw();
 }
 
 void GameScene::Release(void)
@@ -243,39 +246,47 @@ void GameScene::Collision(void)
 	}
 
 #endif
-
-
-}
-
-void GameScene::ChangePhase(void)
-{
-	isPhaseChanging_ = true;
-	fader_.lock()->SetFade(Fader::STATE::FADE_OUT);
 }
 
 void GameScene::Fade(void)
 {
 
-	Fader::STATE fState = fader_.lock()->GetState();
+	Fader::STATE fState = fader_->GetState();
 	switch (fState)
 	{
 	case Fader::STATE::FADE_IN:
 		// 明転中
-		if (fader_.lock()->IsEnd())	//明転終了
+		if (fader_->IsEnd())	//明転終了
 		{
 			// 明転が終了したら、フェード処理終了
-			fader_.lock()->SetFade(Fader::STATE::NONE);
+			fader_->SetFade(Fader::STATE::NONE);
 			isPhaseChanging_ = false;
 		}
 		break;
 	case Fader::STATE::FADE_OUT:
 		// 暗転中
-		if (fader_.lock()->IsEnd())	//暗転終了
+		if (fader_->IsEnd())	//暗転終了
 		{
 			//ここの処理をフェーズ遷移がわかりやすいようなやつ始動に変える。
 			// 暗転から明転へ
-			fader_.lock()->SetFade(Fader::STATE::FADE_IN);
+			fader_->SetFade(Fader::STATE::FADE_KEEP);
 		}
 		break;
+
+	default:
+		break;
 	}
+}
+
+//フェーズ関係
+//*********************************************************
+void GameScene::ChangePhase(void)
+{
+	isPhaseChanging_ = true;
+	fader_->SetFade(Fader::STATE::FADE_OUT);
+}
+
+void GameScene::DrawPhase(void)
+{
+	DrawString(0, 0, "フェーズ遷移中", 0xffffff, true);
 }

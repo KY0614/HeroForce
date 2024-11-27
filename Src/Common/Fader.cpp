@@ -40,10 +40,11 @@ void Fader::Update(void)
 	switch (state_)
 	{
 	case STATE::NONE:
+	case STATE::FADE_KEEP:
 		return;
 
 	case STATE::FADE_OUT:
-		alpha_ += SPEED_ALPHA;
+		alpha_ += SPEED_SCENE;
 		if (alpha_ > 255)
 		{
 			// フェード終了
@@ -59,7 +60,7 @@ void Fader::Update(void)
 		break;
 
 	case STATE::FADE_IN:
-		alpha_ -= SPEED_ALPHA;
+		alpha_ -= SPEED_SCENE;
 		if (alpha_ < 0)
 		{
 			// フェード終了
@@ -74,7 +75,7 @@ void Fader::Update(void)
 		break;
 
 	case STATE::FADE_NOTICE:
-		alpha_ += SPEED_ALPHA;
+		alpha_ += SPEED_SCENE;
 		if (alpha_ > NOTICE_ALPHA)
 		{
 			// フェード終了
@@ -102,6 +103,7 @@ void Fader::Draw(void)
 	case STATE::NONE:
 		return;
 
+	case STATE::FADE_KEEP:
 	case STATE::FADE_NOTICE:
 	case STATE::FADE_OUT:
 	case STATE::FADE_IN:

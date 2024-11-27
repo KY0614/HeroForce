@@ -41,7 +41,7 @@ private:
 	SkyDome* sky_;
 
 	//フェーダー
-	std::weak_ptr<Fader>fader_;
+	std::unique_ptr<Fader>fader_;
 
 	// グリッド線
 	Grid* grid_;
@@ -60,10 +60,12 @@ private:
 	//当たり判定（他項目に干渉するもののみ）
 	void Collision(void);
 
-	//フェーズ遷移
-	void ChangePhase(void);
-
 	//フェード
 	void Fade(void);
+
+	//フェーズ遷移
+	void ChangePhase(void);
+	//フェーズ描画
+	void DrawPhase(void);
 };
 

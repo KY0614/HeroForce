@@ -36,7 +36,7 @@ void SceneManager::Init(void)
 	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;
 
-	fader_ = std::make_shared<Fader>();
+	fader_ = std::make_unique<Fader>();
 	fader_->Init();
 
 	// カメラ
@@ -215,10 +215,6 @@ void SceneManager::ResetCameras(void)
 	}
 }
 
-std::weak_ptr<Fader> SceneManager::GetFader(void)
-{
-	return fader_;
-}
 
 /// <summary>
 /// ウィンドウの状態を変化させる
@@ -352,7 +348,6 @@ void SceneManager::Fade(void)
 		}
 		break;
 	}
-
 }
 
 //ウィンドウのサイズ及び位置設定

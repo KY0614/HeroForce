@@ -10,15 +10,18 @@ public:
 	static constexpr float NOTICE_SPEED_ALPHA = 2.0f;
 
 	// フェードが進む速さ
-	static constexpr float SPEED_ALPHA = 5.0f;
+	static constexpr float SPEED_SCENE = 5.0f;	//シーン遷移
+	static constexpr float SPEED_PHASE = 2.0f;	//フェーズ遷移
+	
 
 	// 状態
 	enum class STATE
 	{
-		NONE, 
+		NONE,			//何もしていない
 		FADE_OUT,		// 徐々に暗転
 		FADE_IN,		// 徐々に明転	
-		FADE_NOTICE		//レベルアップ通知用
+		FADE_NOTICE	,	//レベルアップ通知用
+		FADE_KEEP,		//現在の状態を保つ
 	};
 
 	// 状態の取得
@@ -42,6 +45,9 @@ protected:
 
 	// 透明度
 	float alpha_;
+
+	//フェード速度
+	float speed_;
 
 	// 状態(STATE)を保ったまま終了判定を行うため、
 	// Update->Draw->Updateの1フレーム判定用
