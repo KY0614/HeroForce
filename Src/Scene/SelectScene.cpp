@@ -41,11 +41,11 @@ void SelectScene::Init(void)
 	playerNum_ = 1;
 
 	//表示用
-	num_ = playerNum_;
+	num_ = 0;
 
-	opr = false;
+	isPad_ = false;
 
-	role = 0;
+	role_ = 0;
 
 	//デバッグ用------------------------------------------------
 
@@ -63,7 +63,7 @@ void SelectScene::Init(void)
 
 void SelectScene::Update(void)
 {
-	
+	num_ = playerNum_;
 
 	//キーの設定
 	KeyConfigSetting();
@@ -137,15 +137,15 @@ void SelectScene::NumberUpdate(void)
 		//キーの入力を押下された瞬間だけ得たい
 		if (!press_) 
 		{
-			//色を白に
-			triR.color_ = GetColor(255, 255, 255);
+			//押下された瞬間だけ得たいのでtrueにする
+			press_ = true;
 
 			//人数を１追加
 			playerNum_ += 1;
 
-			//押下された瞬間だけ得たいのでtrueにする
-			press_ = true;
 		}
+		//色を白に
+		triR.color_ = GetColor(255, 255, 255);
 
 		//キーが押されている間経過時間を加算していく
 		time_ += delta;
@@ -168,6 +168,7 @@ void SelectScene::NumberUpdate(void)
 		interval_ = INTERVAL_TIME;
 	}
 
+	//左
 	if (triL.isToggle_ &&
 		GetKeyConfig() == KEY_CONFIG::LEFT)
 	{
@@ -208,7 +209,7 @@ void SelectScene::NumberUpdate(void)
 	//プレイ人数の範囲内に数値を収める
 	playerNum_ = std::clamp(playerNum_, 1, SceneManager::PLAYER_NUM );	//１～４人プレイなので1～4まで
 
-	//左クリック押下で役職選択へ
+	//スペースキー押下で入力デバイス選択へ
 	if (key_ == KEY_CONFIG::DECIDE)
 	{
 		//プレイヤー人数の設定
@@ -246,6 +247,7 @@ void SelectScene::OperationUpdate(void)
 {
 	InputManager& ins = InputManager::GetInstance();
 	DataBank& data = DataBank::GetInstance();
+	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
 
 	//カーソル移動処理
 	ProcessCursor();
@@ -267,6 +269,107 @@ void SelectScene::OperationUpdate(void)
 	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
 	triR.color_ = (triR.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
 
+	//右の三角形がONの時にキーの右に値する入力をすると
+	if (triR.isToggle_ &&
+		GetKeyConfig() == KEY_CONFIG::RIGHT)
+	{
+		//キーの入力を押下された瞬間だけ得たい
+		if (!press_)
+		{
+			//押下された瞬間だけ得たいのでtrueにする
+			press_ = true;
+
+			//キーボードを選択
+			isPad_ = true;
+
+		}
+		//色を白に
+		triR.color_ = GetColor(255, 255, 255);
+
+		//キーが押されている間経過時間を加算していく
+		time_ += delta;
+
+		//経過時間がある一定時間経った場合
+		if (time_ > SELECT_TIME)
+		{
+			//インターバルを加算していく
+			interval_ += delta;
+
+			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
+			(interval_ > INTERVAL_TIME) ?
+				interval_ = 0.0f, playerNum_ += 1 : interval_;
+		}
+	}
+	else if (triR.isToggle_)
+	{
+		press_ = false;
+		time_ = 0.0f;
+		interval_ = INTERVAL_TIME;
+	}
+
+	if (triL.isToggle_ &&
+		GetKeyConfig() == KEY_CONFIG::LEFT)
+	{
+		//キーの入力を押下された瞬間だけ得たい
+		if (!press_)
+		{
+			//押下された瞬間だけ得たいのでtrueにする
+			press_ = true;
+
+			//キーボードを選択
+			isPad_ = false;
+
+		}
+		//色を白に
+		triL.color_ = GetColor(255, 255, 255);
+
+		//キーが押されている間経過時間を加算していく
+		time_ += delta;
+
+		//経過時間がある一定時間経った場合
+		if (time_ > SELECT_TIME)
+		{
+			//インターバルを加算していく
+			interval_ += delta;
+
+			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
+			(interval_ > INTERVAL_TIME) ?
+				interval_ = 0.0f, playerNum_ -= 1 : interval_;
+		}
+	}
+	else if (triL.isToggle_)
+	{
+		press_ = false;
+		time_ = 0.0f;
+		interval_ = INTERVAL_TIME;
+	}
+
+	//スペースキー押下で役職選択へ
+	if (GetKeyConfig() == KEY_CONFIG::DECIDE)
+	{
+		//1Pの操作の設定
+		(isPad_) ? data.Input(SceneManager::CNTL::PAD, 1) : data.Input(SceneManager::CNTL::KEYBOARD, 1);
+		
+		//押下したときの色
+		rc.color_ = 0xFF0000;
+
+		ChangeSelect(SELECT::ROLE);
+	}
+
+	//選択する三角形
+	if (!triR.isToggle_ &&
+		GetKeyConfig() == KEY_CONFIG::RIGHT)
+	{
+		triR.isToggle_ = true;
+		triL.isToggle_ = false;
+	}
+
+	if (!triL.isToggle_ &&
+		GetKeyConfig() == KEY_CONFIG::LEFT)
+	{
+		triR.isToggle_ = false;
+		triL.isToggle_ = true;
+	}
 
 #endif // DEBUG_RECT
 
@@ -276,37 +379,131 @@ void SelectScene::RoleUpdate(void)
 {
 	InputManager& ins = InputManager::GetInstance();
 	DataBank& data = DataBank::GetInstance();
-	
+	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
+
 #ifdef DEBUG_RECT
-	int RECT_SPACE = 100;
-	//for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
-	//{
-	//	//四角形の座標と大きさを決め、1個ずつ右にずらす
-	//	rc[i] = { 350,450,200,200 };
-	//	rc[i].pos.x += ((RECT_SPACE + rc[i].w) * i);
+	int PRI_SPACE = 100;
+	int RECT_SCALE = 300;
+	int SCALE = 150;
 
-	//	if (IsHitRect(rc[i], ins.GetMousePos(), 20) )
-	//	{
-	//		rc[i].color_ = 0x99FF99;
-	//		role = i + 1;
-	//		//左クリック押下で役職選択へ
-	//		if (ins.IsTrgMouseLeft())
-	//		{
-	//			//iは役職の種類
-	//			data.Input(static_cast<SceneManager::ROLE>(i), 1);
+	//四角形の座標と大きさ、色を決める
+	rc = { 750,450,RECT_SCALE,RECT_SCALE };
 
-	//			role = i + 1;
-	//			rc[i].color_ = 0xFF0000;
+	triL.pos.x = rc.pos.x - SCALE - PRI_SPACE;
+	triR.pos.x = rc.pos.x + SCALE + PRI_SPACE;
 
-	//			//ゲームシーンへ
-	//			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
-	//		}
-	//	}
-	//	else {
-	//		rc[i].color_ = 0x00FF00;
-	//	}
+	rc.color_ = GetColor(255, 0, 0);
 
-	//}
+	//三角形のボタンがONだったら緑にOFFだったら黄色に
+	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
+	triR.color_ = (triR.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
+
+	//右の三角形がONの時にキーの右に値する入力をすると
+	if (triR.isToggle_ &&
+		GetKeyConfig() == KEY_CONFIG::RIGHT)
+	{
+		//キーの入力を押下された瞬間だけ得たい
+		if (!press_)
+		{
+			//押下された瞬間だけ得たいのでtrueにする
+			press_ = true;
+
+			//役職を選択
+			role_ += 1;
+
+		}
+		//色を白に
+		triR.color_ = GetColor(255, 255, 255);
+
+		//キーが押されている間経過時間を加算していく
+		time_ += delta;
+
+		//経過時間がある一定時間経った場合
+		if (time_ > SELECT_TIME)
+		{
+			//インターバルを加算していく
+			interval_ += delta;
+
+			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
+			(interval_ > INTERVAL_TIME) ?
+				interval_ = 0.0f, playerNum_ += 1 : interval_;
+		}
+	}
+	else if (triR.isToggle_)
+	{
+		press_ = false;
+		time_ = 0.0f;
+		interval_ = INTERVAL_TIME;
+	}
+
+	if (triL.isToggle_ &&
+		GetKeyConfig() == KEY_CONFIG::LEFT)
+	{
+		//キーの入力を押下された瞬間だけ得たい
+		if (!press_)
+		{
+			//押下された瞬間だけ得たいのでtrueにする
+			press_ = true;
+
+			//役職を選択
+			role_ -= 1;
+
+		}
+		//色を白に
+		triL.color_ = GetColor(255, 255, 255);
+
+		//キーが押されている間経過時間を加算していく
+		time_ += delta;
+
+		//経過時間がある一定時間経った場合
+		if (time_ > SELECT_TIME)
+		{
+			//インターバルを加算していく
+			interval_ += delta;
+
+			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
+			(interval_ > INTERVAL_TIME) ?
+				interval_ = 0.0f, playerNum_ -= 1 : interval_;
+		}
+	}
+	else if (triL.isToggle_)
+	{
+		press_ = false;
+		time_ = 0.0f;
+		interval_ = INTERVAL_TIME;
+	}
+
+	//役職数の範囲内に数値を収める
+	role_ = std::clamp(role_, 0, static_cast<int>(SceneManager::ROLE::ARCHER) + 1);	//４役職なので0～3まで
+
+	//スペースキー押下でゲーム画面へ
+	if (GetKeyConfig() == KEY_CONFIG::DECIDE)
+	{
+		//役職の設定
+		data.Input(static_cast<SceneManager::ROLE>(role_),playerNum_);
+
+		//押下したときの色
+		rc.color_ = 0xFF0000;
+
+		ChangeSelect(SELECT::ROLE);
+	}
+
+
+	//選択する三角形
+	if (!triR.isToggle_ &&
+		GetKeyConfig() == KEY_CONFIG::RIGHT)
+	{
+		triR.isToggle_ = true;
+		triL.isToggle_ = false;
+	}
+
+	if (!triL.isToggle_ &&
+		GetKeyConfig() == KEY_CONFIG::LEFT)
+	{
+		triR.isToggle_ = false;
+		triL.isToggle_ = true;
+	}
+
 #endif // DEBUG_RECT
 
 	//カーソル移動処理
@@ -326,47 +523,66 @@ void SelectScene::DrawDebug(void)
 	case SelectScene::SELECT::NUMBER:
 		rc.Draw(rc.color_);
 
-			rc.Draw(rc.color_);
-			DrawFormatString(rc.pos.x, rc.pos.y,
-				0xFFFFFF, "%d", playerNum_);
+		rc.Draw(rc.color_);
+		DrawFormatString(rc.pos.x, rc.pos.y,
+			0xFFFFFF, "%d", playerNum_);
 
-			DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
-				0xFF9999, "プレイ人数選択中");
-			
-			DrawFormatString(0, 0,
-				0xFFFFFF, "time : %.2f",time_);
+		DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
+			0xFF9999, "プレイ人数選択中");
+
+		DrawFormatString(0, 0,
+			0xFFFFFF, "time : %.2f", time_);
 
 		break;
 
 	case SelectScene::SELECT::OPERATION:
 
-			rc.Draw(rc.color_);
+		rc.Draw(rc.color_);
+		if (!isPad_)
+		{
 			DrawFormatString(rc.pos.x, rc.pos.y,
-				0xFFFFFF, "key_");
+				0xFFFFFF, "key");
+		}
+		else
+		{
+
 			DrawFormatString(rc.pos.x, rc.pos.y,
 				0xFFFFFF, "pad");
+		}
 
-			DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
-				0xFF9999, "1P操作方法選択中");
-		
+		DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
+			0xFF9999, "1P操作方法選択中");
+
 		break;
 
 	case SelectScene::SELECT::ROLE:
-		for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+
+		rc.Draw(rc.color_);
+
+		if (role_ >= static_cast<int>(SceneManager::ROLE::KNIGHT))
 		{
-			rc.Draw(rc.color_);
-			DrawFormatString(rc.pos.x, rc.pos.y,
-				0xFFFFFF, "KNIGHT");
-			DrawFormatString(rc.pos.x, rc.pos.y,
-				0xFFFFFF, "AXEMAN");
-			DrawFormatString(rc.pos.x, rc.pos.y,
-				0xFFFFFF, "MAGE");
 			DrawFormatString(rc.pos.x, rc.pos.y,
 				0xFFFFFF, "ARCHER");
-
-			DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
-				0x99FF99, "役職選択中");
 		}
+		else if (role_ > static_cast<int>(SceneManager::ROLE::KNIGHT))
+		{
+			DrawFormatString(rc.pos.x, rc.pos.y,
+				0xFFFFFF, "MAGE");
+		}
+		else if (role_ > static_cast<int>(SceneManager::ROLE::AXEMAN))
+		{
+			DrawFormatString(rc.pos.x, rc.pos.y,
+				0xFFFFFF, "AXEMAN");
+		}
+		else 
+		{
+			DrawFormatString(rc.pos.x, rc.pos.y,
+				0xFFFFFF, "KNIGHT");
+		}
+
+		DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
+			0x99FF99, "役職選択中");
+
 		break;
 
 	default:
@@ -383,11 +599,8 @@ void SelectScene::DrawDebug(void)
 		key_);
 
 	DrawFormatString(Application::SCREEN_SIZE_X / 2, 0, 0xFFFFFF, "number : %d", num_);
-	DrawFormatString(Application::SCREEN_SIZE_X / 2, 20, 0xFFFFFF, "operation : %d", opr);
-	DrawFormatString(Application::SCREEN_SIZE_X / 2, 40, 0xFFFFFF, "role : %d", role);
-
-	DrawFormatString(Application::SCREEN_SIZE_X / 2, 60, 0xFFFFFF, "L : %d", triL.isToggle_);
-	DrawFormatString(Application::SCREEN_SIZE_X / 2, 80, 0xFFFFFF, "R : %d", triR.isToggle_);
+	DrawFormatString(Application::SCREEN_SIZE_X / 2, 20, 0xFFFFFF, "operation : %d", isPad_);
+	DrawFormatString(Application::SCREEN_SIZE_X / 2, 40, 0xFFFFFF, "role_ : %d", role_);
 
 	triL.LeftDraw(triL.color_);
 	triR.RightDraw(triR.color_);
@@ -411,6 +624,14 @@ void SelectScene::KeyConfigSetting(void)
 
 	//縦軸
 	int leftStickY_ = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLY;
+
+	DrawFormatString(Application::SCREEN_SIZE_X / 2, 60, 0xFFFFFF, "stickX : %d", leftStickX_);
+	DrawFormatString(Application::SCREEN_SIZE_X / 2, 80, 0xFFFFFF, "stickY : %d", leftStickY_);
+
+	//スティックが倒されているかどうか
+	bool isStickMoved = (leftStickX_ != 0 || leftStickY_ != 0);
+	bool isStickPressed = false; // スティックが倒されたかどうかのフラグ
+	bool lastStickState = false; // 最後のスティック状態（倒されているかどうか）
 
 	switch (GetDevice())
 	{
@@ -493,6 +714,26 @@ void SelectScene::KeyConfigSetting(void)
 		{
 			key_ = KEY_CONFIG::RIGHT;
 		}
+
+		//
+		if (leftStickY_ < -1)
+		{
+			key_ = KEY_CONFIG::UP;
+
+		}
+		if (leftStickY_ > 1)
+		{
+			key_ = KEY_CONFIG::DOWN;
+		}
+		if (leftStickX_ < -1)
+		{
+			key_ = KEY_CONFIG::LEFT;
+		}
+		if (leftStickX_ > 1)
+		{
+			key_ = KEY_CONFIG::RIGHT;
+		}
+
 		if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_BUTTON))
 		{
 			key_ = KEY_CONFIG::DECIDE;
@@ -568,8 +809,6 @@ bool SelectScene::GetJoinDevice(void)
 	{
 		return device_ == SceneManager::CNTL::KEYBOARD;
 	}
-
-
 }
 
 SelectScene::KEY_CONFIG SelectScene::GetKeyConfig(void)
@@ -598,9 +837,9 @@ bool SelectScene::IsHitRect(Rect& rc, Vector2 pos, int r)
 void SelectScene::ControllDevice(void)
 {
 	InputManager& ins = InputManager::GetInstance();
-	int key_ = CheckHitKeyAll(DX_CHECKINPUT_KEY);		//キー入力を調べる(マウス、パッド以外)
+	int key_ = CheckHitKeyAll(DX_CHECKINPUT_KEY);		//入力を調べる(キーボード)
 	int padNum = GetJoypadNum();
-	int padState = CheckHitKeyAll(DX_CHECKINPUT_PAD);	//キー入力を調べる(マウス、キーボード以外)
+	int padState = CheckHitKeyAll(DX_CHECKINPUT_PAD);	//入力を調べる(パッド)
 
 	//キーボード操作の時パッド操作をできないように
 	if (key_ != 0	&&
