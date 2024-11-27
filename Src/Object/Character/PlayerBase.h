@@ -1,11 +1,12 @@
 #pragma once
 #include"../Utility/AsoUtility.h"
 #include"../Manager/SceneManager.h"
+#include"../Manager/InputManager.h"
 #include<map>
 #include "../UnitBase.h"
 
 #define DEBUG_ON
-class PlayerBase:
+class PlayerBase :
     public UnitBase
 {
 public:
@@ -20,16 +21,13 @@ public:
 
 #endif // DEBUG_ON
     //デバッグ用
-   
+
     //各アニメーション番号
     static constexpr int T_POSE_NUM = 64;
     static constexpr int IDLE_NUM = 36;
     static constexpr int WALK_NUM = 72;
     static constexpr int RUN_NUM = 49;
     static constexpr int DODGE_NUM = 28;
-    static constexpr int ATK_NUM = 1;
-    static constexpr int SKILL_ONE_NUM = 2;
-    static constexpr int SKILL_TWO_NUM = 10;
     static constexpr int DAMAGE_NUM = 35;
     static constexpr int DEATH_NUM = 23;
 
@@ -51,16 +49,16 @@ public:
 
 
 
-    static constexpr float FRAME_DODGE_MAX = 1.0f*CHARACTER_SCALE;
+    static constexpr float FRAME_DODGE_MAX = 1.0f * CHARACTER_SCALE;
     static constexpr float DODGE_CDT_MAX = 0.5f;
 
     static constexpr int MAX_HP = 100;
- 
+
     //プレイヤー自身の当たり判定
     static constexpr VECTOR PLAYER_COL_LOCAL_POS = { 0.0f,100.0f,0.0f };
 
     //自身の当たり判定半径
-    static constexpr float MY_COL_RADIUS = 66.0f*CHARACTER_SCALE;
+    static constexpr float MY_COL_RADIUS = 66.0f * CHARACTER_SCALE;
 
     //CPU
     //--------------------------------------------------------
@@ -71,18 +69,19 @@ public:
     //プレイヤー追従範囲
     static constexpr float FOLLOW_PLAYER_RADIUS = 100.0f * CHARACTER_SCALE;
 
-    PlayerBase(SceneManager::PLAY_MODE _mode) :mode_(_mode){}
+    PlayerBase(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum) :mode_(_mode), padNum_(_padNum) {}
     ~PlayerBase(void) = default;
     void Destroy(void)override;
     virtual void SetParam(void);
     void Init(void)override;
-   void Update(void)override;
-   //virtual void UserUpdate(void);
-   //Cpu処理
-   virtual void CpuUpdate(void);
+    void Update(void)override;
+    //virtual void UserUpdate(void);
+
+    //Cpu処理
+    virtual void CpuUpdate(void);
     void Draw(void)override;
 
-   
+
 
     enum class CPU_STATE
     {
@@ -92,7 +91,7 @@ public:
         , MAX
     };
 
-   
+
     //コントローラー変更用関数
     void ChangeControll(SceneManager::CNTL _cntl);
 
@@ -100,54 +99,57 @@ public:
 
     //回避関連
    //---------------------------------------
-   const  bool IsDodge(void) { return 0.0f < dodgeCnt_ && dodgeCnt_ < FRAME_DODGE_MAX; }
+    const  bool IsDodge(void) { return 0.0f < dodgeCnt_ && dodgeCnt_ < FRAME_DODGE_MAX; }
 
-   //-------------------------------------------------------------
-   //ダメージ関数
-   void Damage(void);
+    //-------------------------------------------------------------
+    //ダメージ関数
+    void Damage(void);
 
-   //ゲッタ
-   //-----------------------------------------------
+    //ゲッタ
+    //-----------------------------------------------
 
-   //攻撃開始判定
-   const float GetAtkStartRange(void) { return atkStartRange_; }
+    //攻撃開始判定
+    const float GetAtkStartRange(void) { return atkStartRange_; }
 
-   //索敵判定
-   const float GetSearchRange(void) { return searchRange_; }
+    //索敵判定
+    const float GetSearchRange(void) { return searchRange_; }
 
-   //プレイヤーに呼び出されたかどうか
-   const bool GetIsCalledPlayer(void) { return isMove2CallPlayer_; }
+    //プレイヤーに呼び出されたかどうか
+    const bool GetIsCalledPlayer(void) { return isMove2CallPlayer_; }
 
-   //状態変更
-   void ChangeState(const CPU_STATE _state);
+    //状態変更
+    void ChangeState(const CPU_STATE _state);
 
-   //セッタ
-   //---------------------------------------------------
+    //セッタ
+    //---------------------------------------------------
 
-   //CPUの状態セッタ
-   void SetState(const CPU_STATE _state) { cpuState_ = _state; }
+    //CPUの状態セッタ
+    void SetState(const CPU_STATE _state) { cpuState_ = _state; }
 
-   //CPUの移動セッタ
-   void SetIsMove(const bool _isMove) { isMove_ = _isMove; }
+    //CPUの移動セッタ
+    void SetIsMove(const bool _isMove) { isMove_ = _isMove; }
 
-   //プレイヤーのモードゲッタ(CPUかUSERか)
-   SceneManager::PLAY_MODE GetPlayMode(void) { return mode_; }
+    //プレイヤーのモードゲッタ(CPUかUSERか)
+    SceneManager::PLAY_MODE GetPlayMode(void) { return mode_; }
 
-   //状態ゲッタ
-   CPU_STATE GetState(void) { return cpuState_; }
+    //状態ゲッタ
+    CPU_STATE GetState(void) { return cpuState_; }
 
-   //敵サーチセッタ
-   void SetisEnemySerch(const bool _isEnemySerch) { isEnemySerch_ = _isEnemySerch; }
+    //敵サーチセッタ
+    void SetisEnemySerch(const bool _isEnemySerch) { isEnemySerch_ = _isEnemySerch; }
 
-   //追従対象をセット
-   void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; }
-    
+    //追従対象をセット
+    void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; }
+
+    //リセット
+    void Reset(void);
+
 protected:
-   //*************************************************
-   // 列挙型
-   //*************************************************
+    //*************************************************
+    // 列挙型
+    //*************************************************
 
-    //攻撃種類
+     //攻撃種類
     enum class ATK_ACT
     {
         ATK
@@ -164,27 +166,38 @@ protected:
         , MAX
     };
 
+    enum class ATK_TYPE
+    {
+        NORMALATK
+        , CHARGEATK
+    };
+
     //*************************************************
     // メンバ変数
     //*************************************************
+    //システム系
     //ステータス系
-    VECTOR userOnePos_;                     //ユーザー1追従用の座標   
-    VECTOR colPos_;                         //プレイヤーの当たり判定座標
-    SceneManager::ROLE role_;               //役割
-    ATK_ACT act_;                           //攻撃種類
-    float moveSpeed_;                       //移動スピード
+    VECTOR userOnePos_;                                   //ユーザー1追従用の座標   
+    VECTOR colPos_;                                       //プレイヤーの当たり判定座標
+    SceneManager::ROLE role_;                             //役割
+    ATK_ACT act_;                                         //攻撃種類
+    float atkStartCnt_;                                   //攻撃が発生するまでのカウント
+    float moveSpeed_;                                     //移動スピード
     float coolTime_[static_cast<int>(ATK_ACT::MAX)];      //それぞれのクールタイムカウント
     bool isCool_[static_cast<int>(ATK_ACT::MAX)];         //それぞれの攻撃使い終わりを格納する
-    //それぞれの最大値セット用
+    float multiHitInterval_;                              //多段ヒットのダメージ間隔
+    ATK_TYPE atkType_[static_cast<int>(ATK_ACT::MAX)];    //攻撃のタイプ(チャージするかしないか)
+    float pushCnt_;                                       //長押しスキル用のボタンを押した時間
 
-    std::map<ATK_ACT,float> colRadius_;               //当たり判定
-    std::map<ATK_ACT, VECTOR> colLocalPos_;           //攻撃座標
-    std::map<ATK_ACT, float> dulationMax_;            //持続時間
-    std::map<ATK_ACT, float> backLashMax_;            //後隙
-    float coolTimeMax_[static_cast<int>(ATK_ACT::MAX)];             //クールタイム最大           //クールタイム最大   
-   
+    //それぞれの最大値セット用
+    std::map<ATK_ACT, float> colRadius_;                             //当たり判定
+    std::map<ATK_ACT, VECTOR> colLocalPos_;                         //攻撃座標
+    std::map<ATK_ACT, float> dulationMax_;                          //持続時間
+    std::map<ATK_ACT, float> backLashMax_;                          //後隙
+    float coolTimeMax_[static_cast<int>(ATK_ACT::MAX)];             //クールタイム最大
+    float atkStartTime_[static_cast<int>(ATK_ACT::MAX)];            //攻撃発生時間
     //コントローラー系
-    int padNo_;                 //各ゲームパッドの割り当て用
+    InputManager::JOYPAD_NO padNum_;                //ゲームパッドの番号
     int leftStickX_;            //パッドのスティックのX角度  
     int leftStickY_;            //パッドのスティックのY角度
     float stickDeg_;            //パッドのスティックの角度
@@ -197,19 +210,20 @@ protected:
     int atkStartRange_;     //攻撃開始範囲
     float searchRange_;      //索敵範囲
 
- 
+
     //CPU系
     CPU_STATE cpuState_;        //状態
-    bool isMove_;              //動いているかどうか
-    bool isCall_;             //プレイヤーに呼び出されたか
-    bool isMove2CallPlayer_;  //強制呼び出され中か　true:呼び出されてプレイヤーまで移動中
+    bool isMove_;               //動いているかどうか
+    bool isCall_;               //プレイヤーに呼び出されたか
+    bool isMove2CallPlayer_;    //強制呼び出され中か　true:呼び出されてプレイヤーまで移動中
     bool isEnemySerch_;         //敵をサーチしたかしてないか
-    float calledMoveSpeed_;   //プレイヤーに呼び出されたときの加速用変数
+    float calledMoveSpeed_;     //プレイヤーに呼び出されたときの加速用変数
     float moveStartDelay_;      //移動の初めを遅らせる
+    bool moveAble_;             //移動可能かを返す  true:移動可能
     //*************************************************
-    //  // メンバ関数
+    //メンバ関数
     //*************************************************
-   VECTOR GetTargetVec(VECTOR _targetPos);
+    VECTOR GetTargetVec(VECTOR _targetPos);
 
 
     //プレイヤーがCPUかUSERか判別
@@ -218,11 +232,19 @@ protected:
     //アニメNo初期化
     void InitAnimNum(void);
 
+    //役割ごとに違うアニメーションの初期化
+    virtual void InitCharaAnim(void);
+
     //それぞれのアクションの初期化
     virtual void InitAct(void);
 
+    //ほぼガード用
+    virtual void ResetGuardCnt(void);
+
     //攻撃変更用
     void ChangeAtk(const ATK_ACT _act);
+
+
 
     //攻撃の最大値の初期化(各役割)
     void ResetParam(ATK_ACT _act);
@@ -238,7 +260,7 @@ protected:
     //ゲームパッド
     void GamePad(void);
 
-    
+
     SceneManager::CNTL cntl_;
 
     SKILL_NUM skillNo_;     //スキル変更用
@@ -247,19 +269,21 @@ protected:
     //-------------------------------------------------
 
     //CPUのアップデート
-    void ActUpdate(ATK_ACT _act);
+    void CpuActUpdate(ATK_ACT _act);
 
     //各状態の更新
-    void NmlUpdate(void);
-    void AtkUpdate(void);
-    void BreakUpdate(void);
+    void CpuNmlUpdate(void);
+    void CpuAtkUpdate(void);
+    void CpuBreakUpdate(void);
 
 
-   
+
 
     //プレイヤー(CPUとユーザー)共通処理
-    void Common(void);
+    //--------------------------------------------------
 
+    //それぞれの攻撃処理をさせる
+    void AtkUpdate(void);
     //攻撃処理
     virtual void AtkFunc(void);
     //スキル1
@@ -267,13 +291,30 @@ protected:
     //スキル2
     virtual void Skill2Func(void);
 
-  
-   
     //各アクションの共通処理
     void Action(void);
 
+    //チャージなしの攻撃
+    void NmlAct(void);
+
+    //チャージ攻撃
+    void ChargeAct(void);
+
+    //攻撃発生中フラグ
+    bool IsAtkStart(void) { return 0.0f < atkStartCnt_ && atkStartCnt_ <= atkStartTime_[static_cast<int>(act_)]; }
+
+    bool IsFinishAtkStart(void) { return atkStartCnt_ > atkStartTime_[static_cast<int>(act_)]; }
+
     //攻撃座標の同期
-    void SyncActPos(VECTOR _localPos);
+    void SyncActPos(VECTOR& _localPos);
+
+    //スキルごとの操作更新
+    void ChangeSkillControll(void);
+
+    //攻撃終わった後の初期化
+    void InitAtk(void);
+
+
 
 
     //移動関連
@@ -283,24 +324,22 @@ protected:
 
     //CPU移動
     void CpuMove(VECTOR _targetPos);
+
     //方向処理
     void Turn(float _deg, VECTOR _axis);
-
-   
 
     //動いてるかどうか
     bool IsMove(void) { return moveSpeed_ > 0.0f; }
 
-   
     //攻撃
     //-------------------------------------
     //攻撃中かどうか(UnitBaseで修正予定)
-    bool IsAtkAction(void) { return atk_.IsAttack() || atk_.IsBacklash(); }
+    bool IsAtkAction(void) { return IsAtkStart() || atk_.IsAttack() || atk_.IsBacklash(); }
 
     //攻撃可能かどうか(true:可能)
-    bool IsAtkable(void) { return!IsAtkAction()&& !IsDodge(); }
+    bool IsAtkable(void) { return!IsAtkAction() && !IsDodge(); }
 
-    
+
     //回避関連
     //---------------------------------------
     //回避可能か
@@ -308,54 +347,55 @@ protected:
 
     bool IsDodgeable(void) { return !IsDodge() && !IsAtkAction() && !IsCoolDodge(); }
     //クールタイム中かどうか
-    bool IsCoolDodge(void){return dodgeCdt_ < DODGE_CDT_MAX;}
+    bool IsCoolDodge(void) { return dodgeCdt_ < DODGE_CDT_MAX; }
     void Dodge(void);
 
     //ドッジカウント初期化
-    void ResetDodgeFrame(void){dodgeCnt_ = 0.0f; }
+    void ResetDodgeFrame(void) { dodgeCnt_ = 0.0f; }
 
-   
-    
+
+
 
     //スキル仮想関数
     //-----------------------------------------
-   
-    //スキル1
-    virtual void Skill_One(void);
+    //スキル1の操作
+    virtual void SkillOneControll(void);
 
-     //スキル2
-     virtual void Skill_Two(void);
+    //スキル2の操作
+    virtual void SkillTwoControll(void);
 
-     //スキル
-     //virtual void Skill(void);
-     /// <summary>
-     /// スキル中フラグ
-     /// </summary>
-     /// <param name="_frameSkillNo">スキルフレーム最大値(今はスキル1か2)</param>
-     /// <returns>スキル中/スキル中でない</returns>
+    //スキル
+    //virtual void Skill(void);
+    /// <summary>
+    /// スキル中フラグ
+    /// </summary>
+    /// <param name="_frameSkillNo">スキルフレーム最大値(今はスキル1か2)</param>
+    /// <returns>スキル中/スキル中でない</returns>
 
-     bool IsSkillAction(SKILL_NUM _num) { return atk_.IsAttack() 
-           || atk_.IsBacklash(); }
-     
-     //スキル使用可能かどうか
-     bool IsSkillable(void) { return !IsAtkAction()&& !IsDodge(); }
+    bool IsSkillAction(SKILL_NUM _num) {
+        return atk_.IsAttack()
+            || atk_.IsBacklash();
+    }
 
-
-     //スキルクールタイム中フラグ
-     bool IsSkillCool(void);
-
-     //スキルごとに再生するアニメーションを決める
-     void SkillAnim(void);
+    //スキル使用可能かどうか
+    bool IsSkillable(void) { return !IsAtkAction() && !IsDodge(); }
 
 
+    //スキルクールタイム中フラグ
+    bool IsSkillCool(void);
+
+    //スキルごとに再生するアニメーションを決める
+    void SkillAnim(void);
 
 
-     //とりあえずランダムに攻撃を決める
-     void RandAct(void);
 
-     //クールタイムのカウント
-     void CoolTimeCnt(void);
-    
+
+    //とりあえずランダムに攻撃を決める
+    void RandAct(void);
+
+    //クールタイムのカウント
+    void CoolTimeCnt(void);
+
 private:
     //CPUの前の攻撃格納用
     ATK_ACT preAtk_;
@@ -369,4 +409,3 @@ private:
     //前について行ってたターゲットの保存用
     VECTOR preTargetPos_;
 };
-

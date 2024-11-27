@@ -1,5 +1,9 @@
 #include "PlArcher.h"
-PlArcher::PlArcher(SceneManager::PLAY_MODE _mode) :PlayerBase(_mode) { mode_ = _mode; }
+PlArcher::PlArcher(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum) :PlayerBase(_mode, _padNum)
+{
+	mode_ = _mode;
+	padNum_ = _padNum;
+}
 
 void PlArcher::SetParam(void)
 {

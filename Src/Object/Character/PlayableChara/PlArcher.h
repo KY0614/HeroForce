@@ -10,7 +10,7 @@ public:
     static constexpr float SKILL_TWO_COOLTIME = 5.0f;
 
 
-    PlArcher(SceneManager::PLAY_MODE _mode);
+    PlArcher(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum);
     ~PlArcher(void) = default;
     void SetParam(void)override;
 
@@ -19,4 +19,3 @@ protected:
     void Skill1Func(void)override;
     void Skill2Func(void)override;
 };
-

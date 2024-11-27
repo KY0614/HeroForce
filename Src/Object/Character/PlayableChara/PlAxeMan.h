@@ -5,15 +5,30 @@ class PlAxe :
     public PlayerBase
 {
 public:
+
+#ifdef DEBUG_ON
+    //クールタイム
+    static constexpr float ATK_COOLTIME = 1.0f;
+    static constexpr float SKILL_ONE_COOLTIME = 1.0f;
+    static constexpr float SKILL_TWO_COOLTIME = 1.0f;
+#else // DEBUG_ON
     //クールタイム
     static constexpr float ATK_COOLTIME = 2.0f;
     static constexpr float SKILL_ONE_COOLTIME = 6.0f;
     static constexpr float SKILL_TWO_COOLTIME = 5.0f;
+#endif // DEBUG_ON
+
+
+    //攻撃発生の時間
+    static constexpr float ATK_START = 0.2f;
+    static constexpr float SKILL_ONE_START = 1.0f;
+    static constexpr float SKILL_TWO_START = 0.2f;
 
     //各攻撃の持続時間
-    static constexpr float FRAME_ATK_DURATION = 0.5f;
-    static constexpr float FRAME_SKILL1_DURATION = 0.5f;
-    static constexpr float FRAME_SKILL2_DURATION = 1.5f;
+    static constexpr float FRAME_ATK_DURATION = 0.5f - ATK_START;
+    static constexpr float FRAME_SKILL1_DURATION = 0.7f;
+    static constexpr float FRAME_SKILL2_DURATION = 3.0f - SKILL_TWO_START;
+    static constexpr float SKILL2_CHANGE_ANIM_TIME = 0.7f;
 
     //後隙
     static constexpr float FRAME_ATK_BACKRASH = 0.1f;
@@ -30,17 +45,32 @@ public:
     static constexpr float COL_SKILL1 = CHARACTER_SCALE * 150.0f;
     static constexpr float COL_SKILL2 = CHARACTER_SCALE * 200.0f;
 
+
+
+
+
+    //固有アニメーション
+    static constexpr int ATK_NUM = 9;
+    static constexpr int SKILL_ONE_NUM = 8;
+    static constexpr int SKILL_TWO_NUM = 10;
+    static constexpr int SPIN_NUM = 11;
+
+    //スキル２の回転攻撃の多段ヒットインターバル
+    static constexpr float MULTIHIT_INTERVAL = 0.5f;
     static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//攻撃開始判定の大きさ
 
-    PlAxe(SceneManager::PLAY_MODE _mode);
+    PlAxe(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum);
     ~PlAxe(void) = default;
     void SetParam(void)override;
 protected:
+
     void AtkFunc(void)override;
     void Skill1Func(void)override;
     void Skill2Func(void)override;
     void InitAct(void)override;
 
+    //固有アニメーション番号の初期化
+    void InitCharaAnim(void)override;
+
     //void ResetParam(ATK_ACT _act)override;
 };
-
