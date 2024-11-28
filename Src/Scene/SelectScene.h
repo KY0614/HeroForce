@@ -11,6 +11,17 @@ public:
 
 	#define DEBUG_RECT
 
+	//三角形用の定数
+	static constexpr int TRI_SCALE = 150;	//大きさ
+	static constexpr int TRI_POS_Y = 450;	//Y座標
+
+	//四角形の大きさ
+	static constexpr int RECT_SCALE = 300;
+
+	//図形同士の間隔
+	static constexpr int PRI_SPACE = 100;
+
+
 	//キー押下経過時間
 	static constexpr float SELECT_TIME = 2.0f;
 
@@ -21,6 +32,7 @@ public:
 	struct Rect {
 		Vector2 pos;
 		int w, h;
+
 		Rect() : pos(0, 0), w(0), h(0) {}
 		Rect(float x, float y, int inw, int inh) :
 			pos(x, y), w(inw), h(inh) {}

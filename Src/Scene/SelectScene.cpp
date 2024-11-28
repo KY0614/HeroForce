@@ -41,16 +41,24 @@ void SelectScene::Init(void)
 
 	//図形用------------------------------------------------
 
+	//三角形の中心座標と大きさ
+	triL = { 450,TRI_POS_Y ,TRI_SCALE,TRI_SCALE ,false };
+	triR = { 1050,TRI_POS_Y ,TRI_SCALE,TRI_SCALE ,false };
+
+	//三角形の色
 	triL.color_ = GetColor(255, 255, 64);
 	triR.color_ = GetColor(255, 255, 64);
 
-	triL = { 450,450 ,150,150 ,false };
-	triR = { 1050,450 ,150,150 ,false };
-
-	int RECT_SCALE = 300;
-	//四角形の座標と大きさ、色を決める
+	//四角形の中心座標と大きさ
 	rc = { 750,450,RECT_SCALE,RECT_SCALE };
+
+	//四角形の色
 	rc.color_ = GetColor(255, 0, 0);
+
+	//三角形の描画座標
+	triL.pos.x = rc.pos.x - TRI_SCALE - PRI_SPACE;
+	triR.pos.x = rc.pos.x + TRI_SCALE + PRI_SPACE;
+
 	//------------------------------------------------------
 
 	keyPressTime_ = 0.0f;
@@ -107,15 +115,15 @@ void SelectScene::NumberUpdate(void)
 #ifdef DEBUG_RECT
 	int PRI_SPACE = 100;
 	int RECT_SCALE = 300;
-	int SCALE = 150;
+	int TRI_SCALE = 150;
 
 	////四角形の座標と大きさ、色を決める
 	//rc = { 750,450,RECT_SCALE,RECT_SCALE };
 	//rc.color_ = GetColor(255, 0, 0);
 
 	//三角形の描画座標
-	triL.pos.x = rc.pos.x - SCALE - PRI_SPACE;
-	triR.pos.x = rc.pos.x + SCALE + PRI_SPACE;
+	triL.pos.x = rc.pos.x - TRI_SCALE - PRI_SPACE;
+	triR.pos.x = rc.pos.x + TRI_SCALE + PRI_SPACE;
 
 	//三角形のボタンを選択中だったら緑に非選択だったら黄色に
 	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
@@ -237,15 +245,15 @@ void SelectScene::OperationUpdate(void)
 #ifdef DEBUG_RECT
 	int PRI_SPACE = 100;
 	int RECT_SCALE = 300;
-	int SCALE = 150;
+	int TRI_SCALE = 150;
 
 	//四角形の座標と大きさ、色を決める
 	rc = { 750,450,RECT_SCALE,RECT_SCALE };
 	rc.color_ = GetColor(255, 0, 0);
 
 	//三角形の描画座標
-	triL.pos.x = rc.pos.x - SCALE - PRI_SPACE;
-	triR.pos.x = rc.pos.x + SCALE + PRI_SPACE;
+	triL.pos.x = rc.pos.x - TRI_SCALE - PRI_SPACE;
+	triR.pos.x = rc.pos.x + TRI_SCALE + PRI_SPACE;
 
 	//三角形のボタンが選択中だったら緑に非選択だったら黄色に
 	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
@@ -362,15 +370,15 @@ void SelectScene::RoleUpdate(void)
 #ifdef DEBUG_RECT
 	int PRI_SPACE = 100;
 	int RECT_SCALE = 300;
-	int SCALE = 150;
+	int TRI_SCALE = 150;
 
 	//四角形の座標と大きさ、色を決める
 	rc = { 750,450,RECT_SCALE,RECT_SCALE };
 	rc.color_ = GetColor(255, 0, 0);
 
 	//三角形の描画座標
-	triL.pos.x = rc.pos.x - SCALE - PRI_SPACE;
-	triR.pos.x = rc.pos.x + SCALE + PRI_SPACE;
+	triL.pos.x = rc.pos.x - TRI_SCALE - PRI_SPACE;
+	triR.pos.x = rc.pos.x + TRI_SCALE + PRI_SPACE;
 
 	//三角形のボタンが選択中だったら緑に非選択だったら黄色に
 	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
@@ -601,6 +609,14 @@ void SelectScene::KeyConfigSetting(void)
 	//縦軸
 	int leftStickY_ = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLY;
 
+	//0がスティックが動いていない状態
+	
+	//							//スティックを最大まで倒したときの数値
+	int stickXRight = 900;		//0～1000
+	int stickXLeft = -900;		//0～-1000
+	int stickYDown = 900;		//0～1000
+	int stickYUp = -900;		//0～-1000
+
 	//スティックが倒されているかどうか
 	bool isStickMoved = (leftStickX_ != 0 || leftStickY_ != 0);
 	bool isStickPressed = false; // スティックが倒されたかどうかのフラグ
@@ -609,30 +625,28 @@ void SelectScene::KeyConfigSetting(void)
 	switch (GetDevice())
 	{
 	case SceneManager::CNTL::KEYBOARD:
+		ChangeDevice(SceneManager::CNTL::KEYBOARD);
+
 		//キーの押下判定
 		if (ins.IsNew(KEY_INPUT_UP) ||
 			ins.IsNew(KEY_INPUT_W))
 		{
 			key_ = KEY_CONFIG::UP;
-			ChangeDevice(SceneManager::CNTL::KEYBOARD);
 		}
 		if (ins.IsNew(KEY_INPUT_DOWN) ||
 			ins.IsNew(KEY_INPUT_S))
 		{
 			key_ = KEY_CONFIG::DOWN;
-			ChangeDevice(SceneManager::CNTL::KEYBOARD);
 		}
 		if (ins.IsNew(KEY_INPUT_LEFT) ||
 			ins.IsNew(KEY_INPUT_A))
 		{
 			key_ = KEY_CONFIG::LEFT;
-			ChangeDevice(SceneManager::CNTL::KEYBOARD);
 		}
 		if (ins.IsNew(KEY_INPUT_RIGHT) ||
 			ins.IsNew(KEY_INPUT_D))
 		{
 			key_ = KEY_CONFIG::RIGHT;
-			ChangeDevice(SceneManager::CNTL::KEYBOARD);
 		}
 
 		//キーの押下判定(押した瞬間だけ)
@@ -640,31 +654,26 @@ void SelectScene::KeyConfigSetting(void)
 			ins.IsTrgDown(KEY_INPUT_W))
 		{
 			key_ = KEY_CONFIG::UP_TRG;
-			ChangeDevice(SceneManager::CNTL::KEYBOARD);
 		}
 		if (ins.IsTrgDown(KEY_INPUT_DOWN) ||
 			ins.IsTrgDown(KEY_INPUT_S))
 		{
 			key_ = KEY_CONFIG::DOWN_TRG;
-			ChangeDevice(SceneManager::CNTL::KEYBOARD);
 		}
 		if (ins.IsTrgDown(KEY_INPUT_LEFT) ||
 			ins.IsTrgDown(KEY_INPUT_A))
 		{
 			key_ = KEY_CONFIG::LEFT_TRG;
-			ChangeDevice(SceneManager::CNTL::KEYBOARD);
 		}
 		if (ins.IsTrgDown(KEY_INPUT_RIGHT) ||
 			ins.IsTrgDown(KEY_INPUT_D))
 		{
 			key_ = KEY_CONFIG::RIGHT_TRG;
-			ChangeDevice(SceneManager::CNTL::KEYBOARD);
 		}
 
 		if (ins.IsTrgDown(KEY_INPUT_SPACE))
 		{
 			key_ = KEY_CONFIG::DECIDE;
-			ChangeDevice(SceneManager::CNTL::KEYBOARD);
 		}
 		break;
 
@@ -707,7 +716,7 @@ void SelectScene::KeyConfigSetting(void)
 			key_ = KEY_CONFIG::RIGHT;
 		}
 
-		if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_BUTTON))
+		if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
 		{
 			key_ = KEY_CONFIG::DECIDE;
 		}
