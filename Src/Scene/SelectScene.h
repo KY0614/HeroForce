@@ -120,12 +120,6 @@ public:
 	//キー入力とコントローラ入力を共通化
 	void KeyConfigSetting(void);
 
-	//カーソル移動処理
-	void ProcessCursor(void);
-
-	//カーソルの移動量
-	void MoveCursor(float pow ,VECTOR dir);
-
 	//今使用している入力デバイスを取得する
 	SceneManager::CNTL GetDevice(void);
 
@@ -136,8 +130,6 @@ public:
 	void ControllDevice(void);
 
 	//ゲッター	----------------------------------------------------------
-
-	bool GetJoinDevice(void);	//プレイヤーが参加するときに使用したデバイス
 
 	KEY_CONFIG GetKeyConfig(void);	//入力キーを取得
 
@@ -152,9 +144,6 @@ public:
 	//--------------------------------------------------------------------
 
 private:
-	//プレイヤー人数
-	int playerNum_;
-
 	//選択中の種類
 	SELECT select_;
 
@@ -164,10 +153,6 @@ private:
 	//キーコンフィグ
 	KEY_CONFIG key_;
 
-	//座標
-	Vector2 kPos_;	//キーカーソル用座標
-	Vector2 cPos_;	//コントローラーカーソル用座標
-
 	//デバッグ関連-------------------------------
 
 	//四角形
@@ -176,32 +161,20 @@ private:
 	//三角形
 	Tri triL;
 	Tri triR;
-
-	bool isSelected_;;
-
-	//DrawFormatStringに使う用---------
 	
-	int color;	//色
-	
-	int num_;	//人数
+	//プレイヤー人数
+	int playerNum_;
 	
 	bool isPad_;	//1Pの入力タイプ
+	SceneManager::CNTL selectedCntl_;
 	
 	int role_;	//職種
-	//---------------------------------
 
 	//キーを何秒押しているか
-	float time_;
-
-	//キーが押されているか
-	bool press_;
+	float keyPressTime_;
 
 	//人数を一定間隔で加算していくためのインターバル用時間(加算して次加算するまでの間)
 	float interval_;
 
-	//-----------------------------------------
-
-	//読み込み用関数
-	void Load(void);
 };
 
