@@ -628,26 +628,10 @@ void SelectScene::KeyConfigSetting(void)
 		ChangeDevice(SceneManager::CNTL::KEYBOARD);
 
 		//キーの押下判定
-		if (ins.IsNew(KEY_INPUT_UP) ||
-			ins.IsNew(KEY_INPUT_W))
-		{
-			key_ = KEY_CONFIG::UP;
-		}
-		if (ins.IsNew(KEY_INPUT_DOWN) ||
-			ins.IsNew(KEY_INPUT_S))
-		{
-			key_ = KEY_CONFIG::DOWN;
-		}
-		if (ins.IsNew(KEY_INPUT_LEFT) ||
-			ins.IsNew(KEY_INPUT_A))
-		{
-			key_ = KEY_CONFIG::LEFT;
-		}
-		if (ins.IsNew(KEY_INPUT_RIGHT) ||
-			ins.IsNew(KEY_INPUT_D))
-		{
-			key_ = KEY_CONFIG::RIGHT;
-		}
+		if (ins.IsNew(KEY_INPUT_UP)		|| ins.IsNew(KEY_INPUT_W))	key_ = KEY_CONFIG::UP;
+		if (ins.IsNew(KEY_INPUT_DOWN)	|| ins.IsNew(KEY_INPUT_S))	key_ = KEY_CONFIG::DOWN;
+		if (ins.IsNew(KEY_INPUT_LEFT)	|| ins.IsNew(KEY_INPUT_A))	key_ = KEY_CONFIG::LEFT;
+		if (ins.IsNew(KEY_INPUT_RIGHT)	|| ins.IsNew(KEY_INPUT_D))	key_ = KEY_CONFIG::RIGHT;
 
 		//キーの押下判定(押した瞬間だけ)
 		if (ins.IsTrgDown(KEY_INPUT_UP) ||
@@ -729,6 +713,7 @@ void SelectScene::KeyConfigSetting(void)
 
 SceneManager::CNTL SelectScene::GetDevice(void)
 {
+	//返り値用のret等で運用すること
 	//1Pの操作選択後であったら使用デバイスを固定(とりあえず)
 	if (selectedCntl_ == SceneManager::CNTL::KEYBOARD)
 	{
@@ -740,6 +725,14 @@ SceneManager::CNTL SelectScene::GetDevice(void)
 	}
 
 	return device_;
+
+	if (selectedCntl_ == SceneManager::CNTL::KEYBOARD)
+	{
+		ChangeDevice(SceneManager::CNTL::KEYBOARD);
+		return SceneManager::CNTL::KEYBOARD;
+	}
+	ChangeDevice(SceneManager::CNTL::PAD);
+	return SceneManager::CNTL::PAD;
 }
 
 SelectScene::KEY_CONFIG SelectScene::GetKeyConfig(void)
@@ -750,19 +743,6 @@ SelectScene::KEY_CONFIG SelectScene::GetKeyConfig(void)
 void SelectScene::ChangeDevice(SceneManager::CNTL device)
 {
 	device_ = device;
-}
-
-bool SelectScene::IsHitRect(Rect& rc, Vector2 pos, int r)
-{
-	auto diffX = pos.x - rc.pos.x;	//終点から始点を引く
-	auto diffY = pos.y - rc.pos.y;	
-	if (fabsf(diffX) > r + rc.w / 2 ||
-		fabsf(diffY) > r + rc.h / 2) {
-		return false;
-	}
-	else {
-		return true;
-	}
 }
 
 void SelectScene::ControllDevice(void)
@@ -787,6 +767,19 @@ void SelectScene::ControllDevice(void)
 }
 
 //デバッグ用の図形描画------------------------------------------------------------------------
+
+bool SelectScene::IsHitRect(Rect& rc, Vector2 pos, int r)
+{
+	auto diffX = pos.x - rc.pos.x;	//終点から始点を引く
+	auto diffY = pos.y - rc.pos.y;
+	if (fabsf(diffX) > r + rc.w / 2 ||
+		fabsf(diffY) > r + rc.h / 2) {
+		return false;
+	}
+	else {
+		return true;
+	}
+}
 
 void SelectScene::Rect::Draw(unsigned int color)
 {
