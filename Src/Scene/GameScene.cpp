@@ -145,6 +145,11 @@ void GameScene::Draw(void)
 	level_->Draw();
 
 	fader_->Draw();
+
+	if (fader_->GetState() == Fader::STATE::FADE_KEEP)
+	{
+		DrawPhase();
+	}
 }
 
 void GameScene::Release(void)
@@ -272,7 +277,9 @@ void GameScene::Fade(void)
 			fader_->SetFade(Fader::STATE::FADE_KEEP);
 		}
 		break;
-
+	case Fader::STATE::FADE_KEEP:
+		UpdatePhase();
+		break;
 	default:
 		break;
 	}
@@ -284,6 +291,16 @@ void GameScene::ChangePhase(void)
 {
 	isPhaseChanging_ = true;
 	fader_->SetFade(Fader::STATE::FADE_OUT);
+}
+
+void GameScene::UpdatePhase(void)
+{
+	phaseCnt_++;
+	if (phaseCnt_ > PHASE_TIME)
+	{
+		fader_->SetFade(Fader::STATE::FADE_IN);
+		phaseCnt_ = 0;
+	}
 }
 
 void GameScene::DrawPhase(void)

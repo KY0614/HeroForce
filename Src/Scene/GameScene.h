@@ -18,7 +18,10 @@ public:
 	//#define _DEBUG_COL	//テスト用の敵とプレイヤーを一体ずつ生成（この行をコメントアウトすると消える）
 
 	//定数
+	//プレイヤーの数
 	static constexpr int PLAYER_NUM = 4;
+
+	static constexpr int PHASE_TIME = 180;
 
 
 	// コンストラクタ
@@ -56,6 +59,7 @@ private:
 
 	//ゲームシーンのフェーズ遷移中判定
 	bool isPhaseChanging_;
+	int phaseCnt_;
 
 	//当たり判定（他項目に干渉するもののみ）
 	void Collision(void);
@@ -65,6 +69,8 @@ private:
 
 	//フェーズ遷移
 	void ChangePhase(void);
+	//フェーズ更新
+	void UpdatePhase(void);
 	//フェーズ描画
 	void DrawPhase(void);
 };
