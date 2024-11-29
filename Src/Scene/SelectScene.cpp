@@ -113,34 +113,31 @@ void SelectScene::NumberUpdate(void)
 	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
 
 #ifdef DEBUG_RECT
-	int PRI_SPACE = 100;
-	int RECT_SCALE = 300;
-	int TRI_SCALE = 150;
-
-	////四角形の座標と大きさ、色を決める
-	//rc = { 750,450,RECT_SCALE,RECT_SCALE };
-	//rc.color_ = GetColor(255, 0, 0);
-
-	//三角形の描画座標
-	triL.pos.x = rc.pos.x - TRI_SCALE - PRI_SPACE;
-	triR.pos.x = rc.pos.x + TRI_SCALE + PRI_SPACE;
 
 	//三角形のボタンを選択中だったら緑に非選択だったら黄色に
 	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
 	triR.color_ = (triR.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
 
-	//選択中に同じ方向のキーをもう一回押すと人数を加算
-	if (triR.isToggle_&&
-		GetKeyConfig() == KEY_CONFIG::RIGHT_TRG)
-	{
-		//人数を１追加
-		playerNum_ += 1;
-	}
+	////選択中に同じ方向のキーをもう一回押すと人数を加算
+	//if (triR.isToggle_&&
+	//	GetKeyConfig() == KEY_CONFIG::RIGHT_TRG)
+	//{
+	//	//人数を１追加
+	//	playerNum_ += 1;
+	//}
 
 	//右の三角形がONの時にキーの右に値する入力をし続けると
 	if (triR.isToggle_ &&
 		GetKeyConfig() == KEY_CONFIG::RIGHT)
 	{
+		if (!press_)
+		{
+			press_ = true;
+
+			//人数を１追加
+			playerNum_ += 1;
+		}
+		
 		//色を白に
 		triR.color_ = GetColor(255, 255, 255);
 
@@ -162,20 +159,28 @@ void SelectScene::NumberUpdate(void)
 	{
 		keyPressTime_ = 0.0f;
 		interval_ = INTERVAL_TIME;
+		press_ = false;
 	}
 
-	//選択中に同じ方向のキーをもう一回押すと人数を減算
-	if (triL.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::LEFT_TRG)
-	{
-		//人数を１削減
-		playerNum_ -= 1;
-	}
+	////選択中に同じ方向のキーをもう一回押すと人数を減算
+	//if (triL.isToggle_ &&
+	//	GetKeyConfig() == KEY_CONFIG::LEFT_TRG)
+	//{
+	//	//人数を１削減
+	//	playerNum_ -= 1;
+	//}
 
 	//左
 	if (triL.isToggle_ &&
 		GetKeyConfig() == KEY_CONFIG::LEFT)
 	{
+		if (!press_)
+		{
+			press_ = true;
+
+			//人数を１追加
+			playerNum_ -= 1;
+		}
 		//色を白に
 		triL.color_ = GetColor(255, 255, 255);
 
@@ -197,6 +202,7 @@ void SelectScene::NumberUpdate(void)
 	{
 		keyPressTime_ = 0.0f;
 		interval_ = INTERVAL_TIME;
+		press_ = false;
 	}
 
 	//プレイ人数の範囲内に数値を収める
@@ -672,26 +678,7 @@ void SelectScene::KeyConfigSetting(void)
 		{
 			key_ = KEY_CONFIG::DOWN;
 		}
-		if (leftStickX_ < -1)
-		{
-			key_ = KEY_CONFIG::LEFT;
-		}
-		if (leftStickX_ > 1)
-		{
-			key_ = KEY_CONFIG::RIGHT;
-		}
-
-		//
-		if (leftStickY_ < -1)
-		{
-			key_ = KEY_CONFIG::UP;
-
-		}
-		if (leftStickY_ > 1)
-		{
-			key_ = KEY_CONFIG::DOWN;
-		}
-		if (leftStickX_ < -1)
+		if (leftStickX_ < stickXLeft)
 		{
 			key_ = KEY_CONFIG::LEFT;
 		}

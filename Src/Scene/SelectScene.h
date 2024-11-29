@@ -185,6 +185,8 @@ private:
 	//キーを何秒押しているか
 	float keyPressTime_;
 
+	bool press_;
+
 	//人数を一定間隔で加算していくためのインターバル用時間(加算して次加算するまでの間)
 	float interval_;
 
