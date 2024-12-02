@@ -4,6 +4,9 @@
 #include "../Manager/SceneManager.h"
 #include "../Common/Vector2.h"
 
+class SkyDome;
+class StageBase;
+class PlayerBase;
 
 class SelectScene :public SceneBase
 {
@@ -23,10 +26,15 @@ public:
 
 
 	//キー押下経過時間
-	static constexpr float SELECT_TIME = 2.0f;
+	static constexpr float SELECT_TIME = 1.0f;
 
 	//インターバル上限
-	static constexpr float INTERVAL_TIME = 1.0f;
+	static constexpr float INTERVAL_TIME = 0.5f;
+
+	//カメラの座標
+	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 100.0f, -500.0f };	
+	//カメラの注視点座標
+	static constexpr VECTOR DEFAULT_TARGET_POS = { 0.0f, 150.0f, -100.0f };	
 
 	//四角形を描画するために必要なもの
 	struct Rect {
@@ -124,7 +132,16 @@ public:
 
 	void RoleUpdate(void);			//役職選択中の処理
 
+	//描画処理関連-----------------------------------------------
+
+	void NumberDraw(void);			//人数選択中の処理
+
+	void OperationDraw(void);		//操作方法選択中の処理(1Pのみ)
+
+	void RoleDraw(void);			//役職選択中の処理
+
 	//-----------------------------------------------------------
+
 
 	//選択するもの(人数or役職)の種類を変える
 	void ChangeSelect(SELECT select);
@@ -156,6 +173,15 @@ public:
 	//--------------------------------------------------------------------
 
 private:
+	//スカイドーム
+	std::unique_ptr<SkyDome> skyDome_;
+
+	//背景のステージ
+	StageBase* stage_;
+
+	PlayerBase* player_;
+	Transform trans_;
+
 	//選択中の種類
 	SELECT select_;
 

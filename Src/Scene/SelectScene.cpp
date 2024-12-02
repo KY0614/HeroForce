@@ -8,6 +8,11 @@
 #include "../Manager/Camera.h"
 #include "../Manager/DataBank.h"
 #include "../Utility/AsoUtility.h"
+#include "../Object/Stage/StageBase.h"
+#include "../Object/Stage/StageObject.h"
+#include "../Object/Stage/SkyDome.h"
+#include "../Object/Character/PlayerBase.h"
+#include "../Object/Character/PlayableChara/PlAxeMan.h"
 #include "SelectScene.h"
 
 SelectScene::SelectScene(void)
@@ -21,8 +26,38 @@ SelectScene::~SelectScene(void)
 
 void SelectScene::Init(void)
 {
+	//スカイドーム
+	skyDome_ = std::make_unique<SkyDome>();
+	skyDome_->Init();
+	
+	//背景用ステージ
+	stage_ = new StageBase();
+	stage_->Init();
+
+	SetBackgroundColor(255, 255, 255);
+	MV1SetOpacityRate(skyDome_->GetTransform().modelId, 0.5f);
+
+	//表示用のキャラ
+	//player_ = new PlAxe(SceneManager::PLAY_MODE::USER);
+	//player_->Init();
+	//player_->ChangeState(PlayerBase::STATE::NORMAL);
+	trans_.SetModel(
+		ResourceManager::GetInstance()
+		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_AXEMAN));
+	float scale = PlAxe::CHARACTER_SCALE;
+	trans_.scl = { scale, scale, scale };
+	trans_.pos = { 0.0f, 0.0f, 0.0f };
+	trans_.quaRot = Quaternion();
+	trans_.quaRotLocal = Quaternion::Euler(
+		0.0f, AsoUtility::Deg2RadF(180.0f),
+		0.0f
+	);
+	
+
 	// カメラモード：定点カメラ
-	SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FIXED_POINT);
+	Camera* camera = SceneManager::GetInstance().GetCamera();
+	camera->SetPos(DEFAULT_CAMERA_POS,DEFAULT_TARGET_POS);
+	camera->ChangeMode(Camera::MODE::FIXED_POINT);
 
 	//人数選択から
 	ChangeSelect(SELECT::NUMBER);
@@ -63,6 +98,11 @@ void SelectScene::Init(void)
 
 	keyPressTime_ = 0.0f;
 	interval_ = 0.0f;
+
+	//// フォグ設定(ステージ導入時)
+	//SetFogEnable(true);
+	//SetFogColor(255, 255, 255);
+	//SetFogStartEnd(-10000.0f, 15000.0f);
 }
 
 void SelectScene::Update(void)
@@ -96,14 +136,38 @@ void SelectScene::Update(void)
 void SelectScene::Draw(void)
 {
 	auto& ins = InputManager::GetInstance();
-	InputManager::JOYPAD_IN_STATE pad = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
+
+	skyDome_->Draw();
+	stage_->Draw();
 
 	//デバッグ描画
 	DrawDebug();
+
+	switch (select_)
+	{
+	case SelectScene::SELECT::NUMBER:
+		NumberDraw();
+		break;
+	
+	case SelectScene::SELECT::OPERATION:
+		OperationDraw();
+		break;
+	
+	case SelectScene::SELECT::ROLE:
+		RoleDraw();
+		break;
+	
+	default:
+		break;
+	}
+
+	MV1DrawModel(trans_.modelId);
+
 }
 
 void SelectScene::Release(void)
 {
+
 }
 
 void SelectScene::NumberUpdate(void)
@@ -249,18 +313,6 @@ void SelectScene::OperationUpdate(void)
 	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
 
 #ifdef DEBUG_RECT
-	int PRI_SPACE = 100;
-	int RECT_SCALE = 300;
-	int TRI_SCALE = 150;
-
-	//四角形の座標と大きさ、色を決める
-	rc = { 750,450,RECT_SCALE,RECT_SCALE };
-	rc.color_ = GetColor(255, 0, 0);
-
-	//三角形の描画座標
-	triL.pos.x = rc.pos.x - TRI_SCALE - PRI_SPACE;
-	triR.pos.x = rc.pos.x + TRI_SCALE + PRI_SPACE;
-
 	//三角形のボタンが選択中だったら緑に非選択だったら黄色に
 	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
 	triR.color_ = (triR.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
@@ -374,18 +426,6 @@ void SelectScene::RoleUpdate(void)
 	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
 
 #ifdef DEBUG_RECT
-	int PRI_SPACE = 100;
-	int RECT_SCALE = 300;
-	int TRI_SCALE = 150;
-
-	//四角形の座標と大きさ、色を決める
-	rc = { 750,450,RECT_SCALE,RECT_SCALE };
-	rc.color_ = GetColor(255, 0, 0);
-
-	//三角形の描画座標
-	triL.pos.x = rc.pos.x - TRI_SCALE - PRI_SPACE;
-	triR.pos.x = rc.pos.x + TRI_SCALE + PRI_SPACE;
-
 	//三角形のボタンが選択中だったら緑に非選択だったら黄色に
 	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
 	triR.color_ = (triR.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
@@ -471,7 +511,7 @@ void SelectScene::RoleUpdate(void)
 		//押下したときの色
 		rc.color_ = 0xFF0000;
 
-		ChangeSelect(SELECT::ROLE);
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 	}
 
 
@@ -494,6 +534,72 @@ void SelectScene::RoleUpdate(void)
 
 }
 
+void SelectScene::NumberDraw(void)
+{
+#ifdef DEBUG_RECT
+
+	DrawFormatString(rc.pos.x, rc.pos.y,
+		0xFFFFFF, "%d", playerNum_);
+
+	DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
+		0xFF9999, "プレイ人数選択中");
+
+	DrawFormatString(0, 0,
+		0xFFFFFF, "time : %.2f", keyPressTime_);
+#endif // DEBUG_RECT
+}
+
+void SelectScene::OperationDraw(void)
+{
+#ifdef DEBUG_RECT
+
+	if (!isPad_)
+	{
+		DrawFormatString(rc.pos.x, rc.pos.y,
+			0xFFFFFF, "key");
+	}
+	else
+	{
+		DrawFormatString(rc.pos.x, rc.pos.y,
+			0xFFFFFF, "pad");
+	}
+
+	DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
+		0xFF9999, "1P操作方法選択中");
+#endif // DEBUG_RECT
+
+}
+
+void SelectScene::RoleDraw(void)
+{
+#ifdef DEBUG_RECT
+	if (role_ > static_cast<int>(SceneManager::ROLE::MAGE))
+	{
+		DrawFormatString(rc.pos.x, rc.pos.y,
+			0xFFFFFF, "ARCHER");
+	}
+	else if (role_ > static_cast<int>(SceneManager::ROLE::AXEMAN))
+	{
+		DrawFormatString(rc.pos.x, rc.pos.y,
+			0xFFFFFF, "MAGE");
+	}
+	else if (role_ > static_cast<int>(SceneManager::ROLE::KNIGHT))
+	{
+		DrawFormatString(rc.pos.x, rc.pos.y,
+			0xFFFFFF, "AXEMAN");
+	}
+	else
+	{
+		DrawFormatString(rc.pos.x, rc.pos.y,
+			0xFFFFFF, "KNIGHT");
+	}
+
+	DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
+		0x99FF99, "役職選択中");
+#endif // DEBUG_RECT
+
+}
+
 void SelectScene::DrawDebug(void)
 {
 	InputManager& ins = InputManager::GetInstance();
@@ -503,68 +609,10 @@ void SelectScene::DrawDebug(void)
 	//選択用の四角形と選択している種類または数字を表示する
 	rc.Draw(rc.color_);
 
-	switch (select_)
-	{
-	case SelectScene::SELECT::NUMBER:
+	//三角形描画
+	triL.LeftDraw(triL.color_);
+	triR.RightDraw(triR.color_);
 
-		DrawFormatString(rc.pos.x, rc.pos.y,
-			0xFFFFFF, "%d", playerNum_);
-
-		DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
-			0xFF9999, "プレイ人数選択中");
-
-		DrawFormatString(0, 0,
-			0xFFFFFF, "time : %.2f", keyPressTime_);
-
-		break;
-
-	case SelectScene::SELECT::OPERATION:
-		if (!isPad_)
-		{
-			DrawFormatString(rc.pos.x, rc.pos.y,
-				0xFFFFFF, "key");
-		}
-		else
-		{
-			DrawFormatString(rc.pos.x, rc.pos.y,
-				0xFFFFFF, "pad");
-		}
-
-		DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
-			0xFF9999, "1P操作方法選択中");
-
-		break;
-
-	case SelectScene::SELECT::ROLE:
-		if (role_ > static_cast<int>(SceneManager::ROLE::MAGE))
-		{
-			DrawFormatString(rc.pos.x, rc.pos.y,
-				0xFFFFFF, "ARCHER");
-		}
-		else if (role_ > static_cast<int>(SceneManager::ROLE::AXEMAN))
-		{
-			DrawFormatString(rc.pos.x, rc.pos.y,
-				0xFFFFFF, "MAGE");
-		}
-		else if (role_ > static_cast<int>(SceneManager::ROLE::KNIGHT))
-		{
-			DrawFormatString(rc.pos.x, rc.pos.y,
-				0xFFFFFF, "AXEMAN");
-		}
-		else 
-		{
-			DrawFormatString(rc.pos.x, rc.pos.y,
-				0xFFFFFF, "KNIGHT");
-		}
-
-		DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
-			0x99FF99, "役職選択中");
-
-		break;
-
-	default:
-		break;
-	}
 #endif // DEBUG_RECT
 
 	//現在の入力デバイス
@@ -591,10 +639,6 @@ void SelectScene::DrawDebug(void)
 	DrawFormatString(Application::SCREEN_SIZE_X / 2, 60, 0xFFFFFF, "stickX : %d", leftStickX_);
 	DrawFormatString(Application::SCREEN_SIZE_X / 2, 80, 0xFFFFFF, "stickY : %d", leftStickY_);
 
-
-	//三角形描画
-	triL.LeftDraw(triL.color_);
-	triR.RightDraw(triR.color_);
 }
 
 void SelectScene::ChangeSelect(SELECT select)
