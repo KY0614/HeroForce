@@ -6,6 +6,9 @@
 
 void EneArcher::SetParam(void)
 {
+	//攻撃の遷移
+	changeSkill_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneArcher::Skill_One, this));
+
 	//モデル読み込み
 	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_ARCHER));
 	//arrowMdlId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::);	※TODO矢のモデル
@@ -40,7 +43,7 @@ void EneArcher::InitAnimNum(void)
 void EneArcher::InitSkill(void)
 {
 	//ここにスキルの数分格納させる
-	skills_.emplace_back(SKILL_ONE);
+	skills_.emplace(ATK_ACT::SKILL_ONE, SKILL_ONE);
 
 	//ここにスキルの数分アニメーションを格納させる
 	skillAnims_.emplace_back(ANIM::SKILL_1);
@@ -54,15 +57,8 @@ void EneArcher::Attack(void)
 	//リロード中　又は　矢を放った判定なら攻撃しない
 	if (IsReload() || isShotArrow_)return;
 
-	//現在のスキルの確認
-	if (nowSkill_.front().radius_ == SKILL_ONE.radius_
-		&& nowSkill_.front().backlash_ == SKILL_ONE.backlash_
-		&& nowSkill_.front().duration_ == SKILL_ONE.duration_
-		&& nowSkill_.front().pow_ == SKILL_ONE.pow_)
-	{
-		//スキル1発動
-		Skill_One();
-	}
+	//対応スキル発動
+	processSkill_();
 }
 
 void EneArcher::Skill_One(void)
@@ -87,7 +83,7 @@ void EneArcher::CreateArrow(void)
 			//矢の情報を上書き
 			arrow = nullptr;
 			arrow = std::make_shared<Arrow>();
-			arrow->Init(arrowMdlId_, trans_, 10.0f);
+			arrow->Init(arrowMdlId_, trans_, ARROW_SPEED);
 
 			//カウント増加
 			arrowCnt_++;
@@ -98,7 +94,7 @@ void EneArcher::CreateArrow(void)
 
 	//新しく配列を追加
 	std::shared_ptr<Arrow> arrow = std::make_shared<Arrow>();
-	arrow->Init(arrowMdlId_, trans_, 10.0f);
+	arrow->Init(arrowMdlId_, trans_, ARROW_SPEED);
 
 	//配列に格納
 	arrow_.emplace_back(arrow);
@@ -137,35 +133,22 @@ void EneArcher::FinishAnim(void)
 	}
 }
 
-void EneArcher::InitChangeState(void)
+void EneArcher::ChangeStateAlert(void)
 {
-	switch (state_)
-	{
-	case Enemy::STATE::NORMAL:
-		break;
+	//更新処理の中身初期化
+	Enemy::ChangeStateAlert();
 
-	case Enemy::STATE::ALERT:
-		//向きを改めて設定
-		trans_.quaRot = trans_.quaRot.LookRotation(GetMovePow2Target());
+	//待機アニメーション
+	ResetAnim(ANIM::UNIQUE_1, SPEED_ANIM);
+}
 
-		//待機アニメーション
-		ResetAnim(ANIM::UNIQUE_1, SPEED_ANIM);
+void EneArcher::ChangeStateBreak(void)
+{
+	//更新処理の中身初期化
+	Enemy::ChangeStateBreak();
 
-		//警告カウンタ初期化
-		alertCnt_ = 0.0f;
-		break;
-
-	case Enemy::STATE::ATTACK:
-		break;
-
-	case Enemy::STATE::BREAK:
-		//矢を放った判定を初期化
-		isShotArrow_ = false;
-
-		//攻撃休憩時間の初期化
-		breakCnt_ = 0;
-		break;
-	}
+	//矢を放った判定を初期化
+	isShotArrow_ = false;
 }
 
 void EneArcher::Update(void)

@@ -1,5 +1,6 @@
 #pragma once
 #include<vector>
+#include <functional>
 #include"../../Utility/AsoUtility.h"
 #include "../UnitBase.h"
 
@@ -32,6 +33,14 @@ public:
 		,ALERT			//攻撃前(警告)
 		,ATTACK			//攻撃
 		,BREAK			//休憩
+		,MAX
+	};
+
+	//敵のスキル行動
+	enum class ATK_ACT
+	{
+		SKILL_ONE
+		,SKILL_TWO
 		,MAX
 	};
 
@@ -112,14 +121,19 @@ protected:
 
 	STATE state_;	//現在の状態
 
+	std::function<void(void)> stateUpdate_;						//状態ごとの更新管理
+	std::map<STATE,std::function<void(void)>> stateChanges_;	//状態遷移の管理
+
 	float alertCnt_;			//攻撃の警告時間カウンタ
 	float breakCnt_;			//攻撃の休憩時間カウンタ
 
 	float walkSpeed_;		//敵ごとの歩く速度
 	float runSpeed_;		//敵ごとの走る速度
 
-	std::vector<ATK> skills_;			//スキルの種類
-	std::vector<ATK> nowSkill_;			//現在のスキル
+	std::map<ATK_ACT, ATK> skills_;								//スキルの種類
+	std::vector<ATK> nowSkill_;									//現在のスキル
+	std::function<void(void)>processSkill_;						//スキルの処理
+	std::map<ATK_ACT, std::function<void(void)>> changeSkill_;	//スキルの変更用
 
 	std::vector<ANIM> skillAnims_;		//スキルに対応したアニメーション
 	ANIM nowSkillAnim_;					//現在のスキルアニメーション
@@ -163,8 +177,14 @@ protected:
 	//アニメーション終了時の動き
 	virtual void FinishAnim(void)override;
 
-	//状態遷移における初期化処理
-	virtual void InitChangeState(void);
+	//状態遷移(通常)
+	void ChangeStateNormal(void);
+	//状態遷移(攻撃警告)
+	virtual void ChangeStateAlert(void);
+	//状態遷移(攻撃)
+	void ChangeStateAttack(void);
+	//状態遷移(休憩)
+	virtual void ChangeStateBreak(void);
 
 	//更新(通常)
 	void UpdateNml(void);

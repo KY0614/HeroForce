@@ -36,10 +36,24 @@ public:
 	static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
 
 	//スキルの当たり判定半径
-	static constexpr float SKILL_ONE_COL_RADIUS = 10.0f;	//スキル１
+	static constexpr float SKILL_ONE_COL_RADIUS = 10.0f;	//スキル１の当たり判定半径
+
+	//スキルの攻撃力
+	static constexpr float SKILL_ONE_POW = 20.0f;			//スキル１の攻撃力
+
+	//スキルの持続時間
+	static constexpr float SKILL_ONE_DURATION = 1.0f;		//スキル１の持続時間
+
+	//スキルの後隙
+	static constexpr float SKILL_ONE_BACKLASH = 2.0f;		//スキル１の後隙
 
 	//スキル関係
-	static constexpr ATK SKILL_ONE = { AsoUtility::VECTOR_ZERO,SKILL_ONE_COL_RADIUS,1.0f,1.0f,1.0f,0.0f };	//スキル１
+	static constexpr ATK SKILL_ONE = { AsoUtility::VECTOR_ZERO	//スキル１の要素
+		,SKILL_ONE_COL_RADIUS
+		,SKILL_ONE_POW
+		,SKILL_ONE_DURATION
+		,SKILL_ONE_BACKLASH
+		,0.0f };
 
 private:
 	//****************************************************************
@@ -66,7 +80,7 @@ private:
 	//スキル1
 	void Skill_One(void)override;
 
-	//状態遷移における初期化処理
-	void InitChangeState(void)override;
+	//状態遷移(攻撃警告)
+	void ChangeStateAlert(void)override;
 };
 

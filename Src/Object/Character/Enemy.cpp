@@ -15,6 +15,12 @@ void Enemy::Destroy(void)
 
 void Enemy::Init(void)
 {
+	//状態管理
+	stateChanges_.emplace(STATE::NORMAL, std::bind(&Enemy::ChangeStateNormal, this));
+	stateChanges_.emplace(STATE::ALERT, std::bind(&Enemy::ChangeStateAlert, this));
+	stateChanges_.emplace(STATE::ATTACK, std::bind(&Enemy::ChangeStateAttack, this));
+	stateChanges_.emplace(STATE::BREAK, std::bind(&Enemy::ChangeStateBreak, this));
+
 	//キャラ固有設定
 	SetParam();
 
@@ -29,7 +35,7 @@ void Enemy::Init(void)
 	trans_.pos = AsoUtility::VECTOR_ZERO;
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::AngleAxis(AsoUtility::Deg2RadF(180.0f), AsoUtility::AXIS_Y);
-	state_ = STATE::NORMAL;
+	ChangeState(STATE::NORMAL);
 	alertCnt_ = 0.0f;
 	breakCnt_ = 0.0f;
 	stunDef_ = 0;
@@ -66,24 +72,7 @@ void Enemy::Update(void)
 	colPos_ = VAdd(trans_.pos, localCenterPos_);
 
 	//状態ごとのUpdate
-	switch (state_)
-	{
-	case Enemy::STATE::NORMAL:
-		UpdateNml();
-		break;
-
-	case Enemy::STATE::ALERT:
-		UpdateAlert();
-		break;
-
-	case Enemy::STATE::ATTACK:
-		UpdateAtk();
-		break;
-
-	case Enemy::STATE::BREAK:
-		UpdateBreak();
-		break;
-	}
+	stateUpdate_();
 
 	//モデル制御
 	trans_.Update();
@@ -117,9 +106,43 @@ void Enemy::ChangeState(const STATE _state)
 {
 	//状態遷移
 	state_ = _state;
-	
-	//状態遷移における初期化
-	InitChangeState();
+
+	// 各状態遷移の初期処理
+	stateChanges_[state_]();
+}
+
+void Enemy::ChangeStateNormal(void)
+{
+	//更新処理の中身初期化
+	stateUpdate_ = std::bind(&Enemy::UpdateNml, this);
+}
+
+void Enemy::ChangeStateAlert(void)
+{
+	//更新処理の中身初期化
+	stateUpdate_ = std::bind(&Enemy::UpdateAlert, this);
+
+	//向きを改めて設定
+	trans_.quaRot = trans_.quaRot.LookRotation(GetMovePow2Target());
+
+	//警告カウンタ初期化
+	alertCnt_ = 0.0f;
+
+}
+
+void Enemy::ChangeStateAttack(void)
+{
+	//更新処理の中身初期化
+	stateUpdate_ = std::bind(&Enemy::UpdateAtk, this);
+}
+
+void Enemy::ChangeStateBreak(void)
+{
+	//更新処理の中身初期化
+	stateUpdate_ = std::bind(&Enemy::UpdateBreak, this);
+
+	//攻撃休憩時間の初期化
+	breakCnt_ = 0;
 }
 
 void Enemy::InitAnimNum()
@@ -320,6 +343,7 @@ void Enemy::Move(void)
 
 void Enemy::FinishAnim(void)
 {
+	//アニメーション判定
 	switch (anim_)
 	{
 	case UnitBase::ANIM::IDLE:
@@ -337,35 +361,6 @@ void Enemy::FinishAnim(void)
 		break;
 	}
 }
-
-void Enemy::InitChangeState(void)
-{
-	switch (state_)
-	{
-	case Enemy::STATE::NORMAL:
-		break;
-
-	case Enemy::STATE::ALERT:
-		//向きを改めて設定
-		trans_.quaRot = trans_.quaRot.LookRotation(GetMovePow2Target());
-
-		//待機アニメーション
-		ResetAnim(ANIM::IDLE, SPEED_ANIM);
-
-		//警告カウンタ初期化
-		alertCnt_ = 0.0f;
-		break;
-
-	case Enemy::STATE::ATTACK:
-		break;
-
-	case Enemy::STATE::BREAK:
-		//攻撃休憩時間の初期化
-		breakCnt_ = 0;
-		break;
-	}
-}
-
 
 void Enemy::Skill_One(void)
 {
@@ -396,8 +391,9 @@ void Enemy::RandSkill(void)
 		if (nowSkill.IsFinishMotion())
 		{
 			//上書き
-			nowSkill = skills_[rand];
+			nowSkill = skills_[static_cast<ATK_ACT>(rand)];
 			nowSkillAnim_ = skillAnims_[rand];
+			processSkill_ = changeSkill_[static_cast<ATK_ACT>(rand)];
 			
 			//カウンタの初期化
 			nowSkill.ResetCnt();
@@ -415,8 +411,9 @@ void Enemy::RandSkill(void)
 	//**********************************************************
 
 	//ランダムでとってきた攻撃の種類を今から発動するスキルに設定
-	nowSkill_.emplace_back(skills_[rand]);
+	nowSkill_.emplace_back(skills_[static_cast<ATK_ACT>(rand)]);
 	nowSkillAnim_ = skillAnims_[rand];
+	processSkill_ = changeSkill_[static_cast<ATK_ACT>(rand)];
 
 	//カウンタの初期化
 	nowSkill_.back().ResetCnt();

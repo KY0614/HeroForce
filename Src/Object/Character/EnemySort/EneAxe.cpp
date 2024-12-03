@@ -5,6 +5,9 @@
 
 void EneAxe::SetParam(void)
 {
+	//攻撃の遷移
+	changeSkill_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneAxe::Skill_One, this));
+
 	//モデル読み込み
 	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_AXEMAN));
 
@@ -34,7 +37,7 @@ void EneAxe::InitAnimNum(void)
 void EneAxe::InitSkill(void)
 {
 	//ここにスキルの数分格納させる
-	skills_.emplace_back(SKILL_ONE);
+	skills_.emplace(ATK_ACT::SKILL_ONE, SKILL_ONE);
 
 	//ここにスキルの数分アニメーションを格納させる
 	skillAnims_.emplace_back(ANIM::SKILL_1);
@@ -45,15 +48,8 @@ void EneAxe::InitSkill(void)
 
 void EneAxe::Attack(void)
 {
-	//現在のスキルの確認
-	if (nowSkill_.front().radius_ == SKILL_ONE.radius_
-		&& nowSkill_.front().backlash_ == SKILL_ONE.backlash_
-		&& nowSkill_.front().duration_ == SKILL_ONE.duration_
-		&& nowSkill_.front().pow_ == SKILL_ONE.pow_)
-	{
-		//スキル1発動
-		Skill_One();
-	}
+	//対応スキル発動
+	processSkill_();
 }
 
 void EneAxe::Skill_One(void)
@@ -68,30 +64,11 @@ void EneAxe::Skill_One(void)
 	}
 }
 
-void EneAxe::InitChangeState(void)
+void EneAxe::ChangeStateAlert(void)
 {
-	switch (state_)
-	{
-	case Enemy::STATE::NORMAL:
-		break;
+	//更新処理の中身初期化
+	Enemy::ChangeStateAlert();
 
-	case Enemy::STATE::ALERT:
-		//向きを改めて設定
-		trans_.quaRot = trans_.quaRot.LookRotation(GetMovePow2Target());
-
-		//待機アニメーション
-		ResetAnim(ANIM::IDLE, SPEED_ANIM);
-
-		//警告カウンタ初期化
-		alertCnt_ = 0.0f;
-		break;
-
-	case Enemy::STATE::ATTACK:
-		break;
-
-	case Enemy::STATE::BREAK:
-		//攻撃休憩時間の初期化
-		breakCnt_ = 0;
-		break;
-	}
+	//待機アニメーション
+	ResetAnim(ANIM::IDLE, SPEED_ANIM);
 }
