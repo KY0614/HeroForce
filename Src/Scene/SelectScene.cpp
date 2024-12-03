@@ -34,25 +34,32 @@ void SelectScene::Init(void)
 	stage_ = new StageBase();
 	stage_->Init();
 
+	//背景色を白に
 	SetBackgroundColor(255, 255, 255);
-	MV1SetOpacityRate(skyDome_->GetTransform().modelId, 0.5f);
+	//背景のステージモデルやらを半透明に
+	float alpha = 0.5f;
+	MV1SetOpacityRate(skyDome_->GetTransform().modelId, alpha);
 
 	//表示用のキャラ
 	//player_ = new PlAxe(SceneManager::PLAY_MODE::USER);
 	//player_->Init();
 	//player_->ChangeState(PlayerBase::STATE::NORMAL);
+
+
 	trans_.SetModel(
 		ResourceManager::GetInstance()
-		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_AXEMAN));
-	float scale = PlAxe::CHARACTER_SCALE;
+		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_KNIGHT));
+	float scale = CHARACTER_SCALE;
 	trans_.scl = { scale, scale, scale };
-	trans_.pos = { 0.0f, 0.0f, 0.0f };
+	trans_.pos = { 110.0f, 110.0f, -50.0f };
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::Euler(
-		0.0f, AsoUtility::Deg2RadF(180.0f),
+		0.0f, AsoUtility::Deg2RadF(0.0f),
 		0.0f
 	);
 	
+	//モデルの初期化
+	trans_.Update();
 
 	// カメラモード：定点カメラ
 	Camera* camera = SceneManager::GetInstance().GetCamera();
@@ -99,7 +106,7 @@ void SelectScene::Init(void)
 	keyPressTime_ = 0.0f;
 	interval_ = 0.0f;
 
-	//// フォグ設定(ステージ導入時)
+	//// フォグ設定
 	//SetFogEnable(true);
 	//SetFogColor(255, 255, 255);
 	//SetFogStartEnd(-10000.0f, 15000.0f);
@@ -131,6 +138,8 @@ void SelectScene::Update(void)
 	default:
 		break;
 	}
+
+	trans_.Update();
 }
 
 void SelectScene::Draw(void)
@@ -161,13 +170,12 @@ void SelectScene::Draw(void)
 		break;
 	}
 
-	MV1DrawModel(trans_.modelId);
 
 }
 
 void SelectScene::Release(void)
 {
-
+	MV1DeleteModel(trans_.modelId);
 }
 
 void SelectScene::NumberUpdate(void)
@@ -592,6 +600,7 @@ void SelectScene::RoleDraw(void)
 	{
 		DrawFormatString(rc.pos.x, rc.pos.y,
 			0xFFFFFF, "KNIGHT");
+		MV1DrawModel(trans_.modelId);
 	}
 
 	DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
@@ -616,28 +625,30 @@ void SelectScene::DrawDebug(void)
 #endif // DEBUG_RECT
 
 	//現在の入力デバイス
-	DrawFormatString(0, 820, 0xFFFFFF, "(key_:0)(pad:1) %d", GetDevice());
+	DrawFormatString(0, 820, 0x000000, "(key_:0)(pad:1) %d", GetDevice());
 	//入力の種類
 	DrawFormatString(Application::SCREEN_SIZE_X / 2,
 		Application::SCREEN_SIZE_Y / 2,
-		0xFFFFFF,
+		0x000000,
 		"%d",
 		key_);
 
 	//プレイ人数
-	DrawFormatString(Application::SCREEN_SIZE_X / 2, 0, 0xFFFFFF, "number : %d", playerNum_);
+	DrawFormatString(Application::SCREEN_SIZE_X / 2, 0, 0x000000, "number : %d", playerNum_);
 	//1Pかパッド操作かどうか
-	DrawFormatString(Application::SCREEN_SIZE_X / 2, 20, 0xFFFFFF, "operation : %d", isPad_);
+	DrawFormatString(Application::SCREEN_SIZE_X / 2, 20, 0x000000, "operation : %d", isPad_);
 	//役職
-	DrawFormatString(Application::SCREEN_SIZE_X / 2, 40, 0xFFFFFF, "role_ : %d", role_);
+	DrawFormatString(Application::SCREEN_SIZE_X / 2, 40, 0x000000, "role_ : %d", role_);
+
+	DrawFormatString(Application::SCREEN_SIZE_X / 2, 100, 0x000000, "pos : %2.f,%2.f,%2.f", trans_.pos.x,trans_.pos.y,trans_.pos.z);
 
 	// 左スティックの横軸
 	int leftStickX_ = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLX;
 	//縦軸
 	int leftStickY_ = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLY;
 
-	DrawFormatString(Application::SCREEN_SIZE_X / 2, 60, 0xFFFFFF, "stickX : %d", leftStickX_);
-	DrawFormatString(Application::SCREEN_SIZE_X / 2, 80, 0xFFFFFF, "stickY : %d", leftStickY_);
+	DrawFormatString(Application::SCREEN_SIZE_X / 2, 60, 0x000000, "stickX : %d", leftStickX_);
+	DrawFormatString(Application::SCREEN_SIZE_X / 2, 80, 0x000000, "stickY : %d", leftStickY_);
 
 }
 

@@ -31,10 +31,11 @@ public:
 	//インターバル上限
 	static constexpr float INTERVAL_TIME = 0.5f;
 
-	//カメラの座標
-	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 100.0f, -500.0f };	
-	//カメラの注視点座標
-	static constexpr VECTOR DEFAULT_TARGET_POS = { 0.0f, 150.0f, -100.0f };	
+	//カメラ関連
+	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 100.0f, -500.0f };		//カメラの座標
+	static constexpr VECTOR DEFAULT_TARGET_POS = { 0.0f, 150.0f, -100.0f };		//カメラの注視点座標
+
+	static constexpr float CHARACTER_SCALE = 0.5f;
 
 	//四角形を描画するために必要なもの
 	struct Rect {
