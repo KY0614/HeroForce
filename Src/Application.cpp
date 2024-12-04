@@ -14,6 +14,8 @@ const std::string Application::PATH_PLAYER = "Data/Model/Player/";
 const std::string Application::PATH_STAGE = "Data/Model/Stage/";
 const std::string Application::PATH_OBJECT = "Data/Model/Object/";
 const std::string Application::PATH_EFFECT = "Data/Effect/";
+const std::string Application::PATH_TEXT = "Data/Text/";
+const std::string Application::PATH_FONT = "Data/Font/";
 
 void Application::CreateInstance(void)
 {

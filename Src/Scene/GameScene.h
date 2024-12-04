@@ -5,9 +5,11 @@
 class Grid;
 class PlayerBase;
 class Enemy;
-class StageBase;
+class StageManager;
 class SkyDome;
-class LevelBase;
+class LevelScreenManager;
+class UnitPositionLoad;
+class ChickenManager;
 
 class GameScene : public SceneBase
 {
@@ -17,7 +19,6 @@ public:
 
 	//定数
 	static constexpr int PLAYER_NUM = 4;
-
 
 	// コンストラクタ
 	GameScene(void);
@@ -33,7 +34,7 @@ public:
 private:
 
 	//ステージ
-	StageBase* stage_;
+	StageManager* stage_;
 
 	//スカイドーム
 	SkyDome* sky_;
@@ -47,9 +48,17 @@ private:
 	std::vector<Enemy*> enemys_;
 	Enemy* enemyTest_;
 
-	LevelBase* level_;
+	//チキン
+	ChickenManager* chicken_;
+
+	LevelScreenManager* level_;
+
+	UnitPositionLoad* unitLoad_;
 
 	//当たり判定（他項目に干渉するもののみ）
 	void Collision(void);
+
+	//強化要素反映
+	void LevelUpReflection();
 };
 

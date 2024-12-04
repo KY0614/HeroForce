@@ -4,10 +4,12 @@
 #include "../Object/Grid.h"
 #include "../Object/Character/PlayerBase.h"
 #include"../Object/Character/Enemy.h"
+#include"../Object/Character/Chiken/ChickenManager.h"
 #include "../Object/Common/Transform.h"
-#include "../Object/Stage/StageBase.h"
+#include "../Object/Stage/StageManager.h"
 #include "../Object/Stage/SkyDome.h"
-#include "../Object/System/LevelBase.h"
+#include "../Object/System/LevelScreenManager.h"
+#include "../Object/System/UnitPositionLoad.h"
 #include "GameScene.h"
 
 GameScene::GameScene(void)
@@ -20,14 +22,18 @@ GameScene::~GameScene(void)
 
 void GameScene::Init(void)
 {
-	stage_ = new StageBase();
+	unitLoad_ = new UnitPositionLoad();
+	unitLoad_->Init();
+
+	stage_ = new StageManager();
 	stage_->Init();
 
 	sky_ = new SkyDome();
 	sky_->Init();
 
-	level_ = new LevelBase();
+	level_ = new LevelScreenManager();
 	level_->Init();
+
 
 	// グリッド線機能の実態を生成
 	grid_ = new Grid();
@@ -37,7 +43,9 @@ void GameScene::Init(void)
 	playerTest_ = new PlayerBase();
 	playerTest_->Init();
 	enemyTest_ = new Enemy();
-	enemyTest_->Init();
+	enemyTest_->Init();	
+	chicken_ = new ChickenManager(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU));
+	chicken_->Init();
 #endif
 
 
@@ -59,8 +67,14 @@ void GameScene::Update(void)
 	enemyTest_->Update();
 #endif
 
+	chicken_->SetTargetPos(playerTest_->GetPos());
+	chicken_->Update();
+
 	//あたり判定
 	Collision();
+
+	//強化要素の反映
+	LevelUpReflection();
 }
 
 void GameScene::Draw(void)
@@ -72,6 +86,7 @@ void GameScene::Draw(void)
 	enemyTest_->Draw();
 #endif
 	stage_->Draw();
+	chicken_->Draw();
 	level_->Draw();
 }
 
@@ -83,6 +98,8 @@ void GameScene::Release(void)
 	stage_->Release();
 	delete stage_;
 	delete grid_;
+	delete unitLoad_;
+	delete chicken_;
 #ifdef _DEBUG_COL
 	playerTest_->Destroy();
 	delete playerTest_;
@@ -155,4 +172,32 @@ void GameScene::Collision(void)
 #endif
 
 
+}
+
+void GameScene::LevelUpReflection()
+{
+	//ステート確認
+	if (level_->GetState() == LevelScreenManager::STATE::FIN)
+	{
+		return;
+	}
+
+	//ここでプレイヤーの強化を反映
+	switch (level_->GetType())
+	{
+	case LevelScreenManager::TYPE::ATTACK:
+		break;
+
+	case LevelScreenManager::TYPE::DEFENSE:
+		break;
+
+	case LevelScreenManager::TYPE::LIFE:
+		break;
+
+	case LevelScreenManager::TYPE::SPEED:
+		break;
+
+	default:
+		break;
+	}
 }

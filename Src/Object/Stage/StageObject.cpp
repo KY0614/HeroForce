@@ -12,7 +12,7 @@ StageObject::StageObject(const json& data, int model)
 	transform_.SetModel(MV1DuplicateModel(
 		model));
 
-	int i = 100;
+	int i = SCALE;
 
 	transform_.scl = {
 		data["scl"]["x"] / static_cast<float>(i) * static_cast<float>(i),
@@ -23,7 +23,7 @@ StageObject::StageObject(const json& data, int model)
 	transform_.pos = AsoUtility::VECTOR_ZERO;
 	transform_.pos = { 
 		data["pos"]["x"]* static_cast<float>(i) ,
-		data["pos"]["y"] * static_cast<float>(i),
+		data["pos"]["y"] * static_cast<float>(i) - i,
 		data["pos"]["z"] * static_cast<float>(i)
 	};
 
@@ -61,14 +61,5 @@ Transform StageObject::GetTrans() const
 	return transform_;
 }
 
-void StageObject::SetRadius(const float radius)
-{
-	radius_ = radius;
-}
-
-float StageObject::GetRadius() const
-{
-	return radius_;
-}
 
 
