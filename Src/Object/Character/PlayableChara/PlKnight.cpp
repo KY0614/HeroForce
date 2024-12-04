@@ -1,7 +1,7 @@
 #include"../Manager/ResourceManager.h"
 #include"../Manager/SceneManager.h"
 #include "PlKnight.h"
-PlKnight::PlKnight(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum) :PlayerBase(_mode, padNum_)
+PlKnight::PlKnight(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum) :PlayerBase(_mode, _padNum)
 {
 	mode_ = _mode;
 	padNum_ = _padNum;
@@ -29,7 +29,6 @@ void PlKnight::SetParam(void)
 
 	//当たり判定の設定
 	radius_ = MY_COL_RADIUS;
-	//acts_[ATK_ACT::ATK].radius_ = COL_ATK;
 
 	atkStartRange_ = ATK_START_RANGE;
 }
@@ -88,26 +87,22 @@ void PlKnight::Skill1Func(void)
 
 void PlKnight::Skill2Func(void)
 {
-	//CPUの時にisPushいらないからここを考える(Changeするときにクールタイム回復をtrueにすれば治るかも)
-	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] <= 0.0f||!isPush_)
+	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] <= 0.0f || !isPush_)
 	{
 		//スキル切り替え出来ないようにする
 		return;
 	}
-//	if (isPush_)
-	//{
-		if(IsAtkStart())CntUp(atkStartCnt_);
-		
-		if (IsFinishAtkStart())
-		{
-			CntUp(atk_.cnt_);
-		}
-	//}
+
+	if (IsAtkStart())CntUp(atkStartCnt_);
+
+	if (IsFinishAtkStart())
+	{
+		CntUp(atk_.cnt_);
+	}
 	if (IsAtkAction())
 	{
 		if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > 0.0f)
 		{
-			//skillNo_ = SKILL_NUM::TWO;
 			moveAble_ = false;
 			isCool_[static_cast<int>(SKILL_NUM::TWO)] = false;
 			CntDown(coolTime_[static_cast<int>(SKILL_NUM::TWO)]);
@@ -117,7 +112,7 @@ void PlKnight::Skill2Func(void)
 			}
 		}
 	}
-	else if(coolTime_[static_cast<int>(SKILL_NUM::TWO)] <= SKILL_TWO_START_COOLTIME)
+	else if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] <= SKILL_TWO_START_COOLTIME)
 	{
 		isCool_[static_cast<int>(SKILL_NUM::TWO)] = true;
 		return;

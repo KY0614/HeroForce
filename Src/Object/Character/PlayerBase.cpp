@@ -10,10 +10,7 @@ void PlayerBase::Destroy(void)
 
 }
 
-void PlayerBase::SetParam(void)
-{
 
-}
 
 void PlayerBase::Init(void)
 {
@@ -25,7 +22,7 @@ void PlayerBase::Init(void)
 #ifdef DEBUG_ON
 	InitDebug();
 #endif // DEBUG_ON
-	//関数ポインタを使ってます
+	//関数ポインタ初期化
 	cpuStateChanges_.emplace(CPU_STATE::NORMAL, std::bind(&PlayerBase::CpuChangeNml, this));
 	cpuStateChanges_.emplace(CPU_STATE::ATTACK, std::bind(&PlayerBase::CpuChangeAtk, this));
 	cpuStateChanges_.emplace(CPU_STATE::BREAK, std::bind(&PlayerBase::CpuChangeBreak, this));
@@ -106,11 +103,6 @@ void PlayerBase::Update(void)
 	trans_.Update();
 
 	colPos_ = VAdd(trans_.pos, VScale(PLAYER_COL_LOCAL_POS, CHARACTER_SCALE));
-
-
-
-
-
 
 #ifdef DEBUG_ON
 	//この処理は後でキーボードのところに置いておく
@@ -346,7 +338,10 @@ void PlayerBase::KeyBoardControl(void)
 		ChangeControll(SceneManager::CNTL::PAD);
 	}
 	//前
-	if (ins.IsNew(KEY_INPUT_W)){Move(0.0f, AsoUtility::AXIS_Y);}
+	if (ins.IsNew(KEY_INPUT_W))
+	{
+		Move(0.0f, AsoUtility::AXIS_Y);
+	}
 
 	//右
 	else if (ins.IsNew(KEY_INPUT_D)){Move(90.0f, AsoUtility::AXIS_Y);}
@@ -435,7 +430,6 @@ void PlayerBase::GamePad(void)
 	{
 		if (!IsAtkAction()) 
 		{ 
-
 			skillNo_ = static_cast<SKILL_NUM>(static_cast<int>(skillNo_) + 1);
 			ChangeSkillControll(skillNo_);
 			if (skillNo_ == SKILL_NUM::MAX)
@@ -526,7 +520,6 @@ void PlayerBase::CpuMove(VECTOR _targetPos)
 	//移動速度の更新
 	moveSpeed_ = SPEED_MOVE * calledMoveSpeed_;
 	isMove_ = true;
-	//ResetAnim(ANIM::WALK, SPEED_ANIM_RUN);
 
 	//方向ベクトル取得
 	VECTOR targetVec = GetTargetVec(_targetPos);
@@ -714,7 +707,7 @@ void PlayerBase::SyncActPos(VECTOR& _localPos)
 	VECTOR relativeActPos = atkMax_[act_].pos_;
 
 	VECTOR addPos = followRot.PosAxis(VScale(relativeActPos, CHARACTER_SCALE));
-	//VECTOR relativeActPos = followRot.PosAxis(_localPos);
+	
 	atk_.pos_ = VAdd(trans_.pos, addPos);
 }
 

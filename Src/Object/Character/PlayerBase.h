@@ -74,7 +74,7 @@ public:
     PlayerBase(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum) :mode_(_mode), padNum_(_padNum) {}
     ~PlayerBase(void) = default;
     void Destroy(void)override;
-    virtual void SetParam(void);
+    virtual void SetParam(void) = 0;
     void Init(void)override;
     void Update(void)override;
     //virtual void UserUpdate(void);
@@ -179,7 +179,6 @@ protected:
     //ステータス系
     VECTOR userOnePos_;                                         //ユーザー1追従用の座標   
     VECTOR colPos_;                                             //プレイヤーの当たり判定座標
-    SceneManager::ROLE role_;                                   //役割
     ATK_ACT act_;                                               //攻撃種類
     std::map < ATK_ACT, std::function<void(void)>>changeAct_;   //攻撃の変更
     std::function<void(void)>actUpdate_;                        //攻撃ごとの更新処理

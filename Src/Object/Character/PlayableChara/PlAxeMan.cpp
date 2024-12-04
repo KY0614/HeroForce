@@ -45,25 +45,6 @@ void PlAxe::InitAct(void)
 	//スキル２の最大値
 	atkMax_.emplace(ATK_ACT::SKILL2, SKILL_TWO_MAX);
 
-	////範囲
-	//colRadius_.emplace(ATK_ACT::ATK, COL_ATK);
-	//colRadius_.emplace(ATK_ACT::SKILL1, COL_SKILL1);
-	//colRadius_.emplace(ATK_ACT::SKILL2, COL_SKILL2);
-
-	////座標
-	//colLocalPos_.emplace(ATK_ACT::ATK, ATK_COL_LOCAL_POS);
-	//colLocalPos_.emplace(ATK_ACT::SKILL1, SKILL1_COL_LOCAL_POS);
-	//colLocalPos_.emplace(ATK_ACT::SKILL2, SKILL2_COL_LOCAL_POS);
-
-	////持続時間
-	//dulationMax_.emplace(ATK_ACT::ATK, FRAME_ATK_DURATION);
-	//dulationMax_.emplace(ATK_ACT::SKILL1, FRAME_SKILL1_DURATION);
-	//dulationMax_.emplace(ATK_ACT::SKILL2, FRAME_SKILL2_DURATION);
-
-	////後隙
-	//backLashMax_.emplace(ATK_ACT::ATK, FRAME_ATK_BACKRASH);
-	//backLashMax_.emplace(ATK_ACT::SKILL1, FRAME_SKILL1_BACKRASH);
-	//backLashMax_.emplace(ATK_ACT::SKILL2, FRAME_SKILL2_BACKRASH);
 
 	//クールタイム
 	coolTimeMax_[static_cast<int>(ATK_ACT::ATK)] = ATK_COOLTIME;
@@ -91,13 +72,13 @@ void PlAxe::InitCharaAnim(void)
 
 void PlAxe::AtkFunc(void)
 {
-	moveAble_ = false;
+	
 }
 
 void PlAxe::Skill1Func(void)
 {
 	//力溜めて打ち込むやつ
-	moveAble_ = false;
+	//moveAble_ = false;
 	//クールタイムの初期化
 	//coolTime_[static_cast<int>(act_)] = 0.0f;
 	if (IsAtkStart())
@@ -135,10 +116,6 @@ void PlAxe::Skill2Func(void)
 			multiHitInterval_ = 0.0f;
 		}
 	}
-	else
-	{
-		//回転中移動できる
-		moveAble_ = false;
-	}
+	
 
 }
