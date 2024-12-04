@@ -57,7 +57,7 @@ void SceneManager::Init(void)
 	Init3D();
 
 	// 初期シーンの設定
-	DoChangeScene(SCENE_ID::GAME);
+	DoChangeScene(SCENE_ID::TITLE);
 
 	//メインウィンドウを追加
 	subWindowH_.push_back(NULL);
@@ -218,12 +218,31 @@ void SceneManager::ResetCameras(void)
 
 
 /// <summary>
-/// ウィンドウの状態を変化させる
+/// ウィンドウの追加
 /// </summary>
 /// <param name="_mode"></param>
 void SceneManager::SetSubWindowH(HWND _mode)
 {
 	subWindowH_.push_back(_mode);
+}
+
+void SceneManager::RedySubWindow(void)
+{
+	//ウィンドウの設定
+	int num = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
+	SetActiveNum(num);
+	ChangeWindowMode(Application::WINDOW::SHOW);
+	SetWindowPram();
+
+	//すでに一つは生成されているので初期値は①
+	for (int i = 1; i < num; i++)
+	{
+		//生成及び初期化
+		auto c = std::make_shared<Camera>();
+		c->Init();
+		//格納
+		cameras_.push_back(std::move(c));
+	}
 }
 
 //ウィンドウの状態を変える
@@ -243,14 +262,37 @@ void SceneManager::ChangeWindowMode(const Application::WINDOW _mode)
 		cnt++;
 	}
 }
+//サブウィンドウを隠す状態に(ゲームシーンから別のシーンに移動するときに使用)
+void SceneManager::SetHideSubWindows(void)
+{
+	//少し雑に作るので要見直し
+	//もしかしたらこの関数すらいらない可能性はある
+	int cnt = 1;
+	for (HWND hwnd : subWindowH_)
+	{
+		if (cnt == 1)	//メインウィンドウはスキップ
+		{
+			cnt++;
+			continue;
+		}
+		ShowWindow(hwnd, static_cast<int>(Application::WINDOW::HIDE));
+
+		cnt++;
+	}
+}
+
 //フルスクリーンに戻す
 void SceneManager::ReturnSolo(void)
 {
 	//画面枚数を一枚に戻す
 	SetActiveNum(1);
+	//サブウィンドウを隠す
+	SetHideSubWindows();
 	//フルスクに戻る
 	SetWindowSize(1960, 1080);
 }
+
+
 
 SceneManager::SceneManager(void)
 {
@@ -301,20 +343,7 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	
 	case SCENE_ID::GAME:
 		//ウィンドウの設定
-		int num = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
-		SetActiveNum(num);
-		ChangeWindowMode(Application::WINDOW::SHOW);
-		SetWindowPram();
-
-		//すでに一つは生成されているので初期値は①
-		for (int i = 1; i < num; i++)
-		{
-			//生成及び初期化
-			auto c = std::make_shared<Camera>();
-			c->Init();
-			//格納
-			cameras_.push_back(std::move(c));
-		}
+		RedySubWindow();
 		scene_ = new GameScene();
 		break;
 	}

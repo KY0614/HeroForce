@@ -87,10 +87,15 @@ public:
 
 	//ウィンドウ関係
 	// ************************************************************************
-	//ウィンドウセッター
+	//ウィンドウの追加
 	void SetSubWindowH(HWND _mode);
+	//ウィンドウの準備(その個数に元ずくカメラの複数生成)
+	void RedySubWindow(void);
+
 	//モードを変える
 	void ChangeWindowMode(const Application::WINDOW _mode);
+	//メインウィンドウ以外をHIDE状態にする
+	void SetHideSubWindows(void);
 	//フルスクに戻す
 	void ReturnSolo(void);
 

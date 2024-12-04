@@ -8,7 +8,7 @@
 #include "../Manager/Camera.h"
 #include "../Manager/DataBank.h"
 #include "../Utility/AsoUtility.h"
-#include "../Object/Stage/StageBase.h"
+#include "../Object/Stage/StageManager.h"
 #include "../Object/Stage/StageObject.h"
 #include "../Object/Stage/SkyDome.h"
 #include "../Object/Character/PlayerBase.h"
@@ -31,7 +31,7 @@ void SelectScene::Init(void)
 	skyDome_->Init();
 	
 	//背景用ステージ
-	stage_ = new StageBase();
+	stage_ = new StageManager();
 	stage_->Init();
 
 	//背景色を白に
@@ -58,9 +58,9 @@ void SelectScene::Init(void)
 	InitModel();
 
 	// カメラモード：定点カメラ
-	Camera* camera = SceneManager::GetInstance().GetCamera();
-	camera->SetPos(DEFAULT_CAMERA_POS,DEFAULT_TARGET_POS);
-	camera->ChangeMode(Camera::MODE::FIXED_POINT);
+	auto camera = SceneManager::GetInstance().GetCameras();
+	camera[0]->SetPos(DEFAULT_CAMERA_POS, DEFAULT_TARGET_POS);
+	camera[0]->ChangeMode(Camera::MODE::FIXED_POINT);
 
 	//人数選択から
 	ChangeSelect(SELECT::NUMBER);
@@ -335,6 +335,7 @@ void SelectScene::NumberUpdate(void)
 	{
 		//プレイヤー人数の設定
 		data.Input(SceneManager::PLAY_MODE::USER, playerNum_);
+		data.Input(DataBank::INFO::USER_NUM, playerNum_);
 
 		//CPU人数の設定(CPUは１人から３人)
 		data.Input(SceneManager::PLAY_MODE::CPU, (SceneManager::PLAYER_NUM) - playerNum_);
@@ -569,6 +570,7 @@ void SelectScene::RoleUpdate(void)
 		//押下したときの色
 		rc.color_ = 0xFF0000;
 
+		data.Input(DataBank::INFO::DHISPLAY_NUM, 1);
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 	}
 

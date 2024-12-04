@@ -20,7 +20,7 @@ TitleScene::~TitleScene(void)
 
 void TitleScene::Init(void)
 {
-	windowNum_ = 1;
+	//windowNum_ = 1;
 	// カメラモード：定点カメラ
 	SceneManager::GetInstance().GetCameras()[0]->ChangeMode(Camera::MODE::FIXED_POINT);
 }
@@ -35,11 +35,11 @@ void TitleScene::Update(void)
 
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
-		data.Input(DataBank::INFO::USER_NUM, windowNum_);
-		mng.ChangeScene(SceneManager::SCENE_ID::GAME);
+		//data.Input(DataBank::INFO::USER_NUM, windowNum_);	//ゲームシーン移行時にやるもの
+		mng.ChangeScene(SceneManager::SCENE_ID::SELECT);
 	}
 
-	if (ins.IsTrgDown(KEY_INPUT_RIGHT))
+	/*if (ins.IsTrgDown(KEY_INPUT_RIGHT))
 	{
 		windowNum_++;
 		if (windowNum_ > SceneManager::PLAYER_NUM)windowNum_ = SceneManager::PLAYER_NUM;
@@ -49,8 +49,7 @@ void TitleScene::Update(void)
 	{
 		windowNum_--;
 		if (windowNum_ < 1)windowNum_ = 1;
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::SELECT);
-	}
+	}*/
 }
 
 void TitleScene::Draw(void)
@@ -58,7 +57,7 @@ void TitleScene::Draw(void)
 
 	// ロゴ描画
 	DrawLogo();
-	DrawFormatString(400, 400, 0xffffff, "%d", windowNum_);
+	//DrawFormatString(400, 400, 0xffffff, "%d", windowNum_);
 }
 
 void TitleScene::Release(void)

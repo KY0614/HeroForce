@@ -116,7 +116,6 @@ void GameScene::Update(void)
 	//スペース推したらタイトルに戻る
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
-		mng.ReturnSolo();
 		mng.ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
 
@@ -171,6 +170,7 @@ void GameScene::Release(void)
 	delete stage_;
 
 	SceneManager::GetInstance().ResetCameras();
+	SceneManager::GetInstance().ReturnSolo();
 
 	for (auto& p : players_)
 	{

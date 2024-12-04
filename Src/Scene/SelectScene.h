@@ -5,7 +5,7 @@
 #include "../Common/Vector2.h"
 
 class SkyDome;
-class StageBase;
+class StageManager;
 class PlayerBase;
 
 class SelectScene :public SceneBase
@@ -181,7 +181,7 @@ private:
 	std::unique_ptr<SkyDome> skyDome_;
 
 	//背景のステージ
-	StageBase* stage_;
+	StageManager* stage_;
 
 	Transform trans_;
 	Transform tests_[SceneManager::PLAYER_NUM];
