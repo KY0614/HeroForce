@@ -47,10 +47,6 @@ void GameScene::Init(void)
 	level_->Init();
 
 
-	// グリッド線機能の実態を生成
-	grid_ = new Grid();
-	grid_->Init();	
-
 #ifdef _DEBUG_COL
 	playerTest_ = new PlAxe(SceneManager::PLAY_MODE::USER);
 	playerTest_->Init();
@@ -141,7 +137,6 @@ void GameScene::Update(void)
 void GameScene::Draw(void)
 {
 	sky_->Draw();
-	//grid_->Draw();
 #ifdef _DEBUG_COL
 	playerTest_->Draw();
 	enemyTest_->Draw();
@@ -174,7 +169,6 @@ void GameScene::Release(void)
 	delete sky_;
 	stage_->Release();
 	delete stage_;
-	delete grid_;
 
 	SceneManager::GetInstance().ResetCameras();
 

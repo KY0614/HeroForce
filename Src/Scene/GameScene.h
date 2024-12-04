@@ -48,8 +48,6 @@ private:
 	//フェーダー
 	std::unique_ptr<Fader>fader_;
 
-	// グリッド線
-	Grid* grid_;
 	//プレイヤー
 	std::unique_ptr<PlayerBase>players_[PLAYER_NUM];
 	PlayerBase* playerTest_;
