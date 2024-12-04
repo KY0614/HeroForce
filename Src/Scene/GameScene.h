@@ -17,7 +17,7 @@ class GameScene : public SceneBase
 {
 public:
 	//デバッグ用
-	//#define _DEBUG_COL	//テスト用の敵とプレイヤーを一体ずつ生成（この行をコメントアウトすると消える）
+	#define _DEBUG_COL	//テスト用の敵とプレイヤーを一体ずつ生成（この行をコメントアウトすると消える）
 
 	//定数
 	//プレイヤーの数
