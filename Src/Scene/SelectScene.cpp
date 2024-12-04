@@ -41,25 +41,21 @@ void SelectScene::Init(void)
 	MV1SetOpacityRate(skyDome_->GetTransform().modelId, alpha);
 
 	//表示用のキャラ
-	//player_ = new PlAxe(SceneManager::PLAY_MODE::USER);
-	//player_->Init();
-	//player_->ChangeState(PlayerBase::STATE::NORMAL);
-
-
-	trans_.SetModel(
-		ResourceManager::GetInstance()
-		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_KNIGHT));
-	float scale = CHARACTER_SCALE;
-	trans_.scl = { scale, scale, scale };
-	trans_.pos = { 110.0f, 110.0f, -50.0f };
-	trans_.quaRot = Quaternion();
-	trans_.quaRotLocal = Quaternion::Euler(
-		0.0f, AsoUtility::Deg2RadF(0.0f),
-		0.0f
-	);
-	
-	//モデルの初期化
-	trans_.Update();
+	//trans_.SetModel(
+	//	ResourceManager::GetInstance()
+	//	.LoadModelDuplicate(ResourceManager::SRC::PLAYER_KNIGHT));
+	//float scale = CHARACTER_SCALE;
+	//trans_.scl = { scale, scale, scale };
+	//trans_.pos = { 110.0f, 110.0f, -50.0f };
+	//trans_.quaRot = Quaternion();
+	//trans_.quaRotLocal = Quaternion::Euler(
+	//	0.0f, AsoUtility::Deg2RadF(0.0f),
+	//	0.0f
+	//);
+	//
+	////モデルの初期化
+	//trans_.Update();
+	InitModel();
 
 	// カメラモード：定点カメラ
 	Camera* camera = SceneManager::GetInstance().GetCamera();
@@ -176,6 +172,60 @@ void SelectScene::Draw(void)
 void SelectScene::Release(void)
 {
 	MV1DeleteModel(trans_.modelId);
+}
+
+void SelectScene::InitModel(void)
+{
+	//騎士
+	tests_[0].SetModel(
+		ResourceManager::GetInstance()
+		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_KNIGHT));
+	float scale = CHARACTER_SCALE;
+	tests_[0].scl = { scale, scale, scale };
+	tests_[0].pos = { 110.0f, 110.0f, -50.0f };
+	tests_[0].quaRot = Quaternion();
+	tests_[0].quaRotLocal = Quaternion::Euler(
+		0.0f, AsoUtility::Deg2RadF(0.0f),
+		0.0f
+	);
+	//斧使い
+	tests_[1].SetModel(
+		ResourceManager::GetInstance()
+		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_AXEMAN));
+	tests_[1].scl = { scale, scale, scale };
+	tests_[1].pos = { 110.0f, 110.0f, -50.0f };
+	tests_[1].quaRot = Quaternion();
+	tests_[1].quaRotLocal = Quaternion::Euler(
+		0.0f, AsoUtility::Deg2RadF(0.0f),
+		0.0f
+	);
+	//魔法使い
+	tests_[2].SetModel(
+		ResourceManager::GetInstance()
+		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_MAGE));
+	tests_[2].scl = { scale, scale, scale };
+	tests_[2].pos = { 110.0f, 110.0f, -50.0f };
+	tests_[2].quaRot = Quaternion();
+	tests_[2].quaRotLocal = Quaternion::Euler(
+		0.0f, AsoUtility::Deg2RadF(0.0f),
+		0.0f
+	);
+	//弓使い
+	tests_[3].SetModel(
+		ResourceManager::GetInstance()
+		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_ARCHER));
+	tests_[3].scl = { scale, scale, scale };
+	tests_[3].pos = { 110.0f, 110.0f, -50.0f };
+	tests_[3].quaRot = Quaternion();
+	tests_[3].quaRotLocal = Quaternion::Euler(
+		0.0f, AsoUtility::Deg2RadF(0.0f),
+		0.0f
+	);
+
+	for (int i = 0; i < SceneManager::PLAYER_NUM; i++) {
+		//モデルの初期化
+		tests_[i].Update();
+	}
 }
 
 void SelectScene::NumberUpdate(void)
@@ -585,22 +635,25 @@ void SelectScene::RoleDraw(void)
 	{
 		DrawFormatString(rc.pos.x, rc.pos.y,
 			0xFFFFFF, "ARCHER");
+		MV1DrawModel(tests_[3].modelId);
 	}
 	else if (role_ > static_cast<int>(SceneManager::ROLE::AXEMAN))
 	{
 		DrawFormatString(rc.pos.x, rc.pos.y,
 			0xFFFFFF, "MAGE");
+		MV1DrawModel(tests_[2].modelId);
 	}
 	else if (role_ > static_cast<int>(SceneManager::ROLE::KNIGHT))
 	{
 		DrawFormatString(rc.pos.x, rc.pos.y,
 			0xFFFFFF, "AXEMAN");
+		MV1DrawModel(tests_[1].modelId);
 	}
 	else
 	{
 		DrawFormatString(rc.pos.x, rc.pos.y,
 			0xFFFFFF, "KNIGHT");
-		MV1DrawModel(trans_.modelId);
+		MV1DrawModel(tests_[0].modelId);
 	}
 
 	DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,

@@ -13,6 +13,7 @@ class SelectScene :public SceneBase
 public:
 
 	#define DEBUG_RECT
+	#define DEBUG_TEST
 
 	//三角形用の定数
 	static constexpr int TRI_SCALE = 150;	//大きさ
@@ -125,6 +126,8 @@ public:
 	void Draw(void) override;
 	void Release(void) override;
 
+	void InitModel(void);
+
 	//更新処理関連-----------------------------------------------
 	
 	void NumberUpdate(void);		//人数選択中の処理
@@ -180,8 +183,8 @@ private:
 	//背景のステージ
 	StageBase* stage_;
 
-	PlayerBase* player_;
 	Transform trans_;
+	Transform tests_[SceneManager::PLAYER_NUM];
 
 	//選択中の種類
 	SELECT select_;
