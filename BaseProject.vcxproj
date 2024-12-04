@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Manager\InputController.cpp" />
+    <ClCompile Include="Src\Scene\SelectScene.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneAxe.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\PlArcher.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\PlKnight.cpp" />
@@ -61,6 +63,8 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Manager\InputController.h" />
+    <ClInclude Include="Src\Scene\SelectScene.h" />
     <ClInclude Include="Src\Manager\DataBank.h" />
     <ClInclude Include="Src\Object\Character\Chiken\ChickenManager.h" />
     <ClInclude Include="Src\Object\Character\Chiken\ChickenBase.h" />
@@ -191,6 +195,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir)Src/Lib/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

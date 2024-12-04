@@ -49,6 +49,7 @@ void TitleScene::Update(void)
 	{
 		windowNum_--;
 		if (windowNum_ < 1)windowNum_ = 1;
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::SELECT);
 	}
 }
 

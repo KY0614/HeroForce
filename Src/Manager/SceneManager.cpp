@@ -3,6 +3,7 @@
 #include<cassert>
 
 #include "../Scene/TitleScene.h"
+#include "../Scene/SelectScene.h"
 #include "../Scene/GameScene.h"
 #include "ResourceManager.h"
 #include "Camera.h"
@@ -292,6 +293,10 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	case SCENE_ID::TITLE:
 		ChangeWindowMode(Application::WINDOW::HIDE);
 		scene_ = new TitleScene();
+		break;		
+	
+	case SCENE_ID::SELECT:
+		scene_ = new SelectScene();
 		break;	
 	
 	case SCENE_ID::GAME:

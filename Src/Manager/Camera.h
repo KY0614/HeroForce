@@ -79,8 +79,6 @@ public:
 	void SetBeforeDrawFollowSpring(void);	//ばね追従カメラ
 	void SetBeforeDrawShake(void);			//カメラシェイク
 
-	void SetBeforeDrawFollowDelay(void);	//没
-
 	//----------------------------------------
 
 	// 描画処理
@@ -97,6 +95,8 @@ public:
 
 	//追従対象の設定
 	const void SetFollow(const Transform* follow);
+
+	void SetPos(const VECTOR& pos,const VECTOR& target);
 
 private:
 
