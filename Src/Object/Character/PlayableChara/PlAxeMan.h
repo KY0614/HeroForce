@@ -6,17 +6,17 @@ class PlAxe :
 {
 public:
 
-#ifdef DEBUG_ON
+#ifdef DEBUG_COOL
     //クールタイム
     static constexpr float ATK_COOLTIME = 1.0f;
     static constexpr float SKILL_ONE_COOLTIME = 1.0f;
     static constexpr float SKILL_TWO_COOLTIME = 1.0f;
-#else // DEBUG_ON
+#else // DEBUG_COOL
     //クールタイム
     static constexpr float ATK_COOLTIME = 2.0f;
     static constexpr float SKILL_ONE_COOLTIME = 6.0f;
     static constexpr float SKILL_TWO_COOLTIME = 5.0f;
-#endif // DEBUG_ON
+#endif // DEBUG_COOL
 
 
     //攻撃発生の時間
@@ -28,7 +28,7 @@ public:
     static constexpr float FRAME_ATK_DURATION = 0.5f - ATK_START;
     static constexpr float FRAME_SKILL1_DURATION = 0.7f;
     static constexpr float FRAME_SKILL2_DURATION = 3.0f - SKILL_TWO_START;
-    static constexpr float SKILL2_CHANGE_ANIM_TIME = 0.7f;
+    static constexpr float SKILL2_CHANGE_ANIM_TIME = 0.25f;
 
     //後隙
     static constexpr float FRAME_ATK_BACKRASH = 0.1f;
@@ -45,6 +45,19 @@ public:
     static constexpr float COL_SKILL1 = CHARACTER_SCALE * 150.0f;
     static constexpr float COL_SKILL2 = CHARACTER_SCALE * 200.0f;
 
+    //攻撃威力
+    static constexpr float ATK_POW = 7.0f;
+    static constexpr float SKILL_ONE_POW = 50.0f;
+    static constexpr float SKILL_TWO_POW = 5.0f;
+
+    //通常攻撃の最大値
+    static constexpr ATK ATK_MAX{ ATK_COL_LOCAL_POS,COL_ATK,ATK_POW,FRAME_ATK_DURATION,FRAME_ATK_BACKRASH,0.0f,false };
+
+    //スキル１
+    static constexpr ATK SKILL_ONE_MAX{ SKILL1_COL_LOCAL_POS ,COL_SKILL1 ,SKILL_ONE_POW,FRAME_SKILL1_DURATION ,FRAME_SKILL1_BACKRASH ,0.0f,false };
+
+    //スキル２
+    static constexpr ATK SKILL_TWO_MAX{ SKILL2_COL_LOCAL_POS ,COL_SKILL2 ,SKILL_TWO_POW,FRAME_SKILL2_DURATION ,FRAME_SKILL2_BACKRASH ,0.0f,false };
 
 
 
@@ -52,7 +65,7 @@ public:
     //固有アニメーション
     static constexpr int ATK_NUM = 9;
     static constexpr int SKILL_ONE_NUM = 8;
-    static constexpr int SKILL_TWO_NUM = 10;
+    static constexpr int SKILL_TWO_NUM = 9;
     static constexpr int SPIN_NUM = 11;
 
     //スキル２の回転攻撃の多段ヒットインターバル

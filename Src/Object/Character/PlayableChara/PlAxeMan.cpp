@@ -36,25 +36,34 @@ void PlAxe::SetParam(void)
 }
 void PlAxe::InitAct(void)
 {
-	//範囲
-	colRadius_.emplace(ATK_ACT::ATK, COL_ATK);
-	colRadius_.emplace(ATK_ACT::SKILL1, COL_SKILL1);
-	colRadius_.emplace(ATK_ACT::SKILL2, COL_SKILL2);
+	//通常攻撃の最大値
+	atkMax_.emplace(ATK_ACT::ATK, ATK_MAX);
 
-	//座標
-	colLocalPos_.emplace(ATK_ACT::ATK, ATK_COL_LOCAL_POS);
-	colLocalPos_.emplace(ATK_ACT::SKILL1, SKILL1_COL_LOCAL_POS);
-	colLocalPos_.emplace(ATK_ACT::SKILL2, SKILL2_COL_LOCAL_POS);
+	//スキル１の最大値
+	atkMax_.emplace(ATK_ACT::SKILL1, SKILL_ONE_MAX);
 
-	//持続時間
-	dulationMax_.emplace(ATK_ACT::ATK, FRAME_ATK_DURATION);
-	dulationMax_.emplace(ATK_ACT::SKILL1, FRAME_SKILL1_DURATION);
-	dulationMax_.emplace(ATK_ACT::SKILL2, FRAME_SKILL2_DURATION);
+	//スキル２の最大値
+	atkMax_.emplace(ATK_ACT::SKILL2, SKILL_TWO_MAX);
 
-	//後隙
-	backLashMax_.emplace(ATK_ACT::ATK, FRAME_ATK_BACKRASH);
-	backLashMax_.emplace(ATK_ACT::SKILL1, FRAME_SKILL1_BACKRASH);
-	backLashMax_.emplace(ATK_ACT::SKILL2, FRAME_SKILL2_BACKRASH);
+	////範囲
+	//colRadius_.emplace(ATK_ACT::ATK, COL_ATK);
+	//colRadius_.emplace(ATK_ACT::SKILL1, COL_SKILL1);
+	//colRadius_.emplace(ATK_ACT::SKILL2, COL_SKILL2);
+
+	////座標
+	//colLocalPos_.emplace(ATK_ACT::ATK, ATK_COL_LOCAL_POS);
+	//colLocalPos_.emplace(ATK_ACT::SKILL1, SKILL1_COL_LOCAL_POS);
+	//colLocalPos_.emplace(ATK_ACT::SKILL2, SKILL2_COL_LOCAL_POS);
+
+	////持続時間
+	//dulationMax_.emplace(ATK_ACT::ATK, FRAME_ATK_DURATION);
+	//dulationMax_.emplace(ATK_ACT::SKILL1, FRAME_SKILL1_DURATION);
+	//dulationMax_.emplace(ATK_ACT::SKILL2, FRAME_SKILL2_DURATION);
+
+	////後隙
+	//backLashMax_.emplace(ATK_ACT::ATK, FRAME_ATK_BACKRASH);
+	//backLashMax_.emplace(ATK_ACT::SKILL1, FRAME_SKILL1_BACKRASH);
+	//backLashMax_.emplace(ATK_ACT::SKILL2, FRAME_SKILL2_BACKRASH);
 
 	//クールタイム
 	coolTimeMax_[static_cast<int>(ATK_ACT::ATK)] = ATK_COOLTIME;
@@ -67,9 +76,9 @@ void PlAxe::InitAct(void)
 	atkStartTime_[static_cast<int>(ATK_ACT::SKILL2)] = SKILL_TWO_START;
 
 	//攻撃タイプ
-	atkType_[static_cast<int>(ATK_ACT::ATK)] = ATK_TYPE::NORMALATK;
-	atkType_[static_cast<int>(ATK_ACT::SKILL1)] = ATK_TYPE::NORMALATK;
-	atkType_[static_cast<int>(ATK_ACT::SKILL2)] = ATK_TYPE::NORMALATK;
+	atkTypes_[static_cast<int>(ATK_ACT::ATK)] = ATK_TYPE::NORMALATK;
+	atkTypes_[static_cast<int>(ATK_ACT::SKILL1)] = ATK_TYPE::NORMALATK;
+	atkTypes_[static_cast<int>(ATK_ACT::SKILL2)] = ATK_TYPE::NORMALATK;
 }
 
 void PlAxe::InitCharaAnim(void)
@@ -90,7 +99,7 @@ void PlAxe::Skill1Func(void)
 	//力溜めて打ち込むやつ
 	moveAble_ = false;
 	//クールタイムの初期化
-	coolTime_[static_cast<int>(act_)] = 0.0f;
+	//coolTime_[static_cast<int>(act_)] = 0.0f;
 	if (IsAtkStart())
 	{
 		if (stepAnim_ >= 16.9f)
@@ -104,7 +113,7 @@ void PlAxe::Skill2Func(void)
 {
 	if (atk_.cnt_ >= SKILL2_CHANGE_ANIM_TIME)
 	{
-		ResetAnim(ANIM::UNIQUE_2, SPEED_ANIM_ATK);
+		if (stepAnim_ > 14.0f)ResetAnim(ANIM::UNIQUE_2, SPEED_ANIM_ATK);
 		//回転中移動できる
 		moveAble_ = true;
 		//攻撃座標を移動中も同期する

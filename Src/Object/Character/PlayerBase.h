@@ -1,11 +1,13 @@
 #pragma once
+#include<map>
+#include<functional>
 #include"../Utility/AsoUtility.h"
 #include"../Manager/SceneManager.h"
 #include"../Manager/InputManager.h"
-#include<map>
 #include "../UnitBase.h"
 
 #define DEBUG_ON
+//#define DEBUG_COOL
 class PlayerBase :
     public UnitBase
 {
@@ -95,8 +97,6 @@ public:
     //コントローラー変更用関数
     void ChangeControll(SceneManager::CNTL _cntl);
 
-    //
-
     //回避関連
    //---------------------------------------
     const  bool IsDodge(void) { return 0.0f < dodgeCnt_ && dodgeCnt_ < FRAME_DODGE_MAX; }
@@ -177,23 +177,25 @@ protected:
     //*************************************************
     //システム系
     //ステータス系
-    VECTOR userOnePos_;                                   //ユーザー1追従用の座標   
-    VECTOR colPos_;                                       //プレイヤーの当たり判定座標
-    SceneManager::ROLE role_;                             //役割
-    ATK_ACT act_;                                         //攻撃種類
-    float atkStartCnt_;                                   //攻撃が発生するまでのカウント
-    float moveSpeed_;                                     //移動スピード
-    float coolTime_[static_cast<int>(ATK_ACT::MAX)];      //それぞれのクールタイムカウント
-    bool isCool_[static_cast<int>(ATK_ACT::MAX)];         //それぞれの攻撃使い終わりを格納する
-    float multiHitInterval_;                              //多段ヒットのダメージ間隔
-    ATK_TYPE atkType_[static_cast<int>(ATK_ACT::MAX)];    //攻撃のタイプ(チャージするかしないか)
-    float pushCnt_;                                       //長押しスキル用のボタンを押した時間
+    VECTOR userOnePos_;                                         //ユーザー1追従用の座標   
+    VECTOR colPos_;                                             //プレイヤーの当たり判定座標
+    SceneManager::ROLE role_;                                   //役割
+    ATK_ACT act_;                                               //攻撃種類
+    std::map < ATK_ACT, std::function<void(void)>>changeAct_;   //攻撃の変更
+    std::function<void(void)>actUpdate_;                        //攻撃ごとの更新処理
+    float atkStartCnt_;                                         //攻撃が発生するまでのカウント
+    float moveSpeed_;                                           //移動スピード
+    float coolTime_[static_cast<int>(ATK_ACT::MAX)];            //それぞれのクールタイムカウント
+    bool isCool_[static_cast<int>(ATK_ACT::MAX)];               //それぞれの攻撃使い終わりを格納する
+    float multiHitInterval_;                                    //多段ヒットのダメージ間隔
+    ATK_TYPE atkType_;                                           //タイプ変数
+    ATK_TYPE atkTypes_[static_cast<int>(ATK_ACT::MAX)];          //攻撃のタイプ(チャージするかしないか)
+    std::map<ATK_TYPE, std::function<void(void)>>changeAtkType_;//攻撃タイプ変更
+    std::function<void(void)>atkTypeUpdate_;                    //攻撃タイプごとのアップデート
+    bool isPush_;                                               //長押しスキル用のボタンを押しているかどうか  true:押している
 
-    //それぞれの最大値セット用
-    std::map<ATK_ACT, float> colRadius_;                             //当たり判定
-    std::map<ATK_ACT, VECTOR> colLocalPos_;                         //攻撃座標
-    std::map<ATK_ACT, float> dulationMax_;                          //持続時間
-    std::map<ATK_ACT, float> backLashMax_;                          //後隙
+    //それぞれの最大値セット用(攻撃の座標はローカル座標で設定してます)
+    std::map<ATK_ACT, ATK>atkMax_;
     float coolTimeMax_[static_cast<int>(ATK_ACT::MAX)];             //クールタイム最大
     float atkStartTime_[static_cast<int>(ATK_ACT::MAX)];            //攻撃発生時間
     //コントローラー系
@@ -213,6 +215,8 @@ protected:
 
     //CPU系
     CPU_STATE cpuState_;        //状態
+    std::map < CPU_STATE, std::function<void(void)>> cpuStateChanges_;  //状態ごとの初期化
+    std::function<void(void)> cpuStateUpdate_;                          //状態ごとの更新
     bool isMove_;               //動いているかどうか
     bool isCall_;               //プレイヤーに呼び出されたか
     bool isMove2CallPlayer_;    //強制呼び出され中か　true:呼び出されてプレイヤーまで移動中
@@ -228,6 +232,9 @@ protected:
 
     //プレイヤーがCPUかUSERか判別
     SceneManager::PLAY_MODE mode_;
+    //モード変更しないけどデバッグしやすいようにする
+    std::map < SceneManager::PLAY_MODE, std::function<void(void)>>changeMode_;
+    std::function<void(void)>modeUpdate_;       //モードごとの処理
 
     //アニメNo初期化
     void InitAnimNum(void);
@@ -242,7 +249,11 @@ protected:
     virtual void ResetGuardCnt(void);
 
     //攻撃変更用
-    void ChangeAtk(const ATK_ACT _act);
+    void ChangeAct(const ATK_ACT _act);
+
+    void ChangeNmlAtk(void);
+    void ChangeSkillOne(void);
+    void ChangeSkillTwo(void);
 
 
 
@@ -254,6 +265,11 @@ protected:
     //ユーザーがいるときの更新
     void UserUpdate(void);
 
+    //デバッグしやすいようにチェンジ作る
+    void ChangeMode(SceneManager::PLAY_MODE _mode);
+    void ChangeUser(void);
+    void ChangeCpu(void);
+
     //操作系（キーボード)
     void KeyBoardControl(void);
 
@@ -262,6 +278,8 @@ protected:
 
 
     SceneManager::CNTL cntl_;
+    std::map < SceneManager::CNTL, std::function<void(void)>> changeCntl_;//コントローラー変更用
+    std::function<void(void)> cntlUpdate_;                                 //それぞれの更新
 
     SKILL_NUM skillNo_;     //スキル変更用
 
@@ -270,6 +288,11 @@ protected:
 
     //CPUのアップデート
     void CpuActUpdate(ATK_ACT _act);
+
+    //各役割の初期化
+    void CpuChangeNml(void);
+    void CpuChangeAtk(void);
+    void CpuChangeBreak(void);
 
     //各状態の更新
     void CpuNmlUpdate(void);
@@ -281,15 +304,12 @@ protected:
 
     //プレイヤー(CPUとユーザー)共通処理
     //--------------------------------------------------
-
-    //それぞれの攻撃処理をさせる
-    void AtkUpdate(void);
     //攻撃処理
-    virtual void AtkFunc(void);
+    virtual void AtkFunc(void)=0;
     //スキル1
-    virtual void Skill1Func(void);
+    virtual void Skill1Func(void)=0;
     //スキル2
-    virtual void Skill2Func(void);
+    virtual void Skill2Func(void)=0;
 
     //各アクションの共通処理
     void Action(void);
@@ -297,19 +317,33 @@ protected:
     //チャージなしの攻撃
     void NmlAct(void);
 
+    //短押し攻撃共通処理(攻撃カウントとか後隙とか)
+    void NmlActCommon(void);
+
     //チャージ攻撃
     void ChargeAct(void);
+
+    //攻撃タイプ変更
+    void ChangeChargeAct(void);
+    void ChangeNmlAct(void);
 
     //攻撃発生中フラグ
     bool IsAtkStart(void) { return 0.0f < atkStartCnt_ && atkStartCnt_ <= atkStartTime_[static_cast<int>(act_)]; }
 
+    //攻撃発生したのを確認する
     bool IsFinishAtkStart(void) { return atkStartCnt_ > atkStartTime_[static_cast<int>(act_)]; }
+
+    //コントローラー変更
+    void ChangeGamePad(void);
+    //キーボード変更
+    void ChangeKeyBoard(void);
+
 
     //攻撃座標の同期
     void SyncActPos(VECTOR& _localPos);
 
     //スキルごとの操作更新
-    void ChangeSkillControll(void);
+    void ChangeSkillControll(SKILL_NUM _skill);
 
     //攻撃終わった後の初期化
     void InitAtk(void);
@@ -379,16 +413,6 @@ protected:
 
     //スキル使用可能かどうか
     bool IsSkillable(void) { return !IsAtkAction() && !IsDodge(); }
-
-
-    //スキルクールタイム中フラグ
-    bool IsSkillCool(void);
-
-    //スキルごとに再生するアニメーションを決める
-    void SkillAnim(void);
-
-
-
 
     //とりあえずランダムに攻撃を決める
     void RandAct(void);

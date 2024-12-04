@@ -10,12 +10,6 @@ PlKnight::PlKnight(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNu
 
 void PlKnight::SetParam(void)
 {
-	//acts_[ATK_ACT::ATK].pos_ = VAdd(trans_.pos, ATK_COL_LOCAL_POS);
-	//acts_[ATK_ACT::ATK].ResetCnt();
-	//acts_[ATK_ACT::ATK].duration_ = FRAME_ATK_DURATION;
-	//acts_[ATK_ACT::ATK].backlash_ = FRAME_ATK_BACKRASH;
-	//acts_[ATK_ACT::ATK].pow_ = 0;
-
 	InitAct();
 
 	trans_.SetModel(
@@ -42,26 +36,15 @@ void PlKnight::SetParam(void)
 
 void PlKnight::InitAct(void)
 {
+	//通常攻撃の最大値
+	atkMax_.emplace(ATK_ACT::ATK, ATK_MAX);
 
-	//範囲
-	colRadius_.emplace(ATK_ACT::ATK, COL_ATK);
-	colRadius_.emplace(ATK_ACT::SKILL1, COL_SKILL1);
-	colRadius_.emplace(ATK_ACT::SKILL2, COL_SKILL2);
+	//スキル１の最大値
+	atkMax_.emplace(ATK_ACT::SKILL1, SKILL_ONE_MAX);
 
-	//座標
-	colLocalPos_.emplace(ATK_ACT::ATK, ATK_COL_LOCAL_POS);
-	colLocalPos_.emplace(ATK_ACT::SKILL1, SKILL1_COL_LOCAL_POS);
-	colLocalPos_.emplace(ATK_ACT::SKILL2, SKILL2_COL_LOCAL_POS);
+	//スキル２の最大値
+	atkMax_.emplace(ATK_ACT::SKILL2, SKILL_TWO_MAX);
 
-	//持続時間
-	dulationMax_.emplace(ATK_ACT::ATK, FRAME_ATK_DURATION);
-	dulationMax_.emplace(ATK_ACT::SKILL1, FRAME_SKILL1_DURATION);
-	dulationMax_.emplace(ATK_ACT::SKILL2, FRAME_SKILL2_DURATION);
-
-	//後隙
-	backLashMax_.emplace(ATK_ACT::ATK, FRAME_ATK_BACKRASH);
-	backLashMax_.emplace(ATK_ACT::SKILL1, FRAME_SKILL1_BACKRASH);
-	backLashMax_.emplace(ATK_ACT::SKILL2, FRAME_SKILL2_BACKRASH);
 
 	//クールタイム
 	coolTimeMax_[static_cast<int>(ATK_ACT::ATK)] = ATK_COOLTIME;
@@ -74,9 +57,9 @@ void PlKnight::InitAct(void)
 	atkStartTime_[static_cast<int>(ATK_ACT::SKILL2)] = SKILL_TWO_START;
 
 	//攻撃タイプ
-	atkType_[static_cast<int>(ATK_ACT::ATK)] = ATK_TYPE::NORMALATK;
-	atkType_[static_cast<int>(ATK_ACT::SKILL1)] = ATK_TYPE::NORMALATK;
-	atkType_[static_cast<int>(ATK_ACT::SKILL2)] = ATK_TYPE::CHARGEATK;
+	atkTypes_[static_cast<int>(ATK_ACT::ATK)] = ATK_TYPE::NORMALATK;
+	atkTypes_[static_cast<int>(ATK_ACT::SKILL1)] = ATK_TYPE::NORMALATK;
+	atkTypes_[static_cast<int>(ATK_ACT::SKILL2)] = ATK_TYPE::CHARGEATK;
 
 }
 
@@ -87,7 +70,13 @@ void PlKnight::AtkFunc(void)
 
 void PlKnight::ResetGuardCnt(void)
 {
-	coolTime_[static_cast<int>(SKILL_NUM::TWO)] -= 3.0f;
+	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > GUARD_STARTABLE_COOL)
+	{
+		isCool_[static_cast<int>(SKILL_NUM::TWO)] = false;
+		coolTime_[static_cast<int>(SKILL_NUM::TWO)] -= SKILL_TWO_START_COOLTIME;
+		atkMax_[ATK_ACT::SKILL2].duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
+		CntUp(atkStartCnt_);
+	}
 }
 
 
@@ -99,10 +88,26 @@ void PlKnight::Skill1Func(void)
 
 void PlKnight::Skill2Func(void)
 {
+	//CPUの時にisPushいらないからここを考える(Changeするときにクールタイム回復をtrueにすれば治るかも)
+	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] <= 0.0f||!isPush_)
+	{
+		//スキル切り替え出来ないようにする
+		return;
+	}
+//	if (isPush_)
+	//{
+		if(IsAtkStart())CntUp(atkStartCnt_);
+		
+		if (IsFinishAtkStart())
+		{
+			CntUp(atk_.cnt_);
+		}
+	//}
 	if (IsAtkAction())
 	{
 		if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > 0.0f)
 		{
+			//skillNo_ = SKILL_NUM::TWO;
 			moveAble_ = false;
 			isCool_[static_cast<int>(SKILL_NUM::TWO)] = false;
 			CntDown(coolTime_[static_cast<int>(SKILL_NUM::TWO)]);
@@ -112,9 +117,10 @@ void PlKnight::Skill2Func(void)
 			}
 		}
 	}
-	else
+	else if(coolTime_[static_cast<int>(SKILL_NUM::TWO)] <= SKILL_TWO_START_COOLTIME)
 	{
-		dulationMax_[ATK_ACT::SKILL2] = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
+		isCool_[static_cast<int>(SKILL_NUM::TWO)] = true;
+		return;
 	}
 }
 

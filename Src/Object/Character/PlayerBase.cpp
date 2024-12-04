@@ -25,11 +25,40 @@ void PlayerBase::Init(void)
 #ifdef DEBUG_ON
 	InitDebug();
 #endif // DEBUG_ON
+	//関数ポインタを使ってます
+	cpuStateChanges_.emplace(CPU_STATE::NORMAL, std::bind(&PlayerBase::CpuChangeNml, this));
+	cpuStateChanges_.emplace(CPU_STATE::ATTACK, std::bind(&PlayerBase::CpuChangeAtk, this));
+	cpuStateChanges_.emplace(CPU_STATE::BREAK, std::bind(&PlayerBase::CpuChangeBreak, this));
+
+
+	changeAtkType_.emplace(ATK_TYPE::CHARGEATK, std::bind(&PlayerBase::ChangeChargeAct, this));
+	changeAtkType_.emplace(ATK_TYPE::NORMALATK, std::bind(&PlayerBase::ChangeNmlAct, this));
+
+	changeCntl_.emplace(SceneManager::CNTL::KEYBOARD, std::bind(&PlayerBase::ChangeKeyBoard, this));
+	changeCntl_.emplace(SceneManager::CNTL::PAD, std::bind(&PlayerBase::ChangeGamePad, this));
+
+	changeAct_.emplace(ATK_ACT::ATK, std::bind(&PlayerBase::ChangeNmlAtk, this));
+	changeAct_.emplace(ATK_ACT::SKILL1, std::bind(&PlayerBase::ChangeSkillOne, this));
+	changeAct_.emplace(ATK_ACT::SKILL2, std::bind(&PlayerBase::ChangeSkillTwo, this));
+
+	changeMode_.emplace(SceneManager::PLAY_MODE::USER, std::bind(&PlayerBase::ChangeUser, this));
+	changeMode_.emplace(SceneManager::PLAY_MODE::CPU, std::bind(&PlayerBase::ChangeCpu, this));
+
+	//攻撃の初期化(とりあえず通常攻撃で初期化しておく)
+	ChangeAct(ATK_ACT::ATK);
+
+	//コンストラクタのmodeで初期化する
+	ChangeMode(mode_);
+
 	skillNo_ = SKILL_NUM::ONE;
 
 	dodgeCdt_ = DODGE_CDT_MAX;
 	moveSpeed_ = 0.0f;
 	ChangeControll(SceneManager::CNTL::KEYBOARD);
+
+	ChangeSkillControll(SKILL_NUM::ONE);
+
+	ChangeState(CPU_STATE::NORMAL);
 
 	searchRange_ = SEARCH_RANGE;
 
@@ -43,6 +72,7 @@ void PlayerBase::Init(void)
 
 	act_ = ATK_ACT::MAX;
 
+
 	calledMoveSpeed_ = 1.0f;
 
 	atk_.isHit_ = false;
@@ -52,6 +82,10 @@ void PlayerBase::Init(void)
 	multiHitInterval_ = 0.0f;
 
 	atkStartCnt_ = 0.0f;
+
+	isPush_ = false;
+
+
 
 	//モデルの初期化
 	trans_.Update();
@@ -112,17 +146,8 @@ void PlayerBase::Update(void)
 #endif // DEBUG_ON
 
 	//それぞれの更新
-	switch (mode_)
-	{
-	case SceneManager::PLAY_MODE::USER:
-		UserUpdate();
-		break;
-	case SceneManager::PLAY_MODE::CPU:
-		CpuUpdate();
-		break;
-	default:
-		break;
-	}
+	modeUpdate_();
+
 	//アクション判定
 	Action();
 
@@ -164,19 +189,7 @@ void PlayerBase::Update(void)
 }
 void PlayerBase::CpuUpdate(void)
 {
-	switch (cpuState_)
-	{
-	case PlayerBase::CPU_STATE::NORMAL:
-		CpuNmlUpdate();
-		break;
-	case PlayerBase::CPU_STATE::ATTACK:
-		CpuAtkUpdate();
-		break;
-	case PlayerBase::CPU_STATE::BREAK:
-		CpuBreakUpdate();
-		break;
-	}
-
+	cpuStateUpdate_();
 }
 
 void PlayerBase::Draw(void)
@@ -211,64 +224,60 @@ void PlayerBase::Move(float _deg, VECTOR _axis)
 void PlayerBase::UserUpdate(void)
 {
 	//停止状態の時のアニメーション
-	if (!IsMove() && !IsDodge() && !IsAtkAction() /*&& pushCnt_ <= 0.0f*/)
+	if (!IsMove() && !IsDodge() && !IsAtkAction())
 	{
 		ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 		moveSpeed_ = 0.0f;
 	}
 	//それぞれの操作更新
-	switch (cntl_)
-	{
-	case  SceneManager::CNTL::KEYBOARD:
-		KeyBoardControl();
-		break;
-	case  SceneManager::CNTL::PAD:
-		GamePad();
-		break;
-	}
+	cntlUpdate_();
 
 	//回避
 	Dodge();
 
 }
 
+void PlayerBase::ChangeMode(SceneManager::PLAY_MODE _mode)
+{
+	mode_ = _mode;
+	changeMode_[mode_]();
+}
+
+void PlayerBase::ChangeUser(void)
+{
+	modeUpdate_ = std::bind(&PlayerBase::UserUpdate, this);
+}
+
+void PlayerBase::ChangeCpu(void)
+{
+	modeUpdate_ = std::bind(&PlayerBase::CpuUpdate, this);
+}
+
+//役割ごとのCPU処理を作るので残しておく
 void PlayerBase::CpuActUpdate(ATK_ACT _act)
 {
 
 }
 
-void PlayerBase::AtkUpdate(void)
+void PlayerBase::CpuChangeNml(void)
 {
-	switch (act_)
-	{
-	case PlayerBase::ATK_ACT::ATK:
-		AtkFunc();
-		break;
-	case PlayerBase::ATK_ACT::SKILL1:
-		Skill1Func();
-		break;
-	case PlayerBase::ATK_ACT::SKILL2:
-		Skill2Func();
-		break;
-	default:
-		break;
-	}
+	cpuStateUpdate_ = std::bind(&PlayerBase::CpuNmlUpdate, this);
 }
 
-void PlayerBase::AtkFunc(void)
+void PlayerBase::CpuChangeAtk(void)
 {
-
+	isCall_ = false;
+	cpuStateUpdate_ = std::bind(&PlayerBase::CpuAtkUpdate, this);
 }
 
-void PlayerBase::Skill1Func(void)
+void PlayerBase::CpuChangeBreak(void)
 {
-
+	breakCnt_ = 0.0f;
+	cpuStateUpdate_ = std::bind(&PlayerBase::CpuBreakUpdate, this);
 }
 
-void PlayerBase::Skill2Func(void)
-{
 
-}
+
 
 void PlayerBase::InitAnimNum(void)
 {
@@ -290,43 +299,42 @@ void PlayerBase::InitAct(void)
 
 }
 
-void PlayerBase::ChangeAtk(const ATK_ACT _act)
+void PlayerBase::ChangeAct(const ATK_ACT _act)
 {
 	act_ = _act;
 	//クールタイム中なら処理しない
 	if (isCool_[static_cast<int>(act_)])return;
-	switch (act_)
-	{
-	case PlayerBase::ATK_ACT::ATK:
-		//アニメーション
-		ResetAnim(ANIM::UNIQUE_1, SPEED_ANIM_ATK);
-		//カウンタ開始
-		break;
-	case PlayerBase::ATK_ACT::SKILL1:
-		//アニメーション
-		ResetAnim(ANIM::SKILL_1, SPEED_ANIM_ATK);
-		break;
-	case PlayerBase::ATK_ACT::SKILL2:
-		//アニメーション
-		ResetAnim(ANIM::SKILL_2, SPEED_ANIM_ATK);
-		break;
-
-	}
 	ResetParam(_act);
 	SyncActPos(atk_.pos_);
-	atkStartCnt_ = 0.0f;
+	changeAct_[_act]();
+
 
 	//atkStartCnt_をここで開始させる
-	CntUp(atkStartCnt_);
+	//CntUp(atkStartCnt_);
+}
+
+void PlayerBase::ChangeNmlAtk(void)
+{
+	ResetAnim(ANIM::UNIQUE_1, SPEED_ANIM_ATK);
+	actUpdate_ = std::bind(&PlayerBase::AtkFunc, this);
+}
+
+void PlayerBase::ChangeSkillOne(void)
+{
+	ResetAnim(ANIM::SKILL_1, SPEED_ANIM_ATK);
+	isCool_[static_cast<int>(SKILL_NUM::TWO)] = true;
+	actUpdate_ = std::bind(&PlayerBase::Skill1Func, this);
+}
+
+void PlayerBase::ChangeSkillTwo(void)
+{
+	ResetAnim(ANIM::SKILL_2, SPEED_ANIM_ATK);
+	actUpdate_ = std::bind(&PlayerBase::Skill2Func, this);
 }
 
 void PlayerBase::ResetParam(ATK_ACT _act)
 {
-	atk_.radius_ = colRadius_[_act];
-	atk_.pos_ = colLocalPos_[_act];
-	atk_.backlash_ = backLashMax_[_act];
-	atk_.duration_ = dulationMax_[_act];
-	atk_.isHit_ = false;
+	atk_ = atkMax_[act_];
 }
 
 void PlayerBase::KeyBoardControl(void)
@@ -338,54 +346,38 @@ void PlayerBase::KeyBoardControl(void)
 		ChangeControll(SceneManager::CNTL::PAD);
 	}
 	//前
-	if (ins.IsNew(KEY_INPUT_W))
-	{
-		Move(0.0f, AsoUtility::AXIS_Y);
-	}
+	if (ins.IsNew(KEY_INPUT_W)){Move(0.0f, AsoUtility::AXIS_Y);}
+
 	//右
-	else if (ins.IsNew(KEY_INPUT_D))
-	{
-		Move(90.0f, AsoUtility::AXIS_Y);
-	}
+	else if (ins.IsNew(KEY_INPUT_D)){Move(90.0f, AsoUtility::AXIS_Y);}
+
 	//下
-	else if (ins.IsNew(KEY_INPUT_S))
-	{
-		Move(180.0f, AsoUtility::AXIS_Y);
-	}
+	else if (ins.IsNew(KEY_INPUT_S)){Move(180.0f, AsoUtility::AXIS_Y);}
+
 	//左
-	else if (ins.IsNew(KEY_INPUT_A))
-	{
-		Move(270.0f, AsoUtility::AXIS_Y);
-	}
-	else
-	{
-		moveSpeed_ = 0.0f;
-	}
+	else if (ins.IsNew(KEY_INPUT_A)){Move(270.0f, AsoUtility::AXIS_Y);}
+
+	//動いてないときはスピード0にする
+	else{moveSpeed_ = 0.0f;}
 
 
 
 
 
 	//攻撃（攻撃アニメーションのフレームが0以下だったらフレームを設定）
-	if (ins.IsTrgDown(KEY_INPUT_E) && IsAtkable())
-	{
-		ChangeAtk(ATK_ACT::ATK);
-	}
+	if (ins.IsTrgDown(KEY_INPUT_E) && IsAtkable()){ChangeAct(ATK_ACT::ATK);}
 
 	//スキル切り替え
 	if (ins.IsTrgDown(KEY_INPUT_J) && !IsAtkAction())
 	{
 		skillNo_ = static_cast<SKILL_NUM>(static_cast<int>(skillNo_) + 1);
-		if (skillNo_ == SKILL_NUM::MAX)
-		{
-			skillNo_ = SKILL_NUM::ONE;
-		}
+
+		//MAXになったらスキル１に戻る
+		skillNo_ == SKILL_NUM::MAX ? SKILL_NUM::ONE : skillNo_;
 	}
 
-	if (ins.IsTrgDown(KEY_INPUT_Q) && IsSkillable())
-	{
-		ChangeAtk(static_cast<ATK_ACT>(skillNo_));
-	}
+	//スキル
+	if (ins.IsTrgDown(KEY_INPUT_Q) && IsSkillable()){ChangeAct(static_cast<ATK_ACT>(skillNo_));}
 
 	//回避
 	if (ins.IsTrgDown(KEY_INPUT_N) && IsSkillable())
@@ -393,10 +385,6 @@ void PlayerBase::KeyBoardControl(void)
 		ResetAnim(ANIM::DODGE, SPEED_ANIM_DODGE);
 		CntUp(dodgeCnt_);
 	}
-
-
-
-
 }
 
 void PlayerBase::GamePad(void)
@@ -417,54 +405,45 @@ void PlayerBase::GamePad(void)
 	auto stickRad = static_cast<float>(atan2(static_cast<double>(leftStickY_), static_cast<double>(leftStickX_)));
 	stickDeg_ = static_cast<float>(AsoUtility::DegIn360(AsoUtility::Rad2DegF(stickRad) + 90.0f));
 	//前
-	if (leftStickY_ < -1)
-	{
-		Move(stickDeg_, AsoUtility::AXIS_Y);
-	}
+	if (leftStickY_ < -1) { Move(stickDeg_, AsoUtility::AXIS_Y); }
+
 	//右
-	else if (leftStickX_ > 1)
-	{
-		Move(stickDeg_, AsoUtility::AXIS_Y);
-	}
+	else if (leftStickX_ > 1) { Move(stickDeg_, AsoUtility::AXIS_Y); }
+
 	//下
-	else if (leftStickY_ > 1)
-	{
-		Move(stickDeg_, AsoUtility::AXIS_Y);
-	}
+	else if (leftStickY_ > 1){Move(stickDeg_, AsoUtility::AXIS_Y);}
+
 	//左
-	else if (leftStickX_ < -1)
-	{
-		Move(stickDeg_, AsoUtility::AXIS_Y);
-	}
-	else
-	{
-		moveSpeed_ = 0.0f;
-	}
+	else if (leftStickX_ < -1){Move(stickDeg_, AsoUtility::AXIS_Y);}
+
+	else{moveSpeed_ = 0.0f;}
 
 	//攻撃（攻撃アニメーションのフレームが0以下だったらフレームを設定）
 	if (ins.IsPadBtnTrgDown(padNum_, InputManager::JOYPAD_BTN::RIGHT)
 		&& IsAtkable())
 	{
-		ChangeAtk(ATK_ACT::ATK);
+		if (isCool_[static_cast<int>(ATK_ACT::ATK)])return;
+		ChangeAct(ATK_ACT::ATK);
+		CntUp(atkStartCnt_);
 	}
 
-	//スキル
-	ChangeSkillControll();
-	//if (ins.IsPadBtnTrgDown(padNum_, InputManager::JOYPAD_BTN::TOP)
-	//	&& IsSkillable())
-	//{
-	//	//スキルごとにアニメーションを決めて、カウント開始
-	//	ChangeAtk(static_cast<ATK_ACT>(skillNo_));
-	//}
 
-	if (ins.IsPadBtnTrgDown(padNum_, InputManager::JOYPAD_BTN::R_BUTTON)
-		&& !IsAtkAction())
+	//スキル(短押しと長押しで分けている)
+	atkTypeUpdate_();
+
+	if (ins.IsPadBtnTrgDown(padNum_, InputManager::JOYPAD_BTN::R_BUTTON))
 	{
-		skillNo_ = static_cast<SKILL_NUM>(static_cast<int>(skillNo_) + 1);
-		if (skillNo_ == SKILL_NUM::MAX)
-		{
-			skillNo_ = SKILL_NUM::ONE;
+		if (!IsAtkAction()) 
+		{ 
+
+			skillNo_ = static_cast<SKILL_NUM>(static_cast<int>(skillNo_) + 1);
+			ChangeSkillControll(skillNo_);
+			if (skillNo_ == SKILL_NUM::MAX)
+			{
+				skillNo_ = SKILL_NUM::ONE;
+			}
 		}
+		
 	}
 
 	//回避
@@ -484,13 +463,7 @@ void PlayerBase::ResetGuardCnt(void)
 void PlayerBase::ChangeControll(SceneManager::CNTL _cntl)
 {
 	cntl_ = _cntl;
-	switch (cntl_)
-	{
-	case SceneManager::CNTL::KEYBOARD:
-		break;
-	case SceneManager::CNTL::PAD:
-		break;
-	}
+	changeCntl_[cntl_]();
 }
 
 
@@ -506,51 +479,26 @@ void PlayerBase::DrawDebug(void)
 	//	, atk_.cnt_, atk_.IsAttack(), atk_.IsBacklash()
 	//	, dodgeCnt_, atk_.cnt_);
 	DrawFormatString(0, 32, 0xffffff
-		, "AtkCooltime(%.2f)\nSkill1Cool(%.2f)\nSkill2Cool(%.2f)\ndulation(%f)"
-		, coolTime_[static_cast<int>(ATK_ACT::ATK)]
+		, "AtkCooltime(%.2f)\nSkill1Cool(%.2f)\nSkill2Cool(%.2f)\natkDulation(%f)"
+		,coolTime_[static_cast<int>(ATK_ACT::ATK)]
 		, coolTime_[static_cast<int>(ATK_ACT::SKILL1)]
 		, coolTime_[static_cast<int>(ATK_ACT::SKILL2)]
 		, atk_.duration_);
 
 	DrawSphere3D(colPos_, CHARACTER_SCALE * 100, 8, color_Col_, color_Col_, false);
 	DrawSphere3D(atk_.pos_, atk_.radius_, 8, color_Atk_, color_Atk_, false);
-	//DrawSphere3D(acts_[ATK_ACT::SKILL1].pos_, COL_SKILL1, 8, color_skl1_, color_skl1_, false);
-	//DrawSphere3D(acts_[ATK_ACT::SKILL2].pos_, COL_SKILL2, 8, color_skl2_, color_skl2_, false);
 
 	//プレイヤーの当たり判定
-	DrawSphere3D(colPos_, radius_, 4, 0xffff00, 0xffff00, false);
+	//DrawSphere3D(colPos_, radius_, 4, 0xffff00, 0xffff00, false);
 	//プレイヤーの索敵判定
-	DrawSphere3D(trans_.pos, searchRange_, 2, isMove_ ? 0xff0000 : 0xffffff, isMove_ ? 0xff0000 : 0xffffff, false);
+	//DrawSphere3D(trans_.pos, searchRange_, 2, isMove_ ? 0xff0000 : 0xffffff, isMove_ ? 0xff0000 : 0xffffff, false);
 	//プレイヤーの索敵判定
 	DrawSphere3D(userOnePos_, 20, 2, 0x0000ff, 0xffffff, false);
 
+	//攻撃状態の時、球体の色変更
+	if (atk_.IsAttack()){color_Atk_ = ATK_COLOR;}
+	else{color_Atk_ = 0x00ffff;}
 
-	if (atk_.IsAttack())
-	{
-		color_Atk_ = ATK_COLOR;
-	}
-	else
-	{
-		color_Atk_ = 0x00ffff;
-	}
-
-	if (atk_.IsAttack())
-	{
-		color_skl1_ = ATK_COLOR;
-	}
-	else
-	{
-		color_skl1_ = 0x00ffff;
-	}
-
-	if (atk_.IsAttack())
-	{
-		color_skl2_ = ATK_COLOR;
-	}
-	else
-	{
-		color_skl2_ = 0x00ffff;
-	}
 }
 #endif // DEBUG_ON
 
@@ -602,65 +550,56 @@ void PlayerBase::Turn(float _deg, VECTOR _axis)
 
 void PlayerBase::Action(void)
 {
-	AtkUpdate();
-	switch (atkType_[static_cast<int>(act_)])
-	{
-	case ATK_TYPE::CHARGEATK:
-		break;
-	case ATK_TYPE::NORMALATK:
-		if (IsAtkStart())
-		{
-			moveAble_ = false;
-			CntUp(atkStartCnt_);
-			if (IsFinishAtkStart())
-			{
-				CntUp(atk_.cnt_);
-			}
-		}
-		else
-		{
-			if ((atk_.IsAttack() || atk_.IsBacklash())/*&&IsFinishAtkStart()*/)
-			{
-				CntUp(atk_.cnt_);
-				//クールタイムの初期化
-				coolTime_[static_cast<int>(act_)] = 0.0f;
-			}
-			else /*if(atk_.IsFinishMotion())*/
-			{
-				InitAtk();
-			}
-		}
-		break;
-	default:
-		break;
-	}
-
+	//攻撃ごとの処理
+	actUpdate_();
 }
 
 void PlayerBase::NmlAct(void)
 {
-	//if (isCool_[static_cast<int>(act_)])return;
+	//共通
+	NmlActCommon();
+
 	auto& ins = InputManager::GetInstance();
 	//スキル
 	if (ins.IsPadBtnTrgDown(padNum_, InputManager::JOYPAD_BTN::TOP)
-		&& IsSkillable())
+		&& IsSkillable() && !isCool_[static_cast<int>(skillNo_)])
 	{
 		//スキルごとにアニメーションを決めて、カウント開始
-		ChangeAtk(static_cast<ATK_ACT>(skillNo_));
+		ChangeAct(static_cast<ATK_ACT>(skillNo_));
+		CntUp(atkStartCnt_);
+	}
+}
+
+void PlayerBase::NmlActCommon(void)
+{
+	if (IsAtkStart())
+	{
+		moveAble_ = false;
+		CntUp(atkStartCnt_);
+		if (IsFinishAtkStart()) { CntUp(atk_.cnt_); }
 	}
 	else
 	{
-
+		if ((atk_.IsAttack() || atk_.IsBacklash()))
+		{
+			CntUp(atk_.cnt_);
+			//クールタイムの初期化
+			coolTime_[static_cast<int>(act_)] = 0.0f;
+		}
+		else
+		{
+			InitAtk();
+		}
 	}
-
 }
 
 void PlayerBase::ChargeAct(void)
 {
-	//スキルボタンは同じだからスキルボタンを押しているときと話した時の処理を各役割ごとで作る
+	//スキルボタンは同じだからスキルボタンを押しているときと離した時の処理を各役割ごとで作る
 	auto& ins = InputManager::GetInstance();
 	if (ins.IsPadBtnTrgDown(padNum_, InputManager::JOYPAD_BTN::TOP))
 	{
+		//ボタンの押しはじめの時に値初期化
 		ResetGuardCnt();
 	}
 
@@ -668,15 +607,26 @@ void PlayerBase::ChargeAct(void)
 	if (ins.IsPadBtnNew(padNum_, InputManager::JOYPAD_BTN::TOP))
 	{
 		//スキルごとにアニメーションを決めて、カウント開始
-		CntUp(atk_.cnt_);
-		CntUp(pushCnt_);
-		ChangeAtk(static_cast<ATK_ACT>(skillNo_));
+		ChangeAct(static_cast<ATK_ACT>(skillNo_));
+
+		//押している反応
+		isPush_ = true;
 	}
 	else if (ins.IsPadBtnTrgUp(padNum_, InputManager::JOYPAD_BTN::TOP))
 	{
 		InitAtk();
-		pushCnt_ = 0.0f;
+		isPush_ = false;
 	}
+}
+
+void PlayerBase::ChangeChargeAct(void)
+{
+	atkTypeUpdate_ = std::bind(&PlayerBase::ChargeAct, this);
+}
+
+void PlayerBase::ChangeNmlAct(void)
+{
+	atkTypeUpdate_ = std::bind(&PlayerBase::NmlAct, this);
 }
 
 void PlayerBase::InitAtk(void)
@@ -700,22 +650,7 @@ void PlayerBase::InitAtk(void)
 void PlayerBase::ChangeState(CPU_STATE _state)
 {
 	cpuState_ = _state;
-
-	switch (cpuState_)
-	{
-	case CPU_STATE::NORMAL:
-		break;
-	case CPU_STATE::ATTACK:
-		isCall_ = false;
-		break;
-	case CPU_STATE::BREAK:
-		breakCnt_ = 0.0f;
-		break;
-	case CPU_STATE::MAX:
-		break;
-	default:
-		break;
-	}
+	cpuStateChanges_[_state]();
 }
 
 void PlayerBase::Reset(void)
@@ -757,6 +692,16 @@ void PlayerBase::Reset(void)
 	trans_.Update();
 }
 
+void PlayerBase::ChangeGamePad(void)
+{
+	cntlUpdate_ = std::bind(&PlayerBase::GamePad, this);
+}
+
+void PlayerBase::ChangeKeyBoard(void)
+{
+	cntlUpdate_ = std::bind(&PlayerBase::KeyBoardControl, this);
+}
+
 void PlayerBase::SyncActPos(VECTOR& _localPos)
 {
 	//追従対象の位置
@@ -766,24 +711,19 @@ void PlayerBase::SyncActPos(VECTOR& _localPos)
 	Quaternion followRot = trans_.quaRot;
 
 	//追従対象の角度
-	VECTOR relativeActPos = colLocalPos_[act_];
+	VECTOR relativeActPos = atkMax_[act_].pos_;
 
 	VECTOR addPos = followRot.PosAxis(VScale(relativeActPos, CHARACTER_SCALE));
 	//VECTOR relativeActPos = followRot.PosAxis(_localPos);
 	atk_.pos_ = VAdd(trans_.pos, addPos);
 }
 
-void PlayerBase::ChangeSkillControll(void)
+void PlayerBase::ChangeSkillControll(SKILL_NUM _skill)
 {
-	switch (atkType_[static_cast<int>(skillNo_)])
-	{
-	case ATK_TYPE::CHARGEATK:
-		ChargeAct();
-		break;
-	case ATK_TYPE::NORMALATK:
-		NmlAct();
-		break;
-	}
+	atkType_ = atkTypes_[static_cast<int>(_skill)];
+	isPush_ = false;
+	moveAble_ = true;
+	changeAtkType_[atkType_]();
 }
 
 
@@ -819,8 +759,6 @@ void PlayerBase::Dodge(void)
 #ifdef DEBUG_ON
 		color_Col_ = 0xffffff;
 #endif // DEBUG_ON
-
-
 	}
 }
 
@@ -832,23 +770,6 @@ void PlayerBase::SkillOneControll(void)
 void PlayerBase::SkillTwoControll(void)
 {
 
-}
-void PlayerBase::SkillAnim(void)
-{
-	switch (skillNo_)
-	{
-	case PlayerBase::SKILL_NUM::ONE:
-		ResetAnim(ANIM::SKILL_1, SPEED_ANIM);
-		break;
-	case PlayerBase::SKILL_NUM::TWO:
-		ResetAnim(ANIM::SKILL_2, SPEED_ANIM_ATK);
-		break;
-	case PlayerBase::SKILL_NUM::MAX:
-		break;
-	default:
-		break;
-	}
-	CntUp(atk_.cnt_);
 }
 
 void PlayerBase::Damage(void)
@@ -900,6 +821,10 @@ void PlayerBase::CoolTimeCnt(void)
 		{
 			isCool_[i] = false;
 			coolTime_[i] = coolTimeMax_[i];
+		}
+		else if (coolTime_[i] <= 0.0f)
+		{
+			coolTime_[i] = 0.0f;
 		}
 	}
 }
@@ -979,7 +904,7 @@ void PlayerBase::CpuAtkUpdate(void)
 		{
 			if (!isCool_[i])
 			{
-				ChangeAtk(static_cast<ATK_ACT>(i));
+				ChangeAct(static_cast<ATK_ACT>(i));
 				preAtk_ = static_cast<ATK_ACT>(i);
 				return;
 			}
@@ -988,11 +913,7 @@ void PlayerBase::CpuAtkUpdate(void)
 				continue;
 			}
 		}
-		//ATK_ACT rand = static_cast<ATK_ACT>(GetRand(static_cast<int>(ATK_ACT::MAX) - 1));
-		//preAtk_ = rand;
-
 	}
-
 }
 
 void PlayerBase::CpuBreakUpdate(void)
