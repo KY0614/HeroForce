@@ -22,10 +22,16 @@ void Fader::SetFade(STATE state)
 	}
 }
 
+void Fader::SetAlpha(float alpha)
+{
+	alphaMax_ = alpha_;
+}
+
 void Fader::Init(void)
 {
 	state_ = STATE::NONE;
 	alpha_ = 0;
+	alphaMax_ = 0;
 	isPreEnd_ = true;
 	isEnd_ = true;
 }
@@ -74,12 +80,12 @@ void Fader::Update(void)
 		}
 		break;
 
-	case STATE::FADE_NOTICE:
-		alpha_ += SPEED_SCENE;
-		if (alpha_ > NOTICE_ALPHA)
+	case STATE::SET_FADE_OUT:
+		alpha_ += SPEED_ALPHA;
+		if (alpha_ > alphaMax_)
 		{
 			// フェード終了
-			alpha_ = NOTICE_ALPHA;
+			alpha_ = LITTLE_ALPHA;
 			if (isPreEnd_)
 			{
 				// 1フレーム後(Draw後)に終了とする
@@ -104,7 +110,7 @@ void Fader::Draw(void)
 		return;
 
 	case STATE::FADE_KEEP:
-	case STATE::FADE_NOTICE:
+	case STATE::SET_FADE_OUT:
 	case STATE::FADE_OUT:
 	case STATE::FADE_IN:
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)alpha_);

@@ -56,7 +56,7 @@ void SceneManager::Init(void)
 	Init3D();
 
 	// 初期シーンの設定
-	DoChangeScene(SCENE_ID::TITLE);
+	DoChangeScene(SCENE_ID::GAME);
 
 	//メインウィンドウを追加
 	subWindowH_.push_back(NULL);

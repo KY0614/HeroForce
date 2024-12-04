@@ -5,21 +5,12 @@
 
 SkyDome::SkyDome()
 {
+	state_ = STATE::NONE;
 }
-
-//SkyDome::SkyDome(const Transform& syncTransform) : syncTransform_(syncTransform)
-//{
-//	state_ = STATE::NONE;
-//
-//	// èÛë‘ä«óù
-//	stateChanges_.emplace(STATE::NONE, std::bind(&SkyDome::ChangeStateNone, this));
-//	stateChanges_.emplace(STATE::STAY, std::bind(&SkyDome::ChangeStateStay, this));
-//	stateChanges_.emplace(STATE::FOLLOW, std::bind(&SkyDome::ChangeStateFollow, this));
-//
-//}
 
 SkyDome::~SkyDome(void)
 {
+
 }
 
 void SkyDome::Init(void)
@@ -44,7 +35,8 @@ void SkyDome::Init(void)
 
 void SkyDome::Update(void)
 {
-	//transform_.pos = follow_.pos;
+	Quaternion yRot = Quaternion::AngleAxis(AsoUtility::Deg2RadF(ROT_SPEED), AsoUtility::AXIS_Y);
+	transform_.quaRot = Quaternion::Mult(transform_.quaRot, yRot);
 	transform_.Update();
 }
 
@@ -57,49 +49,6 @@ void SkyDome::Release(void)
 {
 	MV1DeleteModel(transform_.modelId);
 }
-
-//void SkyDome::ChangeState(STATE state)
-//{
-//
-//	// èÛë‘ïœçX
-//	state_ = state;
-//
-//	// äeèÛë‘ëJà⁄ÇÃèâä˙èàóù
-//	stateChanges_[state_]();
-//
-//}
-//
-//void SkyDome::ChangeStateNone(void)
-//{
-//	stateUpdate_ = std::bind(&SkyDome::UpdateNone, this);
-//}
-//
-//void SkyDome::ChangeStateStay(void)
-//{
-//	stateUpdate_ = std::bind(&SkyDome::UpdateStay, this);
-//}
-//
-//void SkyDome::ChangeStateFollow(void)
-//{
-//	stateUpdate_ = std::bind(&SkyDome::UpdateFollow, this);
-//	transform_.pos = syncTransform_.pos;
-//	transform_.Update();
-//}
-//
-//void SkyDome::UpdateNone(void)
-//{
-//}
-//
-//void SkyDome::UpdateStay(void)
-//{
-//}
-//
-//void SkyDome::UpdateFollow(void)
-//{
-//	transform_.pos = syncTransform_.pos;
-//	transform_.Update();
-//}
-
 
 const Transform& SkyDome::GetTransform() const
 {

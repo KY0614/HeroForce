@@ -54,6 +54,8 @@ void InputManager::Init(void)
 	InputManager::GetInstance().Add(KEY_INPUT_L);
 
 	InputManager::GetInstance().Add(KEY_INPUT_B);
+	InputManager::GetInstance().Add(KEY_INPUT_K);
+	InputManager::GetInstance().Add(KEY_INPUT_O);
 
 
 	InputManager::MouseInfo info;

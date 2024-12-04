@@ -7,9 +7,11 @@
 class Grid;
 class PlayerBase;
 class Enemy;
-class StageBase;
+class StageManager;
 class SkyDome;
-class LevelBase;
+class LevelScreenManager;
+class UnitPositionLoad;
+class ChickenManager;
 
 class GameScene : public SceneBase
 {
@@ -38,7 +40,7 @@ public:
 private:
 
 	//ステージ
-	StageBase* stage_;
+	StageManager* stage_;
 
 	//スカイドーム
 	SkyDome* sky_;
@@ -55,7 +57,12 @@ private:
 	std::vector<std::unique_ptr<Enemy>> enemys_;
 	Enemy* enemyTest_;
 
-	LevelBase* level_;
+	//チキン
+	ChickenManager* chicken_;
+
+	LevelScreenManager* level_;
+
+	UnitPositionLoad* unitLoad_;
 
 	//ゲームシーンのフェーズ遷移中判定
 	bool isPhaseChanging_;
@@ -73,5 +80,8 @@ private:
 	void UpdatePhase(void);
 	//フェーズ描画
 	void DrawPhase(void);
+
+	//強化要素反映
+	void LevelUpReflection();
 };
 

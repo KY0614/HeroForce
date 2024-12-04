@@ -24,12 +24,12 @@
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
     <ClCompile Include="Src\Manager\Collision.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
-    <ClCompile Include="Src\Object\System\LevelBase.cpp" />
+    <ClCompile Include="Src\Object\System\LevelScreenManager.cpp" />
     <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
-    <ClCompile Include="Src\Object\Stage\StageBase.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
     <ClCompile Include="Src\Object\System\Carsor.cpp" />
     <ClCompile Include="Src\Object\System\LevelupNotice.cpp" />
-    <ClCompile Include="Src\Object\System\PowerSelect.cpp" />
+    <ClCompile Include="Src\Object\System\LevelupSelect.cpp" />
     <ClCompile Include="Src\Common\ImageFader.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\PlAxeMan.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\PlMage.cpp" />
@@ -37,6 +37,10 @@
     <ClCompile Include="Src\Object\Character\PlayableChara\PlArcher.cpp" />
     <ClCompile Include="Src\Manager\DataBank.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneAxe.cpp" />
+    <ClCompile Include="Src\Manager\TextManager.cpp" />
+    <ClCompile Include="Src\Object\System\UnitPositionLoad.cpp" />
+    <ClCompile Include="Src\Object\Character\Chiken\ChickenBase.cpp" />
+    <ClCompile Include="Src\Object\Character\Chiken\ChickenManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\Character\Enemy.h" />
@@ -118,13 +122,13 @@
     <ClCompile Include="Src\Object\Arrow.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClInclude Include="Src\Object\Stage\StageBase.h" />
-    <ClInclude Include="Src\Object\System\LevelBase.h" />
+    <ClInclude Include="Src\Object\Stage\StageManager.h" />
+    <ClInclude Include="Src\Object\System\LevelScreenManager.h" />
     <ClInclude Include="Src\Object\Stage\StageObject.h" />
     <ClInclude Include="Src\Object\Stage\SkyDome.h" />
     <ClInclude Include="Src\Object\System\Carsor.h" />
     <ClInclude Include="Src\Object\System\LevelupNotice.h" />
-    <ClInclude Include="Src\Object\System\PowerSelect.h" />
+    <ClInclude Include="Src\Object\System\LevelupSelect.h" />
     <ClInclude Include="Src\Common\ImageFader.h" />
     <ClInclude Include="Src\Manager\DataBank.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\PlArcher.h" />
@@ -132,6 +136,10 @@
     <ClInclude Include="Src\Object\Character\PlayableChara\PlKnight.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\PlMage.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneAxe.h" />
+    <ClInclude Include="Src\Manager\TextManager.h" />
+    <ClInclude Include="Src\Object\System\UnitPositionLoad.h" />
+    <ClInclude Include="Src\Object\Character\Chiken\ChickenBase.h" />
+    <ClInclude Include="Src\Object\Character\Chiken\ChickenManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">

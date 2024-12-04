@@ -1,6 +1,6 @@
 #pragma once
+#include <string>
 #include "../../Common/ImageFader.h"
-#include "LevelBase.h"
 
 class LevelupNotice
 {
@@ -15,13 +15,28 @@ public:
 		FIN,		//終了
 	};
 
+	//拡大率
+	static constexpr float EXPANSION_RATE = 1.0f;
+
+	//拡大最大
+	static constexpr float EXPANSION_MAX = 1.2f;
+
+	//維持秒数
+	static constexpr float MAINTAIN_SECONDS = 1.5f;
+
+	//フォント関連
+	static constexpr int FONT_SIZE = 128;
+	static constexpr int FONT_THICK = 3;
+
 	LevelupNotice();
 	~LevelupNotice();
 
 	void Init();
 	void Update();
 	void Draw();
+	void Release();
 
+	//変数の初期化
 	void Reset();
 
 	//状態の設定
@@ -44,8 +59,13 @@ private:
 	//大きさ
 	float scl_;
 
+	//フォント
+	int font_;
+
+	//テキスト
+	std::string text_;
+
 	//インスタンス
-	LevelBase* level_;
 	ImageFader* imgFader_;
 
 };
