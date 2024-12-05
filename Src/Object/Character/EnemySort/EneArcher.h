@@ -40,14 +40,29 @@ public:
 	static constexpr float ATK_START_RANGE = 500.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
 
 	//スキルの当たり判定半径
-	static constexpr float SKILL_ONE_COL_RADIUS = 10.0f;	//スキル１
+	static constexpr float SKILL_ONE_COL_RADIUS = 10.0f;	//スキル１の当たり判定半径
+
+	//スキルの攻撃力
+	static constexpr float SKILL_ONE_POW = 15.0f;			//スキル１の攻撃力
+
+	//スキルの持続時間
+	static constexpr float SKILL_ONE_DURATION = 3.0f;		//スキル１の持続時間
+
+	//スキルの後隙
+	static constexpr float SKILL_ONE_BACKLASH = 2.5f;		//スキル１の後隙
 
 	//スキル関係
-	static constexpr ATK SKILL_ONE = { AsoUtility::VECTOR_ZERO,SKILL_ONE_COL_RADIUS,15.0f,3.0f,2.0f,0.0f };	//スキル１
+	static constexpr ATK SKILL_ONE = { AsoUtility::VECTOR_ZERO	//スキル１の要素
+		,SKILL_ONE_COL_RADIUS
+		,SKILL_ONE_POW
+		,SKILL_ONE_DURATION
+		,SKILL_ONE_BACKLASH
+		,0.0f };
 
 	//弓矢関係
 	static constexpr int ARROW_SIZE_MAX = 5;	//矢の最大保持数
 	static constexpr float RELOAD_TIME = 5.0f;	//矢のリロード時間
+	static constexpr float ARROW_SPEED = 10.0f;	//矢のリロード時間
 
 private:
 	//****************************************************************
@@ -58,7 +73,7 @@ private:
 	void SetParam(void)override;
 
 	//アニメーション番号の初期化
-	void InitAnimNum(void)override;
+	void InitAnim(void)override;
 
 	//スキルの初期化
 	void InitSkill(void)override;
@@ -85,9 +100,12 @@ private:
 	//アニメーション終了時の動き
 	void FinishAnim(void)override;
 
-	//状態遷移における初期化処理
-	void InitChangeState(void)override;
-	
+	//状態遷移(攻撃警告)
+	void ChangeStateAlert(void)override;
+
+	//状態遷移(休憩)
+	void ChangeStateBreak(void)override;
+
 	//更新(攻撃)
 	void Update(void)override;
 	//更新(休憩)
