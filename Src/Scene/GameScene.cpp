@@ -110,7 +110,18 @@ void GameScene::Update(void)
 	enemyTest_->SetTargetPos(playerTest_->GetPos());
 	enemyTest_->Update();
 #endif
+	chicken_->SetTargetPos(playerTest_->GetPos());
+	chicken_->Update();
 
+	//あたり判定
+	Collision();
+
+	//強化要素の反映
+	LevelUpReflection();
+
+
+
+	//いずれ消す
 	auto& ins = InputManager::GetInstance();
 	auto& mng = SceneManager::GetInstance();
 	//スペース推したらタイトルに戻る
@@ -123,14 +134,6 @@ void GameScene::Update(void)
 	{
 		ChangePhase();
 	}
-	chicken_->SetTargetPos(playerTest_->GetPos());
-	chicken_->Update();
-
-	//あたり判定
-	Collision();
-
-	//強化要素の反映
-	LevelUpReflection();
 }
 
 void GameScene::Draw(void)
