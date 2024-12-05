@@ -40,10 +40,10 @@ public:
 private:
 
 	//ステージ
-	StageManager* stage_;
+	std::unique_ptr<StageManager> stage_;
 
 	//スカイドーム
-	SkyDome* sky_;
+	std::unique_ptr<SkyDome> sky_;
 
 	//フェーダー
 	std::unique_ptr<Fader>fader_;
@@ -56,11 +56,11 @@ private:
 	Enemy* enemyTest_;
 
 	//チキン
-	ChickenManager* chicken_;
+	std::unique_ptr<ChickenManager> chicken_;
 
-	LevelScreenManager* level_;
+	std::unique_ptr<LevelScreenManager> level_;
 
-	UnitPositionLoad* unitLoad_;
+	std::unique_ptr<UnitPositionLoad> unitLoad_;
 
 	//ゲームシーンのフェーズ遷移中判定
 	bool isPhaseChanging_;

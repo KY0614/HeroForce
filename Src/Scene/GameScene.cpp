@@ -34,23 +34,23 @@ GameScene::~GameScene(void)
 
 void GameScene::Init(void)
 {
-	unitLoad_ = new UnitPositionLoad();
+	unitLoad_ = std::make_unique<UnitPositionLoad>();
 	unitLoad_->Init();
 
-	stage_ = new StageManager();
+	stage_ = std::make_unique<StageManager>();
 	stage_->Init();
 
-	sky_ = new SkyDome();
+	sky_ = std::make_unique<SkyDome>();
 	sky_->Init();
 
-	level_ = new LevelScreenManager();
+	level_ = std::make_unique<LevelScreenManager>();
 	level_->Init();
 
 
 #ifdef _DEBUG_COL
 	playerTest_ = new PlAxe(SceneManager::PLAY_MODE::USER);
 	playerTest_->Init();
-	chicken_ = new ChickenManager(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU));
+	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU));
 	chicken_->Init();
 	playerTest_->ChangeControll(SceneManager::CNTL::KEYBOARD);
 	enemyTest_ = new EneAxe();
@@ -164,10 +164,7 @@ void GameScene::Draw(void)
 void GameScene::Release(void)
 {
 	level_->Release();
-	delete level_;
-	delete sky_;
 	stage_->Release();
-	delete stage_;
 
 	SceneManager::GetInstance().ResetCameras();
 	SceneManager::GetInstance().ReturnSolo();
@@ -182,8 +179,6 @@ void GameScene::Release(void)
 		e->Destroy();
 	}
 
-	delete unitLoad_;
-	delete chicken_;
 #ifdef _DEBUG_COL
 	playerTest_->Destroy();
 	delete playerTest_;
