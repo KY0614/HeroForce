@@ -15,8 +15,6 @@
 #include "../Object/System/UnitPositionLoad.h"
 #include "GameScene.h"
 
-
-
 #include "../Manager/InputManager.h"
 
 
