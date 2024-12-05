@@ -25,13 +25,9 @@ void Enemy::Init(void)
 	SetParam();
 
 	//アニメーション番号の初期化
-	InitAnimNum();
-
-	//アニメーションリセット
-	ResetAnim(ANIM::IDLE, SPEED_ANIM);
+	InitAnim();
 
 	//共通の変数の初期化
-	trans_.scl = { CHARACTER_SCALE,CHARACTER_SCALE,CHARACTER_SCALE };
 	trans_.pos = AsoUtility::VECTOR_ZERO;
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::AngleAxis(AsoUtility::Deg2RadF(180.0f), AsoUtility::AXIS_Y);
@@ -99,7 +95,7 @@ void Enemy::Damage(const int _damage, const int _stunPow)
 	stunDef_ += _stunPow;
 
 	//やられたら死亡アニメーション
-	if (!IsAlive()){ ResetAnim(ANIM::DEATH, SPEED_ANIM); }
+	if (!IsAlive()){ ResetAnim(ANIM::DEATH, changeSpeedAnim_[ANIM::DEATH]); }
 }
 
 void Enemy::ChangeState(const STATE _state)
@@ -145,7 +141,7 @@ void Enemy::ChangeStateBreak(void)
 	breakCnt_ = 0;
 }
 
-void Enemy::InitAnimNum()
+void Enemy::InitAnim()
 {
 	//共通アニメーション
 	animNum_.emplace(ANIM::IDLE, ANIM_IDLE);
@@ -154,6 +150,14 @@ void Enemy::InitAnimNum()
 	animNum_.emplace(ANIM::DAMAGE, ANIM_DAMAGE);
 	animNum_.emplace(ANIM::DEATH, ANIM_DEATH);
 	animNum_.emplace(ANIM::ENTRY, ANIM_ENTRY);
+
+	//アニメーション速度設定
+	changeSpeedAnim_.emplace(ANIM::IDLE, SPEED_ANIM);
+	changeSpeedAnim_.emplace(ANIM::WALK, SPEED_ANIM);
+	changeSpeedAnim_.emplace(ANIM::RUN, SPEED_ANIM);
+	changeSpeedAnim_.emplace(ANIM::DAMAGE, SPEED_ANIM);
+	changeSpeedAnim_.emplace(ANIM::DEATH, SPEED_ANIM);
+	changeSpeedAnim_.emplace(ANIM::ENTRY, SPEED_ANIM);
 }
 
 void Enemy::UpdateNml(void)
@@ -169,9 +173,9 @@ void Enemy::UpdateNml(void)
 	//**********************************************************
 
 	//待機アニメーション
-	if (moveSpeed_ == 0.0)ResetAnim(ANIM::IDLE, SPEED_ANIM);
+	if (moveSpeed_ == 0.0)ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
 	//歩きアニメーション
-	else if (moveSpeed_ > 0.0f)ResetAnim(ANIM::WALK, SPEED_ANIM);
+	else if (moveSpeed_ > 0.0f)ResetAnim(ANIM::WALK, changeSpeedAnim_[ANIM::WALK]);
 
 	//移動量の初期化
 	moveSpeed_ = 0.0f;
@@ -227,7 +231,7 @@ void Enemy::UpdateAtk(void)
 	//**********************************************************
 
 	//攻撃アニメーション
-	ResetAnim(nowSkillAnim_, SPEED_ANIM);
+	ResetAnim(nowSkillAnim_, changeSpeedAnim_[nowSkillAnim_]);
 
 	for (auto& nowSkill : nowSkill_)
 	{
@@ -258,7 +262,7 @@ void Enemy::UpdateBreak(void)
 	//**********************************************************
 
 	//待機アニメーション
-	ResetAnim(ANIM::IDLE, SPEED_ANIM);
+	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
 
 	//攻撃休憩時間カウンタ
 	CntUp(breakCnt_);

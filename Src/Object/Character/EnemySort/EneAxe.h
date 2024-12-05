@@ -64,7 +64,7 @@ private:
 	void SetParam(void)override;
 
 	//アニメーション番号の初期化
-	void InitAnimNum(void)override;
+	void InitAnim(void)override;
 
 	//スキルの初期化
 	void InitSkill(void)override;

@@ -12,6 +12,7 @@ void EneAxe::SetParam(void)
 	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_AXEMAN));
 
 	//※個々で設定する
+	trans_.scl = { CHARACTER_SCALE,CHARACTER_SCALE,CHARACTER_SCALE };
 	radius_ = MY_COL_RADIUS;
 	colPos_ = VAdd(trans_.pos, LOCAL_CENTER_POS);
 	hp_ = HP_MAX;
@@ -25,13 +26,19 @@ void EneAxe::SetParam(void)
 
 }
 
-void EneAxe::InitAnimNum(void)
+void EneAxe::InitAnim(void)
 {
 	//共通アニメーション初期化
-	Enemy::InitAnimNum();
+	Enemy::InitAnim();
 
 	//固有アニメーション初期化
 	animNum_.emplace(ANIM::SKILL_1, ANIM_SKILL_ONE);
+
+	//アニメーション速度設定
+	changeSpeedAnim_.emplace(ANIM::SKILL_1, SPEED_ANIM);
+
+	//アニメーションリセット
+	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
 }
 
 void EneAxe::InitSkill(void)
@@ -70,5 +77,5 @@ void EneAxe::ChangeStateAlert(void)
 	Enemy::ChangeStateAlert();
 
 	//待機アニメーション
-	ResetAnim(ANIM::IDLE, SPEED_ANIM);
+	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
 }

@@ -12,6 +12,7 @@ void EneMage::SetParam(void)
 	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_MAGE));
 
 	//※個々で設定する
+	trans_.scl = { CHARACTER_SCALE,CHARACTER_SCALE,CHARACTER_SCALE };
 	radius_ = MY_COL_RADIUS;
 	colPos_ = VAdd(trans_.pos, LOCAL_CENTER_POS);
 	hp_ = HP_MAX;
@@ -24,14 +25,21 @@ void EneMage::SetParam(void)
 	atkStartRange_ = ATK_START_RANGE;
 }
 
-void EneMage::InitAnimNum(void)
+void EneMage::InitAnim(void)
 {
 	//共通アニメーション初期化
-	Enemy::InitAnimNum();
+	Enemy::InitAnim();
 
 	//固有アニメーション初期化
 	animNum_.emplace(ANIM::SKILL_1, ANIM_SKILL_ONE);
 	animNum_.emplace(ANIM::UNIQUE_1, ANIM_CHARGE);
+
+	//アニメーション速度設定
+	changeSpeedAnim_.emplace(ANIM::SKILL_1, SPEED_ANIM);
+	changeSpeedAnim_.emplace(ANIM::UNIQUE_1, SPEED_ANIM);
+
+	//アニメーションリセット
+	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
 }
 
 void EneMage::InitSkill(void)
@@ -84,5 +92,5 @@ void EneMage::ChangeStateAlert(void)
 	Enemy::ChangeStateAlert();
 
 	//待機アニメーション
-	ResetAnim(ANIM::UNIQUE_1, SPEED_ANIM);
+	ResetAnim(ANIM::UNIQUE_1, changeSpeedAnim_[ANIM::UNIQUE_1]);
 }

@@ -66,6 +66,10 @@ void ResourceManager::Init(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_ENEMY + "Enemy_Axeman.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_AXEMAN, res);
 
+	//ゴーレム（敵）
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ENEMY + "Boss_Golem.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_GOLEM, res);
+
 	//ステージ
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stagei.mv1");
 	resourcesMap_.emplace(SRC::STAGE_1, res);

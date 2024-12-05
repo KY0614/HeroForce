@@ -15,6 +15,7 @@ void EneArcher::SetParam(void)
 	arrowMdlId_ = 0;
 
 	//※個々で設定する
+	trans_.scl = { CHARACTER_SCALE,CHARACTER_SCALE,CHARACTER_SCALE };
 	radius_ = MY_COL_RADIUS;
 	colPos_ = VAdd(trans_.pos, LOCAL_CENTER_POS);
 	hp_ = HP_MAX;
@@ -29,15 +30,23 @@ void EneArcher::SetParam(void)
 	atkStartRange_ = ATK_START_RANGE;
 }
 
-void EneArcher::InitAnimNum(void)
+void EneArcher::InitAnim(void)
 {
 	//共通アニメーション初期化
-	Enemy::InitAnimNum();
+	Enemy::InitAnim();
 
 	//固有アニメーション初期化
 	animNum_.emplace(ANIM::SKILL_1, ANIM_SKILL_ONE);
 	animNum_.emplace(ANIM::UNIQUE_1, ANIM_AIMING);
 	animNum_.emplace(ANIM::UNIQUE_2, ANIM_RELOAD);
+
+	//アニメーション速度設定
+	changeSpeedAnim_.emplace(ANIM::SKILL_1, SPEED_ANIM);
+	changeSpeedAnim_.emplace(ANIM::UNIQUE_1, SPEED_ANIM);
+	changeSpeedAnim_.emplace(ANIM::UNIQUE_2, SPEED_ANIM);
+
+	//アニメーションリセット
+	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
 }
 
 void EneArcher::InitSkill(void)
@@ -117,7 +126,7 @@ void EneArcher::ReloadArrow(void)
 	CntUp(reloadCnt_);
 
 	//リロードアニメーション
-	ResetAnim(ANIM::UNIQUE_2, SPEED_ANIM);
+	ResetAnim(ANIM::UNIQUE_2, changeSpeedAnim_[ANIM::UNIQUE_2]);
 }
 
 void EneArcher::FinishAnim(void)
@@ -138,8 +147,8 @@ void EneArcher::ChangeStateAlert(void)
 	//更新処理の中身初期化
 	Enemy::ChangeStateAlert();
 
-	//待機アニメーション
-	ResetAnim(ANIM::UNIQUE_1, SPEED_ANIM);
+	//エイムアニメーション
+	ResetAnim(ANIM::UNIQUE_1, changeSpeedAnim_[ANIM::UNIQUE_1]);
 }
 
 void EneArcher::ChangeStateBreak(void)
@@ -187,7 +196,7 @@ void EneArcher::UpdateBreak(void)
 	//**********************************************************
 
 	//待機アニメーション
-	ResetAnim(ANIM::IDLE, SPEED_ANIM);
+	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
 
 	//リロード
 	if (IsReload())ReloadArrow();

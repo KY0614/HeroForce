@@ -124,6 +124,8 @@ protected:
 	std::function<void(void)> stateUpdate_;						//状態ごとの更新管理
 	std::map<STATE,std::function<void(void)>> stateChanges_;	//状態遷移の管理
 
+	std::map<ANIM, float>changeSpeedAnim_;	//アニメーション速度変更用
+
 	float alertCnt_;			//攻撃の警告時間カウンタ
 	float breakCnt_;			//攻撃の休憩時間カウンタ
 
@@ -159,8 +161,8 @@ protected:
 	//キャラ固有設定
 	virtual void SetParam(void) = 0;
 
-	//アニメーション番号の初期化
-	virtual void InitAnimNum(void);
+	//アニメーション関係の初期化
+	virtual void InitAnim(void);
 
 	//スキルの初期化
 	virtual void InitSkill(void) = 0;

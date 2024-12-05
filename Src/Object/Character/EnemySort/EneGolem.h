@@ -1,7 +1,8 @@
 #pragma once
-#include"../Enemy.h"
 
-class EneBrig : public Enemy
+#include "../Enemy.h"
+
+class EneGolem : public Enemy
 {
 public:
 	//****************************************************************
@@ -9,10 +10,33 @@ public:
 	//****************************************************************
 
 	//アニメーション番号(キャラ固有)
-	static constexpr int ANIM_SKILL_ONE = 2;	//スキル1アニメーション
+	static constexpr int ANIM_IDLE = 1;		//待機アニメーション
+	static constexpr int ANIM_WALK = 2;		//歩きアニメーション
+	
+	static constexpr int ANIM_PUNCH = 5;		//殴りアニメーション(スキル１)
+	static constexpr int ANIM_MOWDOWN = 6;		//薙ぎ払いアニメーション(スキル２)
+	static constexpr int ANIM_SHOUT = 7;		//叫びアニメーション(スキル３)
+	static constexpr int ANIM_JUMP_ATK = 8;		//ジャンプ攻撃アニメーション(スキル４)
+	
+	static constexpr int ANIM_JUMP = 3;			//ジャンプアニメーション(固有１)
+	static constexpr int ANIM_LANDING = 4;		//着地アニメーション(固有２)
+
+	//TODO:のちに作る
+	//static constexpr int ANIM_ENTRY = 74;		//出現アニメーション
+	//static constexpr int ANIM_DAMAGE = 39;	//ダメージアニメーション
+	//static constexpr int ANIM_DEATH = 24;		//やられアニメーション
+
+	//アニメーション速度
+	static constexpr float SPEED_ANIM_IDLE = 60.0f;		//待機アニメーション速度
+	static constexpr float SPEED_ANIM_WALK = 60.0f;		//歩きアニメーション速度
+	static constexpr float SPEED_ANIM_PUNCH = 60.0f;	//パンチアニメーション速度
+	static constexpr float SPEED_ANIM_MOWDOWN = 60.0f;	//薙ぎ払いアニメーション速度
+	static constexpr float SPEED_ANIM_SHOUT = 60.0f;	//叫びアニメーション速度
+	static constexpr float SPEED_ANIM_JUMP = 60.0f;		//ジャンプアニメーション速度
 
 	//モデル関係
 	static constexpr VECTOR  LOCAL_CENTER_POS = { 0.0f,100.0f * CHARACTER_SCALE,0.0f };	//モデルの中心座標への相対座標
+	static constexpr float SCALE = 0.01f;		//モデルの大きさ
 
 	//攻撃関係
 	static constexpr float ALERT_TIME = 1.0f;	//攻撃の警告時間
