@@ -41,20 +41,6 @@ void SelectScene::Init(void)
 	MV1SetOpacityRate(skyDome_->GetTransform().modelId, alpha);
 
 	//表示用のキャラ
-	//trans_.SetModel(
-	//	ResourceManager::GetInstance()
-	//	.LoadModelDuplicate(ResourceManager::SRC::PLAYER_KNIGHT));
-	//float scale = CHARACTER_SCALE;
-	//trans_.scl = { scale, scale, scale };
-	//trans_.pos = { 110.0f, 110.0f, -50.0f };
-	//trans_.quaRot = Quaternion();
-	//trans_.quaRotLocal = Quaternion::Euler(
-	//	0.0f, AsoUtility::Deg2RadF(0.0f),
-	//	0.0f
-	//);
-	//
-	////モデルの初期化
-	//trans_.Update();
 	InitModel();
 
 	// カメラモード：定点カメラ
@@ -102,10 +88,9 @@ void SelectScene::Init(void)
 	keyPressTime_ = 0.0f;
 	interval_ = 0.0f;
 
-	//// フォグ設定
-	//SetFogEnable(true);
-	//SetFogColor(255, 255, 255);
-	//SetFogStartEnd(-10000.0f, 15000.0f);
+	//メインウィンドウを追加
+	subWindowH_.push_back(NULL);
+	activeWindowNum_ = 1;	//メインをアクティブにするので初期値１
 }
 
 void SelectScene::Update(void)
@@ -136,6 +121,10 @@ void SelectScene::Update(void)
 	}
 
 	trans_.Update();
+	for (auto& i : tests_)
+	{
+		i.Update();
+	}
 }
 
 void SelectScene::Draw(void)
@@ -155,7 +144,18 @@ void SelectScene::Draw(void)
 		break;
 	
 	case SelectScene::SELECT::OPERATION:
-		OperationDraw();
+		for (int i = 0; i < playerNum_; i++) 
+		{
+			OperationDraw();
+			if (i > 1)
+			{
+				TestDraw(i);
+			}
+			else if (i < 1)
+			{
+				continue;
+			}
+		}
 		break;
 	
 	case SelectScene::SELECT::ROLE:
@@ -171,6 +171,10 @@ void SelectScene::Draw(void)
 
 void SelectScene::Release(void)
 {
+	for (auto i : tests_)
+	{
+		MV1DeleteModel(i.modelId);
+	}
 	MV1DeleteModel(trans_.modelId);
 }
 
@@ -213,7 +217,7 @@ void SelectScene::InitModel(void)
 	//弓使い
 	tests_[3].SetModel(
 		ResourceManager::GetInstance()
-		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_ARCHER));
+		.LoadModelDuplicate(ResourceManager::SRC::CHICKEN));
 	tests_[3].scl = { scale, scale, scale };
 	tests_[3].pos = { 110.0f, 110.0f, -50.0f };
 	tests_[3].quaRot = Quaternion();
@@ -222,9 +226,9 @@ void SelectScene::InitModel(void)
 		0.0f
 	);
 
-	for (int i = 0; i < SceneManager::PLAYER_NUM; i++) {
+	for (auto& i : tests_) {
 		//モデルの初期化
-		tests_[i].Update();
+		i.Update();
 	}
 }
 
@@ -239,14 +243,6 @@ void SelectScene::NumberUpdate(void)
 	//三角形のボタンを選択中だったら緑に非選択だったら黄色に
 	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
 	triR.color_ = (triR.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
-
-	////選択中に同じ方向のキーをもう一回押すと人数を加算
-	//if (triR.isToggle_&&
-	//	GetKeyConfig() == KEY_CONFIG::RIGHT_TRG)
-	//{
-	//	//人数を１追加
-	//	playerNum_ += 1;
-	//}
 
 	//右の三角形がONの時にキーの右に値する入力をし続けると
 	if (triR.isToggle_ &&
@@ -283,14 +279,6 @@ void SelectScene::NumberUpdate(void)
 		interval_ = INTERVAL_TIME;
 		press_ = false;
 	}
-
-	////選択中に同じ方向のキーをもう一回押すと人数を減算
-	//if (triL.isToggle_ &&
-	//	GetKeyConfig() == KEY_CONFIG::LEFT_TRG)
-	//{
-	//	//人数を１削減
-	//	playerNum_ -= 1;
-	//}
 
 	//左
 	if (triL.isToggle_ &&
@@ -335,13 +323,21 @@ void SelectScene::NumberUpdate(void)
 	{
 		//プレイヤー人数の設定
 		data.Input(SceneManager::PLAY_MODE::USER, playerNum_);
-		data.Input(DataBank::INFO::USER_NUM, playerNum_);
-
+		data.Input(DataBank::INFO::USER_NUM, playerNum_);	
 		//CPU人数の設定(CPUは１人から３人)
 		data.Input(SceneManager::PLAY_MODE::CPU, (SceneManager::PLAYER_NUM) - playerNum_);
 
-		//押下したときの色
-		rc.color_ = 0xFF0000;
+		//ウィンドウ複製の準備
+		SceneManager::GetInstance().RedySubWindow();
+
+		//カメラの設定
+		auto cameras = SceneManager::GetInstance().GetCameras();
+		for (int i = 0; i < cameras.size(); i++)
+		{
+			cameras[i]->SetPos(DEFAULT_CAMERA_POS, DEFAULT_TARGET_POS);
+			cameras[i]->ChangeMode(Camera::MODE::FIXED_POINT);
+		}
+
 		ChangeSelect(SELECT::OPERATION);
 	}
 
@@ -371,24 +367,27 @@ void SelectScene::OperationUpdate(void)
 	DataBank& data = DataBank::GetInstance();
 	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
 
+	data.Input(SceneManager::CNTL::PAD, 2);
+	data.Input(SceneManager::CNTL::PAD, 3);
+	data.Input(SceneManager::CNTL::PAD, 4);
+
 #ifdef DEBUG_RECT
 	//三角形のボタンが選択中だったら緑に非選択だったら黄色に
 	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
 	triR.color_ = (triR.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
 
-
-	//選択中に同じ方向のキーをもう一回押すと選択デバイスを変更
-	if (triR.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::RIGHT_TRG)
-	{
-		//キーボードを選択
-		isPad_ = true;
-	}
-
 	//右の三角形がONの時にキーの右に値する入力をし続けると
 	if (triR.isToggle_ &&
 		GetKeyConfig() == KEY_CONFIG::RIGHT)
 	{
+		if (!press_)
+		{
+			press_ = true;
+
+			//キーボードを選択
+			isPad_ = true;
+		}
+
 		//色を白に
 		triR.color_ = GetColor(255, 255, 255);
 
@@ -410,19 +409,20 @@ void SelectScene::OperationUpdate(void)
 	{
 		keyPressTime_ = 0.0f;
 		interval_ = INTERVAL_TIME;
-	}
-
-	//選択中に同じ方向のキーをもう一回押すと選択デバイスを変更
-	if (triL.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::LEFT_TRG)
-	{
-		//キーボードを選択
-		isPad_ = false;
+		press_ = false;
 	}
 
 	if (triL.isToggle_ &&
 		GetKeyConfig() == KEY_CONFIG::LEFT)
 	{
+		if (!press_)
+		{
+			press_ = true;
+
+			//キーボードを選択
+			isPad_ = false;
+		}
+
 		//色を白に
 		triL.color_ = GetColor(255, 255, 255);
 
@@ -444,6 +444,7 @@ void SelectScene::OperationUpdate(void)
 	{
 		keyPressTime_ = 0.0f;
 		interval_ = INTERVAL_TIME;
+		press_ = false;
 	}
 
 	//スペースキー押下で決定&役職選択へ
@@ -489,18 +490,18 @@ void SelectScene::RoleUpdate(void)
 	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
 	triR.color_ = (triR.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
 
-	//選択中に同じ方向のキーをもう一回押すと選択役職を変更
-	if (triR.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::RIGHT_TRG)
-	{
-		//役職を選択
-		role_ += 1;
-	}
-
 	//右の三角形がONの時にキーの右に値する入力をし続けると
 	if (triR.isToggle_ &&
 		GetKeyConfig() == KEY_CONFIG::RIGHT)
 	{
+		if (!press_)
+		{
+			press_ = true;
+
+			//役職を選択
+			role_ += 1;
+		}
+
 		//色を白に
 		triR.color_ = GetColor(255, 255, 255);
 
@@ -522,19 +523,19 @@ void SelectScene::RoleUpdate(void)
 	{
 		keyPressTime_ = 0.0f;
 		interval_ = INTERVAL_TIME;
-	}
-
-	//選択中に同じ方向のキーをもう一回押すと選択役職を変更
-	if (triL.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::LEFT_TRG)
-	{
-		//役職を選択
-		role_ -= 1;
+		press_ = false;
 	}
 
 	if (triL.isToggle_ &&
 		GetKeyConfig() == KEY_CONFIG::LEFT)
 	{
+		if (!press_)
+		{
+			press_ = true;
+
+			//役職を選択
+			role_ -= 1;
+		}
 		//色を白に
 		triL.color_ = GetColor(255, 255, 255);
 
@@ -556,6 +557,7 @@ void SelectScene::RoleUpdate(void)
 	{
 		keyPressTime_ = 0.0f;
 		interval_ = INTERVAL_TIME;
+		press_ = false;
 	}
 
 	//役職数の範囲内に数値を収める
@@ -573,7 +575,6 @@ void SelectScene::RoleUpdate(void)
 		data.Input(DataBank::INFO::DHISPLAY_NUM, 1);
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 	}
-
 
 	//選択する三角形
 	if (!triR.isToggle_ &&
@@ -612,22 +613,29 @@ void SelectScene::NumberDraw(void)
 void SelectScene::OperationDraw(void)
 {
 #ifdef DEBUG_RECT
+	for (int i = 0; i < playerNum_; i++) {
+		if (!isPad_)
+		{
+			DrawFormatString(rc.pos.x, rc.pos.y,
+				0xFFFFFF, "key");
+		}
+		else
+		{
+			DrawFormatString(rc.pos.x, rc.pos.y,
+				0xFFFFFF, "pad");
+		}
 
-	if (!isPad_)
-	{
-		DrawFormatString(rc.pos.x, rc.pos.y,
-			0xFFFFFF, "key");
-	}
-	else
-	{
-		DrawFormatString(rc.pos.x, rc.pos.y,
-			0xFFFFFF, "pad");
+		DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
+			0xFF9999, "1P操作方法選択中");
 	}
 
-	DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
-		0xFF9999, "1P操作方法選択中");
 #endif // DEBUG_RECT
 
+}
+
+void SelectScene::TestDraw(int i)
+{
+	DrawFormatString(0, 0, 0x000000, "test : %d", i);
 }
 
 void SelectScene::RoleDraw(void)

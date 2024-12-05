@@ -141,6 +141,7 @@ public:
 	void NumberDraw(void);			//人数選択中の処理
 
 	void OperationDraw(void);		//操作方法選択中の処理(1Pのみ)
+	void TestDraw(int i);		//操作方法選択中の処理(1Pのみ)
 
 	void RoleDraw(void);			//役職選択中の処理
 
@@ -177,6 +178,10 @@ public:
 	//--------------------------------------------------------------------
 
 private:
+	//ウィンドウ関係
+	std::vector<HWND> subWindowH_;	//ウィンドウハンドルの全体管理(動的配列)
+	int activeWindowNum_;			//使用するウィンドウの数
+
 	//スカイドーム
 	std::unique_ptr<SkyDome> skyDome_;
 
@@ -206,6 +211,7 @@ private:
 	
 	//プレイヤー人数
 	int playerNum_;
+	int player_[SceneManager::PLAYER_NUM];
 	
 	bool isPad_;	//1Pの入力タイプ
 	SceneManager::CNTL selectedCntl_;
