@@ -1,6 +1,7 @@
 #pragma once
 #include<map>
 #include<functional>
+#include<variant>
 #include"../Utility/AsoUtility.h"
 #include"../Manager/SceneManager.h"
 #include"../Manager/InputManager.h"
@@ -235,6 +236,12 @@ protected:
     std::map < SceneManager::PLAY_MODE, std::function<void(void)>>changeMode_;
     std::function<void(void)>modeUpdate_;       //モードごとの処理
 
+    std::map<SceneManager::CNTL, std::function<void(void)>>changeNmlActControll_;              //通常スキル
+    std::function<void(void)>nmlActUpdate_;                                             //通常スキル更新
+
+    std::map<SceneManager::CNTL, std::function<void(void)>>changeChargeActCntl_;       //コントローラーごとのスキル変更
+    std::function<void(void)>chargeActUpdate_;                                         //チャージ攻撃
+
     //アニメNo初期化
     void InitAnimNum(void);
 
@@ -304,23 +311,51 @@ protected:
     //プレイヤー(CPUとユーザー)共通処理
     //--------------------------------------------------
     //攻撃処理
-    virtual void AtkFunc(void)=0;
+    virtual void AtkFunc(void) = 0;
     //スキル1
-    virtual void Skill1Func(void)=0;
+    virtual void Skill1Func(void) = 0;
     //スキル2
-    virtual void Skill2Func(void)=0;
+    virtual void Skill2Func(void) = 0;
 
     //各アクションの共通処理
     void Action(void);
 
     //チャージなしの攻撃
     void NmlAct(void);
+    //チャージなし攻撃(キーボード)
+    void NmlActKeyBoard(void);
+    //チャージなし攻撃(パッド)
+    void NmlActPad(void);
+
+    //変更
+    void ChangeNmlActControll(void);
+    void ChangeNmlActKeyBoard(void);
+    void ChangeNmlActPad(void);
 
     //短押し攻撃共通処理(攻撃カウントとか後隙とか)
     void NmlActCommon(void);
 
     //チャージ攻撃
     void ChargeAct(void);
+    //チャージ攻撃(キーボード)
+    void ChargeActKeyBoard(void);
+    //チャージ攻撃(パッド)
+    void ChargeActPad(void);
+
+    //Change関数
+    //チャージ攻撃(キーボード)
+    void ChangeChargeActKeyBoard(void);
+    //チャージ攻撃(パッド)
+    void ChangeChargeActPad(void);
+
+
+
+
+    //変更点
+    void ChangeChargeActControll(void);
+
+    void ChangeAtkType(ATK_ACT _act);
+
 
     //攻撃タイプ変更
     void ChangeChargeAct(void);

@@ -41,6 +41,12 @@ void PlayerBase::Init(void)
 	changeMode_.emplace(SceneManager::PLAY_MODE::USER, std::bind(&PlayerBase::ChangeUser, this));
 	changeMode_.emplace(SceneManager::PLAY_MODE::CPU, std::bind(&PlayerBase::ChangeCpu, this));
 
+	changeNmlActControll_.emplace(SceneManager::CNTL::KEYBOARD, std::bind(&PlayerBase::ChangeNmlActKeyBoard, this));
+	changeNmlActControll_.emplace(SceneManager::CNTL::PAD, std::bind(&PlayerBase::ChangeNmlActPad, this));
+
+	changeChargeActCntl_.emplace(SceneManager::CNTL::KEYBOARD, std::bind(&PlayerBase::ChangeChargeActKeyBoard, this));
+	changeChargeActCntl_.emplace(SceneManager::CNTL::PAD, std::bind(&PlayerBase::ChangeChargeActPad, this));
+
 	//攻撃の初期化(とりあえず通常攻撃で初期化しておく)
 	ChangeAct(ATK_ACT::ATK);
 
@@ -57,6 +63,9 @@ void PlayerBase::Init(void)
 
 	ChangeState(CPU_STATE::NORMAL);
 
+	ChangeChargeActControll();
+	ChangeNmlActControll();
+
 	searchRange_ = SEARCH_RANGE;
 
 	preAtk_ = ATK_ACT::MAX;
@@ -67,7 +76,7 @@ void PlayerBase::Init(void)
 
 	userOnePos_ = { -400.0f,0.0f,0.0f };
 
-	act_ = ATK_ACT::MAX;
+	//act_ = ATK_ACT::MAX;
 
 
 	calledMoveSpeed_ = 1.0f;
@@ -298,7 +307,14 @@ void PlayerBase::ChangeAct(const ATK_ACT _act)
 	if (isCool_[static_cast<int>(act_)])return;
 	ResetParam(_act);
 	SyncActPos(atk_.pos_);
+
+
+
+
+
+	//変更点
 	changeAct_[_act]();
+	ChangeAtkType(_act);
 
 
 	//atkStartCnt_をここで開始させる
@@ -336,43 +352,60 @@ void PlayerBase::KeyBoardControl(void)
 	if (GetJoypadInputState(DX_INPUT_PAD1) && CheckHitKeyAll() < 0)
 	{
 		ChangeControll(SceneManager::CNTL::PAD);
+		ChangeNmlActControll();
+		ChangeChargeActControll();
+		return;
 	}
 	//前
-	if (ins.IsNew(KEY_INPUT_W))
-	{
-		Move(0.0f, AsoUtility::AXIS_Y);
-	}
+	if (ins.IsNew(KEY_INPUT_W)) { Move(0.0f, AsoUtility::AXIS_Y); }
 
 	//右
-	else if (ins.IsNew(KEY_INPUT_D)){Move(90.0f, AsoUtility::AXIS_Y);}
+	else if (ins.IsNew(KEY_INPUT_D)) { Move(90.0f, AsoUtility::AXIS_Y); }
 
 	//下
-	else if (ins.IsNew(KEY_INPUT_S)){Move(180.0f, AsoUtility::AXIS_Y);}
+	else if (ins.IsNew(KEY_INPUT_S)) { Move(180.0f, AsoUtility::AXIS_Y); }
 
 	//左
-	else if (ins.IsNew(KEY_INPUT_A)){Move(270.0f, AsoUtility::AXIS_Y);}
+	else if (ins.IsNew(KEY_INPUT_A)) { Move(270.0f, AsoUtility::AXIS_Y); }
 
 	//動いてないときはスピード0にする
-	else{moveSpeed_ = 0.0f;}
+	else { moveSpeed_ = 0.0f; }
 
 
 
 
 
 	//攻撃（攻撃アニメーションのフレームが0以下だったらフレームを設定）
-	if (ins.IsTrgDown(KEY_INPUT_E) && IsAtkable()){ChangeAct(ATK_ACT::ATK);}
-
-	//スキル切り替え
-	if (ins.IsTrgDown(KEY_INPUT_J) && !IsAtkAction())
+	if (ins.IsTrgDown(KEY_INPUT_E) && IsAtkable())
 	{
-		skillNo_ = static_cast<SKILL_NUM>(static_cast<int>(skillNo_) + 1);
-
-		//MAXになったらスキル１に戻る
-		skillNo_ == SKILL_NUM::MAX ? SKILL_NUM::ONE : skillNo_;
+		if (isCool_[static_cast<int>(ATK_ACT::ATK)])return;
+		ChangeAct(ATK_ACT::ATK);
+		CntUp(atkStartCnt_);
 	}
 
+
+
 	//スキル
-	if (ins.IsTrgDown(KEY_INPUT_Q) && IsSkillable()){ChangeAct(static_cast<ATK_ACT>(skillNo_));}
+	//スキル(短押しと長押しで分けている)
+	atkTypeUpdate_();
+
+	//スキル切り替え(atkTypeUpdateより下に置くこと！！)
+	if (ins.IsTrgDown(KEY_INPUT_J))
+	{
+		if (!IsAtkAction())
+		{
+			skillNo_ = static_cast<SKILL_NUM>(static_cast<int>(skillNo_) + 1);
+			//MAXになったらスキル１に戻る
+			skillNo_ == SKILL_NUM::MAX ? skillNo_ = SKILL_NUM::ONE : skillNo_ = skillNo_;
+
+
+
+
+			//変更点
+			ChangeSkillControll(skillNo_);
+		}
+
+	}
 
 	//回避
 	if (ins.IsTrgDown(KEY_INPUT_N) && IsSkillable())
@@ -406,12 +439,12 @@ void PlayerBase::GamePad(void)
 	else if (leftStickX_ > 1) { Move(stickDeg_, AsoUtility::AXIS_Y); }
 
 	//下
-	else if (leftStickY_ > 1){Move(stickDeg_, AsoUtility::AXIS_Y);}
+	else if (leftStickY_ > 1) { Move(stickDeg_, AsoUtility::AXIS_Y); }
 
 	//左
-	else if (leftStickX_ < -1){Move(stickDeg_, AsoUtility::AXIS_Y);}
+	else if (leftStickX_ < -1) { Move(stickDeg_, AsoUtility::AXIS_Y); }
 
-	else{moveSpeed_ = 0.0f;}
+	else { moveSpeed_ = 0.0f; }
 
 	//攻撃（攻撃アニメーションのフレームが0以下だったらフレームを設定）
 	if (ins.IsPadBtnTrgDown(padNum_, InputManager::JOYPAD_BTN::RIGHT)
@@ -428,16 +461,19 @@ void PlayerBase::GamePad(void)
 
 	if (ins.IsPadBtnTrgDown(padNum_, InputManager::JOYPAD_BTN::R_BUTTON))
 	{
-		if (!IsAtkAction()) 
-		{ 
+		if (!IsAtkAction())
+		{
 			skillNo_ = static_cast<SKILL_NUM>(static_cast<int>(skillNo_) + 1);
+			skillNo_ == SKILL_NUM::MAX ? skillNo_ = SKILL_NUM::ONE : skillNo_ = skillNo_;
+
+
+
+
+
+			//変更点
 			ChangeSkillControll(skillNo_);
-			if (skillNo_ == SKILL_NUM::MAX)
-			{
-				skillNo_ = SKILL_NUM::ONE;
-			}
 		}
-		
+
 	}
 
 	//回避
@@ -474,11 +510,10 @@ void PlayerBase::DrawDebug(void)
 	//	, dodgeCnt_, atk_.cnt_);
 	DrawFormatString(0, 32, 0xffffff
 		, "AtkCooltime(%.2f)\nSkill1Cool(%.2f)\nSkill2Cool(%.2f)\natkDulation(%f)"
-		,coolTime_[static_cast<int>(ATK_ACT::ATK)]
+		, coolTime_[static_cast<int>(ATK_ACT::ATK)]
 		, coolTime_[static_cast<int>(ATK_ACT::SKILL1)]
 		, coolTime_[static_cast<int>(ATK_ACT::SKILL2)]
-		, atk_.duration_);
-
+		, atkStartCnt_);
 	DrawSphere3D(colPos_, CHARACTER_SCALE * 100, 8, color_Col_, color_Col_, false);
 	DrawSphere3D(atk_.pos_, atk_.radius_, 8, color_Atk_, color_Atk_, false);
 
@@ -490,8 +525,8 @@ void PlayerBase::DrawDebug(void)
 	DrawSphere3D(userOnePos_, 20, 2, 0x0000ff, 0xffffff, false);
 
 	//攻撃状態の時、球体の色変更
-	if (atk_.IsAttack()){color_Atk_ = ATK_COLOR;}
-	else{color_Atk_ = 0x00ffff;}
+	if (atk_.IsAttack()) { color_Atk_ = ATK_COLOR; }
+	else { color_Atk_ = 0x00ffff; }
 
 }
 #endif // DEBUG_ON
@@ -551,7 +586,24 @@ void PlayerBase::NmlAct(void)
 {
 	//共通
 	NmlActCommon();
+	nmlActUpdate_();
+}
 
+void PlayerBase::NmlActKeyBoard(void)
+{
+	auto& ins = InputManager::GetInstance();
+	//スキル
+	if (ins.IsTrgDown(KEY_INPUT_Q)
+		&& IsSkillable() && !isCool_[static_cast<int>(skillNo_)])
+	{
+		//スキルごとにアニメーションを決めて、カウント開始
+		ChangeAct(static_cast<ATK_ACT>(skillNo_));
+		CntUp(atkStartCnt_);
+	}
+}
+
+void PlayerBase::NmlActPad(void)
+{
 	auto& ins = InputManager::GetInstance();
 	//スキル
 	if (ins.IsPadBtnTrgDown(padNum_, InputManager::JOYPAD_BTN::TOP)
@@ -561,6 +613,21 @@ void PlayerBase::NmlAct(void)
 		ChangeAct(static_cast<ATK_ACT>(skillNo_));
 		CntUp(atkStartCnt_);
 	}
+}
+
+void PlayerBase::ChangeNmlActControll(void)
+{
+	changeNmlActControll_[cntl_]();
+}
+
+void PlayerBase::ChangeNmlActKeyBoard(void)
+{
+	nmlActUpdate_ = std::bind(&PlayerBase::NmlActKeyBoard, this);
+}
+
+void PlayerBase::ChangeNmlActPad(void)
+{
+	nmlActUpdate_ = std::bind(&PlayerBase::NmlActPad, this);
 }
 
 void PlayerBase::NmlActCommon(void)
@@ -588,6 +655,36 @@ void PlayerBase::NmlActCommon(void)
 
 void PlayerBase::ChargeAct(void)
 {
+	chargeActUpdate_();
+}
+
+void PlayerBase::ChargeActKeyBoard(void)
+{
+	auto& ins = InputManager::GetInstance();
+	if (ins.IsTrgDown(KEY_INPUT_Q))
+	{
+		//ボタンの押しはじめの時に値初期化
+		ResetGuardCnt();
+	}
+
+	//スキル(長押しでガード状態維持)
+	if (ins.IsNew(KEY_INPUT_Q))
+	{
+		//スキルごとにアニメーションを決めて、カウント開始
+		ChangeAct(static_cast<ATK_ACT>(skillNo_));
+
+		//押している反応
+		isPush_ = true;
+	}
+	else if (ins.IsTrgUp(KEY_INPUT_Q))
+	{
+		InitAtk();
+		isPush_ = false;
+	}
+}
+
+void PlayerBase::ChargeActPad(void)
+{
 	//スキルボタンは同じだからスキルボタンを押しているときと離した時の処理を各役割ごとで作る
 	auto& ins = InputManager::GetInstance();
 	if (ins.IsPadBtnTrgDown(padNum_, InputManager::JOYPAD_BTN::TOP))
@@ -595,6 +692,7 @@ void PlayerBase::ChargeAct(void)
 		//ボタンの押しはじめの時に値初期化
 		ResetGuardCnt();
 	}
+
 
 	//スキル(長押しでガード状態維持)
 	if (ins.IsPadBtnNew(padNum_, InputManager::JOYPAD_BTN::TOP))
@@ -610,6 +708,27 @@ void PlayerBase::ChargeAct(void)
 		InitAtk();
 		isPush_ = false;
 	}
+}
+
+void PlayerBase::ChangeChargeActKeyBoard(void)
+{
+	chargeActUpdate_ = std::bind(&PlayerBase::ChargeActKeyBoard, this);
+}
+
+void PlayerBase::ChangeChargeActPad(void)
+{
+	chargeActUpdate_ = std::bind(&PlayerBase::ChargeActPad, this);
+}
+
+void PlayerBase::ChangeChargeActControll(void)
+{
+	changeChargeActCntl_[cntl_]();
+}
+
+void PlayerBase::ChangeAtkType(ATK_ACT _act)
+{
+	atkType_ = atkTypes_[static_cast<int>(_act)];
+	changeAtkType_[atkType_]();
 }
 
 void PlayerBase::ChangeChargeAct(void)
@@ -707,7 +826,7 @@ void PlayerBase::SyncActPos(VECTOR& _localPos)
 	VECTOR relativeActPos = atkMax_[act_].pos_;
 
 	VECTOR addPos = followRot.PosAxis(VScale(relativeActPos, CHARACTER_SCALE));
-	
+
 	atk_.pos_ = VAdd(trans_.pos, addPos);
 }
 
@@ -716,7 +835,12 @@ void PlayerBase::ChangeSkillControll(SKILL_NUM _skill)
 	atkType_ = atkTypes_[static_cast<int>(_skill)];
 	isPush_ = false;
 	moveAble_ = true;
-	changeAtkType_[atkType_]();
+
+
+
+
+	//変更点
+	ChangeAtkType(static_cast<ATK_ACT>(_skill));
 }
 
 
