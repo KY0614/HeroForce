@@ -7,6 +7,7 @@
 #include"../Object/Character/Enemy.h"
 #include"../Object/Character/Chiken/ChickenManager.h"
 #include"../Object/Character/EnemySort/EneAxe.h"
+#include"../Object/Character/EnemySort/EneGolem.h"
 #include "../Object/Common/Transform.h"
 #include "../Object/Stage/StageManager.h"
 #include "../Object/Stage/SkyDome.h"
@@ -50,12 +51,13 @@ void GameScene::Init(void)
 #ifdef _DEBUG_COL
 	playerTest_ = new PlAxe(SceneManager::PLAY_MODE::USER);
 	playerTest_->Init();
-	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU));
-	chicken_->Init();
 	playerTest_->ChangeControll(SceneManager::CNTL::KEYBOARD);
 	enemyTest_ = new EneAxe();
 	enemyTest_->Init();
 #endif
+
+	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU));
+	chicken_->Init();
 
 	//プレイヤー設定
 	for (int i = 0; i < PLAYER_NUM; i++)
@@ -69,6 +71,9 @@ void GameScene::Init(void)
 	e->Init();
 	enemys_.push_back(std::move(e));
 
+	std::unique_ptr<Enemy> g = std::make_unique<EneGolem>();
+	g->Init();
+	enemys_.push_back(std::move(g));
 
 	//カメラの設定
 	auto cameras = SceneManager::GetInstance().GetCameras();
@@ -101,6 +106,7 @@ void GameScene::Update(void)
 
 	for (auto& e : enemys_)
 	{
+		e->SetTargetPos(players_[0]->GetPos());
 		e->Update();
 	}
 	
@@ -110,7 +116,7 @@ void GameScene::Update(void)
 	enemyTest_->SetTargetPos(playerTest_->GetPos());
 	enemyTest_->Update();
 #endif
-	chicken_->SetTargetPos(playerTest_->GetPos());
+	chicken_->SetTargetPos(players_[0]->GetPos());
 	chicken_->Update();
 
 	//あたり判定
@@ -196,6 +202,28 @@ void GameScene::Collision(void)
 {
 	auto& col = Collision::GetInstance();
 
+
+	for (auto& e : enemys_)
+	{
+		VECTOR ePos = e->GetPos();
+		//動ける分だけ(のちに全員分に変える)
+		VECTOR pPos = players_[0]->GetPos();
+
+		//敵側索敵
+		if (col.Search(ePos, pPos, e->GetSearchRange())){
+			//移動を開始
+			e->SetIsMove(true);
+		}
+		else{
+			//移動を停止
+			e->SetIsMove(false);
+		}
+
+		if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL){
+			//状態を変更
+			e->ChangeState(Enemy::STATE::ALERT);
+		}
+	}
 
 #ifdef _DEBUG_COL
 
