@@ -59,6 +59,7 @@
     <ClCompile Include="Src\Object\Character\EnemySort\EneBrig.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneGolem.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneMage.cpp" />
+    <ClCompile Include="Src\Manager\EffectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Manager\InputController.h" />
@@ -177,6 +178,7 @@
     <ClInclude Include="Src\Object\Character\EnemySort\EneBrig.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneGolem.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneMage.h" />
+    <ClInclude Include="Src\Manager\EffectManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">
