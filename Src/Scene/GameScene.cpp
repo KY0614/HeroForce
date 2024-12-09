@@ -4,6 +4,7 @@
 #include "../Object/Grid.h"
 #include "../Object/Character/PlayerBase.h"
 #include "../Object/Character/PlayableChara/PlAxeMan.h"
+#include "../Object/Character/PlayableChara/PlKnight.h"
 #include"../Object/Character/Enemy.h"
 #include"../Object/Character/EnemySort/EneAxe.h"
 #include "../Object/Common/Transform.h"
@@ -38,16 +39,12 @@ void GameScene::Init(void)
 	grid_->Init();	
 
 #ifdef _DEBUG_COL
-	playerTest_ = new PlAxe(PlayerBase::PLAY_MODE::USER);
+	playerTest_ = new PlKnight(SceneManager::PLAY_MODE::USER, InputManager::JOYPAD_NO::PAD1);
 	playerTest_->Init();
 	playerTest_->ChangeControll(SceneManager::CNTL::KEYBOARD);
 	enemyTest_ = new EneAxe();
 	enemyTest_->Init();
 #endif
-
-	//playerCpu_ = new PlayerCpu();
-	//playerCpu_->Init();
-
 
 	// カメラモード　：フリーカメラ
 	Camera* camera = SceneManager::GetInstance().GetCamera();
@@ -82,7 +79,7 @@ void GameScene::Draw(void)
 	stage_->Draw();
 	level_->Draw();
 
-	playerTest_->DrawDebug();
+
 }
 
 void GameScene::Release(void)
@@ -136,10 +133,11 @@ void GameScene::Collision(void)
 
 
 	//プレイヤーがCPUの時だけサーチしたい
-	if (playerTest_->GetPlayMode() == PlayerBase::PLAY_MODE::CPU)
+	if (playerTest_->GetPlayMode() == SceneManager::PLAY_MODE::CPU)
 	{
 		//プレイヤー側索敵
-		if (col.Search(pPos, ePos, playerTest_->GetSearchRange())&&enemyTest_->IsAlive())
+		if (col.Search(pPos, ePos, playerTest_->GetSearchRange())
+			&&enemyTest_->IsAlive() && !playerTest_->GetIsCalledPlayer())
 		{
 			//敵をサーチしたかを返す
 			playerTest_->SetisEnemySerch(true);
@@ -152,11 +150,12 @@ void GameScene::Collision(void)
 		}
 
 		if (col.Search(playerTest_->GetPos(), enemyTest_->GetPos(), playerTest_->GetAtkStartRange()) 
-			&& playerTest_->GetState() == PlayerBase::STATE::NORMAL
-			&&enemyTest_->IsAlive())
+			&& playerTest_->GetState() == PlayerBase::CPU_STATE::NORMAL
+			&&enemyTest_->IsAlive()
+			&&!playerTest_->GetIsCalledPlayer())
 		{
 			//状態を変更
-			playerTest_->ChangeState(PlayerBase::STATE::ATTACK);
+			playerTest_->ChangeState(PlayerBase::CPU_STATE::ATTACK);
 		}
 
 	}
@@ -168,7 +167,7 @@ void GameScene::Collision(void)
 			if (col.IsHitAtk(playerTest_, enemyTest_))
 			{
 				//被弾
-				enemyTest_->Damage(5, 4);
+				enemyTest_->Damage(0, 4);
 				//攻撃判定の終了
 				playerTest_->SetIsHit(true);
 			}
