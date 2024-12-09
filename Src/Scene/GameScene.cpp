@@ -60,7 +60,7 @@ void GameScene::Init(void)
 	//プレイヤー設定
 	for (int i = 0; i < PLAYER_NUM; i++)
 	{
-		players_[i] = std::make_unique<PlAxe>(SceneManager::PLAY_MODE::USER);
+		players_[i] = std::make_unique<PlAxe>(SceneManager::PLAY_MODE::USER, InputManager::JOYPAD_NO::PAD1);
 		players_[i]->Init();
 	}
 
@@ -289,7 +289,33 @@ void GameScene::Collision(void)
 			}
 		}
 
-	
+		//プレイヤーがCPUの時だけサーチしたい
+		if (playerTest_->GetPlayMode() == SceneManager::PLAY_MODE::CPU)
+		{
+			//プレイヤー側索敵
+			if (col.Search(pPos, ePos, playerTest_->GetSearchRange())
+				&& enemyTest_->IsAlive() && !playerTest_->GetIsCalledPlayer())
+			{
+				//敵をサーチしたかを返す
+				playerTest_->SetisEnemySerch(true);
+				playerTest_->SetTargetPos(ePos);
+			}
+			else if (!enemyTest_->IsAlive())
+			{
+				//敵をサーチしたかを返す
+				playerTest_->SetisEnemySerch(false);
+			}
+
+			if (col.Search(playerTest_->GetPos(), enemyTest_->GetPos(), playerTest_->GetAtkStartRange())
+				&& playerTest_->GetState() == PlayerBase::CPU_STATE::NORMAL
+				&& enemyTest_->IsAlive()
+				&& !playerTest_->GetIsCalledPlayer())
+			{
+				//状態を変更
+				playerTest_->ChangeState(PlayerBase::CPU_STATE::ATTACK);
+			}
+
+}
 	
 	//敵の攻撃判定
 	//アタック中であり攻撃判定が終了していないとき
