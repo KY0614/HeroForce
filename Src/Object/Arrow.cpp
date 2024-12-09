@@ -1,3 +1,5 @@
+#include"../Application.h"
+#include"../Manager/SceneManager.h"
 #include"../Utility/AsoUtility.h"
 #include "Arrow.h"
 
@@ -5,28 +7,30 @@ Arrow::Arrow(void)
 {
 }
 
-void Arrow::Init(const int _mdlId, const Transform& _trans)
+void Arrow::Init(const int _mdlId, const Transform& _trans, const float _speed)
 {
 	//引数の引継ぎ
 	trans_ = _trans;
 	trans_.modelId = _mdlId;
 
 	//諸々モデルの初期化
-	trans_.pos = VAdd(trans_.pos, ARROW_LOCAL_POS);
+	VECTOR localPos = trans_.quaRot.PosAxis(ARROW_LOCAL_POS);
+	trans_.pos = VAdd(trans_.pos, localPos);
+
 	trans_.scl = { 1.0f,1.0f,1.0f };
-	trans_.quaRot = Quaternion::LookRotation(trans_.rot);
+	//trans_.quaRot = trans_.quaRot.AngleAxis(START_UP_ANGLE, AsoUtility::AXIS_X);
 	trans_.quaRotLocal =
 		Quaternion::Euler(AsoUtility::Deg2RadF(90.0f), 0.0f, 0.0f);
 
 	trans_.Update();
 
-	ChangeState(STATE::SHOT);
+	ChangeState(STATE::NONE);
 	SetIsAlive(true);
-	atkPow_ = 0.0f;
-	speed_ = 1.0f;
+
+	speed_ = _speed;
 }
 
-void Arrow::Update(void)
+void Arrow::Update(UnitBase::ATK& _atk)
 {
 	switch (state_)
 	{
@@ -46,12 +50,16 @@ void Arrow::Update(void)
 
 	// モデル制御の基本情報更新
 	trans_.Update();
+
+	//対応した攻撃の情報更新
+	_atk.pos_ = trans_.pos;
 }
 
 void Arrow::Draw(void)
 {
 	//ショット状態のときにのみ描画する
-	if (state_ == STATE::SHOT)MV1DrawModel(trans_.modelId);
+	if (state_ == STATE::SHOT)DrawSphere3D(trans_.pos,5.0f,20,0x00ff00,0x00ff00,true);
+	/*MV1DrawModel(trans_.modelId)*/
 }
 
 void Arrow::Release()
@@ -71,10 +79,13 @@ void Arrow::Move(void)
 	//下方向の取得
 	VECTOR downward = trans_.GetDown();
 
+	//横ベクトル
+	VECTOR widthMovePow = VScale(forward, speed_);
+
 	// 移動
 	//前方
 	trans_.pos =
-		VAdd(trans_.pos, VScale(forward, speed_));
+		VAdd(trans_.pos, widthMovePow);
 	//下方
 	trans_.pos =
 		VAdd(trans_.pos, VScale(downward, GRAVITY));

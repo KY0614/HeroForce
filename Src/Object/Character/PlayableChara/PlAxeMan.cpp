@@ -11,6 +11,9 @@ void PlAxe::SetParam(void)
 {
 	InitAct();
 
+	//InitAct(ATK_ACT::SKILL1, FRAME_SKILL1_DURATION, FRAME_SKILL1_BACKRASH);
+	//InitAct(ATK_ACT::SKILL2, FRAME_SKILL2_DURATION, FRAME_SKILL2_BACKRASH);
+
 	trans_.SetModel(
 		ResourceManager::GetInstance()
 		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_AXEMAN));

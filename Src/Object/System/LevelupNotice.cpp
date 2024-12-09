@@ -2,6 +2,7 @@
 #include "../Application.h"
 #include "../../Manager/ResourceManager.h"
 #include "../../Manager/SceneManager.h"
+#include "../../Manager/TextManager.h"
 #include "../Common/Vector2.h"
 #include "../Common/ImageFader.h"
 #include "LevelupNotice.h"
@@ -24,6 +25,17 @@ void LevelupNotice::Init()
 	imgFader_ = new ImageFader();
 	imgFader_->Init();
 
+	//テキスト
+	auto& text_m = TextManager::GetInstance();
+	using FONT_T = TextManager::FONT_TYPE;	//省略用
+	text_ = text_m.TextLoad(TextManager::TEXTS::LEVEL_UP);
+
+	//フォント生成
+	font_ = CreateFontToHandle(
+		text_m.GetFontName(FONT_T::LOGO).c_str(),
+		FONT_SIZE,
+		FONT_THICK);
+
 	//画像
 	img_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::LEVEL_UP).handleId_;
 	if (img_ == -1)
@@ -34,9 +46,9 @@ void LevelupNotice::Init()
 
 void LevelupNotice::Update()
 {
-	float speed = 0.001f;	//拡大スピード;
-	float max = 1.2f;		//拡大倍率
-	int timeLimit = 1.5 * Application::DEFAULT_FPS;
+	float speed = EXPANSION_RATE;	//拡大スピード;
+	float max = EXPANSION_MAX;		//拡大倍率
+	int timeLimit = MAINTAIN_SECONDS * Application::DEFAULT_FPS;
 
 	switch (state_)
 	{
@@ -67,7 +79,6 @@ void LevelupNotice::Update()
 		{
 			state_ = STATE::FIN;
 		}
-
 		break;
 	}
 }
@@ -80,10 +91,24 @@ void LevelupNotice::Draw()
 	float angle = 0.0f;
 	bool trans = true;
 	bool reverse = false;
+	int color = 0xffffff;
+	int c = TextManager::CENTER_TEXT;
+	int cH = TextManager::CENTER_TEXT_H;
 
 	//画像の描画
 	imgFader_->Draw(img_, pos, scl_, angle, trans, reverse);
+
+	//テキスト描画
+	pos.x -= text_.length() * FONT_SIZE / cH;
+	pos.y -= FONT_SIZE / c;
+	DrawFormatStringToHandle(pos.x, pos.y,color, font_, text_.c_str());
 }
+
+void LevelupNotice::Release()
+{
+	DeleteFontToHandle(font_);
+}
+
 void LevelupNotice::Reset()
 {
 	cnt_ = 0;
@@ -91,6 +116,7 @@ void LevelupNotice::Reset()
 	state_ = STATE::NONE;
 	imgFader_->Init();
 }
+
 void LevelupNotice::SetState(const STATE state)
 {
 	state_ = state;

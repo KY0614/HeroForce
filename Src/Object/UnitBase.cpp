@@ -8,7 +8,7 @@ UnitBase::UnitBase(void)
 	trans_.pos = { 0.0f,0.0f,0.0f };
 	trans_.scl = { 0.0f,0.0f,0.0f };
 	trans_.rot = { 0.0f,0.0f,0.0f };
-	anim_ = ANIM::IDLE;
+	anim_ = ANIM::NONE;
 	atcAnim_ = -1;
 	animTotalTime_ = -1;
 	stepAnim_ = -1.0f;

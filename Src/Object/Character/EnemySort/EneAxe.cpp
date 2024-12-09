@@ -5,39 +5,49 @@
 
 void EneAxe::SetParam(void)
 {
+	//攻撃の遷移
+	changeSkill_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneAxe::Skill_One, this));
+
 	//モデル読み込み
 	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_AXEMAN));
 
 	//※個々で設定する
+	trans_.scl = { CHARACTER_SCALE,CHARACTER_SCALE,CHARACTER_SCALE };
 	radius_ = MY_COL_RADIUS;
-	localCenterPos_ = LOCAL_CENTER_POS;
-	colPos_ = VAdd(trans_.pos, localCenterPos_);
-	hp_ = 5;
+	colPos_ = VAdd(trans_.pos, LOCAL_CENTER_POS);
+	hp_ = HP_MAX;
+	atkPow_ = ATK_POW;
+	def_ = DEF;
 	walkSpeed_ = WALK_SPEED;
+	localCenterPos_ = LOCAL_CENTER_POS;
 	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
 	atkStartRange_ = ATK_START_RANGE;
+
 }
 
-void EneAxe::InitAnimNum(void)
+void EneAxe::InitAnim(void)
 {
 	//共通アニメーション初期化
-	Enemy::InitAnimNum();
+	Enemy::InitAnim();
 
 	//固有アニメーション初期化
-	animNum_.emplace(ANIM::SKILL_1, ANIM_SKILL_1);
-	animNum_.emplace(ANIM::SKILL_2, ANIM_SKILL_2);
+	animNum_.emplace(ANIM::SKILL_1, ANIM_SKILL_ONE);
+
+	//アニメーション速度設定
+	changeSpeedAnim_.emplace(ANIM::SKILL_1, SPEED_ANIM);
+
+	//アニメーションリセット
+	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
 }
 
 void EneAxe::InitSkill(void)
 {
 	//ここにスキルの数分格納させる
-	skills_.emplace_back(SKILL_1);
-	skills_.emplace_back(SKILL_2);
+	skills_.emplace(ATK_ACT::SKILL_ONE, SKILL_ONE);
 
 	//ここにスキルの数分アニメーションを格納させる
 	skillAnims_.emplace_back(ANIM::SKILL_1);
-	skillAnims_.emplace_back(ANIM::SKILL_2);
 
 	//初期スキルを設定しておく
 	RandSkill();
@@ -45,26 +55,11 @@ void EneAxe::InitSkill(void)
 
 void EneAxe::Attack(void)
 {
-	//現在のスキルの確認
-	if (nowSkill_.front().radius_ == SKILL_1.radius_
-		&& nowSkill_.front().backlash_ == SKILL_1.backlash_
-		&& nowSkill_.front().duration_ == SKILL_1.duration_
-		&& nowSkill_.front().pow_ == SKILL_1.pow_)
-	{
-		//スキル1発動
-		Skill_1();
-	}
-	else if (nowSkill_.front().radius_ == SKILL_2.radius_
-		&& nowSkill_.front().backlash_ == SKILL_2.backlash_
-		&& nowSkill_.front().duration_ == SKILL_2.duration_
-		&& nowSkill_.front().pow_ == SKILL_2.pow_)
-	{
-		//スキル2発動
-		Skill_2();
-	}
+	//対応スキル発動
+	processSkill_();
 }
 
-void EneAxe::Skill_1(void)
+void EneAxe::Skill_One(void)
 {
 	//前方向
 	VECTOR dir = trans_.quaRot.GetForward();
@@ -72,18 +67,15 @@ void EneAxe::Skill_1(void)
 	for (auto& nowSkill : nowSkill_)
 	{
 		//座標の設定
-		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_));
+		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_ + radius_));
 	}
 }
 
-void EneAxe::Skill_2(void)
+void EneAxe::ChangeStateAlert(void)
 {
-	//前方向
-	VECTOR dir = trans_.quaRot.GetForward();
+	//更新処理の中身初期化
+	Enemy::ChangeStateAlert();
 
-	for (auto& nowSkill : nowSkill_)
-	{
-		//座標の設定
-		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_));
-	}
+	//待機アニメーション
+	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
 }
