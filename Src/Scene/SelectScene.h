@@ -6,7 +6,7 @@
 
 class SkyDome;
 class StageManager;
-class PlayerBase;
+class SelectPlayer;
 
 class SelectScene :public SceneBase
 {
@@ -31,6 +31,9 @@ public:
 
 	//インターバル上限
 	static constexpr float INTERVAL_TIME = 0.5f;
+
+	static constexpr int PLAYER_NUM = SceneManager::PLAYER_NUM;
+	static constexpr int ROLE_NUM = SceneManager::PLAYER_NUM;
 
 	//カメラ関連
 	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 100.0f, -500.0f };		//カメラの座標
@@ -184,6 +187,9 @@ private:
 
 	//スカイドーム
 	std::unique_ptr<SkyDome> skyDome_;
+
+	//プレイヤー
+	std::unique_ptr<SelectPlayer>players_[SceneManager::PLAYER_NUM];
 
 	//背景のステージ
 	StageManager* stage_;

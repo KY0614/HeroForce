@@ -11,8 +11,7 @@
 #include "../Object/Stage/StageManager.h"
 #include "../Object/Stage/StageObject.h"
 #include "../Object/Stage/SkyDome.h"
-#include "../Object/Character/PlayerBase.h"
-#include "../Object/Character/PlayableChara/PlAxeMan.h"
+#include "../Object/Character/SelectPlayer.h"
 #include "SelectScene.h"
 
 SelectScene::SelectScene(void)
@@ -40,8 +39,12 @@ void SelectScene::Init(void)
 	float alpha = 0.5f;
 	MV1SetOpacityRate(skyDome_->GetTransform().modelId, alpha);
 
-	//表示用のキャラ
-	InitModel();
+	//プレイヤー設定
+	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+	{
+		players_[i] = std::make_unique<SelectPlayer>();
+		players_[i]->Init();
+	}
 
 	// カメラモード：定点カメラ
 	auto camera = SceneManager::GetInstance().GetCameras();
@@ -88,9 +91,6 @@ void SelectScene::Init(void)
 	keyPressTime_ = 0.0f;
 	interval_ = 0.0f;
 
-	//メインウィンドウを追加
-	subWindowH_.push_back(NULL);
-	activeWindowNum_ = 1;	//メインをアクティブにするので初期値１
 }
 
 void SelectScene::Update(void)
@@ -171,6 +171,8 @@ void SelectScene::Draw(void)
 
 void SelectScene::Release(void)
 {
+	SceneManager::GetInstance().ResetCameras();
+
 	for (auto i : tests_)
 	{
 		MV1DeleteModel(i.modelId);
@@ -180,56 +182,9 @@ void SelectScene::Release(void)
 
 void SelectScene::InitModel(void)
 {
-	//騎士
-	tests_[0].SetModel(
-		ResourceManager::GetInstance()
-		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_KNIGHT));
-	float scale = CHARACTER_SCALE;
-	tests_[0].scl = { scale, scale, scale };
-	tests_[0].pos = { 110.0f, 110.0f, -50.0f };
-	tests_[0].quaRot = Quaternion();
-	tests_[0].quaRotLocal = Quaternion::Euler(
-		0.0f, AsoUtility::Deg2RadF(0.0f),
-		0.0f
-	);
-	//斧使い
-	tests_[1].SetModel(
-		ResourceManager::GetInstance()
-		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_AXEMAN));
-	tests_[1].scl = { scale, scale, scale };
-	tests_[1].pos = { 110.0f, 110.0f, -50.0f };
-	tests_[1].quaRot = Quaternion();
-	tests_[1].quaRotLocal = Quaternion::Euler(
-		0.0f, AsoUtility::Deg2RadF(0.0f),
-		0.0f
-	);
-	//魔法使い
-	tests_[2].SetModel(
-		ResourceManager::GetInstance()
-		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_MAGE));
-	tests_[2].scl = { scale, scale, scale };
-	tests_[2].pos = { 110.0f, 110.0f, -50.0f };
-	tests_[2].quaRot = Quaternion();
-	tests_[2].quaRotLocal = Quaternion::Euler(
-		0.0f, AsoUtility::Deg2RadF(0.0f),
-		0.0f
-	);
-	//弓使い
-	tests_[3].SetModel(
-		ResourceManager::GetInstance()
-		.LoadModelDuplicate(ResourceManager::SRC::CHICKEN));
-	tests_[3].scl = { scale, scale, scale };
-	tests_[3].pos = { 110.0f, 110.0f, -50.0f };
-	tests_[3].quaRot = Quaternion();
-	tests_[3].quaRotLocal = Quaternion::Euler(
-		0.0f, AsoUtility::Deg2RadF(0.0f),
-		0.0f
-	);
+	//２次元配列にしてそれぞれ対応させる？
 
-	for (auto& i : tests_) {
-		//モデルの初期化
-		i.Update();
-	}
+
 }
 
 void SelectScene::NumberUpdate(void)
@@ -252,8 +207,8 @@ void SelectScene::NumberUpdate(void)
 		{
 			press_ = true;
 
-			//人数を１追加
-			playerNum_ += 1;
+			//人数を１追加(中身は1～4に収める)
+			playerNum_ = (playerNum_ % PLAYER_NUM) + 1;
 		}
 		
 		//色を白に
@@ -270,7 +225,7 @@ void SelectScene::NumberUpdate(void)
 
 			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
 			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f ,playerNum_ += 1: interval_;
+				interval_ = 0.0f , playerNum_ = (playerNum_ % PLAYER_NUM) + 1 : interval_;
 		}
 	}
 	else if(triR.isToggle_)
@@ -288,8 +243,9 @@ void SelectScene::NumberUpdate(void)
 		{
 			press_ = true;
 
-			//人数を１追加
-			playerNum_ -= 1;
+			//人数を１削除(中身は1～4に収める)
+			playerNum_ = (playerNum_ + 3) % PLAYER_NUM;
+			if (playerNum_ == 0)playerNum_ = 4;
 		}
 		//色を白に
 		triL.color_ = GetColor(255, 255, 255);
@@ -305,7 +261,8 @@ void SelectScene::NumberUpdate(void)
 
 			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
 			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, playerNum_ -= 1 : interval_;
+				interval_ = 0.0f, playerNum_ = (playerNum_ + 3) % PLAYER_NUM : interval_;
+			if (playerNum_ == 0)playerNum_ = 4;
 		}
 	}
 	else if (triL.isToggle_)
@@ -316,7 +273,7 @@ void SelectScene::NumberUpdate(void)
 	}
 
 	//プレイ人数の範囲内に数値を収める
-	playerNum_ = std::clamp(playerNum_, 1, SceneManager::PLAYER_NUM );	//１～４人プレイなので1～4まで
+	//playerNum_ = std::clamp(playerNum_, 1, PLAYER_NUM );	//１～４人プレイなので1～4まで
 
 	//スペースキー押下で決定&入力デバイス選択へ
 	if (key_ == KEY_CONFIG::DECIDE)
@@ -325,14 +282,14 @@ void SelectScene::NumberUpdate(void)
 		data.Input(SceneManager::PLAY_MODE::USER, playerNum_);
 		data.Input(DataBank::INFO::USER_NUM, playerNum_);	
 		//CPU人数の設定(CPUは１人から３人)
-		data.Input(SceneManager::PLAY_MODE::CPU, (SceneManager::PLAYER_NUM) - playerNum_);
+		data.Input(SceneManager::PLAY_MODE::CPU, (PLAYER_NUM) - playerNum_);
 
 		//ウィンドウ複製の準備
 		SceneManager::GetInstance().RedySubWindow();
 
 		//カメラの設定
 		auto cameras = SceneManager::GetInstance().GetCameras();
-		for (int i = 0; i < cameras.size(); i++)
+		for (int i = 0; i < playerNum_; i++)
 		{
 			cameras[i]->SetPos(DEFAULT_CAMERA_POS, DEFAULT_TARGET_POS);
 			cameras[i]->ChangeMode(Camera::MODE::FIXED_POINT);
@@ -499,7 +456,7 @@ void SelectScene::RoleUpdate(void)
 			press_ = true;
 
 			//役職を選択
-			role_ += 1;
+			role_ = (role_ + 1) % PLAYER_NUM;
 		}
 
 		//色を白に
@@ -516,7 +473,7 @@ void SelectScene::RoleUpdate(void)
 
 			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
 			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, role_ += 1 : interval_;
+				interval_ = 0.0f, role_ = (role_ + 1) % PLAYER_NUM : interval_;
 		}
 	}
 	else if (triR.isToggle_)
@@ -534,7 +491,7 @@ void SelectScene::RoleUpdate(void)
 			press_ = true;
 
 			//役職を選択
-			role_ -= 1;
+			role_ = (role_ - 1 + PLAYER_NUM) % PLAYER_NUM;
 		}
 		//色を白に
 		triL.color_ = GetColor(255, 255, 255);
@@ -550,7 +507,7 @@ void SelectScene::RoleUpdate(void)
 
 			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
 			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, role_ -= 1 : interval_;
+				interval_ = 0.0f, role_ = (role_ - 1 + PLAYER_NUM) % PLAYER_NUM : interval_;
 		}
 	}
 	else if (triL.isToggle_)
@@ -561,7 +518,7 @@ void SelectScene::RoleUpdate(void)
 	}
 
 	//役職数の範囲内に数値を収める
-	role_ = std::clamp(role_, 0, static_cast<int>(SceneManager::ROLE::ARCHER) + 1);	//４役職なので0～3まで
+	//role_ = std::clamp(role_, 0, static_cast<int>(SceneManager::ROLE::ARCHER) + 1);	//４役職なので0～3まで
 
 	//スペースキー押下でゲーム画面へ
 	if (GetKeyConfig() == KEY_CONFIG::DECIDE)
@@ -645,29 +602,32 @@ void SelectScene::RoleDraw(void)
 	{
 		DrawFormatString(rc.pos.x, rc.pos.y,
 			0xFFFFFF, "ARCHER");
-		MV1DrawModel(tests_[3].modelId);
 	}
 	else if (role_ > static_cast<int>(SceneManager::ROLE::AXEMAN))
 	{
 		DrawFormatString(rc.pos.x, rc.pos.y,
 			0xFFFFFF, "MAGE");
-		MV1DrawModel(tests_[2].modelId);
 	}
 	else if (role_ > static_cast<int>(SceneManager::ROLE::KNIGHT))
 	{
 		DrawFormatString(rc.pos.x, rc.pos.y,
 			0xFFFFFF, "AXEMAN");
-		MV1DrawModel(tests_[1].modelId);
 	}
 	else
 	{
 		DrawFormatString(rc.pos.x, rc.pos.y,
 			0xFFFFFF, "KNIGHT");
-		MV1DrawModel(tests_[0].modelId);
 	}
 
 	DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
 		0x99FF99, "役職選択中");
+
+
+	for (int i = 0; i < playerNum_; i++)
+	{
+		players_[i]->SetRole(role_);
+		players_[i]->Draw();
+	}
 #endif // DEBUG_RECT
 
 }

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\SelectPlayer.cpp" />
     <ClCompile Include="Src\Manager\InputController.cpp" />
     <ClCompile Include="Src\Scene\SelectScene.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneAxe.cpp" />
@@ -63,6 +64,7 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\SelectPlayer.h" />
     <ClInclude Include="Src\Manager\InputController.h" />
     <ClInclude Include="Src\Scene\SelectScene.h" />
     <ClInclude Include="Src\Manager\DataBank.h" />
