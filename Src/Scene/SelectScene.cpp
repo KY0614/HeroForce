@@ -12,6 +12,7 @@
 #include "../Object/Stage/StageObject.h"
 #include "../Object/Stage/SkyDome.h"
 #include "../Object/Character/SelectPlayer.h"
+#include "../Object/SelectImage.h"
 #include "SelectScene.h"
 
 SelectScene::SelectScene(void)
@@ -44,6 +45,13 @@ void SelectScene::Init(void)
 	{
 		players_[i] = std::make_unique<SelectPlayer>();
 		players_[i]->Init();
+	}
+
+	//画像設定
+	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+	{
+		images_[i] = std::make_unique<SelectImage>();
+		images_[i]->Init();
 	}
 
 	// カメラモード：定点カメラ
@@ -142,31 +150,23 @@ void SelectScene::Draw(void)
 	case SelectScene::SELECT::NUMBER:
 		NumberDraw();
 		break;
-	
+
 	case SelectScene::SELECT::OPERATION:
-		for (int i = 0; i < playerNum_; i++) 
-		{
-			OperationDraw();
-			if (i > 1)
-			{
-				TestDraw(i);
-			}
-			else if (i < 1)
-			{
-				continue;
-			}
-		}
+		OperationDraw();
 		break;
-	
+
 	case SelectScene::SELECT::ROLE:
 		RoleDraw();
 		break;
-	
+
 	default:
 		break;
 	}
 
-
+	for (auto& i : images_)
+	{
+		i->Draw();
+	}
 }
 
 void SelectScene::Release(void)
@@ -292,6 +292,7 @@ void SelectScene::NumberUpdate(void)
 		for (int i = 0; i < playerNum_; i++)
 		{
 			cameras[i]->SetPos(DEFAULT_CAMERA_POS, DEFAULT_TARGET_POS);
+			cameras[i]->SetFollow(&players_[i]->GetTransform());
 			cameras[i]->ChangeMode(Camera::MODE::FIXED_POINT);
 		}
 
@@ -590,11 +591,6 @@ void SelectScene::OperationDraw(void)
 
 }
 
-void SelectScene::TestDraw(int i)
-{
-	DrawFormatString(0, 0, 0x000000, "test : %d", i);
-}
-
 void SelectScene::RoleDraw(void)
 {
 #ifdef DEBUG_RECT
@@ -623,10 +619,10 @@ void SelectScene::RoleDraw(void)
 		0x99FF99, "役職選択中");
 
 
-	for (int i = 0; i < playerNum_; i++)
+	for (auto& p : players_)
 	{
-		players_[i]->SetRole(role_);
-		players_[i]->Draw();
+		p->SetRole(role_);
+		p->Draw();
 	}
 #endif // DEBUG_RECT
 

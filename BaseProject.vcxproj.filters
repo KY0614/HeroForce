@@ -56,6 +56,7 @@
     <ClCompile Include="Src\Object\Character\Chiken\ChickenBase.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenManager.cpp" />
     <ClCompile Include="Src\Object\Character\SelectPlayer.cpp" />
+    <ClCompile Include="Src\Object\SelectImage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Manager\InputController.h" />
@@ -171,6 +172,7 @@
     <ClInclude Include="Src\Object\Character\Chiken\ChickenBase.h" />
     <ClInclude Include="Src\Object\Character\Chiken\ChickenManager.h" />
     <ClInclude Include="Src\Object\Character\SelectPlayer.h" />
+    <ClInclude Include="Src\Object\SelectImage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">

@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "../Manager/ResourceManager.h"
 #include "SelectPlayer.h"
 
@@ -69,8 +70,8 @@ void SelectPlayer::Init3DModel(void)
 	//‹|Žg‚¢
 	trans_[3].SetModel(
 		ResourceManager::GetInstance()
-		.LoadModelDuplicate(ResourceManager::SRC::CHICKEN));
-	trans_[3].scl = { scale, scale, scale };
+		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_ARCHER));
+	trans_[3].scl = { 30.0f, 30.0f, 30.0f };
 	trans_[3].pos = { 110.0f, 110.0f, -50.0f };
 	trans_[3].quaRot = Quaternion();
 	trans_[3].quaRotLocal = Quaternion::Euler(

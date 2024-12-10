@@ -7,6 +7,7 @@
 class SkyDome;
 class StageManager;
 class SelectPlayer;
+class SelectImage;
 
 class SelectScene :public SceneBase
 {
@@ -144,7 +145,6 @@ public:
 	void NumberDraw(void);			//人数選択中の処理
 
 	void OperationDraw(void);		//操作方法選択中の処理(1Pのみ)
-	void TestDraw(int i);		//操作方法選択中の処理(1Pのみ)
 
 	void RoleDraw(void);			//役職選択中の処理
 
@@ -181,15 +181,14 @@ public:
 	//--------------------------------------------------------------------
 
 private:
-	//ウィンドウ関係
-	std::vector<HWND> subWindowH_;	//ウィンドウハンドルの全体管理(動的配列)
-	int activeWindowNum_;			//使用するウィンドウの数
-
 	//スカイドーム
 	std::unique_ptr<SkyDome> skyDome_;
 
 	//プレイヤー
 	std::unique_ptr<SelectPlayer>players_[SceneManager::PLAYER_NUM];
+
+	// 画像
+	std::unique_ptr<SelectImage>images_[SceneManager::PLAYER_NUM];
 
 	//背景のステージ
 	StageManager* stage_;

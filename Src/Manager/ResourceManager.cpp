@@ -179,6 +179,18 @@ void ResourceManager::Init(void)
 	res = Resource(Resource::TYPE::MODEL, "Data/Model/Chicken/Chicken.mv1");
 	resourcesMap_.emplace(SRC::CHICKEN, res);
 
+	//l”‘I‘ğ‰æ‘œ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "PlayerNum.png");
+	resourcesMap_.emplace(SRC::PLAYER_NUM, res);
+
+	//‰E–îˆó
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Right_point.png");
+	resourcesMap_.emplace(SRC::RIGHT_POINT, res);
+
+	//¶–îˆó
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Left_point.png");
+	resourcesMap_.emplace(SRC::LEFT_POINT, res);
+
 }
 
 void ResourceManager::Release(void)
