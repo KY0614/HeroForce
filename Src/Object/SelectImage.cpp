@@ -3,6 +3,10 @@
 #include "../Manager/SceneManager.h"
 #include "SelectImage.h"
 
+SelectImage::SelectImage()
+{
+}
+
 void SelectImage::Destroy(void)
 {
 }
