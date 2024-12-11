@@ -1,4 +1,6 @@
 #pragma once
+#include<DxLib.h>
+#include"../Common/Quaternion.h"
 #include<unordered_map>
 #include<string>
 class EffectManager
@@ -9,13 +11,12 @@ public:
 		//使用するエフェクトを羅列
 	};
 
-	void Load(EFFECT& _efc,std::string _path);
-	void Play(void);
-	void Stop(void);
+	void Add(const EFFECT& _efc,int _data);
+	void Play(const EFFECT& _efc, const VECTOR& _pos, const Quaternion& _qua, const float& _size);
+	void Stop(const EFFECT& _efc);
+	void Release(void);
 
 private:
-	EFFECT type_;
 	std::unordered_map<EFFECT,int> effectRes_;
-	int playEffect_;
 };
 

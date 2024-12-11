@@ -1,5 +1,6 @@
 #include "EffectManager.h"
 
-void EffectManager::Load(EFFECT& _efc, std::string _path)
+void EffectManager::Add(const EFFECT& _efc, int _data)
 {
+	effectRes_.emplace(_efc, std::move(_data));
 }
