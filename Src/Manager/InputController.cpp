@@ -1,12 +1,25 @@
+#include <DxLib.h>
 #include "../Manager/InputManager.h"
 #include "InputController.h"
 
-InputController::InputController(void)
+InputController* InputController::instance_ = nullptr;
+
+void InputController::CreateInstance(void)
 {
+	if (instance_ == nullptr)
+	{
+		instance_ = new InputController();
+	}
+	instance_->Init();
 }
 
-InputController::~InputController(void)
+InputController& InputController::GetInstance(void)
 {
+	if (instance_ == nullptr)
+	{
+		InputController::CreateInstance();
+	}
+	return *instance_;
 }
 
 void InputController::Init(void)
@@ -17,8 +30,9 @@ void InputController::Update(void)
 {
 }
 
-void InputController::Release(void)
+void InputController::Destroy(void)
 {
+	delete instance_;
 }
 
 void InputController::SetInput(void)

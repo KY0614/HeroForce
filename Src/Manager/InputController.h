@@ -5,8 +5,6 @@ class InputController
 {
 public:
 
-
-
 	enum class KEY_ACTION
 	{
 		UP,
@@ -21,19 +19,24 @@ public:
 		MAX_ACTION
 	};
 
-	InputController(void);
+	// インスタンスを明示的に生成
+	static void CreateInstance(void);
 
-	~InputController(void);
+	// インスタンスの取得
+	static InputController& GetInstance(void);
 
 	void Init(void);
 	void Update(void);
-	void Release(void);
 
-
+	// リソースの破棄
+	void Destroy(void);
 
 	void SetInput(void);
 
 private:
+
+	// シングルトン用インスタンス
+	static InputController* instance_;
 
 	KEY_ACTION keyAction_;
 };

@@ -2,7 +2,7 @@
 #include "../Manager/ResourceManager.h"
 #include "SelectPlayer.h"
 
-SelectPlayer::SelectPlayer()
+SelectPlayer::SelectPlayer(void)
 {
 }
 

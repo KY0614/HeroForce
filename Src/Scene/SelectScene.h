@@ -13,12 +13,12 @@ class SelectScene :public SceneBase
 {
 public:
 
-	#define DEBUG_RECT
-	#define DEBUG_TEST
+	//#define DEBUG_RECT
 
 	//三角形用の定数
 	static constexpr int TRI_SCALE = 150;	//大きさ
-	static constexpr int TRI_POS_Y = 450;	//Y座標
+	static constexpr int TRI_POS_X = Application::SCREEN_SIZE_X / 2;	//X座標
+	static constexpr int TRI_POS_Y = Application::SCREEN_SIZE_Y / 2;	//Y座標
 
 	//四角形の大きさ
 	static constexpr int RECT_SCALE = 300;
@@ -27,11 +27,11 @@ public:
 	static constexpr int PRI_SPACE = 100;
 
 
-	//キー押下経過時間
-	static constexpr float SELECT_TIME = 1.0f;
+	////キー押下経過時間
+	//static constexpr float SELECT_TIME = 1.0f;
 
-	//インターバル上限
-	static constexpr float INTERVAL_TIME = 0.5f;
+	////インターバル上限
+	//static constexpr float INTERVAL_TIME = 0.5f;
 
 	static constexpr int PLAYER_NUM = SceneManager::PLAYER_NUM;
 	static constexpr int ROLE_NUM = SceneManager::PLAYER_NUM;
@@ -168,7 +168,9 @@ public:
 
 	//ゲッター	----------------------------------------------------------
 
-	KEY_CONFIG GetKeyConfig(void);	//入力キーを取得
+	KEY_CONFIG GetKeyConfig(void) { return key_; }	//入力キーを取得
+
+	SELECT GetSelect(void) { return select_; }		//現在の選択フェーズを取得
 
 	//デバッグ関連--------------------------------------------------------
 
@@ -215,7 +217,7 @@ private:
 	Tri triR;
 	
 	//プレイヤー人数
-	int playerNum_;
+	//int playerNum_;
 	int player_[SceneManager::PLAYER_NUM];
 	
 	bool isPad_;	//1Pの入力タイプ
@@ -223,13 +225,13 @@ private:
 	
 	int role_;	//職種
 
-	//キーを何秒押しているか
-	float keyPressTime_;
+	////キーを何秒押しているか
+	//float keyPressTime_;
 
-	bool press_;
+	//bool press_;
 
-	//人数を一定間隔で加算していくためのインターバル用時間(加算して次加算するまでの間)
-	float interval_;
+	////人数を一定間隔で加算していくためのインターバル用時間(加算して次加算するまでの間)
+	//float interval_;
 
 };
 

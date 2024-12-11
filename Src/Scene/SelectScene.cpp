@@ -37,8 +37,20 @@ void SelectScene::Init(void)
 	//背景色を白に
 	SetBackgroundColor(255, 255, 255);
 	//背景のステージモデルやらを半透明に
-	float alpha = 0.5f;
-	MV1SetOpacityRate(skyDome_->GetTransform().modelId, alpha);
+	//float alpha = 0.5f;
+	//MV1SetOpacityRate(skyDome_->GetTransform().modelId, alpha);
+	//for (int i = 0; i < StageManager::MODELS; i++) {
+	//	for (auto& s : stage_->GetTtans(static_cast<StageManager::MODEL_TYPE>(i)))
+	//	{
+	//		MV1SetOpacityRate(s.modelId, alpha);
+	//	}
+	//}
+
+	//フォグの設定
+	SetFogEnable(true);
+	//白
+	SetFogColor(255, 255, 255);
+	SetFogStartEnd(-10000.0f, 15000.0f);
 
 	//プレイヤー設定
 	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
@@ -50,7 +62,7 @@ void SelectScene::Init(void)
 	//画像設定
 	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
 	{
-		images_[i] = std::make_unique<SelectImage>();
+		images_[i] = std::make_unique<SelectImage>(*this);
 		images_[i]->Init();
 	}
 
@@ -68,7 +80,7 @@ void SelectScene::Init(void)
 
 	ChangeDevice(SceneManager::CNTL::KEYBOARD);
 
-	playerNum_ = 1;
+	//playerNum_ = 1;
 
 	isPad_ = false;
 
@@ -77,15 +89,15 @@ void SelectScene::Init(void)
 	//図形用------------------------------------------------
 
 	//三角形の中心座標と大きさ
-	triL = { 450,TRI_POS_Y ,TRI_SCALE,TRI_SCALE ,false };
-	triR = { 1050,TRI_POS_Y ,TRI_SCALE,TRI_SCALE ,false };
+	triL = { TRI_POS_X - 300,TRI_POS_Y ,TRI_SCALE,TRI_SCALE ,false };
+	triR = { TRI_POS_X + 300,TRI_POS_Y ,TRI_SCALE,TRI_SCALE ,false };
 
 	//三角形の色
 	triL.color_ = GetColor(255, 255, 64);
 	triR.color_ = GetColor(255, 255, 64);
 
 	//四角形の中心座標と大きさ
-	rc = { 750,450,RECT_SCALE,RECT_SCALE };
+	rc = { Application::SCREEN_SIZE_X/2/*750*/,Application::SCREEN_SIZE_Y / 2/*450*/,RECT_SCALE,RECT_SCALE };
 
 	//四角形の色
 	rc.color_ = GetColor(255, 0, 0);
@@ -96,8 +108,8 @@ void SelectScene::Init(void)
 
 	//------------------------------------------------------
 
-	keyPressTime_ = 0.0f;
-	interval_ = 0.0f;
+	//keyPressTime_ = 0.0f;
+	//interval_ = 0.0f;
 
 }
 
@@ -108,6 +120,9 @@ void SelectScene::Update(void)
 
 	//どちらかを操作しているときにもう片方を操作できないように制御
 	ControllDevice();
+
+	//空を回転
+	skyDome_->Update();
 
 	//選択中の種類ごとの更新処理
 	switch (select_)
@@ -192,6 +207,11 @@ void SelectScene::NumberUpdate(void)
 	InputManager& ins = InputManager::GetInstance();
 	DataBank& data = DataBank::GetInstance();
 	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
+
+	for (auto& i : images_)
+	{
+		i->Update();
+	}
 
 #ifdef DEBUG_RECT
 
@@ -280,7 +300,10 @@ void SelectScene::NumberUpdate(void)
 	{
 		//プレイヤー人数の設定
 		data.Input(SceneManager::PLAY_MODE::USER, playerNum_);
+		//ディスプレイの設定
+		data.Input(DataBank::INFO::DHISPLAY_NUM, playerNum_);
 		data.Input(DataBank::INFO::USER_NUM, playerNum_);	
+
 		//CPU人数の設定(CPUは１人から３人)
 		data.Input(SceneManager::PLAY_MODE::CPU, (PLAYER_NUM) - playerNum_);
 
@@ -530,7 +553,6 @@ void SelectScene::RoleUpdate(void)
 		//押下したときの色
 		rc.color_ = 0xFF0000;
 
-		data.Input(DataBank::INFO::DHISPLAY_NUM, 1);
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 	}
 
@@ -646,14 +668,14 @@ void SelectScene::DrawDebug(void)
 	//現在の入力デバイス
 	DrawFormatString(0, 820, 0x000000, "(key_:0)(pad:1) %d", GetDevice());
 	//入力の種類
-	DrawFormatString(Application::SCREEN_SIZE_X / 2,
-		Application::SCREEN_SIZE_Y / 2,
+	DrawFormatString(0,
+		800,
 		0x000000,
 		"%d",
 		key_);
 
-	//プレイ人数
-	DrawFormatString(Application::SCREEN_SIZE_X / 2, 0, 0x000000, "number : %d", playerNum_);
+	////プレイ人数
+	//DrawFormatString(Application::SCREEN_SIZE_X / 2, 0, 0x000000, "number : %d", playerNum_);
 	//1Pかパッド操作かどうか
 	DrawFormatString(Application::SCREEN_SIZE_X / 2, 20, 0x000000, "operation : %d", isPad_);
 	//役職
@@ -770,11 +792,6 @@ SceneManager::CNTL SelectScene::GetDevice(void)
 	//}
 	//ChangeDevice(SceneManager::CNTL::PAD);
 	//return SceneManager::CNTL::PAD;
-}
-
-SelectScene::KEY_CONFIG SelectScene::GetKeyConfig(void)
-{
-	return key_;
 }
 
 void SelectScene::ChangeDevice(SceneManager::CNTL device)

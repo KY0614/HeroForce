@@ -180,7 +180,7 @@ void ResourceManager::Init(void)
 	resourcesMap_.emplace(SRC::CHICKEN, res);
 
 	//l”‘I‘ğ‰æ‘œ
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "PlayerNum.png");
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "PlayerNumber.png",4,1,300,300);
 	resourcesMap_.emplace(SRC::PLAYER_NUM, res);
 
 	//‰E–îˆó

@@ -8,10 +8,10 @@ class SelectPlayer : public UnitBase
 {
 public:
 	//コンストラクタ
-	SelectPlayer();
+	SelectPlayer(void);
 
 	//デストラクタ
-	~SelectPlayer() = default;
+	~SelectPlayer(void) = default;
 
 	//解放
 	virtual void Destroy(void);
