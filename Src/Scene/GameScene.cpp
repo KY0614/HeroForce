@@ -197,32 +197,13 @@ void GameScene::Release(void)
 
 
 //“–‚½‚è”»’èi‘¼€–Ú‚ÉŠ±Â‚·‚é‚à‚Ì‚Ì‚Ýj
+//‚ ‚½‚è”»’è‘Š‡
 void GameScene::Collision(void)
 {
 	auto& col = Collision::GetInstance();
 
-
-	for (auto& e : enemys_)
-	{
-		VECTOR ePos = e->GetPos();
-		//“®‚¯‚é•ª‚¾‚¯(‚Ì‚¿‚É‘Sˆõ•ª‚É•Ï‚¦‚é)
-		VECTOR pPos = players_[0]->GetPos();
-
-		//“G‘¤õ“G
-		if (col.Search(ePos, pPos, e->GetSearchRange())){
-			//ˆÚ“®‚ðŠJŽn
-			e->SetIsMove(true);
-		}
-		else{
-			//ˆÚ“®‚ð’âŽ~
-			e->SetIsMove(false);
-		}
-
-		if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL){
-			//ó‘Ô‚ð•ÏX
-			e->ChangeState(Enemy::STATE::ALERT);
-		}
-	}
+	CollisionEnemy();
+	CollisionPlayer();
 
 #ifdef _DEBUG_COL
 
@@ -250,32 +231,6 @@ void GameScene::Collision(void)
 		enemyTest_->ChangeState(Enemy::STATE::ALERT);
 	}
 
-
-	//ƒvƒŒƒCƒ„[‚ªCPU‚ÌŽž‚¾‚¯ƒT[ƒ`‚µ‚½‚¢
-	if (playerTest_->GetPlayMode() == PlayerBase::PLAY_MODE::CPU)
-	{
-		//ƒvƒŒƒCƒ„[‘¤õ“G
-		if (col.Search(pPos, ePos, playerTest_->GetSearchRange())&&enemyTest_->IsAlive())
-		{
-			//“G‚ðƒT[ƒ`‚µ‚½‚©‚ð•Ô‚·
-			playerTest_->SetisEnemySerch(true);
-			playerTest_->SetTargetPos(ePos);
-		}
-		else if(!enemyTest_->IsAlive())
-		{
-			//“G‚ðƒT[ƒ`‚µ‚½‚©‚ð•Ô‚·
-			playerTest_->SetisEnemySerch(false);
-		}
-
-		if (col.Search(playerTest_->GetPos(), enemyTest_->GetPos(), playerTest_->GetAtkStartRange()) 
-			&& playerTest_->GetState() == PlayerBase::STATE::NORMAL
-			&&enemyTest_->IsAlive())
-		{
-			//ó‘Ô‚ð•ÏX
-			playerTest_->ChangeState(PlayerBase::STATE::ATTACK);
-		}
-
-	}
 		//ƒvƒŒƒCƒ„[UŒ‚”»’è
 		//UŒ‚’†‚Å‚ ‚è‚»‚ÌUŒ‚‚ªˆê“x‚à“–‚½‚Á‚Ä‚¢‚È‚¢‚©
 		if (pAtk.IsAttack() && !pAtk.isHit_)
@@ -316,7 +271,7 @@ void GameScene::Collision(void)
 				playerTest_->ChangeState(PlayerBase::CPU_STATE::ATTACK);
 			}
 
-}
+		}
 	
 	//“G‚ÌUŒ‚”»’è
 	//ƒAƒ^ƒbƒN’†‚Å‚ ‚èUŒ‚”»’è‚ªI—¹‚µ‚Ä‚¢‚È‚¢‚Æ‚«
@@ -333,6 +288,116 @@ void GameScene::Collision(void)
 	}
 
 #endif
+}
+
+//“GŠÖŒW‚Ì“–‚½‚è”»’è
+void GameScene::CollisionEnemy(void)
+{
+	auto& col = Collision::GetInstance();
+
+	//‚ ‚½‚è”»’è(Žå‚Éõ“G)
+	for (auto& e : enemys_)
+	{
+		//“GŒÂl‚ÌˆÊ’u‚ÆUŒ‚‚ðŽæ“¾
+		VECTOR ePos = e->GetPos();
+		UnitBase::ATK eAtk = e->GetAtk();
+
+		//“®‚¯‚é•ª‚¾‚¯(‚Ì‚¿‚É‘Sˆõ•ª‚É•Ï‚¦‚é)
+		VECTOR pPos = players_[0]->GetPos();
+
+		//õ“G
+		//”ÍˆÍ“à‚É“ü‚Á‚Ä‚¢‚é‚Æ‚«
+		if (col.Search(ePos, pPos, e->GetSearchRange())) {
+			//ˆÚ“®‚ðŠJŽn
+			e->SetIsMove(true);
+		}else {
+			//ˆÚ“®‚ð’âŽ~
+			e->SetIsMove(false);
+		}
+
+		//’Êíó‘ÔŽž && UŒ‚”ÍˆÍ“à‚ÉƒvƒŒƒCƒ„[‚ª“ü‚Á‚½‚çUŒ‚‚ðŠJŽn
+		if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL) {
+			//ó‘Ô‚ð•ÏX
+			e->ChangeState(Enemy::STATE::ALERT);
+		}
+
+		//UŒ‚”»’è
+		//ƒAƒ^ƒbƒN’† && UŒ‚”»’è‚ªI—¹‚µ‚Ä‚¢‚È‚¢‚Æ‚«
+		if (eAtk.IsAttack() && !eAtk.isHit_)
+		{
+			//UŒ‚‚ª“–‚½‚é”ÍˆÍ && ƒvƒŒƒCƒ„[‚ª‰ñ”ð‚µ‚Ä‚¢‚È‚¢‚Æ‚«
+			if (col.IsHitAtk(enemyTest_, playerTest_) && !playerTest_->IsDodge())
+			{
+				//ƒ_ƒ[ƒW
+				playerTest_->Damage();
+				//Žg—p‚µ‚½UŒ‚‚ð”»’èI—¹‚É
+				enemyTest_->SetIsHit(true);
+			}
+		}
+	}
+}
+
+void GameScene::CollisionPlayer(void)
+{
+	auto& col = Collision::GetInstance();
+
+	for (int i = 0; i < PLAYER_NUM; i++)
+	{
+		auto pPos = players_[i]->GetPos();
+		auto pAtk = players_[i]->GetAtk();
+
+		//ƒvƒŒƒCƒ„[‚ªCPU‚ÌŽž‚¾‚¯ƒT[ƒ`‚µ‚½‚¢
+		if (playerTest_->GetPlayMode() == SceneManager::PLAY_MODE::CPU)CollisionPlayerCPU(players_[i].get(), pPos);
+
+		//ƒvƒŒƒCƒ„[UŒ‚”»’è
+		//UŒ‚‚µ‚Ä‚¢‚È‚¢ || UŒ‚‚ª‚·‚Å‚É“–‚½‚Á‚Ä‚¢‚é
+		if (!pAtk.IsAttack() || pAtk.isHit_)continue;
+
+		//“–‚½‚è”»’è
+		if (col.IsHitAtk(playerTest_, enemyTest_)) {
+			//”í’e
+			enemyTest_->Damage(5, 4);
+			//UŒ‚”»’è‚ÌI—¹
+			playerTest_->SetIsHit(true);
+		}
+	}
+}
+
+void GameScene::CollisionPlayerCPU(PlayerBase* _player, const VECTOR& _pPos)
+{
+
+	//“Yí‰ÓŠ‘½‚ß
+	auto& col = Collision::GetInstance();
+
+	//“G‚ÌŒÂ‘Ì•ªs‚¤
+	for (auto& e : enemys_)
+	{
+		//“GŒÂl‚ÌˆÊ’u‚ÆUŒ‚‚ðŽæ“¾
+		VECTOR ePos = e->GetPos();
+
+		//ƒvƒŒƒCƒ„[‘¤õ“G
+		if (col.Search(_pPos, ePos, _player->GetSearchRange())
+			&& enemyTest_->IsAlive() && !_player->GetIsCalledPlayer())
+		{
+			//“G‚ðƒT[ƒ`‚µ‚½‚©‚ð•Ô‚·
+			_player->SetisEnemySerch(true);
+			_player->SetTargetPos(ePos);
+		}
+		else if (!enemyTest_->IsAlive())
+		{
+			//“G‚ðƒT[ƒ`‚µ‚½‚©‚ð•Ô‚·
+			_player->SetisEnemySerch(false);
+		}
+
+		if (col.Search(_player->GetPos(), enemyTest_->GetPos(), _player->GetAtkStartRange())
+			&& _player->GetState() == PlayerBase::CPU_STATE::NORMAL
+			&& enemyTest_->IsAlive()
+			&& !_player->GetIsCalledPlayer())
+		{
+			//ó‘Ô‚ð•ÏX
+			_player->ChangeState(PlayerBase::CPU_STATE::ATTACK);
+		}
+	}
 }
 
 void GameScene::Fade(void)

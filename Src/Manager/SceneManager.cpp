@@ -171,9 +171,9 @@ void SceneManager::Destroy(void)
 		c->Release();
 	}
 
-	delete instance_;
-
 	DataBank::GetInstance().Destroy();
+
+	delete instance_;
 }
 
 void SceneManager::ChangeScene(SCENE_ID nextId)
@@ -316,9 +316,10 @@ void SceneManager::ResetDeltaTime(void)
 
 void SceneManager::DoChangeScene(SCENE_ID sceneId)
 {
+	auto& resM = ResourceManager::GetInstance();
 
 	// リソースの解放
-	ResourceManager::GetInstance().Release();
+	resM.Release();
 
 	// シーンを変更する
 	sceneId_ = sceneId;
@@ -335,16 +336,19 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	case SCENE_ID::TITLE:
 		ChangeWindowMode(Application::WINDOW::HIDE);
 		scene_ = new TitleScene();
+		resM.InitTitle();
 		break;		
 	
 	case SCENE_ID::SELECT:
 		scene_ = new SelectScene();
+		resM.InitSelect();
 		break;	
 	
 	case SCENE_ID::GAME:
 		//ウィンドウの設定
 		RedySubWindow();
 		scene_ = new GameScene();
+		resM.InitGame();
 		break;
 	}
 

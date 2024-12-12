@@ -134,6 +134,9 @@ void Application::Destroy(void)
 	ResourceManager::GetInstance().Destroy();
 	SceneManager::GetInstance().Destroy();
 	
+	// Effekseer‚ğI—¹‚·‚éB
+	Effkseer_End();
+
 	// DxLibI—¹
 	if (DxLib_End() == -1)
 	{

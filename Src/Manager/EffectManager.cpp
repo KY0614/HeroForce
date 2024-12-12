@@ -14,7 +14,7 @@ void EffectManager::Add(const EFFECT& _efc, int _data)
 	if (effectRes_.find(_efc) != effectRes_.end())return;
 
 	//V‚µ‚­—v‘f‚ğ’Ç‰Á‚·‚é
-	effectRes_.emplace(_efc, std::move(_data));
+	effectRes_.emplace(_efc, _data);
 }
 
 
