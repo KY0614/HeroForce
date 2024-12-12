@@ -1,5 +1,6 @@
 #include <chrono>
 #include <DxLib.h>
+#include<EffekseerForDXLib.h>
 #include<cassert>
 
 #include "../Scene/TitleScene.h"
@@ -99,18 +100,15 @@ void SceneManager::Update(void)
 	preTime_ = nowTime;
 
 	fader_->Update();
-	if (isSceneChanging_)
-	{
+	if (isSceneChanging_){
 		Fade();
 	}
-	else
-	{
+	else{
 		scene_->Update();
 	}
 
 	// カメラ更新
-	for (auto& c : cameras_)
-	{
+	for (auto& c : cameras_){
 		c->Update();
 	}
 }
@@ -144,9 +142,16 @@ void SceneManager::Draw(void)
 		//カメラの描画
 		cameras_[cnt]->SetBeforeDraw();
 
+		// Effekseerにより再生中のエフェクトを更新する。
+		UpdateEffekseer3D();
+
+
 		//ゲーム内容描画
 		// 描画
 		scene_->Draw();
+
+		// Effekseerにより再生中のエフェクトを描画する。
+		DrawEffekseer3D();
 
 
 		// 暗転・明転

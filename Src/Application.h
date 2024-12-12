@@ -90,9 +90,6 @@ public:
 	// 解放成功／失敗の判定
 	bool IsReleaseFail(void) const;
 
-	//ウィンドウの初期化
-	void InitWindows(const int _num);
-
 private:
 
 	//ウィンドウハンドル
@@ -110,6 +107,13 @@ private:
 
 	// 解放失敗
 	bool isReleaseFail_;
+
+
+	//ウィンドウの初期化
+	void InitWindows(const int _num);
+
+	//エフェクシアの初期化
+	void InitEffekseer(void);
 
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする
