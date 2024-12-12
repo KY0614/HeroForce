@@ -38,5 +38,6 @@ public:
 
 private:
 	std::unordered_map<EFFECT,int> effectRes_;
+	std::unordered_map<EFFECT,int> effectPlay_;
 };
 

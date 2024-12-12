@@ -16,8 +16,7 @@ SceneManager* SceneManager::instance_ = nullptr;
 
 void SceneManager::CreateInstance()
 {
-	if (instance_ == nullptr)
-	{
+	if (instance_ == nullptr){
 		instance_ = new SceneManager();
 	}
 	instance_->Init();
@@ -130,13 +129,10 @@ void SceneManager::Draw(void)
 		//フロントバッファの画像を消去
 		ClearDrawScreen();
 
-		if (hwnd)
-		{
+		if (hwnd){
 			SetScreenFlipTargetWindow(hwnd); // 追加ウィンドウをターゲットに設定
 
-		}
-		else
-		{
+		}else{
 			SetScreenFlipTargetWindow(NULL); // メインウィンドウをターゲットに設定
 		}
 		//カメラの描画
@@ -171,8 +167,7 @@ void SceneManager::Destroy(void)
 	delete scene_;
 
 	// カメラ
-	for (auto& c : cameras_)
-	{
+	for (auto& c : cameras_){
 		c->Release();
 	}
 
@@ -392,6 +387,8 @@ void SceneManager::Fade(void)
 //ウィンドウのサイズ及び位置設定
 void SceneManager::SetWindowPram(void)
 {
+	//現在はディスプレイ一枚と仮定して制作している
+	//後で対応版の制作が必要
 	const int DISPLAY_X = 1920;
 	const int DISPLAY_Y = 1080;
 
