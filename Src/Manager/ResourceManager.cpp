@@ -65,7 +65,7 @@ void ResourceManager::InitGame(void)
 	ResourceStage();
 
 	//チキン
-	res = Resource(Resource::TYPE::MODEL, "Data/Model/Chicken/Chicken.mv1");
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Chicken/Chicken.mv1");
 	resourcesMap_.emplace(SRC::CHICKEN, res);
 }
 
@@ -132,7 +132,7 @@ void ResourceManager::ResourceStage(void)
 {
 	Resource res;
 	//スカイドーム
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "SkyDome.mv1");
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_SKYDOME + "SkyDome.mv1");
 	resourcesMap_.emplace(SRC::SKY_DOME, res);
 
 	//ステージ[樽]
