@@ -325,13 +325,17 @@ void GameScene::CollisionEnemy(void)
 		//アタック中 && 攻撃判定が終了していないとき
 		if (eAtk.IsAttack() && !eAtk.isHit_)
 		{
-			//攻撃が当たる範囲 && プレイヤーが回避していないとき
-			if (col.IsHitAtk(enemyTest_, playerTest_) && !playerTest_->IsDodge())
+			//各プレイヤーと当たり判定を取る
+			for (auto& p : players_)
 			{
-				//ダメージ
-				playerTest_->Damage();
-				//使用した攻撃を判定終了に
-				enemyTest_->SetIsHit(true);
+				//攻撃が当たる範囲 && プレイヤーが回避していないとき
+				if (col.IsHitAtk(*e, *p) && !playerTest_->IsDodge())
+				{
+					//ダメージ
+					p->Damage();
+					//使用した攻撃を判定終了に
+					e->SetIsHit(true);
+				}
 			}
 		}
 	}
@@ -341,61 +345,65 @@ void GameScene::CollisionPlayer(void)
 {
 	auto& col = Collision::GetInstance();
 
-	for (int i = 0; i < PLAYER_NUM; i++)
+	for (auto& p : players_)
 	{
-		auto pPos = players_[i]->GetPos();
-		auto pAtk = players_[i]->GetAtk();
+		auto pPos = p->GetPos();
+		auto pAtk = p->GetAtk();
 
 		//プレイヤーがCPUの時だけサーチしたい
-		if (playerTest_->GetPlayMode() == SceneManager::PLAY_MODE::CPU)CollisionPlayerCPU(players_[i].get(), pPos);
+		if (p->GetPlayMode() == SceneManager::PLAY_MODE::CPU)CollisionPlayerCPU(*p, pPos);
 
 		//プレイヤー攻撃判定
 		//攻撃していない || 攻撃がすでに当たっている
 		if (!pAtk.IsAttack() || pAtk.isHit_)continue;
 
-		//当たり判定
-		if (col.IsHitAtk(playerTest_, enemyTest_)) {
-			//被弾
-			enemyTest_->Damage(5, 4);
-			//攻撃判定の終了
-			playerTest_->SetIsHit(true);
+		for (auto& e : enemys_)
+		{
+			//当たり判定
+			if (col.IsHitAtk(*p, *e)) {
+				//被弾
+				e->Damage(5, 4);
+				//攻撃判定の終了
+				p->SetIsHit(true);
+			}
 		}
+		
 	}
 }
 
-void GameScene::CollisionPlayerCPU(PlayerBase* _player, const VECTOR& _pPos)
+void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
 {
 
 	//添削箇所多め
 	auto& col = Collision::GetInstance();
 
+	//敵をサーチ初期化
+	_player.SetisEnemySerch(false);
+
 	//敵の個体分行う
 	for (auto& e : enemys_)
 	{
+		//敵が死亡していたら処理しない
+		if (!e->IsAlive())continue;
+
 		//敵個人の位置と攻撃を取得
 		VECTOR ePos = e->GetPos();
 
 		//プレイヤー側索敵
-		if (col.Search(_pPos, ePos, _player->GetSearchRange())
-			&& enemyTest_->IsAlive() && !_player->GetIsCalledPlayer())
+		if (col.Search(_pPos, ePos, _player.GetSearchRange())
+			&& !_player.GetIsCalledPlayer())
 		{
 			//敵をサーチしたかを返す
-			_player->SetisEnemySerch(true);
-			_player->SetTargetPos(ePos);
-		}
-		else if (!enemyTest_->IsAlive())
-		{
-			//敵をサーチしたかを返す
-			_player->SetisEnemySerch(false);
+			_player.SetisEnemySerch(true);
+			_player.SetTargetPos(ePos);
 		}
 
-		if (col.Search(_player->GetPos(), enemyTest_->GetPos(), _player->GetAtkStartRange())
-			&& _player->GetState() == PlayerBase::CPU_STATE::NORMAL
-			&& enemyTest_->IsAlive()
-			&& !_player->GetIsCalledPlayer())
+		if (col.Search(_player.GetPos(), enemyTest_->GetPos(), _player.GetAtkStartRange())
+			&& _player.GetState() == PlayerBase::CPU_STATE::NORMAL
+			&& !_player.GetIsCalledPlayer())
 		{
 			//状態を変更
-			_player->ChangeState(PlayerBase::CPU_STATE::ATTACK);
+			_player.ChangeState(PlayerBase::CPU_STATE::ATTACK);
 		}
 	}
 }
