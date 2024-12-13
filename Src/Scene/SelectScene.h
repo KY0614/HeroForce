@@ -101,7 +101,8 @@ public:
 	{
 		NUMBER,		//人数
 		OPERATION,	//1Pをキーボード操作にするかどうか
-		ROLE		//役職
+		ROLE,		//役職
+		MAX
 	};
 
 	// キーコンフィグ
