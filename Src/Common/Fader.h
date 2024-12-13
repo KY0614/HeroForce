@@ -15,14 +15,18 @@ public:
 	static constexpr float LITTLE_FADE_OUT_SPEED = 2.0f;
 
 	// フェードが進む速さ
-	static constexpr float SPEED_ALPHA = 5.0f;
+	static constexpr float SPEED_SCENE = 5.0f;	//シーン遷移
+	static constexpr float SPEED_PHASE = 2.0f;	//フェーズ遷移
+	static constexpr float SPEED_ALPHA = 3.0f;
+	
 
 	// 状態
 	enum class STATE
 	{
-		NONE, 
+		NONE,			//何もしていない
 		FADE_OUT,		// 徐々に暗転
 		FADE_IN,		// 徐々に明転	
+		FADE_KEEP,		//現在の状態を保つ
 		SET_FADE_OUT	// アルファ値を決めて暗転
 	};
 
@@ -50,6 +54,9 @@ protected:
 
 	// 暗転・明転用透明度
 	float alpha_;
+
+	//フェード速度
+	float speed_;
 
 	// 透明度の指定値用
 	float alphaMax_;

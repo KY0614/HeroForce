@@ -19,6 +19,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Manager\EffectManager.cpp" />
+    <ClCompile Include="Src\Manager\InputController.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneArcher.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneBrig.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneGolem.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneMage.cpp" />
+    <ClCompile Include="Src\Scene\SelectScene.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneAxe.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\PlArcher.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\PlKnight.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\PlMage.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\PlAxeMan.cpp" />
+    <ClCompile Include="Src\Manager\DataBank.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenManager.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenBase.cpp" />
     <ClCompile Include="Src\Object\System\UnitPositionLoad.cpp" />
@@ -55,6 +68,14 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Manager\EffectManager.h" />
+    <ClInclude Include="Src\Manager\InputController.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\EneArcher.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\EneBrig.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\EneGolem.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\EneMage.h" />
+    <ClInclude Include="Src\Scene\SelectScene.h" />
+    <ClInclude Include="Src\Manager\DataBank.h" />
     <ClInclude Include="Src\Object\Character\Chiken\ChickenManager.h" />
     <ClInclude Include="Src\Object\Character\Chiken\ChickenBase.h" />
     <ClInclude Include="Src\Object\System\UnitPositionLoad.h" />
@@ -63,6 +84,11 @@
     <ClInclude Include="Src\Manager\TextManager.h" />
     <ClInclude Include="Src\Object\Character\Enemy.h" />
     <ClInclude Include="Src\Object\Arrow.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\EneAxe.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\PlArcher.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\PlAxeMan.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\PlKnight.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\PlMage.h" />
     <ClInclude Include="Src\Object\Character\PlayerBase.h" />
     <ClInclude Include="Src\Object\Stage\SkyDome.h" />
     <ClInclude Include="Src\Object\Stage\StageObject.h" />
@@ -179,6 +205,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir)Src/Lib/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

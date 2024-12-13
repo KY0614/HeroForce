@@ -144,14 +144,14 @@ void UnitBase::FinishAnim(void)
 	stepAnim_ = 0.0f;
 }
 
-void UnitBase::CntUp(float _count)
+void UnitBase::CntUp(float& _count)
 {
 	// Œo‰ßŽžŠÔ‚ÌŽæ“¾
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	_count += deltaTime;
 }
 
-void UnitBase::CntDown(float _count)
+void UnitBase::CntDown(float& _count)
 {
 	// Œo‰ßŽžŠÔ‚ÌŽæ“¾
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
