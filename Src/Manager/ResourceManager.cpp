@@ -31,6 +31,8 @@ void ResourceManager::InitTitle(void)
 
 void ResourceManager::InitSelect(void)
 {
+	Resource res;
+
 	//l”‘I‘ğ‰æ‘œ
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "PlayerNumber.png", 4, 1, 300, 300);
 	resourcesMap_.emplace(SRC::PLAYER_NUM, res);
