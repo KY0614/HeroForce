@@ -39,13 +39,11 @@ void ResourceManager::InitGame(void)
 {
 	Resource res;
 
-	//レベル通知用
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Level-Up.png");
-	resourcesMap_.emplace(SRC::LEVEL_UP, res);
-
+	//強化選択用UI画像
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "SelectUI.png");
 	resourcesMap_.emplace(SRC::SELECT_UI, res);
 
+	//カーソルまとめ画像(強化選択用)
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Carsors.png", CARSORS_NUM_X, CARSORS_NUM_Y, CARSORS_SIZE, CARSORS_SIZE);
 	resourcesMap_.emplace(SRC::CARSOLS, res);
 
