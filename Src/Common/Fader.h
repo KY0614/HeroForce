@@ -5,6 +5,9 @@ class Fader
 
 public:
 
+	//透過最大値
+	static constexpr int ALPHA_MAX = 255;
+
 	// 画面を少し暗くするようのアルファ値
 	static constexpr int LITTLE_ALPHA = 150;
 

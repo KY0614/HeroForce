@@ -1,6 +1,6 @@
 #pragma once
-
-class Fader;
+#include <functional>
+#include <vector>
 class LevelupNotice;
 class LevelupSelect;
 
@@ -14,7 +14,7 @@ public:
 		NONE,		//なし
 		NOTICE,		//通知
 		SELECT,		//選択
-		FIN
+		END			//終了
 	};	
 
 	//強化要素の種類
@@ -30,6 +30,9 @@ public:
 		TRAP_POW_UP_C,*/
 		MAX
 	};
+
+	//初期レベル
+	static constexpr int DEFAULT_LEVEL = 1;
 	
 	//ゲージ最大値
 	static constexpr float CONSTANT_GAGE = 100.0f;
@@ -43,28 +46,13 @@ public:
 	//種類最大
 	static constexpr int TYPE_MAX = static_cast<int>(TYPE::MAX);
 
-	//コンストラクタ
 	LevelScreenManager(void);
-
-	//デストラクタ
 	~LevelScreenManager(void);
 
-
-
-	//基本処理の４つは仮想関数化するのでしっかりオーバーライドするように
-	//初期化
-	virtual void Init(void);
-
-	//更新
-	virtual void Update(void);
-	void NoticeUpdate(void);	//通知用の更新処理
-	void PowerUpdate(void);		//強化選択の更新処理
-
-	//描画
-	virtual void Draw(void);
-
-	//解放	
-	virtual void Release(void);
+	void Init(void);
+	void Update(void);
+	void Draw(void);
+	void Release(void);
 
 	//読み込み
 	void Load(void);
@@ -72,36 +60,32 @@ public:
 	//初期化処理
 	void Reset();
 
-	//経験値の設定
-	void SetExp(const float value);
+	//経験値の増加
+	void AddExp(const float value);
 
 	//ゲージの設定
 	void SetGage(const int level);
 
 	//ステートの設定
-	void SetState(const STATE state);
+	void ChangeState(const STATE state);
 	
 	//経験値の状態確認
 	void CheckExp();
 
-	//暗転
-	void FaderDraw();
-
 	//ゲッター
 	inline float GetExp(void)const { return exp_; };
-	inline TYPE GetType(void)const { return type_; };
 	inline STATE GetState(void)const { return state_; };
+	inline TYPE GetType(const int playerNum)const;
 
-	//デバッグ機能
-	void Debag();
+private:
 
-protected:
+	int playerNum_;
 
 	//状態
 	STATE state_;
 
 	//種類
-	TYPE type_;
+	std::vector<TYPE> selectTypes_;
 
 	//現在のレベル
 	int nowLevel_;
@@ -115,9 +99,39 @@ protected:
 	//アルファ値
 	float alpha_;
 
-	//インスタンス
-	Fader* fader_;
-	LevelupNotice* notice_;
-	LevelupSelect* select_;
+	// 状態管理(状態遷移時初期処理)
+	std::map<STATE, std::function<void(void)>> stateChanges_;
 
+	// 状態管理
+	std::function<void(void)> stateUpdate_;	//更新
+	std::function<void(void)> stateDraw_;	//描画
+
+	//インスタンス
+	std::unique_ptr<LevelupNotice> notice_;
+	std::unique_ptr<LevelupSelect> select_;
+
+	//状態変更
+	void ChangeStateNone();
+	void ChangeStateNotice();
+	void ChangeStateSelect();
+	void ChangeStateEnd();
+
+	//各種更新処理
+	void UpdateNone(void);
+	void UpdateNotice(void);		//通知
+	void UpdateSelect(void);		//強化選択
+	void UpdateEnd(void);			//終了
+
+	//各種描画処理
+	void DrawNone();
+	void DrawNotice();
+	void DrawSelect();
+	void DrawEnd();
+								
+	//暗転
+	void FaderDraw();
+
+	//デバッグ機能
+	void DebagUpdate();
+	void DebagDraw();
 };

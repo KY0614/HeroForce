@@ -50,10 +50,10 @@ void Fader::Update(void)
 
 	case STATE::FADE_OUT:
 		alpha_ += SPEED_ALPHA;
-		if (alpha_ > 255)
+		if (alpha_ > ALPHA_MAX)
 		{
 			// フェード終了
-			alpha_ = 255;
+			alpha_ = ALPHA_MAX;
 			if (isPreEnd_)
 			{
 				// 1フレーム後(Draw後)に終了とする

@@ -177,27 +177,31 @@ void GameScene::Collision(void)
 void GameScene::LevelUpReflection()
 {
 	//ステート確認
-	if (level_->GetState() == LevelScreenManager::STATE::FIN)
+	if (level_->GetState() == LevelScreenManager::STATE::END)
 	{
 		return;
 	}
 
-	//ここでプレイヤーの強化を反映
-	switch (level_->GetType())
-	{
-	case LevelScreenManager::TYPE::ATTACK:
-		break;
+	//int plNum = 1;
+	//for (int i = 0; i < plNum; i++) {
 
-	case LevelScreenManager::TYPE::DEFENSE:
-		break;
+	//	//ここでプレイヤーの強化を反映
+	//	switch (level_->GetType(i))
+	//	{
+	//	case LevelScreenManager::TYPE::ATTACK:
+	//		break;
 
-	case LevelScreenManager::TYPE::LIFE:
-		break;
+	//	case LevelScreenManager::TYPE::DEFENSE:
+	//		break;
 
-	case LevelScreenManager::TYPE::SPEED:
-		break;
+	//	case LevelScreenManager::TYPE::LIFE:
+	//		break;
 
-	default:
-		break;
-	}
+	//	case LevelScreenManager::TYPE::SPEED:
+	//		break;
+
+	//	default:
+	//		break;
+	//	}
+	//}
 }

@@ -8,6 +8,11 @@ class ResourceManager
 
 public:
 
+	//カーソル画像用定数
+	static constexpr int CARSORS_NUM_X = 4;
+	static constexpr int CARSORS_NUM_Y = 1;
+	static constexpr int CARSORS_SIZE = 64;
+
 	// リソース名
 	enum class SRC
 	{
@@ -57,6 +62,7 @@ public:
 		//レベル通知用
 		LEVEL_UP,
 		SELECT_UI,
+		CARSOLS,
 
 		//CPU
 		CHICKEN,
