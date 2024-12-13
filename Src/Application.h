@@ -2,17 +2,25 @@
 #include <string>
 #include<windows.h>
 
+#define DEBUG_SCREEN
+
 class Application
 {
 
 public:
-
-	// スクリーンサイズ
-
-	/*static constexpr int SCREEN_SIZE_X = 1920;
-	static constexpr int SCREEN_SIZE_Y = 1080;*/
+#ifdef DEBUG_SCREEN
 	static constexpr int SCREEN_SIZE_X = 800;
 	static constexpr int SCREEN_SIZE_Y = 600;
+#else
+	// スクリーンサイズ
+
+	static constexpr int SCREEN_SIZE_X = 1920;
+	static constexpr int SCREEN_SIZE_Y = 1080;
+#endif // DEBUG_SCREEN
+
+
+	//static constexpr int SCREEN_SIZE_X = 800;
+	//static constexpr int SCREEN_SIZE_Y = 600;
 
 	//FPS
 	static constexpr int DEFAULT_FPS = 60;
@@ -82,9 +90,6 @@ public:
 	// 解放成功／失敗の判定
 	bool IsReleaseFail(void) const;
 
-	//ウィンドウの初期化
-	void InitWindows(const int _num);
-
 private:
 
 	//ウィンドウハンドル
@@ -102,6 +107,13 @@ private:
 
 	// 解放失敗
 	bool isReleaseFail_;
+
+
+	//ウィンドウの初期化
+	void InitWindows(const int _num);
+
+	//エフェクシアの初期化
+	void InitEffekseer(void);
 
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする

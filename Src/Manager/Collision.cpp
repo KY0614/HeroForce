@@ -25,12 +25,12 @@ void Collision::Init(void)
 }
 //UŒ‚‚ª“–‚½‚Á‚½‚©
  // ˆø”‚ÍiUŒ‚‚µ‚½lAUŒ‚‘ÎÛj‚Ì‡
-const bool Collision::IsHitAtk(const UnitBase* _chaser, const UnitBase* _target)
+const bool Collision::IsHitAtk(const UnitBase& _chaser, const UnitBase& _target)
 {
-    return AsoUtility::IsHitSpheres(_chaser->GetAtk().pos_, _chaser->GetAtk().radius_, _target->GetPos(), _target->GetRadius());
+    return AsoUtility::IsHitSpheres(_chaser.GetAtk().pos_, _chaser.GetAtk().radius_, _target.GetPos(), _target.GetRadius());
 }
 
-const bool Collision::Search(const UnitBase* _chaser, const UnitBase* _target)
+const bool Collision::Search(const UnitBase& _chaser, const UnitBase& _target)
 {
     return false;
 }

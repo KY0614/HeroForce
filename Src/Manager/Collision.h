@@ -21,11 +21,11 @@ public:
 	/// <param name="_chaser">UŒ‚‚ğ‚·‚él</param>
 	/// <param name="_target">UŒ‚‚ğó‚¯‚él</param>
 	/// <returns></returns>
-	const bool IsHitAtk(const UnitBase* _chaser, const UnitBase* _target);
+	const bool IsHitAtk(const UnitBase& _chaser, const UnitBase& _target);
 
 	//õ“G
 	// ˆø”‚Íiõ“G‚µ‚½lAõ“G‘ÎÛj‚Ì‡
-	const bool Search(const UnitBase* _chaser, const UnitBase* _target);
+	const bool Search(const UnitBase& _chaser, const UnitBase& _target);
 
 	/// <summary>
 	/// –Ú“I‚Ì”ÍˆÍ‚É‘ÎÛ‚ª“ü‚Á‚½‚©‚ğ•Ô‚·

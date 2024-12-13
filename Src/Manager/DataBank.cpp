@@ -5,8 +5,7 @@ DataBank* DataBank::instance_ = nullptr;
 
 void DataBank::CreateInstance(void)
 {
-	if (instance_ == nullptr)
-	{
+	if (instance_ == nullptr){
 		instance_ = new DataBank();
 	}
 	instance_->Init();

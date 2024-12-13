@@ -1,15 +1,15 @@
 #include"../../../Manager/Resource.h"
 #include"../../../Manager/ResourceManager.h"
 #include"../Enemy.h"
-#include "EneAxe.h"
+#include "EneBrig.h"
 
-void EneAxe::SetParam(void)
+void EneBrig::SetParam(void)
 {
 	//攻撃の遷移
-	changeSkill_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneAxe::Skill_One, this));
+	changeSkill_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneBrig::Skill_One, this));
 
 	//モデル読み込み
-	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_AXEMAN));
+	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_BRIGANT));
 
 	//※個々で設定する
 	trans_.scl = { CHARACTER_SCALE,CHARACTER_SCALE,CHARACTER_SCALE };
@@ -23,10 +23,9 @@ void EneAxe::SetParam(void)
 	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
 	atkStartRange_ = ATK_START_RANGE;
-
 }
 
-void EneAxe::InitAnim(void)
+void EneBrig::InitAnim(void)
 {
 	//共通アニメーション初期化
 	Enemy::InitAnim();
@@ -41,7 +40,7 @@ void EneAxe::InitAnim(void)
 	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
 }
 
-void EneAxe::InitSkill(void)
+void EneBrig::InitSkill(void)
 {
 	//ここにスキルの数分格納させる
 	skills_.emplace(ATK_ACT::SKILL_ONE, SKILL_ONE);
@@ -53,13 +52,13 @@ void EneAxe::InitSkill(void)
 	RandSkill();
 }
 
-void EneAxe::Attack(void)
+void EneBrig::Attack(void)
 {
 	//対応スキル発動
 	processSkill_();
 }
 
-void EneAxe::Skill_One(void)
+void EneBrig::Skill_One(void)
 {
 	//前方向
 	VECTOR dir = trans_.quaRot.GetForward();
@@ -71,7 +70,7 @@ void EneAxe::Skill_One(void)
 	}
 }
 
-void EneAxe::ChangeStateAlert(void)
+void EneBrig::ChangeStateAlert(void)
 {
 	//更新処理の中身初期化
 	Enemy::ChangeStateAlert();

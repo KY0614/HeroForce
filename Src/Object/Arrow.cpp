@@ -14,7 +14,9 @@ void Arrow::Init(const int _mdlId, const Transform& _trans, const float _speed)
 	trans_.modelId = _mdlId;
 
 	//”Xƒ‚ƒfƒ‹‚Ì‰Šú‰»
-	trans_.pos = VAdd(trans_.pos, ARROW_LOCAL_POS);
+	VECTOR localPos = trans_.quaRot.PosAxis(ARROW_LOCAL_POS);
+	trans_.pos = VAdd(trans_.pos, localPos);
+
 	trans_.scl = { 1.0f,1.0f,1.0f };
 	//trans_.quaRot = trans_.quaRot.AngleAxis(START_UP_ANGLE, AsoUtility::AXIS_X);
 	trans_.quaRotLocal =

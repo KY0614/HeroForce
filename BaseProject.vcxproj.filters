@@ -55,6 +55,11 @@
     <ClCompile Include="Src\Object\System\UnitPositionLoad.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenBase.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenManager.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneArcher.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneBrig.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneGolem.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneMage.cpp" />
+    <ClCompile Include="Src\Manager\EffectManager.cpp" />
     <ClCompile Include="Src\Object\Character\SelectPlayer.cpp" />
     <ClCompile Include="Src\Object\SelectImage.cpp" />
   </ItemGroup>
@@ -171,6 +176,11 @@
     <ClInclude Include="Src\Object\System\UnitPositionLoad.h" />
     <ClInclude Include="Src\Object\Character\Chiken\ChickenBase.h" />
     <ClInclude Include="Src\Object\Character\Chiken\ChickenManager.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\EneArcher.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\EneBrig.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\EneGolem.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\EneMage.h" />
+    <ClInclude Include="Src\Manager\EffectManager.h" />
     <ClInclude Include="Src\Object\Character\SelectPlayer.h" />
     <ClInclude Include="Src\Object\SelectImage.h" />
   </ItemGroup>

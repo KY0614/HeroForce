@@ -17,7 +17,7 @@ class GameScene : public SceneBase
 {
 public:
 	//デバッグ用
-	#define _DEBUG_COL	//テスト用の敵とプレイヤーを一体ずつ生成（この行をコメントアウトすると消える）
+	//#define _DEBUG_COL	//テスト用の敵とプレイヤーを一体ずつ生成（この行をコメントアウトすると消える）
 
 	//定数
 	//プレイヤーの数
@@ -68,6 +68,9 @@ private:
 
 	//当たり判定（他項目に干渉するもののみ）
 	void Collision(void);
+	void CollisionEnemy(void);	//敵関連の当たり判定
+	void CollisionPlayer(void);	//プレイヤー関連の当たり判定
+	void CollisionPlayerCPU(PlayerBase& _player,const VECTOR& _pPos);	//プレイヤー(CPU)関連の当たり判定
 
 	//フェード
 	void Fade(void);
