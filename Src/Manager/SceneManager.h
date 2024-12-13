@@ -32,6 +32,7 @@ public:
 	//ƒRƒ“ƒgƒ[ƒ‰Œn“
 	enum class CNTL
 	{
+		NONE,
 		KEYBOARD,
 		PAD
 	};
@@ -48,6 +49,7 @@ public:
 	//–ğE
 	enum class ROLE
 	{
+		NONE,
 		KNIGHT,
 		AXEMAN,
 		MAGE,

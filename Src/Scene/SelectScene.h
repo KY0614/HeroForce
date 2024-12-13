@@ -38,7 +38,11 @@ public:
 
 	//カメラ関連
 	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 100.0f, -500.0f };		//カメラの座標
+	static constexpr VECTOR DEFAULT_TARGET_ONE = { 0.0f, 150.0f, -100.0f };		//カメラの注視点座標
 	static constexpr VECTOR DEFAULT_TARGET_POS = { 0.0f, 150.0f, -100.0f };		//カメラの注視点座標
+	static constexpr VECTOR DEFAULT_TARGET_TWO = { 100.0f, 150.0f, -100.0f };		//カメラの注視点座標
+	static constexpr VECTOR DEFAULT_TARGET_THREE = { 0.0f, 150.0f, 100.0f };		//カメラの注視点座標
+	static constexpr VECTOR DEFAULT_TARGET_FOUR = { -100.0f, 150.0f, -100.0f };		//カメラの注視点座標
 
 	static constexpr float CHARACTER_SCALE = 0.5f;
 
@@ -46,17 +50,16 @@ public:
 	struct Rect {
 		Vector2 pos;
 		int w, h;
-
-		Rect() : pos(0, 0), w(0), h(0) {}
-		Rect(float x, float y, int inw, int inh) :
-			pos(x, y), w(inw), h(inh) {}
-
-		float Left() { return pos.x - w / 2; }
-		float Top() { return pos.y - h / 2; }
-		float Right() { return pos.x + w / 2; }
-		float Bottom() { return pos.y + h / 2; }
-
 		int color_;
+
+		Rect() : pos(0, 0), w(0), h(0), color_(0) {}
+		Rect(float x, float y, int inw, int inh, int col) :
+			pos(x, y), w(inw), h(inh) , color_(col) {}
+
+		int Left() { return pos.x - w / 2; }
+		int Top() { return pos.y - h / 2; }
+		int Right() { return pos.x + w / 2; }
+		int Bottom() { return pos.y + h / 2; }
 
 		void Draw(unsigned int color);//自分の矩形を描画する
 	};
@@ -66,29 +69,28 @@ public:
 		Vector2 pos;
 		int w, h;	//w:底辺,h:高さ	
 		bool isToggle_;
+		int color_;
 
 		//初期化子
-		Tri() : pos(0, 0), w(0), h(0) ,isToggle_(false) {}
-		Tri(float x, float y, int inw, int inh,bool isT) :
-			pos(x, y), w(inw), h(inh), isToggle_(isT) {}
+		Tri() : pos(0, 0), w(0), h(0) ,isToggle_(false), color_(0) {}
+		Tri(float x, float y, int inw, int inh,bool isT,int col) :
+			pos(x, y), w(inw), h(inh), isToggle_(isT) ,color_(col) {}
 
 		//左の三点のx,y座標
-		float LeftX_L() { return pos.x + h / 2;}
-		float LeftY_L() { return pos.y + w / 2;}
-		float TopX_L()  { return pos.x - h / 2;}
-		float TopY_L()  { return pos.y; }
-		float RightX_L(){ return pos.x + h / 2;}
-		float RightY_L(){ return pos.y - w / 2;}
+		int LeftX_L() { return pos.x + h / 2;}
+		int LeftY_L() { return pos.y + w / 2;}
+		int TopX_L()  { return pos.x - h / 2;}
+		int TopY_L()  { return pos.y; }
+		int RightX_L(){ return pos.x + h / 2;}
+		int RightY_L(){ return pos.y - w / 2;}
 
 		//右の三点のx,y座標
-		float LeftX_R() { return pos.x - h / 2; }
-		float LeftY_R() { return pos.y + w / 2; }
-		float TopX_R() { return pos.x + h / 2; }
-		float TopY_R() { return pos.y; }
-		float RightX_R() { return pos.x - h / 2; }
-		float RightY_R() { return pos.y - w / 2; }
-
-		int color_;
+		int LeftX_R() { return pos.x - h / 2; }
+		int LeftY_R() { return pos.y + w / 2; }
+		int TopX_R() { return pos.x + h / 2; }
+		int TopY_R() { return pos.y; }
+		int RightX_R() { return pos.x - h / 2; }
+		int RightY_R() { return pos.y - w / 2; }
 
 		void LeftDraw(unsigned int color);//三角形を描画する
 		void RightDraw(unsigned int color);//三角形を描画する
@@ -177,9 +179,6 @@ public:
 	//デバッグ描画
 	void DrawDebug(void);
 
-	//矩形と円の当たり判定(デバッグ用)
-	bool IsHitRect(Rect& rc, Vector2 pos, int r);
-
 	//--------------------------------------------------------------------
 
 private:
@@ -191,6 +190,7 @@ private:
 
 	// 画像
 	std::unique_ptr<SelectImage>images_[SceneManager::PLAYER_NUM];
+	std::unique_ptr<SelectImage>image_;
 
 	//背景のステージ
 	StageManager* stage_;
@@ -218,12 +218,11 @@ private:
 	
 	//プレイヤー人数
 	//int playerNum_;
-	int player_[SceneManager::PLAYER_NUM];
 	
-	bool isPad_;	//1Pの入力タイプ
+	//bool isPad_;	//1Pの入力タイプ
 	SceneManager::CNTL selectedCntl_;
 	
-	int role_;	//職種
+	//int role_;	//職種
 
 	////キーを何秒押しているか
 	//float keyPressTime_;

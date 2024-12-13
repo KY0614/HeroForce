@@ -17,7 +17,10 @@
 
 SelectScene::SelectScene(void)
 {
-
+	key_ = KEY_CONFIG::NONE;
+	device_ = SceneManager::CNTL::KEYBOARD;
+	select_ = SELECT::NUMBER;
+	selectedCntl_ = SceneManager::CNTL::NONE;
 }
 
 SelectScene::~SelectScene(void)
@@ -50,7 +53,7 @@ void SelectScene::Init(void)
 	SetFogEnable(true);
 	//白
 	SetFogColor(255, 255, 255);
-	SetFogStartEnd(-10000.0f, 15000.0f);
+	SetFogStartEnd(-10000.0f, 20000.0f);
 
 	//プレイヤー設定
 	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
@@ -65,6 +68,8 @@ void SelectScene::Init(void)
 		images_[i] = std::make_unique<SelectImage>(*this);
 		images_[i]->Init();
 	}
+	//image_ = std::make_unique<SelectImage>(*this);
+	//image_->Init();
 
 	// カメラモード：定点カメラ
 	auto camera = SceneManager::GetInstance().GetCameras();
@@ -82,25 +87,18 @@ void SelectScene::Init(void)
 
 	//playerNum_ = 1;
 
-	isPad_ = false;
+	//isPad_ = false;
 
-	role_ = 0;
+	//role_ = 0;
 
 	//図形用------------------------------------------------
 
 	//三角形の中心座標と大きさ
-	triL = { TRI_POS_X - 300,TRI_POS_Y ,TRI_SCALE,TRI_SCALE ,false };
-	triR = { TRI_POS_X + 300,TRI_POS_Y ,TRI_SCALE,TRI_SCALE ,false };
+	triL = { TRI_POS_X - 300,TRI_POS_Y ,TRI_SCALE,TRI_SCALE ,false ,0xFFFF55 };
+	triR = { TRI_POS_X + 300,TRI_POS_Y ,TRI_SCALE,TRI_SCALE ,false ,0xFFFF55 };
 
-	//三角形の色
-	triL.color_ = GetColor(255, 255, 64);
-	triR.color_ = GetColor(255, 255, 64);
-
-	//四角形の中心座標と大きさ
-	rc = { Application::SCREEN_SIZE_X/2/*750*/,Application::SCREEN_SIZE_Y / 2/*450*/,RECT_SCALE,RECT_SCALE };
-
-	//四角形の色
-	rc.color_ = GetColor(255, 0, 0);
+	//四角形の中心座標と大きさb
+	rc = { Application::SCREEN_SIZE_X/2,Application::SCREEN_SIZE_Y / 2,RECT_SCALE,RECT_SCALE ,0xFF0000 };
 
 	//三角形の描画座標
 	triL.pos.x = rc.pos.x - TRI_SCALE - PRI_SPACE;
@@ -123,6 +121,12 @@ void SelectScene::Update(void)
 
 	//空を回転
 	skyDome_->Update();
+
+	//for (auto& i : images_)
+	//{
+	//	i->Update();
+	//}
+	//image_->Update();
 
 	//選択中の種類ごとの更新処理
 	switch (select_)
@@ -148,6 +152,8 @@ void SelectScene::Update(void)
 	{
 		i.Update();
 	}
+
+	
 }
 
 void SelectScene::Draw(void)
@@ -158,35 +164,33 @@ void SelectScene::Draw(void)
 	stage_->Draw();
 
 	//デバッグ描画
-	DrawDebug();
+	//DrawDebug();
 
+	//選択中の種類ごとの更新処理
 	switch (select_)
 	{
-	case SelectScene::SELECT::NUMBER:
+	case SELECT::NUMBER:
 		NumberDraw();
 		break;
 
-	case SelectScene::SELECT::OPERATION:
+	case SELECT::OPERATION:
 		OperationDraw();
 		break;
 
-	case SelectScene::SELECT::ROLE:
+	case SELECT::ROLE:
 		RoleDraw();
 		break;
 
 	default:
 		break;
 	}
-
-	for (auto& i : images_)
-	{
-		i->Draw();
-	}
 }
 
 void SelectScene::Release(void)
 {
 	SceneManager::GetInstance().ResetCameras();
+
+	//image_->Destroy();
 
 	for (auto i : tests_)
 	{
@@ -195,23 +199,9 @@ void SelectScene::Release(void)
 	MV1DeleteModel(trans_.modelId);
 }
 
-void SelectScene::InitModel(void)
-{
-	//２次元配列にしてそれぞれ対応させる？
-
-
-}
-
 void SelectScene::NumberUpdate(void)
 {
-	InputManager& ins = InputManager::GetInstance();
-	DataBank& data = DataBank::GetInstance();
-	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
-
-	for (auto& i : images_)
-	{
-		i->Update();
-	}
+	images_[0]->Update();
 
 #ifdef DEBUG_RECT
 
@@ -344,13 +334,10 @@ void SelectScene::NumberUpdate(void)
 
 void SelectScene::OperationUpdate(void)
 {
-	InputManager& ins = InputManager::GetInstance();
-	DataBank& data = DataBank::GetInstance();
-	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
-
-	data.Input(SceneManager::CNTL::PAD, 2);
-	data.Input(SceneManager::CNTL::PAD, 3);
-	data.Input(SceneManager::CNTL::PAD, 4);
+	for (auto& i : images_)
+	{
+		i->Update();
+	}
 
 #ifdef DEBUG_RECT
 	//三角形のボタンが選択中だったら緑に非選択だったら黄色に
@@ -462,10 +449,10 @@ void SelectScene::OperationUpdate(void)
 
 void SelectScene::RoleUpdate(void)
 {
-	InputManager& ins = InputManager::GetInstance();
-	DataBank& data = DataBank::GetInstance();
-	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
-
+	for (auto& i : images_)
+	{
+		i->Update();
+	}
 #ifdef DEBUG_RECT
 	//三角形のボタンが選択中だったら緑に非選択だったら黄色に
 	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
@@ -577,40 +564,15 @@ void SelectScene::RoleUpdate(void)
 
 void SelectScene::NumberDraw(void)
 {
-#ifdef DEBUG_RECT
-
-	DrawFormatString(rc.pos.x, rc.pos.y,
-		0xFFFFFF, "%d", playerNum_);
-
-	DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
-		0xFF9999, "プレイ人数選択中");
-
-	DrawFormatString(0, 0,
-		0xFFFFFF, "time : %.2f", keyPressTime_);
-#endif // DEBUG_RECT
+	images_[0]->Draw();
 }
 
 void SelectScene::OperationDraw(void)
 {
-#ifdef DEBUG_RECT
-	for (int i = 0; i < playerNum_; i++) {
-		if (!isPad_)
-		{
-			DrawFormatString(rc.pos.x, rc.pos.y,
-				0xFFFFFF, "key");
-		}
-		else
-		{
-			DrawFormatString(rc.pos.x, rc.pos.y,
-				0xFFFFFF, "pad");
-		}
-
-		DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
-			0xFF9999, "1P操作方法選択中");
+	for (auto& i : images_)
+	{
+		i->Draw();
 	}
-
-#endif // DEBUG_RECT
-
 }
 
 void SelectScene::RoleDraw(void)
@@ -647,7 +609,10 @@ void SelectScene::RoleDraw(void)
 		p->Draw();
 	}
 #endif // DEBUG_RECT
-
+	for (auto& i : images_)
+	{
+		i->Draw();
+	}
 }
 
 void SelectScene::DrawDebug(void)
@@ -676,10 +641,10 @@ void SelectScene::DrawDebug(void)
 
 	////プレイ人数
 	//DrawFormatString(Application::SCREEN_SIZE_X / 2, 0, 0x000000, "number : %d", playerNum_);
-	//1Pかパッド操作かどうか
-	DrawFormatString(Application::SCREEN_SIZE_X / 2, 20, 0x000000, "operation : %d", isPad_);
+	////1Pかパッド操作かどうか
+	//DrawFormatString(Application::SCREEN_SIZE_X / 2, 20, 0x000000, "operation : %d", isPad_);
 	//役職
-	DrawFormatString(Application::SCREEN_SIZE_X / 2, 40, 0x000000, "role_ : %d", role_);
+	//DrawFormatString(Application::SCREEN_SIZE_X / 2, 40, 0x000000, "role_ : %d", role_);
 
 	DrawFormatString(Application::SCREEN_SIZE_X / 2, 100, 0x000000, "pos : %2.f,%2.f,%2.f", trans_.pos.x,trans_.pos.y,trans_.pos.z);
 
@@ -821,19 +786,6 @@ void SelectScene::ControllDevice(void)
 }
 
 //デバッグ用の図形描画------------------------------------------------------------------------
-
-bool SelectScene::IsHitRect(Rect& rc, Vector2 pos, int r)
-{
-	auto diffX = pos.x - rc.pos.x;	//終点から始点を引く
-	auto diffY = pos.y - rc.pos.y;
-	if (fabsf(diffX) > r + rc.w / 2 ||
-		fabsf(diffY) > r + rc.h / 2) {
-		return false;
-	}
-	else {
-		return true;
-	}
-}
 
 void SelectScene::Rect::Draw(unsigned int color)
 {
