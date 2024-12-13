@@ -37,6 +37,7 @@ public:
 	static const std::string PATH_ENEMY;
 	static const std::string PATH_PLAYER;
 	static const std::string PATH_STAGE;
+	static const std::string PATH_SKYDOME;
 	static const std::string PATH_OBJECT;
 	static const std::string PATH_EFFECT;
 	static const std::string PATH_TEXT;
