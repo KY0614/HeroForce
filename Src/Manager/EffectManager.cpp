@@ -27,7 +27,7 @@ void EffectManager::Add(const EFFECT& _efc, int _data)
 	//入っていたら処理終了
 	if (effectRes_.find(_efc) != effectRes_.end())return;
 
-	//新しく要素を追加する
+	//新規データのため情報を追加
 	effectRes_.emplace(_efc, _data);
 }
 
@@ -82,6 +82,5 @@ void EffectManager::Release(void)
 {
 	//配列内の要素を全て消去
 	//元々のデータはリソースマネージャが持っているのでおｋ。
-	//念のためあとでこれについても聞く(_dataのstd::moveについて)
 	effectRes_.clear();
 }
