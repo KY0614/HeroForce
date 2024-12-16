@@ -92,7 +92,8 @@ public:
     static constexpr int SKILL_ONE_NUM = 2;
     static constexpr int SKILL_TWO_NUM = 18;
     static constexpr int BLOCKING_NUM = 21;
-    PlKnight(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum);
+    PlKnight(const SceneManager::PLAY_MODE _mode, const SceneManager::CNTL _cntl);
+    PlKnight(const SceneManager::PLAY_MODE _mode, const InputManager::JOYPAD_NO _padNum);
     ~PlKnight(void) = default;
     void SetParam(void)override;
 

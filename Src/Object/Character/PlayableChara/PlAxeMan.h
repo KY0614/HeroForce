@@ -74,7 +74,8 @@ public:
     static constexpr float MULTIHIT_INTERVAL = 0.5f;
     static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//çUåÇäJénîªíËÇÃëÂÇ´Ç≥
 
-    PlAxe(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum);
+    PlAxe(const SceneManager::PLAY_MODE _mode, const SceneManager::CNTL _cntl);
+    PlAxe(const SceneManager::PLAY_MODE _mode, const InputManager::JOYPAD_NO _padNum);
     ~PlAxe(void) = default;
     void SetParam(void)override;
 protected:

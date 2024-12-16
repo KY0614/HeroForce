@@ -27,7 +27,6 @@ void PlayerBase::Init(void)
 	cpuStateChanges_.emplace(CPU_STATE::ATTACK, std::bind(&PlayerBase::CpuChangeAtk, this));
 	cpuStateChanges_.emplace(CPU_STATE::BREAK, std::bind(&PlayerBase::CpuChangeBreak, this));
 
-
 	changeAtkType_.emplace(ATK_TYPE::CHARGEATK, std::bind(&PlayerBase::ChangeChargeAct, this));
 	changeAtkType_.emplace(ATK_TYPE::NORMALATK, std::bind(&PlayerBase::ChangeNmlAct, this));
 
@@ -384,6 +383,7 @@ void PlayerBase::KeyBoardControl(void)
 
 void PlayerBase::GamePad(void)
 {
+	auto& ins = InputManager::GetInstance();
 	// 左スティックの横軸
 	leftStickX_ = ins.GetJPadInputState(padNum_).AKeyLX;
 
@@ -395,7 +395,7 @@ void PlayerBase::GamePad(void)
 	stickDeg_ = static_cast<float>(AsoUtility::DegIn360(AsoUtility::Rad2DegF(stickRad) + 90.0f));
 	
 	//前
-	if (IsMoveFrontCntlPad()|| IsMoveRightCntlPad()|| IsMoveBackCntlPad()|| IsMoveLeftCntlPad())
+	if (leftStickY_ !=0|| leftStickX_ !=0)
 	{
 		actCntl_ = ACT_CNTL::MOVE;
 		moveDeg_ = stickDeg_;
@@ -404,14 +404,14 @@ void PlayerBase::GamePad(void)
 	else { actCntl_ = ACT_CNTL::NONE; }
 
 	//攻撃（攻撃アニメーションのフレームが0以下だったらフレームを設定）
-	if (IsNmlAtkCntlPad() && IsAtkable() && !isCool_[static_cast<int>(ATK_ACT::ATK)])
+	if (ins.IsPadBtnTrgDown(padNum_, ATK_BTN) && IsAtkable() && !isCool_[static_cast<int>(ATK_ACT::ATK)])
 	{
 		actCntl_ = ACT_CNTL::NMLATK;
 	}
 
-	if (IsSkillChangeCntlPad() && !IsAtkAction()) { SkillChange(); }
+	if (ins.IsPadBtnTrgDown(padNum_, SKILL_CHANGE_BTN) && !IsAtkAction()) { SkillChange(); }
 	//回避
-	if (IsDodgeCntlPad() && IsDodgeable()) { actCntl_ = ACT_CNTL::DODGE; }
+	if (ins.IsPadBtnTrgDown(padNum_, DODGE_BTN) && IsDodgeable()) { actCntl_ = ACT_CNTL::DODGE; }
 
 }
 
@@ -529,8 +529,9 @@ void PlayerBase::NmlActKeyBoard(void)
 
 void PlayerBase::NmlActPad(void)
 {
+	auto& ins = InputManager::GetInstance();
 	//ボタンを押したらスキル状態を返す
-	if(IsNmlSkillCntlPad()){ actCntl_ = ACT_CNTL::NMLSKILL; }
+	if(ins.IsPadBtnTrgDown(padNum_, SKILL_BTN)){ actCntl_ = ACT_CNTL::NMLSKILL; }
 }
 
 void PlayerBase::ChangeNmlActControll(void)
@@ -607,6 +608,7 @@ void PlayerBase::ChargeAct(void)
 
 void PlayerBase::ChargeActKeyBoard(void)
 {
+	auto& ins = InputManager::GetInstance();
 	if (ins.IsTrgDown(SKILL_KEY))
 	{
 		actCntl_ = ACT_CNTL::CHARGE_SKILL_DOWN;
@@ -621,13 +623,14 @@ void PlayerBase::ChargeActKeyBoard(void)
 
 void PlayerBase::ChargeActPad(void)
 {
-	if(IsChargeSkillDownCntlPad()){actCntl_ = ACT_CNTL::CHARGE_SKILL_DOWN;}
+	auto& ins = InputManager::GetInstance();
+	if(ins.IsPadBtnTrgDown(padNum_, SKILL_BTN)){actCntl_ = ACT_CNTL::CHARGE_SKILL_DOWN;}
 
-	else if (IsChargeSkillkeepCntlPad()&&!isCool_[static_cast<int>(skillNo_)])
+	else if (ins.IsPadBtnNew(padNum_, SKILL_BTN) &&!isCool_[static_cast<int>(skillNo_)])
 	{
 		actCntl_ = ACT_CNTL::CHARGE_SKILL_KEEP;
 	}
-	else if (IsChargeSkillUpCntlPad()){actCntl_ = ACT_CNTL::CHARGE_SKILL_UP;}
+	else if (ins.IsPadBtnTrgUp(padNum_, SKILL_BTN)){actCntl_ = ACT_CNTL::CHARGE_SKILL_UP;}
 
 }
 
@@ -1021,11 +1024,3 @@ void PlayerBase::CpuBreakUpdate(void)
 }
 
 
-//コントローラーの移動処理
-bool PlayerBase::IsMoveFrontCntlPad(void){return leftStickY_ < -1;}
-
-bool PlayerBase::IsMoveLeftCntlPad(void){return leftStickX_ > 1;}
-
-bool PlayerBase::IsMoveBackCntlPad(void){return leftStickY_ > 1;}
-
-bool PlayerBase::IsMoveRightCntlPad(void){return leftStickX_ < -1;}

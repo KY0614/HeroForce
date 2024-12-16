@@ -99,7 +99,8 @@ public:
 
 
 
-    PlayerBase(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum) :mode_(_mode), padNum_(_padNum) {}
+    PlayerBase(const SceneManager::PLAY_MODE _mode, const InputManager::JOYPAD_NO _padNum) :mode_(_mode), padNum_(_padNum) {}
+    PlayerBase(const SceneManager::PLAY_MODE _mode, const SceneManager::CNTL _cntl) :mode_(_mode), cntl_(_cntl) {}
     ~PlayerBase(void) = default;
     void Destroy(void)override;
     virtual void SetParam(void) = 0;
@@ -522,7 +523,6 @@ private:
     //移動する角度
     float moveDeg_;
 
-    bool IsAtkBtn(void);
     std::map<ACT_CNTL, std::function<void(void)>>changeActCntl_;        //アクションごとに返すボタンを変更
     std::function<bool(void)>actCntlUpdate_;  
 
@@ -532,19 +532,5 @@ private:
 
     //スキル変更処理
     void SkillChange(void);
-    InputManager& ins = InputManager::GetInstance();
-
-    //ゲームパッド(単純にコード短縮化のため)
-    bool IsMoveFrontCntlPad(void);
-    bool IsMoveLeftCntlPad(void);
-    bool IsMoveBackCntlPad(void);
-    bool IsMoveRightCntlPad(void);
-    bool IsNmlAtkCntlPad(void) { return ins.IsPadBtnTrgDown(padNum_, ATK_BTN);}
-    bool IsNmlSkillCntlPad(void) { return ins.IsPadBtnTrgDown(padNum_, SKILL_BTN); }
-    bool IsSkillChangeCntlPad(void) { return ins.IsPadBtnTrgDown(padNum_, SKILL_CHANGE_BTN); }
-    bool IsChargeSkillDownCntlPad(void) { return ins.IsPadBtnTrgDown(padNum_, SKILL_BTN); }
-    bool IsChargeSkillkeepCntlPad(void) { return ins.IsPadBtnNew(padNum_, SKILL_BTN); }
-    bool IsChargeSkillUpCntlPad(void) { return ins.IsPadBtnTrgUp(padNum_, SKILL_BTN); }
-    bool IsDodgeCntlPad(void) { return ins.IsPadBtnTrgDown(padNum_, DODGE_BTN); }
    
 };

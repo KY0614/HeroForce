@@ -1,7 +1,13 @@
 #include"../Manager/ResourceManager.h"
 #include "PlAxeMan.h"
 
-PlAxe::PlAxe(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum) : PlayerBase(_mode, _padNum)
+PlAxe::PlAxe(const SceneManager::PLAY_MODE _mode, const SceneManager::CNTL _cntl) : PlayerBase(_mode, _cntl)
+{
+	mode_ = _mode;
+	cntl_ = _cntl;
+}
+
+PlAxe::PlAxe(const SceneManager::PLAY_MODE _mode, const InputManager::JOYPAD_NO _padNum) : PlayerBase(_mode, _padNum)
 {
 	mode_ = _mode;
 	padNum_ = _padNum;
@@ -10,9 +16,6 @@ PlAxe::PlAxe(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum) : P
 void PlAxe::SetParam(void)
 {
 	InitAct();
-
-	//InitAct(ATK_ACT::SKILL1, FRAME_SKILL1_DURATION, FRAME_SKILL1_BACKRASH);
-	//InitAct(ATK_ACT::SKILL2, FRAME_SKILL2_DURATION, FRAME_SKILL2_BACKRASH);
 
 	trans_.SetModel(
 		ResourceManager::GetInstance()

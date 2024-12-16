@@ -4,7 +4,8 @@ class PlMage :
     public PlayerBase
 {
 public:
-    PlMage(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum);
+    PlMage(const SceneManager::PLAY_MODE _mode, const SceneManager::CNTL _cntl);
+    PlMage(const SceneManager::PLAY_MODE _mode, const InputManager::JOYPAD_NO _padNum);
     ~PlMage(void) = default;
     void SetParam(void)override;
 

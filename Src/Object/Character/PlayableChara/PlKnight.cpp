@@ -1,7 +1,13 @@
 #include"../Manager/ResourceManager.h"
 #include"../Manager/SceneManager.h"
 #include "PlKnight.h"
-PlKnight::PlKnight(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum) :PlayerBase(_mode, _padNum)
+PlKnight::PlKnight(const SceneManager::PLAY_MODE _mode, const SceneManager::CNTL _cntl) :PlayerBase(_mode, _cntl)
+{
+	mode_ = _mode;
+	cntl_ = _cntl;
+}
+
+PlKnight::PlKnight(const SceneManager::PLAY_MODE _mode, const InputManager::JOYPAD_NO _padNum) :PlayerBase(_mode, _padNum)
 {
 	mode_ = _mode;
 	padNum_ = _padNum;
