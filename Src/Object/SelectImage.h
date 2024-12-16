@@ -16,18 +16,30 @@ public:
 	static constexpr int RIGHT_POS_X = Application::SCREEN_SIZE_X / 2 + (POINT_SCALE * 5);
 	static constexpr int POINT_POS_Y = Application::SCREEN_SIZE_Y / 2 ;
 
+	//頂点関連
+	static constexpr int VERTEX_NUM = 4;			//頂点数
+	static constexpr float VERTEX_ROTSPEED = 1.0f;	//頂点を回転させる速度
+
+	static constexpr float VERTEX_LEFT_X = -50.0f;
+	static constexpr float VERTEX_RIGHT_X = 50.0f;
+
+	static constexpr float VERTEX_UNDER_Y = 70.0f;
+	static constexpr float VERTEX_TOP_Y = 170.0f;
+
+	static constexpr float VERTEX_Z = -350.0f;
+
 	//キー入力関連
 	static constexpr float SELECT_TIME = 1.8f;		//キー押下経過時間
-	static constexpr float INTERVAL_TIME = 0.6f;	//インターバル上限
+	static constexpr float INTERVAL_TIME = 0.7f;	//インターバル上限
 
 	//矢印
 	struct Point {
-		Vector2 pos;
-		int w, h;	//w:底辺,h:高さ	
-		bool isToggle_;
-		int imgHandle_;
+		Vector2 pos;	//座標
+		int w, h;		//w:底辺,h:高さ	
+		bool isToggle_;	//オン、オフの切り替え用
+		int imgHandle_;	//画像ハンドル
 
-		//初期化子
+		//初期化
 		Point() : pos(0, 0), w(0), h(0), isToggle_(false),imgHandle_(-1) {}
 		Point(float x, float y, int inw, int inh, bool isT,int img) :
 			pos(x, y), w(inw), h(inh), isToggle_(isT) ,imgHandle_(img) {}
@@ -44,7 +56,6 @@ public:
 	//解放
 	virtual void Destroy(void);
 
-	//基本処理の４つは仮想関数化するのでしっかりオーバーライドするように
 	//初期化
 	virtual void Init(void)override;
 	//更新
@@ -52,18 +63,22 @@ public:
 	//描画
 	virtual void Draw(void)override;
 
-	void Update1(void);
-	void UpdateOther(void);
-
 private:
 	
 	//画像ハンドル
-	int* imgPlayerNum_;
-	int imgLeftPoint_;
-	int imgRightPoint_;
+	int* imgPlayerNum_;		//人数選択画像
+	int imgLeftPoint_;		//左向きの矢印画像
+	int imgRightPoint_;		//右向きの矢印画像
 
-	Point pointL_;
-	Point pointR_;
+	//メッシュの頂点データ（4つの頂点）
+	VERTEX3D vertices_[4];
+	VERTEX3D triangle1_[3];
+	VERTEX3D triangle2_[3];
+	float angle_;
+
+	//矢印の構造体
+	Point pointL_;		//左
+	Point pointR_;		//右
 
 	//プレイヤー人数
 	int playerNum_;
@@ -104,5 +119,7 @@ private:
 	void RoleDraw(void);			//役職選択中の処理
 
 	//-----------------------------------------------------------
+
+	VECTOR RotateVertex(VECTOR pos, VECTOR center, float angle);
 };
 

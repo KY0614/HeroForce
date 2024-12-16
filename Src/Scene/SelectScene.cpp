@@ -40,20 +40,20 @@ void SelectScene::Init(void)
 	//背景色を白に
 	SetBackgroundColor(255, 255, 255);
 	//背景のステージモデルやらを半透明に
-	//float alpha = 0.5f;
-	//MV1SetOpacityRate(skyDome_->GetTransform().modelId, alpha);
-	//for (int i = 0; i < StageManager::MODELS; i++) {
-	//	for (auto& s : stage_->GetTtans(static_cast<StageManager::MODEL_TYPE>(i)))
-	//	{
-	//		MV1SetOpacityRate(s.modelId, alpha);
-	//	}
-	//}
+	float alpha = 0.5f;
+	MV1SetOpacityRate(skyDome_->GetTransform().modelId, alpha);
+	for (int i = 0; i < StageManager::MODELS; i++) {
+		for (auto& s : stage_->GetTtans(static_cast<StageManager::MODEL_TYPE>(i)))
+		{
+			MV1SetOpacityRate(s.modelId, alpha);
+		}
+	}
 
 	//フォグの設定
-	SetFogEnable(true);
+	SetFogEnable(false);
 	//白
 	SetFogColor(255, 255, 255);
-	SetFogStartEnd(-10000.0f, 20000.0f);
+	SetFogStartEnd(-100.0f, 10000.0f);
 
 	//プレイヤー設定
 	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
@@ -91,20 +91,6 @@ void SelectScene::Init(void)
 
 	//role_ = 0;
 
-	//図形用------------------------------------------------
-
-	//三角形の中心座標と大きさ
-	triL = { TRI_POS_X - 300,TRI_POS_Y ,TRI_SCALE,TRI_SCALE ,false ,0xFFFF55 };
-	triR = { TRI_POS_X + 300,TRI_POS_Y ,TRI_SCALE,TRI_SCALE ,false ,0xFFFF55 };
-
-	//四角形の中心座標と大きさb
-	rc = { Application::SCREEN_SIZE_X/2,Application::SCREEN_SIZE_Y / 2,RECT_SCALE,RECT_SCALE ,0xFF0000 };
-
-	//三角形の描画座標
-	triL.pos.x = rc.pos.x - TRI_SCALE - PRI_SPACE;
-	triR.pos.x = rc.pos.x + TRI_SCALE + PRI_SPACE;
-
-	//------------------------------------------------------
 
 	//keyPressTime_ = 0.0f;
 	//interval_ = 0.0f;
