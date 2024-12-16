@@ -1,5 +1,6 @@
 #pragma once
 #include<DxLib.h>
+#include"SoundManager.h"
 #include"../Common/Quaternion.h"
 #include<unordered_map>
 #include<string>
@@ -31,7 +32,10 @@ public:
 	/// <param name="_pos">再生位置</param>
 	/// <param name="_qua">角度</param>
 	/// <param name="_size">大きさ</param>
-	void Play(const EFFECT& _efc, const VECTOR& _pos, const Quaternion& _qua, const float& _size);
+	/// <param name="_sound">効果音</param>
+	void Play(const EFFECT& _efc,
+		const VECTOR& _pos, const Quaternion& _qua, const float& _size,
+		const SoundManager::SOUND _sound = SoundManager::SOUND::NONE);
 
 	/// <summary>
 	/// エフェクトの再生停止

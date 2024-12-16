@@ -37,11 +37,27 @@ public:
 	/// <param name="_data">音のデータ</param>
 	void Add(const TYPE _type, const SOUND _sound, const int _data);
 
+	/// <summary>
+	/// 音声データ
+	/// </summary>
+	/// <param name="_sound">音声データ</param>
 	void Play(const SOUND _sound);
 
+	/// <summary>
+	/// 停止処理
+	/// </summary>
+	/// <param name="_sound">音声データ</param>
 	void Stop(const SOUND _sound);
 
+	//解放
 	void Release(void);
+
+	/// <summary>
+	/// 音量調節
+	/// </summary>
+	/// <param name="_sound">音声</param>
+	/// <param name="_persent">調整割合(0%～100%)</param>
+	void AdjustVolume(const SOUND _sound, const int _persent);
 private:
 	//インスタンス用
 	static SoundManager* instance_;
