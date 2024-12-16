@@ -74,10 +74,14 @@ void Resource::Load(void)
 		break;
 
 	case Resource::TYPE::EFFEKSEER:
-
+		//エフェクト
 		handleId_ = LoadEffekseerEffect(path_.c_str());
 		break;
 
+	case Resource::TYPE::SOUND:
+		//サウンド
+		handleId_ = LoadSoundMem(path_.c_str());
+		break;
 	}
 
 }
@@ -114,10 +118,12 @@ void Resource::Release(void)
 		break;
 
 	case Resource::TYPE::EFFEKSEER:
-
 		DeleteEffekseerEffect(handleId_);
 		break;
 
+	case Resource::TYPE::SOUND:
+		DeleteSoundMem(handleId_);
+		break;
 	}
 
 }

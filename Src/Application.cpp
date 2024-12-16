@@ -1,4 +1,5 @@
 #include <DxLib.h>
+#include<EffekseerForDXLib.h>
 #include "Manager/ResourceManager.h"
 #include "Manager/InputManager.h"
 #include "Manager/SceneManager.h"
@@ -12,6 +13,7 @@ const std::string Application::PATH_MODEL = "Data/Model/";
 const std::string Application::PATH_ENEMY = "Data/Model/Enemy/";
 const std::string Application::PATH_PLAYER = "Data/Model/Player/";
 const std::string Application::PATH_STAGE = "Data/Model/Stage/";
+const std::string Application::PATH_SKYDOME = "Data/Model/SkyDome/";
 const std::string Application::PATH_OBJECT = "Data/Model/Object/";
 const std::string Application::PATH_EFFECT = "Data/Effect/";
 const std::string Application::PATH_TEXT = "Data/Text/";
@@ -51,6 +53,9 @@ void Application::Init(void)
 		isInitFail_ = true;
 		return;
 	}
+
+	//エフェクシアの初期化
+	InitEffekseer();
 
 	// キー制御初期化
 	SetUseDirectInputFlag(true);
@@ -130,6 +135,9 @@ void Application::Destroy(void)
 	ResourceManager::GetInstance().Destroy();
 	SceneManager::GetInstance().Destroy();
 	
+	// Effekseerを終了する。
+	Effkseer_End();
+
 	// DxLib終了
 	if (DxLib_End() == -1)
 	{
@@ -201,6 +209,17 @@ void Application::InitWindows(const int _num)
 	//表示状態を設定する
 	ShowWindow(hWnd_, static_cast<int>(WINDOW::HIDE));
 	UpdateWindow(hWnd_);
+}
+
+void Application::InitEffekseer(void)
+{
+	if (Effekseer_Init(8000) == -1)
+	{
+		DxLib_End();
+	}
+	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
+	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
+
 }
 
 Application::Application(void)
