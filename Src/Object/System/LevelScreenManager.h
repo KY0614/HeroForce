@@ -35,7 +35,7 @@ public:
 	static constexpr int DEFAULT_LEVEL = 1;
 	
 	//ゲージ最大値
-	static constexpr float CONSTANT_GAGE = 100.0f;
+	static constexpr float CONSTANT_GAGE = 120.0f;
 
 	//アルファ値最大
 	static constexpr float ALPHA_MAX = 150.0f;
@@ -78,6 +78,9 @@ public:
 	inline TYPE GetType(const int playerNum)const;
 
 private:
+
+	int imgGage_;
+	int *imgNumbers_;
 
 	int playerNum_;
 
@@ -127,7 +130,10 @@ private:
 	void DrawNotice();
 	void DrawSelect();
 	void DrawEnd();
-								
+						
+	//UI描画
+	void DrawLevelUI();
+
 	//暗転
 	void FaderDraw();
 

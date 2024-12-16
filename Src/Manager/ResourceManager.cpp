@@ -47,6 +47,13 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Carsors.png", CARSORS_NUM_X, CARSORS_NUM_Y, CARSORS_SIZE, CARSORS_SIZE);
 	resourcesMap_.emplace(SRC::CARSOLS, res);
 
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Circle.png");
+	resourcesMap_.emplace(SRC::CIRCLE_GAGE, res);
+
+	//ÉQÅ[ÉÄUIópêîéöâÊëú
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Numbers.png", NUMBERS_NUM_X,NUMBERS_NUM_Y, NUMBERS_SIZE, NUMBERS_SIZE);
+	resourcesMap_.emplace(SRC::NUMBERS, res);
+
 	ResourcePlayer();
 	ResourceEnemy();
 	ResourceStage();

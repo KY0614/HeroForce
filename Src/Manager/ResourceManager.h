@@ -13,6 +13,11 @@ public:
 	static constexpr int CARSORS_NUM_Y = 1;
 	static constexpr int CARSORS_SIZE = 64;
 
+	//数字画像用定数
+	static constexpr int NUMBERS_NUM_X = 5;
+	static constexpr int NUMBERS_NUM_Y = 2;
+	static constexpr int NUMBERS_SIZE = 128;
+
 	// リソース名
 	enum class SRC
 	{
@@ -59,6 +64,10 @@ public:
 		STAGE_WAGON,
 		STAGE_WELL,
 		STAGE_WOOD,
+
+		//UI
+		CIRCLE_GAGE,
+		NUMBERS,
 
 		//レベル通知用
 		LEVEL_UP,

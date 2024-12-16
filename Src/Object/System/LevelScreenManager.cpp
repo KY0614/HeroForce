@@ -1,6 +1,7 @@
 #include <DxLib.h>
 #include "../../Application.h"
 #include "../../Manager/InputManager.h"
+#include "../../Manager/ResourceManager.h"
 #include "../../Common/Vector2.h"
 #include "../Common/Fader.h"
 #include "LevelupNotice.h"
@@ -136,6 +137,8 @@ void LevelScreenManager::Draw(void)
 {
 	Vector2 pos = { 0,0 };
 
+	DrawLevelUI();
+	
 	//処理中はフェードを行う
 	if(state_ != STATE::NONE){ FaderDraw(); }
 
@@ -165,6 +168,20 @@ void LevelScreenManager::DrawEnd()
 {
 }
 
+void LevelScreenManager::DrawLevelUI()
+{
+	Vector2 pos = { 100, 100 };
+	float percent = 100.0f / gauge_ * exp_;
+
+	//経験値ゲージ
+	DrawCircleGauge(pos.x, pos.y,
+		percent, imgGage_);
+
+	//現在レベル
+	DrawRotaGraph(pos.x, pos.y, 1.0f, 0.0f, imgNumbers_[nowLevel_], true, false);
+
+}
+
 void LevelScreenManager::Release(void)
 {
 	notice_->Release();
@@ -179,6 +196,9 @@ void LevelScreenManager::Load(void)
 
 	select_ = std::make_unique<LevelupSelect>();
 	select_->Init();
+
+	imgGage_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CIRCLE_GAGE).handleId_;
+	imgNumbers_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::NUMBERS).handleIds_;
 }
 
 void LevelScreenManager::Reset()
@@ -188,7 +208,7 @@ void LevelScreenManager::Reset()
 	selectTypes_.resize(playerNum_, TYPE::MAX);
 
 	//経験値ゲージ量
-	gauge_ = 30;
+	gauge_ = CONSTANT_GAGE;
 
 	//初期経験値
 	exp_ = 0.0f;
