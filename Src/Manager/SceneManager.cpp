@@ -10,6 +10,8 @@
 #include "Camera.h"
 #include"Collision.h"
 #include"DataBank.h"
+#include"EffectManager.h"
+#include"SoundManager.h"
 #include "SceneManager.h"
 
 SceneManager* SceneManager::instance_ = nullptr;
@@ -29,10 +31,12 @@ SceneManager& SceneManager::GetInstance(void)
 
 void SceneManager::Init(void)
 {
-
+	//各マネージャの生成
 	//判定の生成
 	Collision::CreateInstance();
 	DataBank::CreateInstance();
+	EffectManager::CreateInstance();
+	SoundManager::CreateInstance();
 
 	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;
@@ -172,6 +176,8 @@ void SceneManager::Destroy(void)
 	}
 
 	DataBank::GetInstance().Destroy();
+	EffectManager::GetInstance().Release();
+	SoundManager::GetInstance().Release();
 
 	delete instance_;
 }

@@ -11,6 +11,12 @@ public:
 		//使用するエフェクトを羅列
 	};
 
+	// インスタンスの生成
+	static void CreateInstance(void);
+
+	// インスタンスの取得
+	static EffectManager& GetInstance(void);
+
 	/// <summary>
 	/// エフェクトの追加
 	/// </summary>
@@ -37,7 +43,15 @@ public:
 	void Release(void);
 
 private:
-	std::unordered_map<EFFECT,int> effectRes_;
-	std::unordered_map<EFFECT,int> effectPlay_;
+	//インスタンス用
+	static EffectManager* instance_;
+
+	//エフェクトデータ格納用
+	std::unordered_map<EFFECT,int> effectRes_;	//初期データ
+	std::unordered_map<EFFECT,int> effectPlay_;	//再生データ
+
+	//コンストラクタ＆デストラクタ
+	EffectManager() = default;
+	~EffectManager() = default;
 };
 
