@@ -198,32 +198,13 @@ void GameScene::Release(void)
 
 
 //当たり判定（他項目に干渉するもののみ）
+//あたり判定総括
 void GameScene::Collision(void)
 {
 	auto& col = Collision::GetInstance();
 
-
-	for (auto& e : enemys_)
-	{
-		VECTOR ePos = e->GetPos();
-		//動ける分だけ(のちに全員分に変える)
-		VECTOR pPos = players_[0]->GetPos();
-
-		//敵側索敵
-		if (col.Search(ePos, pPos, e->GetSearchRange())){
-			//移動を開始
-			e->SetIsMove(true);
-		}
-		else{
-			//移動を停止
-			e->SetIsMove(false);
-		}
-
-		if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL){
-			//状態を変更
-			e->ChangeState(Enemy::STATE::ALERT);
-		}
-	}
+	CollisionEnemy();
+	CollisionPlayer();
 
 #ifdef _DEBUG_COL
 
@@ -251,34 +232,6 @@ void GameScene::Collision(void)
 		enemyTest_->ChangeState(Enemy::STATE::ALERT);
 	}
 
-
-	//プレイヤーがCPUの時だけサーチしたい
-	if (playerTest_->GetPlayMode() == SceneManager::PLAY_MODE::CPU)
-	{
-		//プレイヤー側索敵
-		if (col.Search(pPos, ePos, playerTest_->GetSearchRange())
-			&&enemyTest_->IsAlive() && !playerTest_->GetIsCalledPlayer())
-		{
-			//敵をサーチしたかを返す
-			playerTest_->SetisEnemySerch(true);
-			playerTest_->SetTargetPos(ePos);
-		}
-		else if(!enemyTest_->IsAlive())
-		{
-			//敵をサーチしたかを返す
-			playerTest_->SetisEnemySerch(false);
-		}
-
-		if (col.Search(playerTest_->GetPos(), enemyTest_->GetPos(), playerTest_->GetAtkStartRange()) 
-			&& playerTest_->GetState() == PlayerBase::CPU_STATE::NORMAL
-			&&enemyTest_->IsAlive()
-			&&!playerTest_->GetIsCalledPlayer())
-		{
-			//状態を変更
-			playerTest_->ChangeState(PlayerBase::CPU_STATE::ATTACK);
-		}
-
-	}
 		//プレイヤー攻撃判定
 		//攻撃中でありその攻撃が一度も当たっていないか
 		if (pAtk.IsAttack() && !pAtk.isHit_)
@@ -319,7 +272,7 @@ void GameScene::Collision(void)
 				playerTest_->ChangeState(PlayerBase::CPU_STATE::ATTACK);
 			}
 
-}
+		}
 	
 	//敵の攻撃判定
 	//アタック中であり攻撃判定が終了していないとき
@@ -336,6 +289,122 @@ void GameScene::Collision(void)
 	}
 
 #endif
+}
+
+//敵関係の当たり判定
+void GameScene::CollisionEnemy(void)
+{
+	auto& col = Collision::GetInstance();
+
+	//あたり判定(主に索敵)
+	for (auto& e : enemys_)
+	{
+		//敵個人の位置と攻撃を取得
+		VECTOR ePos = e->GetPos();
+		UnitBase::ATK eAtk = e->GetAtk();
+
+		//動ける分だけ(のちに全員分に変える)
+		VECTOR pPos = players_[0]->GetPos();
+
+		//索敵
+		//範囲内に入っているとき
+		if (col.Search(ePos, pPos, e->GetSearchRange())) {
+			//移動を開始
+			e->SetIsMove(true);
+		}else {
+			//移動を停止
+			e->SetIsMove(false);
+		}
+
+		//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
+		if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL) {
+			//状態を変更
+			e->ChangeState(Enemy::STATE::ALERT);
+		}
+
+		//攻撃判定
+		//アタック中 && 攻撃判定が終了していないとき
+		if (eAtk.IsAttack() && !eAtk.isHit_)
+		{
+			//各プレイヤーと当たり判定を取る
+			for (auto& p : players_)
+			{
+				//攻撃が当たる範囲 && プレイヤーが回避していないとき
+				if (col.IsHitAtk(*e, *p) && !playerTest_->IsDodge())
+				{
+					//ダメージ
+					p->Damage();
+					//使用した攻撃を判定終了に
+					e->SetIsHit(true);
+				}
+			}
+		}
+	}
+}
+
+void GameScene::CollisionPlayer(void)
+{
+	auto& col = Collision::GetInstance();
+
+	for (auto& p : players_)
+	{
+		auto pPos = p->GetPos();
+		auto pAtk = p->GetAtk();
+
+		//プレイヤーがCPUの時だけサーチしたい
+		if (p->GetPlayMode() == SceneManager::PLAY_MODE::CPU)CollisionPlayerCPU(*p, pPos);
+
+		//プレイヤー攻撃判定
+		//攻撃していない || 攻撃がすでに当たっている
+		if (!pAtk.IsAttack() || pAtk.isHit_)continue;
+
+		for (auto& e : enemys_)
+		{
+			//当たり判定
+			if (col.IsHitAtk(*p, *e)) {
+				//被弾
+				e->Damage(5, 4);
+				//攻撃判定の終了
+				p->SetIsHit(true);
+			}
+		}
+		
+	}
+}
+
+void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
+{
+	auto& col = Collision::GetInstance();
+
+	//敵をサーチ初期化
+	_player.SetisEnemySerch(false);
+
+	//敵の個体分行う
+	for (auto& e : enemys_)
+	{
+		//敵が死亡していたら処理しない
+		if (!e->IsAlive())continue;
+
+		//敵個人の位置と攻撃を取得
+		VECTOR ePos = e->GetPos();
+
+		//プレイヤー側索敵
+		if (col.Search(_pPos, ePos, _player.GetSearchRange())
+			&& !_player.GetIsCalledPlayer())
+		{
+			//敵をサーチしたかを返す
+			_player.SetisEnemySerch(true);
+			_player.SetTargetPos(ePos);
+		}
+
+		if (col.Search(_player.GetPos(), enemyTest_->GetPos(), _player.GetAtkStartRange())
+			&& _player.GetState() == PlayerBase::CPU_STATE::NORMAL
+			&& !_player.GetIsCalledPlayer())
+		{
+			//状態を変更
+			_player.ChangeState(PlayerBase::CPU_STATE::ATTACK);
+		}
+	}
 }
 
 void GameScene::Fade(void)

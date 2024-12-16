@@ -1,5 +1,6 @@
 #include <chrono>
 #include <DxLib.h>
+#include<EffekseerForDXLib.h>
 #include<cassert>
 
 #include "../Scene/TitleScene.h"
@@ -9,14 +10,15 @@
 #include "Camera.h"
 #include"Collision.h"
 #include"DataBank.h"
+#include"EffectManager.h"
+#include"SoundManager.h"
 #include "SceneManager.h"
 
 SceneManager* SceneManager::instance_ = nullptr;
 
 void SceneManager::CreateInstance()
 {
-	if (instance_ == nullptr)
-	{
+	if (instance_ == nullptr){
 		instance_ = new SceneManager();
 	}
 	instance_->Init();
@@ -29,10 +31,12 @@ SceneManager& SceneManager::GetInstance(void)
 
 void SceneManager::Init(void)
 {
-
+	//各マネージャの生成
 	//判定の生成
 	Collision::CreateInstance();
 	DataBank::CreateInstance();
+	EffectManager::CreateInstance();
+	SoundManager::CreateInstance();
 
 	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;
@@ -99,18 +103,15 @@ void SceneManager::Update(void)
 	preTime_ = nowTime;
 
 	fader_->Update();
-	if (isSceneChanging_)
-	{
+	if (isSceneChanging_){
 		Fade();
 	}
-	else
-	{
+	else{
 		scene_->Update();
 	}
 
 	// カメラ更新
-	for (auto& c : cameras_)
-	{
+	for (auto& c : cameras_){
 		c->Update();
 	}
 }
@@ -132,21 +133,25 @@ void SceneManager::Draw(void)
 		//フロントバッファの画像を消去
 		ClearDrawScreen();
 
-		if (hwnd)
-		{
+		if (hwnd){
 			SetScreenFlipTargetWindow(hwnd); // 追加ウィンドウをターゲットに設定
 
-		}
-		else
-		{
+		}else{
 			SetScreenFlipTargetWindow(NULL); // メインウィンドウをターゲットに設定
 		}
 		//カメラの描画
 		cameras_[cnt]->SetBeforeDraw();
 
+		// Effekseerにより再生中のエフェクトを更新する。
+		UpdateEffekseer3D();
+
+
 		//ゲーム内容描画
 		// 描画
 		scene_->Draw();
+
+		// Effekseerにより再生中のエフェクトを描画する。
+		DrawEffekseer3D();
 
 
 		// 暗転・明転
@@ -166,14 +171,15 @@ void SceneManager::Destroy(void)
 	delete scene_;
 
 	// カメラ
-	for (auto& c : cameras_)
-	{
+	for (auto& c : cameras_){
 		c->Release();
 	}
 
-	delete instance_;
-
 	DataBank::GetInstance().Destroy();
+	EffectManager::GetInstance().Release();
+	SoundManager::GetInstance().Release();
+
+	delete instance_;
 }
 
 void SceneManager::ChangeScene(SCENE_ID nextId)
@@ -316,9 +322,10 @@ void SceneManager::ResetDeltaTime(void)
 
 void SceneManager::DoChangeScene(SCENE_ID sceneId)
 {
+	auto& resM = ResourceManager::GetInstance();
 
 	// リソースの解放
-	ResourceManager::GetInstance().Release();
+	resM.Release();
 
 	// シーンを変更する
 	sceneId_ = sceneId;
@@ -335,16 +342,19 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	case SCENE_ID::TITLE:
 		ChangeWindowMode(Application::WINDOW::HIDE);
 		scene_ = new TitleScene();
+		resM.InitTitle();
 		break;		
 	
 	case SCENE_ID::SELECT:
 		scene_ = new SelectScene();
+		resM.InitSelect();
 		break;	
 	
 	case SCENE_ID::GAME:
 		//ウィンドウの設定
 		RedySubWindow();
 		scene_ = new GameScene();
+		resM.InitGame();
 		break;
 	}
 
@@ -387,6 +397,8 @@ void SceneManager::Fade(void)
 //ウィンドウのサイズ及び位置設定
 void SceneManager::SetWindowPram(void)
 {
+	//現在はディスプレイ一枚と仮定して制作している
+	//後で対応版の制作が必要
 	const int DISPLAY_X = 1920;
 	const int DISPLAY_Y = 1080;
 

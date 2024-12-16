@@ -72,6 +72,15 @@ public:
 
 	// 初期化
 	void Init(void);
+	//シーンごとにデータを読み込むことにする
+	void InitTitle(void);
+	void InitSelect(void);
+	void InitGame(void);
+	void InitResult(void);
+
+	void ResourcePlayer(void);
+	void ResourceEnemy(void);
+	void ResourceStage(void);
 
 	// 解放(シーン切替時に一旦解放)
 	void Release(void);

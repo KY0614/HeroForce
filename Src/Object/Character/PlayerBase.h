@@ -241,12 +241,6 @@ protected:
     //操作管理用
     ACT_CNTL actCntl_;
 
-
-
-
-
-
-
     //それぞれの最大値セット用(攻撃の座標はローカル座標で設定してます)
     std::map<ATK_ACT, ATK>atkMax_;
     float coolTimeMax_[static_cast<int>(ATK_ACT::MAX)];             //クールタイム最大
@@ -358,9 +352,6 @@ protected:
     void CpuAtkUpdate(void);
     void CpuBreakUpdate(void);
 
-
-
-
     //プレイヤー(CPUとユーザー)共通処理
     //--------------------------------------------------
     //攻撃処理
@@ -401,9 +392,6 @@ protected:
     //チャージ攻撃(パッド)
     void ChangeChargeActPad(void);
 
-
-
-
     //変更点
     void ChangeChargeActControll(void);
 
@@ -434,9 +422,6 @@ protected:
 
     //攻撃終わった後の初期化
     void InitAtk(void);
-
-
-
 
     //移動関連
     //-------------------------------------
@@ -474,9 +459,6 @@ protected:
     //ドッジカウント初期化
     void ResetDodgeFrame(void) { dodgeCnt_ = 0.0f; }
 
-
-
-
     //スキル仮想関数
     //-----------------------------------------
     //スキル1の操作
@@ -492,7 +474,6 @@ protected:
     /// </summary>
     /// <param name="_frameSkillNo">スキルフレーム最大値(今はスキル1か2)</param>
     /// <returns>スキル中/スキル中でない</returns>
-
     bool IsSkillAction(SKILL_NUM _num) {
         return atk_.IsAttack()
             || atk_.IsBacklash();
