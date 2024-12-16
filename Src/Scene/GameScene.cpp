@@ -373,8 +373,6 @@ void GameScene::CollisionPlayer(void)
 
 void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
 {
-
-	//“Yí‰ÓŠ‘½‚ß
 	auto& col = Collision::GetInstance();
 
 	//“G‚ğƒT[ƒ`‰Šú‰»
