@@ -40,10 +40,6 @@
     <ClCompile Include="Src\Manager\Collision.cpp" />
     <ClCompile Include="Src\Manager\TextManager.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlArcher.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlAxeMan.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlKnight.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlMage.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerBase.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
     <ClCompile Include="Src\Object\System\Carsor.cpp" />
