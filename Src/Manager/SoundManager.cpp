@@ -1,5 +1,16 @@
 #include "SoundManager.h"
 
-void SoundManager::Add(const SOUND _type, const int _data)
+SoundManager* SoundManager::instance_ = nullptr;
+
+void SoundManager::CreateInstance(void)
 {
+	if (instance_ == nullptr) {
+		instance_ = new SoundManager();
+	}
 }
+
+SoundManager& SoundManager::GetInstance(void)
+{
+	return *instance_;
+}
+

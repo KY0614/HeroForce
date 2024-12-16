@@ -2,6 +2,20 @@
 #include<cassert>
 #include "EffectManager.h"
 
+EffectManager* EffectManager::instance_ = nullptr;
+
+void EffectManager::CreateInstance(void)
+{
+	if (instance_ == nullptr) {
+		instance_ = new EffectManager();
+	}
+}
+
+EffectManager& EffectManager::GetInstance(void)
+{
+	return *instance_;
+}
+
 /// <summary>
 /// エフェクトの追加
 /// </summary>
