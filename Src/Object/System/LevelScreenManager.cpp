@@ -31,7 +31,7 @@ LevelScreenManager::~LevelScreenManager(void)
 void LevelScreenManager::Init(void)
 {
 	//レベルの初期設定
-	nowLevel_ = DEFAULT_LEVEL;
+	nowLevel_ = 10;
 
 	//インスタンス設定
 	Load();
@@ -178,7 +178,22 @@ void LevelScreenManager::DrawLevelUI()
 		percent, imgGage_);
 
 	//現在レベル
-	DrawRotaGraph(pos.x, pos.y, 1.0f, 0.0f, imgNumbers_[nowLevel_], true, false);
+	if (nowLevel_ < 10) {	//1桁の場合
+		DrawRotaGraph(pos.x, pos.y, 0.8f, 0.0f, imgNumbers_[nowLevel_], true, false);
+	}
+	else {	//2桁の場合
+		int leftNum = nowLevel_ / 10;
+		int rightNum = nowLevel_ % 10;
+
+		//左数字
+		Vector2 leftPos = pos;
+		leftPos.x -= 64 / 1.5;
+		DrawRotaGraph(leftPos.x, leftPos.y, 0.8f, 0.0f, imgNumbers_[leftNum], true, false);
+		//右数字
+		Vector2 rightPos = pos;
+		rightPos.x += 32 * 1.5f;
+		DrawRotaGraph(rightPos.x, rightPos.y, 0.8f, 0.0f, imgNumbers_[rightNum], true, false);
+	}
 
 }
 
