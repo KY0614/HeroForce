@@ -15,8 +15,8 @@ SelectImage::SelectImage(SelectScene& select) : selectScene_(select)
 	//座標(四角形を作るために2つの三角形を使う)
 	vertices_[0].pos = VGet(VERTEX_LEFT_X, VERTEX_UNDER_Y, VERTEX_Z + 12.0f);	// 左下
 	vertices_[1].pos = VGet(VERTEX_RIGHT_X, VERTEX_UNDER_Y, VERTEX_Z + 12.0f);	// 右下
-	vertices_[2].pos = VGet(VERTEX_LEFT_X, VERTEX_TOP_Y, VERTEX_Z);		// 左上
-	vertices_[3].pos = VGet(VERTEX_RIGHT_X, VERTEX_TOP_Y, VERTEX_Z);	// 右上
+	vertices_[2].pos = VGet(VERTEX_LEFT_X, VERTEX_TOP_Y, VERTEX_Z);				// 左上
+	vertices_[3].pos = VGet(VERTEX_RIGHT_X, VERTEX_TOP_Y, VERTEX_Z);			// 右上
 
 	//UV座標（テクスチャ座標）
 	vertices_[0].u = 0.0f / 4.0f;	vertices_[0].v = 1.0f;	// 左下
@@ -40,6 +40,11 @@ SelectImage::SelectImage(SelectScene& select) : selectScene_(select)
 		vertices_[i].spc = GetColorU8(0, 0, 0, 0);  // 白色
 	}
 
+	leftTop_ = AsoUtility::VECTOR_ZERO;
+	leftBottom_ = AsoUtility::VECTOR_ZERO;
+	rightTop_ = AsoUtility::VECTOR_ZERO;
+	rightBottom_ = AsoUtility::VECTOR_ZERO;
+
 	playerNum_ = 1;
 	isPad_ = false;
 	role_ = 0;
@@ -56,6 +61,8 @@ void SelectImage::Destroy(void)
 void SelectImage::Init(void)
 {
 	Load();
+
+	InitVertex();
 
 	pointL_ = { LEFT_POS_X,POINT_POS_Y,POINT_SCALE,POINT_SCALE,false,imgLeftPoint_ };	
 	
@@ -108,10 +115,15 @@ void SelectImage::Draw(void)
 	DrawFormatString(Application::SCREEN_SIZE_X - 100,0, 0x000000, "L : %d", pointL_.isToggle_);
 	DrawFormatString(Application::SCREEN_SIZE_X - 100,20, 0x000000, "R : %d", pointR_.isToggle_);
 	//球
-	for (auto v : vertices_)
-	{
-		DrawSphere3D(v.pos, 10.0f, 10, 0xFF0000, 0xFF0000, false);
-	}
+	//左下
+	DrawSphere3D(vertices_[0].pos, 10.0f, 10, 0xFF0000, 0xFF0000, false);
+	//右下
+	DrawSphere3D(vertices_[1].pos, 10.0f, 10, 0x00FF00, 0x00FF00, false);
+	//左上
+	DrawSphere3D(vertices_[2].pos, 10.0f, 10, 0x0000FF, 0x0000FF, false);
+	//右上
+	DrawSphere3D(vertices_[3].pos, 10.0f, 10, 0x000000, 0x000000, false);
+	
 	for (int i = 0; i < 4; i++)
 	{
 		DrawFormatString(0, 40 + (20 * i), 0xFF0000, "pos %0.2f,%0.2f,%0.2f", vertices_[i].pos.x, vertices_[i].pos.y, vertices_[i].pos.z);
@@ -252,21 +264,10 @@ void SelectImage::NumberUpdate(void)
 	}
 
 	//UV座標（テクスチャ座標）
-	vertices_[0].u = ((float)(playerNum_) - 1.0f) / 4.0f;	vertices_[0].v = 1.0f;	// 左下
+	vertices_[0].u = ((float)(playerNum_)-1.0f) / 4.0f;		vertices_[0].v = 1.0f;	// 左下
 	vertices_[1].u = (float)(playerNum_) / 4.0f;			vertices_[1].v = 1.0f;	// 右下
 	vertices_[2].u = ((float)(playerNum_)-1.0f) / 4.0f;		vertices_[2].v = 0.0f;	// 左上
 	vertices_[3].u = (float)(playerNum_) / 4.0f;			vertices_[3].v = 0.0f;	// 右上
-
-	VECTOR sum = VAdd(vertices_[1].pos, vertices_[0].pos);
-	VECTOR centerPos = VScale(sum, 0.5f);
-	
-	VECTOR Sum = VAdd(vertices_[3].pos, vertices_[2].pos);
-	VECTOR center = VScale(Sum, 0.5f);
-
-	DrawLine3D(centerPos, center, 0xFF0000);
-
-	vertices_[1].pos = RotateVertex(vertices_[1].pos, centerPos, AsoUtility::Deg2RadF(0.1f));
-	vertices_[3].pos = RotateVertex(vertices_[3].pos, center, AsoUtility::Deg2RadF(0.1f));
 }
 
 void SelectImage::OperationUpdate(void)
@@ -443,7 +444,7 @@ void SelectImage::RoleUpdate(void)
 		//役職の設定
 		data.Input(static_cast<SceneManager::ROLE>(role_), playerNum_);
 
-		//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 	}
 
 	//選択する矢印
@@ -460,6 +461,12 @@ void SelectImage::RoleUpdate(void)
 		pointR_.isToggle_ = false;
 		pointL_.isToggle_ = true;
 	}
+
+	//UV座標（テクスチャ座標）
+	vertices_[0].u = (float)(role_) / 4.0f;		vertices_[0].v = 1.0f;	// 左下
+	vertices_[1].u = ((float)(role_) + 1.0f) / 4.0f;				vertices_[1].v = 1.0f;	// 右下
+	vertices_[2].u = (float)(role_) / 4.0f;		vertices_[2].v = 0.0f;	// 左上
+	vertices_[3].u = ((float)(role_) +1.0f) / 4.0f;				vertices_[3].v = 0.0f;	// 右上
 }
 
 void SelectImage::NumberDraw(void)
@@ -481,6 +488,55 @@ void SelectImage::NumberDraw(void)
 	//	imgPlayerNum_[playerNum_ - 1],	//配列は0～3なので
 	//	true, false);
 
+	PointsDraw();
+
+	DrawFormatString(Application::SCREEN_SIZE_X / 2,
+		Application::SCREEN_SIZE_Y / 2, 0x000000, "num : %d", playerNum_);
+
+}
+
+void SelectImage::OperationDraw(void)
+{
+	//仮置き
+	DrawRotaGraph(Application::SCREEN_SIZE_X / 2,
+		Application::SCREEN_SIZE_Y / 2,
+		1.0f, 0.0f,
+		imgPlayerNum_[(int)(isPad_)],
+		true, false);
+
+	PointsDraw();
+
+	DrawFormatString(Application::SCREEN_SIZE_X / 2,
+		Application::SCREEN_SIZE_Y / 2, 0x000000, "ope : %d",isPad_);
+}
+
+void SelectImage::RoleDraw(void)
+{
+	// 2つの三角形を描画（テクスチャ付き）
+	// 1つ目の三角形
+	VERTEX3D triangle1[3] = { vertices_[2], vertices_[1], vertices_[0] };
+	// 2つ目の三角形
+	VERTEX3D triangle2[3] = { vertices_[1], vertices_[2], vertices_[3] };
+
+	// 三角形を描画
+	DrawPolygon3D(triangle1, 2, *imgPlayerNum_, true);  // 1つ目の三角形
+	DrawPolygon3D(triangle2, 2, *imgPlayerNum_, true);  // 2つ目の三角形
+
+	////仮置き
+	//DrawRotaGraph(Application::SCREEN_SIZE_X / 2,
+	//	Application::SCREEN_SIZE_Y / 2,
+	//	1.0f, 0.0f,
+	//	imgPlayerNum_[(int)(role_)],
+	//	true, false);
+
+	PointsDraw();
+
+	DrawFormatString(Application::SCREEN_SIZE_X / 2,
+		Application::SCREEN_SIZE_Y / 2, 0x000000, "role : %d",role_);
+}
+
+void SelectImage::PointsDraw(void)
+{
 	//左の矢印の描画(右の矢印は暗めにする)
 	if (pointL_.isToggle_)
 	{
@@ -519,51 +575,50 @@ void SelectImage::NumberDraw(void)
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	}
-
-	DrawFormatString(Application::SCREEN_SIZE_X / 2,
-		Application::SCREEN_SIZE_Y / 2, 0x000000, "num : %d", playerNum_);
-
 }
 
-void SelectImage::OperationDraw(void)
+void SelectImage::InitVertex(void)
 {
-	//仮置き
-	DrawRotaGraph(Application::SCREEN_SIZE_X / 2,
-		Application::SCREEN_SIZE_Y / 2,
-		1.0f, 0.0f,
-		imgPlayerNum_[(int)(isPad_)],
-		true, false);
+	leftTop_ = { VERTEX_LEFT_X, VERTEX_TOP_Y, VERTEX_Z };
+	leftBottom_ = { VERTEX_LEFT_X, VERTEX_UNDER_Y, VERTEX_Z /*+ 12.0f*/ };
+	rightTop_ = { VERTEX_RIGHT_X, VERTEX_TOP_Y, VERTEX_Z };
+	rightBottom_ = { VERTEX_RIGHT_X, VERTEX_UNDER_Y, VERTEX_Z /*+ 12.0f */};
 
-	DrawFormatString(Application::SCREEN_SIZE_X / 2,
-		Application::SCREEN_SIZE_Y / 2, 0x000000, "ope : %d",isPad_);
-}
-
-void SelectImage::RoleDraw(void)
-{
-	//仮置き
-	DrawRotaGraph(Application::SCREEN_SIZE_X / 2,
-		Application::SCREEN_SIZE_Y / 2,
-		1.0f, 0.0f,
-		imgPlayerNum_[(int)(role_)],
-		true, false);
-
-	DrawFormatString(Application::SCREEN_SIZE_X / 2,
-		Application::SCREEN_SIZE_Y / 2, 0x000000, "role : %d",role_);
+	//座標(四角形を作るために2つの三角形を使う)
+	vertices_[0].pos = leftBottom_;		// 左下
+	vertices_[1].pos = rightBottom_;	// 右下
+	vertices_[2].pos = leftTop_;		// 左上
+	vertices_[3].pos = rightTop_;		// 右上
 }
 
 VECTOR SelectImage::RotateVertex(VECTOR pos, VECTOR center, float angle)
 {
-	// 回転行列を使って新しい座標を計算
-	float x_new = pos.x * cos(angle) + pos.z * sin(angle);
-	float y_new = pos.y;  // y軸回転なのでy座標は変化しない
-	float z_new = -pos.x * sin(angle) + pos.z * cos(angle);
+	// メッシュの中心点を計算
+	VECTOR Center;
+	Center.x = (VERTEX_RIGHT_X + VERTEX_LEFT_X) * 0.5f;
+	Center.y = (VERTEX_TOP_Y + VERTEX_UNDER_Y) * 0.5f;
+	Center.z = VERTEX_Z;
 
-	// 回転後の座標を返す
-	pos.x = x_new;
-	pos.y = y_new;
-	pos.z = z_new;
+	//半径
+	const float DIS = 50.0f;
 
-	return pos;
+	// 時間進行
+	angle_ += SceneManager::GetInstance().GetDeltaTime();
+
+	// 回転行列を適用して頂点を回転
+
+	for (int i = 1; i < 4; i += 2)
+	{
+		//XZ平面上で回転させる
+		vertices_[i].pos.x = Center.x + (DIS * (sinf(angle_)));
+		vertices_[i].pos.z = Center.z + (DIS * (cosf(angle_)));
+	}
+	for (int i = 0; i < 4; i += 2)
+	{
+		vertices_[i].pos.x = Center.x + (-DIS * (sinf(angle_)));
+		vertices_[i].pos.z = Center.z + (-DIS * (cosf(angle_)));
+	}
+	return AsoUtility::VECTOR_ZERO;
 }
 
 void SelectImage::Point::PointDraw(void)

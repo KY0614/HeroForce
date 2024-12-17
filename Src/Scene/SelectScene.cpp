@@ -53,7 +53,7 @@ void SelectScene::Init(void)
 	SetFogEnable(false);
 	//”’
 	SetFogColor(255, 255, 255);
-	SetFogStartEnd(-100.0f, 10000.0f);
+	SetFogStartEnd(-300.0f, 15000.0f);
 
 	//ƒvƒŒƒCƒ„[İ’è
 	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)

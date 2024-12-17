@@ -16,12 +16,12 @@ public:
 	static constexpr int RIGHT_POS_X = Application::SCREEN_SIZE_X / 2 + (POINT_SCALE * 5);
 	static constexpr int POINT_POS_Y = Application::SCREEN_SIZE_Y / 2 ;
 
-	//頂点関連
+	//頂点関連（４点)
 	static constexpr int VERTEX_NUM = 4;			//頂点数
 	static constexpr float VERTEX_ROTSPEED = 1.0f;	//頂点を回転させる速度
 
-	static constexpr float VERTEX_LEFT_X = -50.0f;
-	static constexpr float VERTEX_RIGHT_X = 50.0f;
+	static constexpr float VERTEX_LEFT_X = -50.0f;	//
+	static constexpr float VERTEX_RIGHT_X = 50.0f;	//
 
 	static constexpr float VERTEX_UNDER_Y = 70.0f;
 	static constexpr float VERTEX_TOP_Y = 170.0f;
@@ -29,8 +29,8 @@ public:
 	static constexpr float VERTEX_Z = -350.0f;
 
 	//キー入力関連
-	static constexpr float SELECT_TIME = 1.8f;		//キー押下経過時間
-	static constexpr float INTERVAL_TIME = 0.7f;	//インターバル上限
+	static constexpr float SELECT_TIME = 1.0f;		//キー押下経過時間
+	static constexpr float INTERVAL_TIME = 0.6f;	//インターバル上限
 
 	//矢印
 	struct Point {
@@ -74,6 +74,10 @@ private:
 	VERTEX3D vertices_[4];
 	VERTEX3D triangle1_[3];
 	VERTEX3D triangle2_[3];
+	VECTOR leftTop_;
+	VECTOR leftBottom_;
+	VECTOR rightTop_;
+	VECTOR rightBottom_;
 	float angle_;
 
 	//矢印の構造体
@@ -118,8 +122,11 @@ private:
 
 	void RoleDraw(void);			//役職選択中の処理
 
+	void PointsDraw(void);			//矢印（２つとも）描画
+
 	//-----------------------------------------------------------
 
+	void InitVertex(void);
 	VECTOR RotateVertex(VECTOR pos, VECTOR center, float angle);
 };
 
