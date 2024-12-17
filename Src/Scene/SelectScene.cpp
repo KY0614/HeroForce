@@ -187,7 +187,7 @@ void SelectScene::Release(void)
 
 void SelectScene::NumberUpdate(void)
 {
-	images_[0]->Update();
+	images_[0]->NumberUpdate();
 
 #ifdef DEBUG_RECT
 
@@ -322,7 +322,7 @@ void SelectScene::OperationUpdate(void)
 {
 	for (auto& i : images_)
 	{
-		i->Update();
+		i->OperationUpdate();
 	}
 
 #ifdef DEBUG_RECT
@@ -647,6 +647,21 @@ void SelectScene::DrawDebug(void)
 void SelectScene::ChangeSelect(SELECT select)
 {
 	select_ = select;
+
+	//•ÏX‚Ì‰Šú‰»ˆ—
+	switch (select_)
+	{
+	case SelectScene::SELECT::NUMBER:
+		break;
+	case SelectScene::SELECT::OPERATION:
+		break;
+	case SelectScene::SELECT::ROLE:
+		break;
+	case SelectScene::SELECT::MAX:
+		break;
+	default:
+		break;
+	}
 }
 
 void SelectScene::KeyConfigSetting(void)

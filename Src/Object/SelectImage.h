@@ -63,6 +63,27 @@ public:
 	//描画
 	virtual void Draw(void)override;
 
+	//関数ポインタ使ってすっきりさせたい
+	//更新処理関連-----------------------------------------------
+
+	void NumberUpdate(void);		//人数選択中の処理
+
+	void OperationUpdate(void);		//操作方法選択中の処理(1Pのみ)
+
+	void RoleUpdate(void);			//役職選択中の処理
+
+	//描画処理関連-----------------------------------------------
+
+	void NumberDraw(void);			//人数選択中の処理
+
+	void OperationDraw(void);		//操作方法選択中の処理(1Pのみ)
+
+	void RoleDraw(void);			//役職選択中の処理
+
+	void PointsDraw(void);			//矢印（２つとも）描画
+
+	//-----------------------------------------------------------
+
 private:
 	
 	//画像ハンドル
@@ -105,26 +126,6 @@ private:
 	SelectScene& selectScene_;
 
 	void Load(void);	//読み込み用
-
-	//更新処理関連-----------------------------------------------
-
-	void NumberUpdate(void);		//人数選択中の処理
-
-	void OperationUpdate(void);		//操作方法選択中の処理(1Pのみ)
-
-	void RoleUpdate(void);			//役職選択中の処理
-
-	//描画処理関連-----------------------------------------------
-
-	void NumberDraw(void);			//人数選択中の処理
-
-	void OperationDraw(void);		//操作方法選択中の処理(1Pのみ)
-
-	void RoleDraw(void);			//役職選択中の処理
-
-	void PointsDraw(void);			//矢印（２つとも）描画
-
-	//-----------------------------------------------------------
 
 	void InitVertex(void);
 	VECTOR RotateVertex(VECTOR pos, VECTOR center, float angle);
