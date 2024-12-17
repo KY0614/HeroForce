@@ -1,6 +1,12 @@
 #pragma once
 #include<unordered_map>
 
+
+//Dxlib内に音声データを3D空間上に再生する処理がある
+//簡単に言えば音声に距離をつけることが可能
+//少しばかり複雑そうなので後日に回す
+
+
 class SoundManager
 {
 public:

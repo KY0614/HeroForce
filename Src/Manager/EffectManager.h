@@ -4,12 +4,20 @@
 #include"../Common/Quaternion.h"
 #include<unordered_map>
 #include<string>
+
+//無駄のないように要改善
+
 class EffectManager
 {
 public:
+
+	//各種エフェクトの上限
+	static constexpr int NONE_MAX = 5;
+
 	enum class EFFECT
 	{
 		//使用するエフェクトを羅列
+		NONE,
 	};
 
 	// インスタンスの生成
@@ -53,9 +61,11 @@ private:
 	//エフェクトデータ格納用
 	std::unordered_map<EFFECT,int> effectRes_;	//初期データ
 	std::unordered_map<EFFECT,int> effectPlay_;	//再生データ
+	std::unordered_map<EFFECT,int[]> effectTest_;	//再生データ
+	std::unordered_map<EFFECT, int> effectMax_;		//再生データの最大所持数
 
 	//コンストラクタ＆デストラクタ
-	EffectManager() = default;
+	EffectManager(void);
 	~EffectManager() = default;
 };
 

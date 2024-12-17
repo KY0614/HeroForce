@@ -16,6 +16,12 @@ EffectManager& EffectManager::GetInstance(void)
 	return *instance_;
 }
 
+EffectManager::EffectManager(void) {
+	int i[NONE_MAX] = {};
+
+	effectTest_.emplace(EFFECT::NONE,i);
+}
+
 /// <summary>
 /// エフェクトの追加
 /// </summary>
