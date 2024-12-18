@@ -1,10 +1,6 @@
 #include<DxLib.h>
 #include<cmath>
 #include"../../Application.h"
-#include"../../Manager/Resource.h"
-#include"../../Manager/InputManager.h"
-#include"../../Manager/ResourceManager.h"
-#include"../../Manager/Collision.h"
 #include"../../Utility/AsoUtility.h"
 #include "Enemy.h"
 

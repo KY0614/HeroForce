@@ -1,4 +1,3 @@
-#include"../Manager/ResourceManager.h"
 #include "PlAxeMan.h"
 
 PlAxe::PlAxe(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum) : PlayerBase(_mode, _padNum)

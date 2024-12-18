@@ -1,4 +1,4 @@
-#include "../Manager/InputManager.h"
+#include "../Manager/Generic/InputManager.h"
 #include "InputController.h"
 
 InputController::InputController(void)

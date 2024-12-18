@@ -1,7 +1,7 @@
 #pragma once
 #include "SceneBase.h"
 #include "../Object/Common/Transform.h"
-#include "../Manager/SceneManager.h"
+#include "../Manager/Generic/SceneManager.h"
 #include "../Common/Vector2.h"
 
 class SkyDome;

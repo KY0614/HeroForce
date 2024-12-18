@@ -8,10 +8,10 @@
 #include "../Scene/GameScene.h"
 #include "ResourceManager.h"
 #include "Camera.h"
-#include"Collision.h"
-#include"DataBank.h"
-#include"EffectManager.h"
-#include"SoundManager.h"
+#include"../Manager/GameSystem/Collision.h"
+#include"../Manager/GameSystem/DataBank.h"
+#include"../Manager/Decoration/EffectManager.h"
+#include"../Manager/Decoration/SoundManager.h"
 #include "SceneManager.h"
 
 SceneManager* SceneManager::instance_ = nullptr;

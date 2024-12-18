@@ -1,6 +1,6 @@
 #include <DxLib.h>
 #include "../Application.h"
-#include "../../Manager/ResourceManager.h"
+#include "../../Manager/Generic/ResourceManager.h"
 #include "LevelupSelect.h"
 #include "Carsor.h"
 

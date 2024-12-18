@@ -1,6 +1,6 @@
 #include <DxLib.h>
 #include "../../Application.h"
-#include "../../Manager/InputManager.h"
+#include "../../Manager/Generic/InputManager.h"
 #include "../../Common/Vector2.h"
 #include "../Common/Fader.h"
 #include "LevelScreenManager.h"

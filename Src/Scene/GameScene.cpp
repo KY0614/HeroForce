@@ -1,7 +1,6 @@
 #include "../Manager/Generic/SceneManager.h"
 #include "../Manager/Generic/Camera.h"
 #include "../Manager/GameSystem/Collision.h"
-#include "../Object/Grid.h"
 #include "../Object/Character/PlayerBase.h"
 #include "../Object/Character/PlayableChara/PlAxeMan.h"
 #include "../Object/Character/PlayableChara/PlArcher.h"
@@ -152,8 +151,7 @@ void GameScene::Draw(void)
 	for (auto& p : players_)
 		p->Draw();
 
-	for (auto& e : enemys_)
-	{
+	for (auto& e : enemys_){
 		e->Draw();
 	}
 

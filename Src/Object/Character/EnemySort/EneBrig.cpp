@@ -1,5 +1,3 @@
-#include"../../../Manager/Resource.h"
-#include"../../../Manager/ResourceManager.h"
 #include"../Enemy.h"
 #include "EneBrig.h"
 

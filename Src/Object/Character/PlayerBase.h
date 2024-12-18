@@ -3,8 +3,7 @@
 #include<functional>
 #include<variant>
 #include"../Utility/AsoUtility.h"
-#include"../Manager/SceneManager.h"
-#include"../Manager/InputManager.h"
+#include"../Manager/Generic/SceneManager.h"
 #include "../UnitBase.h"
 
 #define DEBUG_ON

@@ -1,5 +1,3 @@
-#include"../Manager/ResourceManager.h"
-#include"../Manager/SceneManager.h"
 #include "PlKnight.h"
 PlKnight::PlKnight(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum) :PlayerBase(_mode, _padNum)
 {
