@@ -29,9 +29,8 @@ public:
 private:
 
 	Transform trans_[SceneManager::PLAYER_NUM];
-	int role;
+	int role_;
 
 	void Init3DModel(void);
-	void UpdateTrans(void);
 };
 

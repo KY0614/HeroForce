@@ -4,9 +4,10 @@
 #include "../Manager/InputManager.h"
 #include "../Manager/DataBank.h"
 #include "../Scene/SelectScene.h"
+#include "../Object/Character/SelectPlayer.h"
 #include "SelectImage.h"
 
-SelectImage::SelectImage(SelectScene& select) : selectScene_(select)
+SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> player) : selectScene_(select), player_(player)
 {
 	imgPlayerNum_ = nullptr;
 	imgLeftPoint_ = -1;
@@ -52,6 +53,7 @@ SelectImage::SelectImage(SelectScene& select) : selectScene_(select)
 	keyPressTime_ = 0.0f;
 	interval_ = 0.0f;
 	press_ = false;
+	angle_ = 0.0f;
 }
 
 void SelectImage::Destroy(void)
@@ -463,10 +465,12 @@ void SelectImage::RoleUpdate(void)
 	}
 
 	//UV座標（テクスチャ座標）
-	vertices_[0].u = (float)(role_) / 4.0f;		vertices_[0].v = 1.0f;	// 左下
-	vertices_[1].u = ((float)(role_) + 1.0f) / 4.0f;				vertices_[1].v = 1.0f;	// 右下
-	vertices_[2].u = (float)(role_) / 4.0f;		vertices_[2].v = 0.0f;	// 左上
-	vertices_[3].u = ((float)(role_) +1.0f) / 4.0f;				vertices_[3].v = 0.0f;	// 右上
+	vertices_[0].u = (float)(role_) / 4.0f;				vertices_[0].v = 1.0f;	// 左下
+	vertices_[1].u = ((float)(role_) + 1.0f) / 4.0f;	vertices_[1].v = 1.0f;	// 右下
+	vertices_[2].u = (float)(role_) / 4.0f;				vertices_[2].v = 0.0f;	// 左上
+	vertices_[3].u = ((float)(role_) +1.0f) / 4.0f;		vertices_[3].v = 0.0f;	// 右上
+
+	player_->SetRole(role_);
 }
 
 void SelectImage::NumberDraw(void)
@@ -593,7 +597,7 @@ void SelectImage::InitVertex(void)
 
 VECTOR SelectImage::RotateVertex(VECTOR pos, VECTOR center, float angle)
 {
-	// メッシュの中心点を計算
+	//メッシュの中心点を計算(今はとりあえずメッシュの真ん中の座標)
 	VECTOR Center;
 	Center.x = (VERTEX_RIGHT_X + VERTEX_LEFT_X) * 0.5f;
 	Center.y = (VERTEX_TOP_Y + VERTEX_UNDER_Y) * 0.5f;

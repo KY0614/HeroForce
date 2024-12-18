@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include "SceneBase.h"
 #include "../Object/Common/Transform.h"
 #include "../Manager/SceneManager.h"
@@ -46,56 +47,6 @@ public:
 
 	static constexpr float CHARACTER_SCALE = 0.5f;
 
-	//四角形を描画するために必要なもの
-	struct Rect {
-		Vector2 pos;
-		int w, h;
-		int color_;
-
-		Rect() : pos(0, 0), w(0), h(0), color_(0) {}
-		Rect(float x, float y, int inw, int inh, int col) :
-			pos(x, y), w(inw), h(inh) , color_(col) {}
-
-		int Left() { return pos.x - w / 2; }
-		int Top() { return pos.y - h / 2; }
-		int Right() { return pos.x + w / 2; }
-		int Bottom() { return pos.y + h / 2; }
-
-		void Draw(unsigned int color);//自分の矩形を描画する
-	};
-
-	//三角形
-	struct Tri {
-		Vector2 pos;
-		int w, h;	//w:底辺,h:高さ	
-		bool isToggle_;
-		int color_;
-
-		//初期化子
-		Tri() : pos(0, 0), w(0), h(0) ,isToggle_(false), color_(0) {}
-		Tri(float x, float y, int inw, int inh,bool isT,int col) :
-			pos(x, y), w(inw), h(inh), isToggle_(isT) ,color_(col) {}
-
-		//左の三点のx,y座標
-		int LeftX_L() { return pos.x + h / 2;}
-		int LeftY_L() { return pos.y + w / 2;}
-		int TopX_L()  { return pos.x - h / 2;}
-		int TopY_L()  { return pos.y; }
-		int RightX_L(){ return pos.x + h / 2;}
-		int RightY_L(){ return pos.y - w / 2;}
-
-		//右の三点のx,y座標
-		int LeftX_R() { return pos.x - h / 2; }
-		int LeftY_R() { return pos.y + w / 2; }
-		int TopX_R() { return pos.x + h / 2; }
-		int TopY_R() { return pos.y; }
-		int RightX_R() { return pos.x - h / 2; }
-		int RightY_R() { return pos.y - w / 2; }
-
-		void LeftDraw(unsigned int color);//三角形を描画する
-		void RightDraw(unsigned int color);//三角形を描画する
-	};
-
 	//選択している種類
 	enum class SELECT 
 	{
@@ -128,34 +79,22 @@ public:
 	// デストラクタ
 	~SelectScene(void);
 
-	void Init(void) override;
-	void Update(void) override;
-	void Draw(void) override;
-	void Release(void) override;
+	virtual void Init(void) override;
+	virtual void Update(void) override;
+	virtual void Draw(void) override;
+	virtual void Release(void) override;
 
-	void InitModel(void);
+	/// <summary>
+	/// 状態遷移
+	/// </summary>
+	/// <param name="_state">遷移する状態</param>
+	void ChangeSelect(const SELECT _state);
 
-	//更新処理関連-----------------------------------------------
 	
-	void NumberUpdate(void);		//人数選択中の処理
-	
-	void OperationUpdate(void);		//操作方法選択中の処理(1Pのみ)
-
-	void RoleUpdate(void);			//役職選択中の処理
-
-	//描画処理関連-----------------------------------------------
-
-	void NumberDraw(void);			//人数選択中の処理
-
-	void OperationDraw(void);		//操作方法選択中の処理(1Pのみ)
-
-	void RoleDraw(void);			//役職選択中の処理
-
-	//-----------------------------------------------------------
 
 
-	//選択するもの(人数or役職)の種類を変える
-	void ChangeSelect(SELECT select);
+	////選択するもの(人数or役職)の種類を変える
+	//void ChangeSelect(SELECT select);
 
 	//キー入力とコントローラ入力を共通化
 	void KeyConfigSetting(void);
@@ -183,11 +122,17 @@ public:
 	//--------------------------------------------------------------------
 
 private:
+
+	//状態管理(更新ステップ)
+	std::function<void(void)> stateUpdate_;
+	//状態管理(状態遷移時初期処理)
+	std::map<SELECT, std::function<void(void)>> stateChanges_;
+
 	//スカイドーム
 	std::unique_ptr<SkyDome> skyDome_;
 
 	//プレイヤー
-	std::unique_ptr<SelectPlayer>players_[SceneManager::PLAYER_NUM];
+	std::shared_ptr<SelectPlayer>players_[SceneManager::PLAYER_NUM];
 
 	// 画像
 	std::unique_ptr<SelectImage>images_[SceneManager::PLAYER_NUM];
@@ -208,30 +153,34 @@ private:
 	//キーコンフィグ
 	KEY_CONFIG key_;
 
+	//状態遷移
+	void ChangeStateNumber(void);
+	void ChangeStateOperation(void);
+	void ChangeStateRole(void);
+	void ChangeStateMax(void);
+
+	//更新処理関連-----------------------------------------------
+
+	void NumberUpdate(void);		//人数選択中の処理
+
+	void OperationUpdate(void);		//操作方法選択中の処理(1Pのみ)
+
+	void RoleUpdate(void);			//役職選択中の処理
+
+	void MaxUpdate(void);			//無
+
+	//描画処理関連-----------------------------------------------
+
+	void NumberDraw(void);			//人数選択中の処理
+
+	void OperationDraw(void);		//操作方法選択中の処理(1Pのみ)
+
+	void RoleDraw(void);			//役職選択中の処理
+
+	//-----------------------------------------------------------
+
 	//デバッグ関連-------------------------------
-
-	//四角形
-	Rect rc;
-
-	//三角形
-	Tri triL;
-	Tri triR;
-	
-	//プレイヤー人数
-	//int playerNum_;
-	
-	//bool isPad_;	//1Pの入力タイプ
 	SceneManager::CNTL selectedCntl_;
 	
-	//int role_;	//職種
-
-	////キーを何秒押しているか
-	//float keyPressTime_;
-
-	//bool press_;
-
-	////人数を一定間隔で加算していくためのインターバル用時間(加算して次加算するまでの間)
-	//float interval_;
-
 };
 

@@ -5,6 +5,7 @@
 #include "./UnitBase.h"
 
 class SelectScene;
+class SelectPlayer;
 
 class SelectImage : public UnitBase
 {
@@ -48,7 +49,7 @@ public:
 	};
 
 	//コンストラクタ
-	SelectImage(SelectScene& select);
+	SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> player);
 
 	//デストラクタ
 	~SelectImage(void) = default;
@@ -124,6 +125,7 @@ private:
 	float interval_;
 
 	SelectScene& selectScene_;
+	std::shared_ptr<SelectPlayer> player_;
 
 	void Load(void);	//読み込み用
 

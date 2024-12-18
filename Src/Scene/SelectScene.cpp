@@ -21,6 +21,16 @@ SelectScene::SelectScene(void)
 	device_ = SceneManager::CNTL::KEYBOARD;
 	select_ = SELECT::NUMBER;
 	selectedCntl_ = SceneManager::CNTL::NONE;
+
+	// 状態管理
+	stateChanges_.emplace(
+		SELECT::NUMBER, std::bind(&SelectScene::ChangeStateNumber, this));
+	stateChanges_.emplace(
+		SELECT::OPERATION, std::bind(&SelectScene::ChangeStateOperation, this));
+	stateChanges_.emplace(
+		SELECT::ROLE, std::bind(&SelectScene::ChangeStateRole, this));
+	stateChanges_.emplace(
+		SELECT::ROLE, std::bind(&SelectScene::ChangeStateMax, this));
 }
 
 SelectScene::~SelectScene(void)
@@ -58,14 +68,14 @@ void SelectScene::Init(void)
 	//プレイヤー設定
 	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
 	{
-		players_[i] = std::make_unique<SelectPlayer>();
+		players_[i] = std::make_shared<SelectPlayer>();
 		players_[i]->Init();
 	}
 
 	//画像設定
 	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
 	{
-		images_[i] = std::make_unique<SelectImage>(*this);
+		images_[i] = std::make_unique<SelectImage>(*this, *players_);
 		images_[i]->Init();
 	}
 	//image_ = std::make_unique<SelectImage>(*this);
@@ -75,6 +85,7 @@ void SelectScene::Init(void)
 	auto camera = SceneManager::GetInstance().GetCameras();
 	camera[0]->SetPos(DEFAULT_CAMERA_POS, DEFAULT_TARGET_POS);
 	camera[0]->ChangeMode(Camera::MODE::FIXED_POINT);
+	SetupCamera_Ortho(50.0f);
 
 	//人数選択から
 	ChangeSelect(SELECT::NUMBER);
@@ -115,23 +126,23 @@ void SelectScene::Update(void)
 	//image_->Update();
 
 	//選択中の種類ごとの更新処理
-	switch (select_)
-	{
-	case SELECT::NUMBER:  
-		NumberUpdate();
-		break;
+	//switch (select_)
+	//{
+	//case SELECT::NUMBER:  
+	//	NumberUpdate();
+	//	break;
 
-	case SELECT::OPERATION:
-		OperationUpdate();
-		break;
+	//case SELECT::OPERATION:
+	//	OperationUpdate();
+	//	break;
 
-	case SELECT::ROLE:
-		RoleUpdate();
-		break;
+	//case SELECT::ROLE:
+	//	RoleUpdate();
+	//	break;
 
-	default:
-		break;
-	}
+	//default:
+	//	break;
+	//}
 
 	trans_.Update();
 	for (auto& i : tests_)
@@ -139,7 +150,8 @@ void SelectScene::Update(void)
 		i.Update();
 	}
 
-	
+	//更新ステップ
+	stateUpdate_();
 }
 
 void SelectScene::Draw(void)
@@ -185,136 +197,29 @@ void SelectScene::Release(void)
 	MV1DeleteModel(trans_.modelId);
 }
 
+void SelectScene::ChangeStateNumber(void)
+{
+	stateUpdate_ = std::bind(&SelectScene::NumberUpdate, this);
+}
+
+void SelectScene::ChangeStateOperation(void)
+{
+	stateUpdate_ = std::bind(&SelectScene::OperationUpdate, this);
+}
+
+void SelectScene::ChangeStateRole(void)
+{
+	stateUpdate_ = std::bind(&SelectScene::RoleUpdate, this);
+}
+
+void SelectScene::ChangeStateMax(void)
+{
+	stateUpdate_ = std::bind(&SelectScene::MaxUpdate, this);
+}
+
 void SelectScene::NumberUpdate(void)
 {
 	images_[0]->NumberUpdate();
-
-#ifdef DEBUG_RECT
-
-	//三角形のボタンを選択中だったら緑に非選択だったら黄色に
-	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
-	triR.color_ = (triR.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
-
-	//右の三角形がONの時にキーの右に値する入力をし続けると
-	if (triR.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::RIGHT)
-	{
-		if (!press_)
-		{
-			press_ = true;
-
-			//人数を１追加(中身は1～4に収める)
-			playerNum_ = (playerNum_ % PLAYER_NUM) + 1;
-		}
-		
-		//色を白に
-		triR.color_ = GetColor(255, 255, 255);
-
-		//キーが押されている間経過時間を加算していく
-		keyPressTime_ += delta;
-
-		//経過時間がある一定時間経った場合
-		if (keyPressTime_ > SELECT_TIME )
-		{
-			//インターバルを加算していく
-			interval_ += delta;
-
-			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
-			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f , playerNum_ = (playerNum_ % PLAYER_NUM) + 1 : interval_;
-		}
-	}
-	else if(triR.isToggle_)
-	{
-		keyPressTime_ = 0.0f;
-		interval_ = INTERVAL_TIME;
-		press_ = false;
-	}
-
-	//左
-	if (triL.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::LEFT)
-	{
-		if (!press_)
-		{
-			press_ = true;
-
-			//人数を１削除(中身は1～4に収める)
-			playerNum_ = (playerNum_ + 3) % PLAYER_NUM;
-			if (playerNum_ == 0)playerNum_ = 4;
-		}
-		//色を白に
-		triL.color_ = GetColor(255, 255, 255);
-
-		//キーが押されている間経過時間を加算していく
-		keyPressTime_ += delta;
-
-		//経過時間がある一定時間経った場合
-		if (keyPressTime_ > SELECT_TIME)
-		{
-			//インターバルを加算していく
-			interval_ += delta;
-
-			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
-			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, playerNum_ = (playerNum_ + 3) % PLAYER_NUM : interval_;
-			if (playerNum_ == 0)playerNum_ = 4;
-		}
-	}
-	else if (triL.isToggle_)
-	{
-		keyPressTime_ = 0.0f;
-		interval_ = INTERVAL_TIME;
-		press_ = false;
-	}
-
-	//プレイ人数の範囲内に数値を収める
-	//playerNum_ = std::clamp(playerNum_, 1, PLAYER_NUM );	//１～４人プレイなので1～4まで
-
-	//スペースキー押下で決定&入力デバイス選択へ
-	if (key_ == KEY_CONFIG::DECIDE)
-	{
-		//プレイヤー人数の設定
-		data.Input(SceneManager::PLAY_MODE::USER, playerNum_);
-		//ディスプレイの設定
-		data.Input(DataBank::INFO::DHISPLAY_NUM, playerNum_);
-		data.Input(DataBank::INFO::USER_NUM, playerNum_);	
-
-		//CPU人数の設定(CPUは１人から３人)
-		data.Input(SceneManager::PLAY_MODE::CPU, (PLAYER_NUM) - playerNum_);
-
-		//ウィンドウ複製の準備
-		SceneManager::GetInstance().RedySubWindow();
-
-		//カメラの設定
-		auto cameras = SceneManager::GetInstance().GetCameras();
-		for (int i = 0; i < playerNum_; i++)
-		{
-			cameras[i]->SetPos(DEFAULT_CAMERA_POS, DEFAULT_TARGET_POS);
-			cameras[i]->SetFollow(&players_[i]->GetTransform());
-			cameras[i]->ChangeMode(Camera::MODE::FIXED_POINT);
-		}
-
-		ChangeSelect(SELECT::OPERATION);
-	}
-
-	//選択する三角形
-	if (!triR.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::RIGHT)
-	{
-		triR.isToggle_ = true;
-		triL.isToggle_ = false;
-	}
-
-	if (!triL.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::LEFT)
-	{
-		triR.isToggle_ = false;
-		triL.isToggle_ = true;
-	}
-
-
-#endif // DEBUG_RECT
 
 }
 
@@ -324,113 +229,6 @@ void SelectScene::OperationUpdate(void)
 	{
 		i->OperationUpdate();
 	}
-
-#ifdef DEBUG_RECT
-	//三角形のボタンが選択中だったら緑に非選択だったら黄色に
-	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
-	triR.color_ = (triR.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
-
-	//右の三角形がONの時にキーの右に値する入力をし続けると
-	if (triR.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::RIGHT)
-	{
-		if (!press_)
-		{
-			press_ = true;
-
-			//キーボードを選択
-			isPad_ = true;
-		}
-
-		//色を白に
-		triR.color_ = GetColor(255, 255, 255);
-
-		//キーが押されている間経過時間を加算していく
-		keyPressTime_ += delta;
-
-		//経過時間がある一定時間経った場合
-		if (keyPressTime_ > SELECT_TIME)
-		{
-			//インターバルを加算していく
-			interval_ += delta;
-
-			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
-			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, isPad_ = true : interval_;
-		}
-	}
-	else if (triR.isToggle_)
-	{
-		keyPressTime_ = 0.0f;
-		interval_ = INTERVAL_TIME;
-		press_ = false;
-	}
-
-	if (triL.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::LEFT)
-	{
-		if (!press_)
-		{
-			press_ = true;
-
-			//キーボードを選択
-			isPad_ = false;
-		}
-
-		//色を白に
-		triL.color_ = GetColor(255, 255, 255);
-
-		//キーが押されている間経過時間を加算していく
-		keyPressTime_ += delta;
-
-		//経過時間がある一定時間経った場合
-		if (keyPressTime_ > SELECT_TIME)
-		{
-			//インターバルを加算していく
-			interval_ += delta;
-
-			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
-			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, isPad_ = false : interval_;
-		}
-	}
-	else if (triL.isToggle_)
-	{
-		keyPressTime_ = 0.0f;
-		interval_ = INTERVAL_TIME;
-		press_ = false;
-	}
-
-	//スペースキー押下で決定&役職選択へ
-	if (GetKeyConfig() == KEY_CONFIG::DECIDE)
-	{
-		//1Pの操作の設定
-		(isPad_) ? data.Input(SceneManager::CNTL::PAD, 1) : data.Input(SceneManager::CNTL::KEYBOARD, 1);
-		selectedCntl_ = (isPad_) ? SceneManager::CNTL::PAD : SceneManager::CNTL::KEYBOARD;
-		
-		//押下したときの色
-		rc.color_ = 0xFF0000;
-
-		ChangeSelect(SELECT::ROLE);
-	}
-
-	//選択する三角形
-	if (!triR.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::RIGHT)
-	{
-		triR.isToggle_ = true;
-		triL.isToggle_ = false;
-	}
-
-	if (!triL.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::LEFT)
-	{
-		triR.isToggle_ = false;
-		triL.isToggle_ = true;
-	}
-
-#endif // DEBUG_RECT
-
 }
 
 void SelectScene::RoleUpdate(void)
@@ -439,113 +237,10 @@ void SelectScene::RoleUpdate(void)
 	{
 		i->Update();
 	}
-#ifdef DEBUG_RECT
-	//三角形のボタンが選択中だったら緑に非選択だったら黄色に
-	triL.color_ = (triL.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
-	triR.color_ = (triR.isToggle_) ? GetColor(128, 168, 128) : GetColor(255, 255, 64);
+}
 
-	//右の三角形がONの時にキーの右に値する入力をし続けると
-	if (triR.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::RIGHT)
-	{
-		if (!press_)
-		{
-			press_ = true;
-
-			//役職を選択
-			role_ = (role_ + 1) % PLAYER_NUM;
-		}
-
-		//色を白に
-		triR.color_ = GetColor(255, 255, 255);
-
-		//キーが押されている間経過時間を加算していく
-		keyPressTime_ += delta;
-
-		//経過時間がある一定時間経った場合
-		if (keyPressTime_ > SELECT_TIME)
-		{
-			//インターバルを加算していく
-			interval_ += delta;
-
-			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
-			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, role_ = (role_ + 1) % PLAYER_NUM : interval_;
-		}
-	}
-	else if (triR.isToggle_)
-	{
-		keyPressTime_ = 0.0f;
-		interval_ = INTERVAL_TIME;
-		press_ = false;
-	}
-
-	if (triL.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::LEFT)
-	{
-		if (!press_)
-		{
-			press_ = true;
-
-			//役職を選択
-			role_ = (role_ - 1 + PLAYER_NUM) % PLAYER_NUM;
-		}
-		//色を白に
-		triL.color_ = GetColor(255, 255, 255);
-
-		//キーが押されている間経過時間を加算していく
-		keyPressTime_ += delta;
-
-		//経過時間がある一定時間経った場合
-		if (keyPressTime_ > SELECT_TIME)
-		{
-			//インターバルを加算していく
-			interval_ += delta;
-
-			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
-			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, role_ = (role_ - 1 + PLAYER_NUM) % PLAYER_NUM : interval_;
-		}
-	}
-	else if (triL.isToggle_)
-	{
-		keyPressTime_ = 0.0f;
-		interval_ = INTERVAL_TIME;
-		press_ = false;
-	}
-
-	//役職数の範囲内に数値を収める
-	//role_ = std::clamp(role_, 0, static_cast<int>(SceneManager::ROLE::ARCHER) + 1);	//４役職なので0～3まで
-
-	//スペースキー押下でゲーム画面へ
-	if (GetKeyConfig() == KEY_CONFIG::DECIDE)
-	{
-		//役職の設定
-		data.Input(static_cast<SceneManager::ROLE>(role_),playerNum_);
-
-		//押下したときの色
-		rc.color_ = 0xFF0000;
-
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
-	}
-
-	//選択する三角形
-	if (!triR.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::RIGHT)
-	{
-		triR.isToggle_ = true;
-		triL.isToggle_ = false;
-	}
-
-	if (!triL.isToggle_ &&
-		GetKeyConfig() == KEY_CONFIG::LEFT)
-	{
-		triR.isToggle_ = false;
-		triL.isToggle_ = true;
-	}
-
-#endif // DEBUG_RECT
-
+void SelectScene::MaxUpdate(void)
+{
 }
 
 void SelectScene::NumberDraw(void)
@@ -595,10 +290,12 @@ void SelectScene::RoleDraw(void)
 		p->Draw();
 	}
 #endif // DEBUG_RECT
-	for (auto& i : images_)
-	{
-		i->Draw();
-	}
+	//for (auto& i : images_)
+	//{
+	//	i->Draw();
+	//}
+
+	players_[0]->Draw();
 }
 
 void SelectScene::DrawDebug(void)
@@ -644,24 +341,13 @@ void SelectScene::DrawDebug(void)
 
 }
 
-void SelectScene::ChangeSelect(SELECT select)
+void SelectScene::ChangeSelect(const SELECT _state)
 {
-	select_ = select;
+	//状態遷移
+	select_ = _state;
 
-	//変更時の初期化処理
-	switch (select_)
-	{
-	case SelectScene::SELECT::NUMBER:
-		break;
-	case SelectScene::SELECT::OPERATION:
-		break;
-	case SelectScene::SELECT::ROLE:
-		break;
-	case SelectScene::SELECT::MAX:
-		break;
-	default:
-		break;
-	}
+	// 各状態遷移の初期処理
+	stateChanges_[select_]();
 }
 
 void SelectScene::KeyConfigSetting(void)
@@ -784,39 +470,4 @@ void SelectScene::ControllDevice(void)
 	{
 		ChangeDevice(SceneManager::CNTL::PAD);
 	}
-}
-
-//デバッグ用の図形描画------------------------------------------------------------------------
-
-void SelectScene::Rect::Draw(unsigned int color)
-{
-	DxLib::DrawBox(
-		(int)Left(),
-		(int)Top() ,
-		(int)Right() ,
-		(int)Bottom(), color, true);
-}
-
-void SelectScene::Tri::LeftDraw(unsigned int color)
-{
-	DxLib::DrawTriangle(
-		(int)LeftX_L(),
-		(int)LeftY_L(),
-		(int)TopX_L(),
-		(int)TopY_L(),
-		(int)RightX_L(),
-		(int)RightY_L(),
-		 color, true);
-}
-
-void SelectScene::Tri::RightDraw(unsigned int color)
-{
-	DxLib::DrawTriangle(
-		(int)LeftX_R(),
-		(int)LeftY_R(),
-		(int)TopX_R(),
-		(int)TopY_R(),
-		(int)RightX_R(),
-		(int)RightY_R(),
-		color, true);
 }
