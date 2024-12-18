@@ -66,8 +66,8 @@ void EneArcher::Attack(void)
 	//リロード中　又は　矢を放った判定なら攻撃しない
 	if (IsReload() || isShotArrow_)return;
 
-	//対応スキル発動
-	processSkill_();
+	//攻撃の基本処理
+	Enemy::Attack();
 }
 
 void EneArcher::Skill_One(void)

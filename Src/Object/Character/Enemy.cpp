@@ -77,7 +77,7 @@ void Enemy::Update(void)
 void Enemy::LookTargetVec(void)
 {
 	//方向ベクトル取得
-	VECTOR targetVec = GetMovePow2Target();
+	VECTOR targetVec = GetTargetVec();
 
 	//向き回転
 	trans_.quaRot = trans_.quaRot.LookRotation(targetVec);
@@ -119,7 +119,7 @@ void Enemy::ChangeStateAlert(void)
 	stateUpdate_ = std::bind(&Enemy::UpdateAlert, this);
 
 	//向きを改めて設定
-	trans_.quaRot = trans_.quaRot.LookRotation(GetMovePow2Target());
+	trans_.quaRot = trans_.quaRot.LookRotation(GetTargetVec());
 
 	//警告カウンタ初期化
 	alertCnt_ = 0.0f;
@@ -160,6 +160,19 @@ void Enemy::InitAnim()
 	changeSpeedAnim_.emplace(ANIM::ENTRY, SPEED_ANIM);
 }
 
+void Enemy::Attack(void)
+{
+	//対応スキル発動
+	processSkill_();
+
+	//各攻撃のカウント
+	for (auto& nowSkill : nowSkill_)
+	{
+		//攻撃のカウント
+		CntUp(nowSkill.cnt_);
+	}
+}
+
 void Enemy::UpdateNml(void)
 {
 	//**********************************************************
@@ -195,9 +208,16 @@ void Enemy::UpdateAlert(void)
 
 	//警告カウンタが終わったなら攻撃開始
 	if (!IsAlertTime())
-	{
+	{		
+		//ランダムで攻撃生成
+		RandSkill();
+
+		//攻撃生成
+		createSkill_();
+
 		//攻撃状態に遷移
 		ChangeState(STATE::ATTACK);
+
 		return;
 	}
 
@@ -207,17 +227,14 @@ void Enemy::UpdateAlert(void)
 
 	//クールダウンカウンタ
 	CntUp(alertCnt_);
-
-	//生成が終わってないなら生成する
-	if (nowSkill_.front().IsFinishMotion())
-	{
-		//ランダムで攻撃生成
-		RandSkill();
-	}
 }
 
 void Enemy::UpdateAtk(void)
 {
+	//**********************************************************
+	//終了処理
+	//**********************************************************
+
 	//攻撃が終わっているなら状態遷移
 	if (nowSkill_.back().IsFinishMotion())
 	{
@@ -232,12 +249,6 @@ void Enemy::UpdateAtk(void)
 
 	//攻撃アニメーション
 	ResetAnim(nowSkillAnim_, changeSpeedAnim_[nowSkillAnim_]);
-
-	for (auto& nowSkill : nowSkill_)
-	{
-		//攻撃のカウンタ
-		CntUp(nowSkill.cnt_);
-	}
 
 	//攻撃処理
 	Attack();
@@ -313,7 +324,7 @@ void Enemy::Draw(void)
 	}
 }
 
-const VECTOR Enemy::GetMovePow2Target(void)const
+const VECTOR Enemy::GetTargetVec(const float _speed) const
 {
 	//標的への方向ベクトルを取得						※TODO:targetPosはSceneGameからもらう
 	VECTOR targetVec = VSub(targetPos_, trans_.pos);
@@ -325,7 +336,24 @@ const VECTOR Enemy::GetMovePow2Target(void)const
 	targetVec = { targetVec.x,0.0f,targetVec.z };
 
 	//移動量を求める
-	VECTOR ret = VScale(targetVec, moveSpeed_);
+	VECTOR ret = VScale(targetVec, _speed);
+
+	return ret;
+}
+
+const VECTOR Enemy::GetTargetVec(const VECTOR _pos, const float _speed) const
+{
+	//標的への方向ベクトルを取得						※TODO:targetPosはSceneGameからもらう
+	VECTOR targetVec = VSub(targetPos_, _pos);
+
+	//正規化
+	targetVec = VNorm(targetVec);
+
+	//Y座標は必要ないので要素を消す
+	targetVec = { targetVec.x,0.0f,targetVec.z };
+
+	//移動量を求める
+	VECTOR ret = VScale(targetVec, _speed);
 
 	return ret;
 }
@@ -335,14 +363,55 @@ void Enemy::Move(void)
 	//移動速度の更新
 	moveSpeed_ = walkSpeed_;
 
-	//方向ベクトル取得
-	VECTOR targetVec = GetMovePow2Target();
+	//移動ベクトル取得
+	VECTOR targetVec = GetTargetVec(moveSpeed_);
 
 	//向き回転
 	trans_.quaRot = trans_.quaRot.LookRotation(targetVec);
 
 	//移動
 	trans_.pos = VAdd(trans_.pos, targetVec);
+}
+
+void Enemy::CreateSkill(ATK_ACT _atkAct)
+{
+	//**********************************************************
+	//使い終わった攻撃がある場合
+	//**********************************************************
+
+	//使い終わった攻撃に上書き
+	for (auto& nowSkill : nowSkill_)
+	{
+		if (nowSkill.IsFinishMotion())
+		{
+			//上書き
+			nowSkill = skills_[_atkAct];
+			nowSkillAnim_ = skillAnims_[static_cast<int>(_atkAct)];
+
+			//カウンタの初期化
+			nowSkill.ResetCnt();
+
+			//ヒット判定の初期化
+			nowSkill_.back().isHit_ = false;
+
+			//処理終了
+			return;
+		}
+	}
+
+	//**********************************************************
+	//ない場合
+	//**********************************************************
+
+	//ランダムでとってきた攻撃の種類を今から発動するスキルに設定
+	nowSkill_.emplace_back(skills_[_atkAct]);
+	nowSkillAnim_ = skillAnims_[static_cast<int>(_atkAct)];
+
+	//カウンタの初期化
+	nowSkill_.back().ResetCnt();
+
+	//ヒット判定の初期化
+	nowSkill_.back().isHit_ = false;
 }
 
 void Enemy::FinishAnim(void)
@@ -366,17 +435,6 @@ void Enemy::FinishAnim(void)
 	}
 }
 
-void Enemy::Skill_One(void)
-{
-	//前方向
-	VECTOR dir = trans_.quaRot.GetForward();
-
-	for (auto& nowSkill : nowSkill_)
-	{
-		//座標の設定
-		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_ + radius_));
-	}
-}
 void Enemy::RandSkill(void)
 {
 	//スキルの数
@@ -385,43 +443,17 @@ void Enemy::RandSkill(void)
 	//スキルの数分からランダムを取る
 	int rand = GetRand(size - 1);
 
-	//**********************************************************
-	//使い終わった攻撃がある場合
-	//**********************************************************
-	
-	//使い終わった攻撃に上書き
-	for (auto& nowSkill : nowSkill_)
-	{
-		if (nowSkill.IsFinishMotion())
-		{
-			//上書き
-			nowSkill = skills_[static_cast<ATK_ACT>(rand)];
-			nowSkillAnim_ = skillAnims_[rand];
-			processSkill_ = changeSkill_[static_cast<ATK_ACT>(rand)];
-			
-			//カウンタの初期化
-			nowSkill.ResetCnt();
+	//スキル
+	ATK_ACT act = static_cast<ATK_ACT>(rand);
 
-			//ヒット判定の初期化
-			nowSkill_.back().isHit_ = false;
+	//スキル生成準備
+	SetUpSkill(act);
 
-			//処理終了
-			return;
-		}
-	}
+	//スキル生成
+	createSkill_ = std::bind(&Enemy::CreateSkill, this, act);
+}
 
-	//**********************************************************
-	//ない場合
-	//**********************************************************
-
-	//ランダムでとってきた攻撃の種類を今から発動するスキルに設定
-	nowSkill_.emplace_back(skills_[static_cast<ATK_ACT>(rand)]);
-	nowSkillAnim_ = skillAnims_[rand];
-	processSkill_ = changeSkill_[static_cast<ATK_ACT>(rand)];
-
-	//カウンタの初期化
-	nowSkill_.back().ResetCnt();
-
-	//ヒット判定の初期化
-	nowSkill_.back().isHit_ = false;
+void Enemy::SetUpSkill(ATK_ACT _atkAct)
+{
+	processSkill_ = changeSkill_[_atkAct];
 }

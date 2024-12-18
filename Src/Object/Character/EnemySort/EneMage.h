@@ -29,12 +29,12 @@ public:
 	static constexpr int STUN_DEF_MAX = 100;	//敵の最大スタン防御値
 
 	//速度関係
-	static constexpr float WALK_SPEED = 2.0f;	//歩きの速度
-	static constexpr float RUN_SPEED = 4.0f;	//走りの速度
+	static constexpr float WALK_SPEED = 2.0f;		//歩きの速度
+	static constexpr float RUN_SPEED = 4.0f;		//走りの速度
 
 	//範囲関係
 	static constexpr float SEARCH_RANGE = 1500.0f * CHARACTER_SCALE;		//索敵判定の大きさ
-	static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
+	static constexpr float ATK_START_RANGE = 500.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
 
 	//スキルの射程
 	static constexpr float SKILL_ONE_RANGE = 40.0f;			//スキル１の射程
@@ -51,6 +51,12 @@ public:
 	//スキルの後隙
 	static constexpr float SKILL_ONE_BACKLASH = 4.5f;		//スキル１の後隙
 
+	//スキルの速度
+	static constexpr float SKILL_ONE_SPEED = 4.0f;			//スキル1の速度
+
+	//攻撃回数
+	static constexpr float SKILL_ONE_MAX_TIME = 10.0f;		//スキル1の最大持続時間
+
 	//スキル関係
 	static constexpr ATK SKILL_ONE = { AsoUtility::VECTOR_ZERO	//スキル１の要素
 		,SKILL_ONE_COL_RADIUS
@@ -60,6 +66,14 @@ public:
 		,0.0f };
 
 private:
+
+	//****************************************************************
+	//変数
+	//****************************************************************
+
+	VECTOR skillOneShot_;		//スキル１の参照座標用
+	float skillOneDelayCnt_;	//スキル１の発生ディレイ用
+
 	//****************************************************************
 	//関数
 	//****************************************************************
@@ -77,9 +91,6 @@ private:
 	const bool IsAlertTime(void)const override { return alertCnt_ < ALERT_TIME; }
 	//休憩時間中かどうかを返す
 	const bool IsBreak(void)const override { return breakCnt_ < BREAK_TIME; }
-
-	//敵の攻撃処理
-	void Attack(void)override;
 
 	//スキル1
 	void Skill_One(void)override;

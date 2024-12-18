@@ -7,6 +7,7 @@ void EneGolem::SetParam(void)
 {
 	//攻撃の遷移
 	changeSkill_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneGolem::Skill_One, this));
+	changeSkill_.emplace(ATK_ACT::SKILL_TWO, std::bind(&EneGolem::Skill_Two, this));
 
 	//モデル読み込み
 	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_GOLEM));
@@ -57,29 +58,31 @@ void EneGolem::InitSkill(void)
 {
 	//ここにスキルの数分格納させる
 	skills_.emplace(ATK_ACT::SKILL_ONE, SKILL_ONE);
+	skills_.emplace(ATK_ACT::SKILL_TWO, SKILL_TWO);
 
 	//ここにスキルの数分アニメーションを格納させる
 	skillAnims_.emplace_back(ANIM::SKILL_1);
+	skillAnims_.emplace_back(ANIM::SKILL_2);
 
 	//初期スキルを設定しておく
 	RandSkill();
 }
 
-void EneGolem::Attack(void)
-{
-	//対応スキル発動
-	processSkill_();
-}
-
 void EneGolem::Skill_One(void)
 {
-	//前方向
-	VECTOR dir = trans_.quaRot.GetForward();
-
 	for (auto& nowSkill : nowSkill_)
 	{
 		//座標の設定
-		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_ + radius_));
+		nowSkill.pos_ = MV1GetFramePosition(trans_.modelId, FRAME_R_HAND);
+	}
+}
+
+void EneGolem::Skill_Two(void)
+{
+	for (auto& nowSkill : nowSkill_)
+	{
+		//座標の設定
+		nowSkill.pos_ = MV1GetFramePosition(trans_.modelId, FRAME_R_HAND);
 	}
 }
 

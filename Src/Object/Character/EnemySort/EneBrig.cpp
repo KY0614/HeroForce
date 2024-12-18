@@ -52,12 +52,6 @@ void EneBrig::InitSkill(void)
 	RandSkill();
 }
 
-void EneBrig::Attack(void)
-{
-	//‘Î‰žƒXƒLƒ‹”­“®
-	processSkill_();
-}
-
 void EneBrig::Skill_One(void)
 {
 	//‘O•ûŒü

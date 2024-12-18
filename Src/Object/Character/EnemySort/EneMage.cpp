@@ -23,6 +23,9 @@ void EneMage::SetParam(void)
 	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
 	atkStartRange_ = ATK_START_RANGE;
+	
+	skillOneShot_ = AsoUtility::VECTOR_ZERO;
+	skillOneDelayCnt_ = 0.0f;
 }
 
 void EneMage::InitAnim(void)
@@ -54,21 +57,23 @@ void EneMage::InitSkill(void)
 	RandSkill();
 }
 
-void EneMage::Attack(void)
-{
-	//対応スキル発動
-	processSkill_();
-}
-
 void EneMage::Skill_One(void)
 {
-	//前方向
-	VECTOR dir = trans_.quaRot.GetForward();
+	//初期値設定
+	if (skillOneDelayCnt_ == 0.0f)
+		skillOneShot_ = trans_.pos;
 
-	for (auto& nowSkill : nowSkill_)
+	//カウンタ
+	if(skillOneDelayCnt_ <= SKILL_ONE_MAX_TIME)
+	CntUp(skillOneDelayCnt_);
+
+	//座標の設定
+	skillOneShot_ = VAdd(skillOneShot_, GetTargetVec(skillOneShot_, SKILL_ONE_SPEED));
+
+	if (static_cast<int>(skillOneDelayCnt_) % 7 == 0.0f)
 	{
-		//座標の設定
-		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_ + radius_));
+		//攻撃作成
+		//createSkill_();
 	}
 }
 

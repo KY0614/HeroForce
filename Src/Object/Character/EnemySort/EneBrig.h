@@ -74,9 +74,6 @@ private:
 	//‹xŒeŠÔ’†‚©‚Ç‚¤‚©‚ğ•Ô‚·
 	const bool IsBreak(void)const override { return breakCnt_ < BREAK_TIME; }
 
-	//“G‚ÌUŒ‚ˆ—
-	void Attack(void)override;
-
 	//ƒXƒLƒ‹1
 	void Skill_One(void)override;
 

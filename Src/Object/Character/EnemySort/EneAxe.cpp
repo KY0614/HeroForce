@@ -53,14 +53,11 @@ void EneAxe::InitSkill(void)
 	RandSkill();
 }
 
-void EneAxe::Attack(void)
-{
-	//‘Î‰ƒXƒLƒ‹”­“®
-	processSkill_();
-}
-
 void EneAxe::Skill_One(void)
 {
+	//UŒ‚‚ÌÄ¶¬
+	if (nowSkill_.back().IsFinishMotion())createSkill_();
+
 	//‘O•ûŒü
 	VECTOR dir = trans_.quaRot.GetForward();
 

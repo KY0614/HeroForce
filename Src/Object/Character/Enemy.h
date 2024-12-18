@@ -134,7 +134,8 @@ protected:
 
 	std::map<ATK_ACT, ATK> skills_;								//スキルの種類
 	std::vector<ATK> nowSkill_;									//現在のスキル
-	std::function<void(void)>processSkill_;						//スキルの処理
+	std::function<void(void)> createSkill_;					//スキルの生成
+	std::function<void(void)> processSkill_;					//スキルの処理
 	std::map<ATK_ACT, std::function<void(void)>> changeSkill_;	//スキルの変更用
 
 	std::vector<ANIM> skillAnims_;		//スキルに対応したアニメーション
@@ -168,13 +169,25 @@ protected:
 	virtual void InitSkill(void) = 0;
 
 	//敵の攻撃処理
-	virtual void Attack(void) = 0;
+	virtual void Attack(void);
 
 	//スキル1
-	virtual void Skill_One(void);
+	virtual void Skill_One(void) = 0;
 
 	//スキルのランダム生成
 	virtual void RandSkill(void);
+
+	/// <summary>
+	/// スキル生成準備
+	/// </summary>
+	/// <param name="_atkAct">生成するスキル</param>
+	void SetUpSkill(ATK_ACT _atkAct);
+
+	/// <summary>
+	/// スキルの生成
+	/// </summary>
+	/// <param name="_atkAct">生成するスキル</param>
+	void CreateSkill(ATK_ACT _atkAct);
 
 	//アニメーション終了時の動き
 	virtual void FinishAnim(void)override;
@@ -198,11 +211,19 @@ protected:
 	virtual void UpdateBreak(void);
 
 	/// <summary>
-	/// 標的までのベクトル速度を返す
+	/// 標的までの移動ベクトルを返す
 	/// </summary>
-	/// <param name=""></param>
-	/// <returns>標的への方向ベクトル</returns>
-	const VECTOR GetMovePow2Target(void)const;
+	/// <param name="_speed">設定速度(未設定だと、方向ベクトルのみを返す)</param>
+	/// <returns>標的への移動(方向)ベクトル</returns>
+	const VECTOR GetTargetVec(const float _speed = 1.0f)const;
+	
+	/// <summary>
+	/// 標的までの移動ベクトルを返す
+	/// </summary>
+	/// <param name="_pos">狙う側の座標</param>
+	/// <param name="_speed">設定速度(未設定だと、方向ベクトルのみを返す)</param>
+	/// <returns>標的への移動(方向)ベクトル</returns>
+	const VECTOR GetTargetVec(const VECTOR _pos, const float _speed = 1.0f)const;
 
 	//移動
 	void Move(void);
