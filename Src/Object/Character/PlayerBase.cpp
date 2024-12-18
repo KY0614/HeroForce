@@ -199,6 +199,7 @@ void PlayerBase::Draw(void)
 	MV1DrawModel(trans_.modelId);
 #ifdef DEBUG_ON
 	DrawDebug();
+
 #endif // DEBUG_ON
 
 }
@@ -308,8 +309,8 @@ void PlayerBase::ChangeAct(const ATK_ACT _act)
 	//クールタイム中なら処理しない
 	if (isCool_[static_cast<int>(act_)] && !IsAtkable())return;
 	act_ = _act;
-	ResetParam(_act);
-	SyncActPos(atk_.pos_);
+	ResetParam(atk_);
+	SyncActPos(atk_);
 
 	//変更点
 	changeAct_[_act]();
@@ -339,9 +340,9 @@ void PlayerBase::ChangeSkillTwo(void)
 	actUpdate_ = std::bind(&PlayerBase::Skill2Func, this);
 }
 
-void PlayerBase::ResetParam(ATK_ACT _act)
+void PlayerBase::ResetParam(ATK& _atk)
 {
-	atk_ = atkMax_[act_];
+	_atk = atkMax_[act_];
 }
 
 void PlayerBase::KeyBoardControl(void)
@@ -404,9 +405,12 @@ void PlayerBase::GamePad(void)
 	else { actCntl_ = ACT_CNTL::NONE; }
 
 	//攻撃（攻撃アニメーションのフレームが0以下だったらフレームを設定）
-	if (ins.IsPadBtnTrgDown(padNum_, ATK_BTN) && IsAtkable() && !isCool_[static_cast<int>(ATK_ACT::ATK)])
+	if (ins.IsPadBtnTrgDown(padNum_, ATK_BTN))
 	{
-		actCntl_ = ACT_CNTL::NMLATK;
+		if (IsAtkable() && !isCool_[static_cast<int>(ATK_ACT::ATK)])
+		{
+			actCntl_ = ACT_CNTL::NMLATK;
+		}
 	}
 
 	if (ins.IsPadBtnTrgDown(padNum_, SKILL_CHANGE_BTN) && !IsAtkAction()) { SkillChange(); }
@@ -432,19 +436,21 @@ void PlayerBase::DrawDebug(void)
 {
 	const unsigned int ATK_COLOR = 0xff0000;
 	//球体
-	DrawSphere3D(trans_.pos, 20.0f, 8, 0x0, 0xff0000, true);
+	//DrawSphere3D(trans_.pos, 20.0f, 8, 0x0, 0xff0000, true);
 	//値見る用
-	//DrawFormatString(0, 32, 0xffffff
-	//	, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)"
-	//	, atk_.cnt_, atk_.IsAttack(), atk_.IsBacklash()
-	//	, dodgeCnt_, atk_.cnt_);
 	DrawFormatString(0, 32, 0xffffff
-		, "AtkCooltime(%.2f)\nSkill1Cool(%.2f)\nSkill2Cool(%.2f)\natkDulation(%f)\nactCntl(%d)"
-		, coolTime_[static_cast<int>(ATK_ACT::ATK)]
-		, coolTime_[static_cast<int>(ATK_ACT::SKILL1)]
-		, coolTime_[static_cast<int>(ATK_ACT::SKILL2)]
-		, atkStartCnt_
-	,actCntl_);
+		, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)"
+		, atk_.cnt_, atk_.IsAttack(), atk_.IsBacklash()
+		, dodgeCnt_, atk_.cnt_);
+	//DrawFormatString(0, 32, 0xffffff
+	//	, "AtkCooltime(%.2f)\nSkill1Cool(%.2f)\nSkill2Cool(%.2f)\natkDulation(%f)\nactCntl(%d)"
+	//	, coolTime_[static_cast<int>(ATK_ACT::ATK)]
+	//	, coolTime_[static_cast<int>(ATK_ACT::SKILL1)]
+	//	, coolTime_[static_cast<int>(ATK_ACT::SKILL2)]
+	//	, atkStartCnt_
+	//,actCntl_);
+
+	DrawFormatString(0, 32, 0xffffff, "atkPos(%f,%f,%f)", atk_.pos_.x, atk_.pos_.y, atk_.pos_.z);
 	DrawSphere3D(colPos_, CHARACTER_SCALE * 100, 8, color_Col_, color_Col_, false);
 	DrawSphere3D(atk_.pos_, atk_.radius_, 8, color_Atk_, color_Atk_, false);
 
@@ -453,7 +459,7 @@ void PlayerBase::DrawDebug(void)
 	//プレイヤーの索敵判定
 	//DrawSphere3D(trans_.pos, searchRange_, 2, isMove_ ? 0xff0000 : 0xffffff, isMove_ ? 0xff0000 : 0xffffff, false);
 	//プレイヤーの索敵判定
-	DrawSphere3D(userOnePos_, 20, 2, 0x0000ff, 0xffffff, false);
+	//DrawSphere3D(userOnePos_, 20, 2, 0x0000ff, 0xffffff, false);
 
 	//攻撃状態の時、球体の色変更
 	if (atk_.IsAttack()) { color_Atk_ = ATK_COLOR; }
@@ -558,13 +564,18 @@ void PlayerBase::NmlActCommon(void)
 		ChangeAct(static_cast<ATK_ACT>(skillNo_));
 		CntUp(atkStartCnt_);
 	}
+
+	//近接攻撃用(atk_変数と遠距離で分ける)
 	if (IsAtkStart())
 	{
 		moveAble_ = false;
 		CntUp(atkStartCnt_);
-		if (IsFinishAtkStart()) { CntUp(atk_.cnt_); }
+		if (IsFinishAtkStart())
+		{ 
+			CntUp(atk_.cnt_);
+		}
 	}
-	else
+	else if(IsFinishAtkStart())
 	{
 		if ((atk_.IsAttack() || atk_.IsBacklash()))
 		{
@@ -572,7 +583,7 @@ void PlayerBase::NmlActCommon(void)
 			//クールタイムの初期化
 			coolTime_[static_cast<int>(act_)] = 0.0f;
 		}
-		else if(atk_.IsFinishMotion())
+		else //if(atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
 		{
 			InitAtk();
 		}
@@ -592,7 +603,7 @@ void PlayerBase::ChargeAct(void)
 	//スキル(長押しでガード状態維持)
 	if (CheckAct(ACT_CNTL::CHARGE_SKILL_KEEP))
 	{
-		//スキルごとにアニメーションを決めて、カウント開始s
+		//スキルごとにアニメーションを決めて、カウント開始
 		ChangeAct(static_cast<ATK_ACT>(skillNo_));
 
 		//押している反応
@@ -738,7 +749,7 @@ void PlayerBase::ChangeKeyBoard(void)
 	cntlUpdate_ = std::bind(&PlayerBase::KeyBoardControl, this);
 }
 
-void PlayerBase::SyncActPos(VECTOR& _localPos)
+void PlayerBase::SyncActPos(ATK& _atk)
 {
 	//追従対象の位置
 	VECTOR followPos = trans_.pos;
@@ -751,7 +762,7 @@ void PlayerBase::SyncActPos(VECTOR& _localPos)
 
 	VECTOR addPos = followRot.PosAxis(VScale(relativeActPos, CHARACTER_SCALE));
 
-	atk_.pos_ = VAdd(trans_.pos, addPos);
+	_atk.pos_ = VAdd(trans_.pos, addPos);
 }
 
 void PlayerBase::ChangeSkillControll(SKILL_NUM _skill)

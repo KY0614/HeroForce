@@ -105,12 +105,12 @@ public:
     void Destroy(void)override;
     virtual void SetParam(void) = 0;
     void Init(void)override;
-    void Update(void)override;
+    virtual void Update(void)override;
     //virtual void UserUpdate(void);
 
     //Cpu処理
     virtual void CpuUpdate(void);
-    void Draw(void)override;
+    virtual void Draw(void)override;
 
 
 
@@ -311,7 +311,7 @@ protected:
 
 
     //攻撃の最大値の初期化(各役割)
-    void ResetParam(ATK_ACT _act);
+    void ResetParam(ATK& _atk);
 
     //USER関係
     //------------------------------------------------
@@ -415,13 +415,13 @@ protected:
 
 
     //攻撃座標の同期
-    void SyncActPos(VECTOR& _localPos);
+    void SyncActPos(ATK& _atk);
 
     //スキルごとの操作更新
     void ChangeSkillControll(SKILL_NUM _skill);
 
     //攻撃終わった後の初期化
-    void InitAtk(void);
+    virtual void InitAtk(void);
 
     //移動関連
     //-------------------------------------

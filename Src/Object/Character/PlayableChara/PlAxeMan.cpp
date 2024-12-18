@@ -104,7 +104,7 @@ void PlAxe::Skill2Func(void)
 		//‰ñ“]’†ˆÚ“®‚Å‚«‚é
 		moveAble_ = true;
 		//UŒ‚À•W‚ğˆÚ“®’†‚à“¯Šú‚·‚é
-		SyncActPos(atk_.pos_);
+		SyncActPos(atk_);
 		//‘±‰ñ“]Ø‚è
 		if (atk_.isHit_)
 		{

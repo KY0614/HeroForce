@@ -62,7 +62,7 @@ void GameScene::Init(void)
 	//ƒvƒŒƒCƒ„[İ’è
 	for (int i = 0; i < PLAYER_NUM; i++)
 	{
-		players_[i] = std::make_unique<PlArcher>(SceneManager::PLAY_MODE::USER, InputManager::JOYPAD_NO::PAD1);
+		players_[i] = std::make_unique<PlAxe>(SceneManager::PLAY_MODE::USER, InputManager::JOYPAD_NO::PAD1);
 		players_[i]->Init();
 	}
 
@@ -150,9 +150,8 @@ void GameScene::Draw(void)
 	enemyTest_->Draw();
 #endif
 
-	for (auto& p : players_)
-		p->Draw();
-
+	
+		
 	for (auto& e : enemys_)
 	{
 		e->Draw();
@@ -163,6 +162,13 @@ void GameScene::Draw(void)
 	level_->Draw();
 
 	fader_->Draw();
+
+	for (auto& p : players_)
+	{
+		p->Draw();
+		p->DrawDebug();
+	}
+
 
 	if (fader_->GetState() == Fader::STATE::FADE_KEEP)
 	{

@@ -1,5 +1,6 @@
 #pragma once
 #include "../PlayerBase.h"
+class Arrow;
 class PlArcher :
     public PlayerBase
 {
@@ -7,7 +8,7 @@ public:
     static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//攻撃開始判定の大きさ
 
     //クールタイム
-    static constexpr float ATK_COOLTIME = 0.3f;
+    static constexpr float ATK_COOLTIME = 0.5f;
     static constexpr float SKILL_ONE_COOLTIME = 3.0f;
     static constexpr float SKILL_TWO_COOLTIME = 5.0f;
 
@@ -17,7 +18,7 @@ public:
     static constexpr float SKILL_TWO_START = 0.2f;
 
     //各攻撃の持続時間
-    static constexpr float FRAME_ATK_DURATION = 0.5f - ATK_START;
+    static constexpr float FRAME_ATK_DURATION = 0.9f;
     static constexpr float FRAME_SKILL1_DURATION = 0.7f;
     static constexpr float FRAME_SKILL2_DURATION = 3.0f - SKILL_TWO_START;
     static constexpr float SKILL2_CHANGE_ANIM_TIME = 0.25f;
@@ -44,7 +45,7 @@ public:
     static constexpr float SKILL_TWO_POW = 0.0f;
 
     //固有アニメーション
-    static constexpr int ATK_NUM = 57;
+    static constexpr int ATK_NUM = 16;
     static constexpr int SKILL_ONE_NUM = 57;
     static constexpr int SKILL_TWO_NUM = 57;
 
@@ -58,19 +59,42 @@ public:
     static constexpr ATK SKILL_TWO_MAX{ SKILL2_COL_LOCAL_POS ,COL_SKILL2 ,SKILL_TWO_POW,FRAME_SKILL2_DURATION ,FRAME_SKILL2_BACKRASH ,0.0f,false };
 
 
+    //弓矢関係
+    static constexpr int ARROW_SIZE_MAX = 5;	//矢の最大保持数
+    static constexpr float RELOAD_TIME = 5.0f;	//矢のリロード時間
+    static constexpr float ARROW_SPEED = 10.0f;	//矢のリロード時間
+
 
     PlArcher(const SceneManager::PLAY_MODE _mode, const SceneManager::CNTL _cntl);
     PlArcher(const SceneManager::PLAY_MODE _mode, const InputManager::JOYPAD_NO _padNum);
     ~PlArcher(void) = default;
     void SetParam(void)override;
 
+    //各アクションの初期化
     void InitAct(void)override;
 
     //固有アニメーション番号の初期化
     void InitCharaAnim(void)override;
 
+    //攻撃が終わった後の初期化
+    void InitAtk(void)override;
+
+    //弓矢の作成
+    void CreateArrow(void);
+
+    void Update(void)override;
+
+    void Draw(void)override;
+
 protected:
     void AtkFunc(void)override;
     void Skill1Func(void)override;
     void Skill2Func(void)override;
+
+    std::vector<ATK>arrowAtk_;
+    int arrowMdlId_;							//矢のモデル
+    std::vector<std::shared_ptr<Arrow>> arrow_;	//弓矢
+    bool isShotArrow_;							//矢を放ったかの判定(true:放った)
+    int arrowCnt_;								//矢の使用個数カウンタ
+    float reloadCnt_;							//矢のリロード時間
 };
