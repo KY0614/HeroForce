@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Manager\SoundManager.cpp" />
-    <ClCompile Include="Src\Manager\EffectManager.cpp" />
-    <ClCompile Include="Src\Manager\InputController.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\SoundManager.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
+    <ClCompile Include="Src\Manager\Generic\InputController.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneArcher.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneBrig.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneGolem.cpp" />
@@ -32,13 +32,13 @@
     <ClCompile Include="Src\Object\Character\PlayableChara\PlKnight.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\PlMage.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\PlAxeMan.cpp" />
-    <ClCompile Include="Src\Manager\DataBank.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\DataBank.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenManager.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenBase.cpp" />
     <ClCompile Include="Src\Object\System\UnitPositionLoad.cpp" />
     <ClCompile Include="Src\Common\ImageFader.cpp" />
-    <ClCompile Include="Src\Manager\Collision.cpp" />
-    <ClCompile Include="Src\Manager\TextManager.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\Collision.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\TextManager.cpp" />
     <ClCompile Include="Src\Object\Character\Enemy.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerBase.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
@@ -57,11 +57,11 @@
     <ClCompile Include="Src\Common\Quaternion.cpp" />
     <ClCompile Include="Src\Common\Vector2.cpp" />
     <ClCompile Include="Src\main.cpp" />
-    <ClCompile Include="Src\Manager\Camera.cpp" />
-    <ClCompile Include="Src\Manager\InputManager.cpp" />
-    <ClCompile Include="Src\Manager\Resource.cpp" />
-    <ClCompile Include="Src\Manager\ResourceManager.cpp" />
-    <ClCompile Include="Src\Manager\SceneManager.cpp" />
+    <ClCompile Include="Src\Manager\Generic\Camera.cpp" />
+    <ClCompile Include="Src\Manager\Generic\InputManager.cpp" />
+    <ClCompile Include="Src\Manager\Generic\Resource.cpp" />
+    <ClCompile Include="Src\Manager\Generic\ResourceManager.cpp" />
+    <ClCompile Include="Src\Manager\Generic\SceneManager.cpp" />
     <ClCompile Include="Src\Object\Grid.cpp" />
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Scene\TitleScene.cpp" />
@@ -69,21 +69,21 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\Manager\SoundManager.h" />
-    <ClInclude Include="Src\Manager\EffectManager.h" />
-    <ClInclude Include="Src\Manager\InputController.h" />
+    <ClInclude Include="Src\Manager\Decoration\SoundManager.h" />
+    <ClInclude Include="Src\Manager\Decoration\EffectManager.h" />
+    <ClInclude Include="Src\Manager\Generic\InputController.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneArcher.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneBrig.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneGolem.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneMage.h" />
     <ClInclude Include="Src\Scene\SelectScene.h" />
-    <ClInclude Include="Src\Manager\DataBank.h" />
+    <ClInclude Include="Src\Manager\GameSystem\DataBank.h" />
     <ClInclude Include="Src\Object\Character\Chiken\ChickenManager.h" />
     <ClInclude Include="Src\Object\Character\Chiken\ChickenBase.h" />
     <ClInclude Include="Src\Object\System\UnitPositionLoad.h" />
     <ClInclude Include="Src\Common\ImageFader.h" />
-    <ClInclude Include="Src\Manager\Collision.h" />
-    <ClInclude Include="Src\Manager\TextManager.h" />
+    <ClInclude Include="Src\Manager\GameSystem\Collision.h" />
+    <ClInclude Include="Src\Manager\GameSystem\TextManager.h" />
     <ClInclude Include="Src\Object\Character\Enemy.h" />
     <ClInclude Include="Src\Object\Arrow.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneAxe.h" />
@@ -107,11 +107,11 @@
     <ClInclude Include="Src\Common\Quaternion.h" />
     <ClInclude Include="Src\Common\Vector2.h" />
     <ClInclude Include="Src\main.h" />
-    <ClInclude Include="Src\Manager\Camera.h" />
-    <ClInclude Include="Src\Manager\InputManager.h" />
-    <ClInclude Include="Src\Manager\Resource.h" />
-    <ClInclude Include="Src\Manager\ResourceManager.h" />
-    <ClInclude Include="Src\Manager\SceneManager.h" />
+    <ClInclude Include="Src\Manager\Generic\Camera.h" />
+    <ClInclude Include="Src\Manager\Generic\InputManager.h" />
+    <ClInclude Include="Src\Manager\Generic\Resource.h" />
+    <ClInclude Include="Src\Manager\Generic\ResourceManager.h" />
+    <ClInclude Include="Src\Manager\Generic\SceneManager.h" />
     <ClInclude Include="Src\Object\Grid.h" />
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Scene\TitleScene.h" />

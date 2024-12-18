@@ -59,13 +59,8 @@ void EffectManager::Play(const EFFECT& _efc, const VECTOR& _pos, const Quaternio
 		effectPlay_[_efc] = PlayEffekseer3DEffect(effectRes_[_efc]);
 	}
 
-	//その他各種設定
-	//大きさ
-		SetScalePlayingEffekseer3DEffect(effectPlay_[_efc], _size, _size, _size);
-	//角度
-		SetRotationPlayingEffekseer3DEffect(effectPlay_[_efc], _qua.ToEuler().x, _qua.ToEuler().y, _qua.ToEuler().z);
-	//位置
-		SetPosPlayingEffekseer3DEffect(effectPlay_[_efc], _pos.x, _pos.y, _pos.z);
+	//各種設定同期
+	SyncEffect(_efc, _pos, _qua, _size);
 
 	//効果音の再生
 		if (_sound != SoundManager::SOUND::NONE) {
@@ -84,6 +79,17 @@ void EffectManager::Stop(const EFFECT& _efc)
 	if (effectPlay_.find(_efc) == effectPlay_.end())assert("設定していないエフェクトを停止しようとしています。");
 	//再生停止
 	StopEffekseer3DEffect(effectPlay_[_efc]);
+}
+
+void EffectManager::SyncEffect(const EFFECT& _efc, const VECTOR& _pos, const Quaternion& _qua, const float& _size)
+{
+	//その他各種設定
+	//大きさ
+	SetScalePlayingEffekseer3DEffect(effectPlay_[_efc], _size, _size, _size);
+	//角度
+	SetRotationPlayingEffekseer3DEffect(effectPlay_[_efc], _qua.ToEuler().x, _qua.ToEuler().y, _qua.ToEuler().z);
+	//位置
+	SetPosPlayingEffekseer3DEffect(effectPlay_[_efc], _pos.x, _pos.y, _pos.z);
 }
 
 //解放処理

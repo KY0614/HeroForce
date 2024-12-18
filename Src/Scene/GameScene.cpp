@@ -1,6 +1,6 @@
-#include "../Manager/SceneManager.h"
-#include "../Manager/Camera.h"
-#include "../Manager/Collision.h"
+#include "../Manager/Generic/SceneManager.h"
+#include "../Manager/Generic/Camera.h"
+#include "../Manager/GameSystem/Collision.h"
 #include "../Object/Grid.h"
 #include "../Object/Character/PlayerBase.h"
 #include "../Object/Character/PlayableChara/PlAxeMan.h"
@@ -16,7 +16,7 @@
 #include "../Object/System/UnitPositionLoad.h"
 #include "GameScene.h"
 
-#include "../Manager/InputManager.h"
+#include "../Manager/Generic/InputManager.h"
 
 
 

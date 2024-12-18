@@ -51,6 +51,15 @@ public:
 	/// <param name="_efc">エフェクト種類名</param>
 	void Stop(const EFFECT& _efc);
 
+	/// <summary>
+	/// エフェクトの各パラメータ同期
+	/// </summary>
+	/// <param name="_efc">エフェクト名</param>
+	/// <param name="_pos">位置情報</param>
+	/// <param name="_qua">回転情報</param>
+	/// <param name="_size">大きさ</param>
+	void SyncEffect(const EFFECT& _efc, const VECTOR& _pos, const Quaternion& _qua, const float& _size);
+
 	//解放処理
 	void Release(void);
 
