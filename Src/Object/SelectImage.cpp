@@ -1,6 +1,4 @@
-#include "../Application.h"
 #include "../Manager/ResourceManager.h"
-#include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/DataBank.h"
 #include "../Scene/SelectScene.h"

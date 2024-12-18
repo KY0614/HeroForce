@@ -2,7 +2,6 @@
 #include <math.h>
 #include<algorithm>
 #include "../Application.h"
-#include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/ResourceManager.h"
 #include "../Manager/Camera.h"
@@ -85,7 +84,6 @@ void SelectScene::Init(void)
 	auto camera = SceneManager::GetInstance().GetCameras();
 	camera[0]->SetPos(DEFAULT_CAMERA_POS, DEFAULT_TARGET_POS);
 	camera[0]->ChangeMode(Camera::MODE::FIXED_POINT);
-	SetupCamera_Ortho(50.0f);
 
 	//l”‘I‘ğ‚©‚ç
 	ChangeSelect(SELECT::NUMBER);
