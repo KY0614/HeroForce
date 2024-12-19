@@ -33,6 +33,12 @@ public:
 	static constexpr float SELECT_TIME = 1.0f;		//キー押下経過時間
 	static constexpr float INTERVAL_TIME = 0.6f;	//インターバル上限
 
+	//メッシュ
+	struct Mesh {
+		VERTEX3D vertex_[4];	//頂点情報
+		int imgHandle_;			//画像ハンドル
+	};
+
 	//矢印
 	struct Point {
 		Vector2 pos;	//座標
@@ -85,7 +91,12 @@ public:
 
 	//-----------------------------------------------------------
 
+	//選択を変更する
+	void ChangeObject(SceneManager::CNTL cntl, int obj);
+
 private:
+
+	Mesh mesh_[SceneManager::PLAYER_NUM];
 	
 	//画像ハンドル
 	int* imgPlayerNum_;		//人数選択画像
@@ -113,7 +124,7 @@ private:
 	bool isPad_;	
 
 	//職種
-	int role_;	
+	int role_[SceneManager::PLAYER_NUM];
 
 	//キーを何秒押しているか
 	float keyPressTime_;
@@ -127,9 +138,13 @@ private:
 	SelectScene& selectScene_;
 	std::shared_ptr<SelectPlayer> player_;
 
+	VECTOR target_;
+
 	void Load(void);	//読み込み用
 
 	void InitVertex(void);
 	VECTOR RotateVertex(VECTOR pos, VECTOR center, float angle);
+
+	VECTOR RotTargetPos(VECTOR pos);
 };
 

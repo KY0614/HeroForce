@@ -46,7 +46,7 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 
 	playerNum_ = 1;
 	isPad_ = false;
-	role_ = 0;
+	//role_ = 0;
 
 	keyPressTime_ = 0.0f;
 	interval_ = 0.0f;
@@ -67,6 +67,8 @@ void SelectImage::Init(void)
 	pointL_ = { LEFT_POS_X,POINT_POS_Y,POINT_SCALE,POINT_SCALE,false,imgLeftPoint_ };	
 	
 	pointR_ = { RIGHT_POS_X,POINT_POS_Y,POINT_SCALE,POINT_SCALE,false,imgRightPoint_ };
+
+	target_ = SelectScene::DEFAULT_TARGET_POS;
 }
 
 void SelectImage::Update(void)
@@ -241,7 +243,8 @@ void SelectImage::NumberUpdate(void)
 		auto cameras = SceneManager::GetInstance().GetCameras();
 		for (int i = 0; i < cameras.size(); i++)
 		{
-			cameras[i]->SetPos(SelectScene::DEFAULT_CAMERA_POS, SelectScene::DEFAULT_TARGET_POS);
+			RotTargetPos(target_);
+			cameras[i]->SetPos(SelectScene::DEFAULT_CAMERA_POS,target_);
 			cameras[i]->ChangeMode(Camera::MODE::FIXED_POINT);
 		}
 
@@ -371,104 +374,10 @@ void SelectImage::OperationUpdate(void)
 
 void SelectImage::RoleUpdate(void)
 {
-	DataBank& data = DataBank::GetInstance();
-	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
-
-	//右の三角形がONの時にキーの右に値する入力をし続けると
-	if (pointR_.isToggle_ &&
-		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::RIGHT)
+	for (auto& r : role_)
 	{
-		if (!press_)
-		{
-			press_ = true;
-
-			//役職を選択
-			role_ = (role_ + 1) % SceneManager::PLAYER_NUM;
-		}
-
-		//キーが押されている間経過時間を加算していく
-		keyPressTime_ += delta;
-
-		//経過時間がある一定時間経った場合
-		if (keyPressTime_ > SELECT_TIME)
-		{
-			//インターバルを加算していく
-			interval_ += delta;
-
-			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
-			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, role_ = (role_ + 1) % SceneManager::PLAYER_NUM : interval_;
-		}
+		player_->SetRole(r);
 	}
-	else if (pointR_.isToggle_)
-	{
-		keyPressTime_ = 0.0f;
-		interval_ = INTERVAL_TIME;
-		press_ = false;
-	}
-
-	if (pointL_.isToggle_ &&
-		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::LEFT)
-	{
-		if (!press_)
-		{
-			press_ = true;
-
-			//役職を選択
-			role_ = (role_ - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM;
-		}
-		//キーが押されている間経過時間を加算していく
-		keyPressTime_ += delta;
-
-		//経過時間がある一定時間経った場合
-		if (keyPressTime_ > SELECT_TIME)
-		{
-			//インターバルを加算していく
-			interval_ += delta;
-
-			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
-			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, role_ = (role_ - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM : interval_;
-		}
-	}
-	else if (pointL_.isToggle_)
-	{
-		keyPressTime_ = 0.0f;
-		interval_ = INTERVAL_TIME;
-		press_ = false;
-	}
-
-	//スペースキー押下でゲーム画面へ
-	if (selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::DECIDE)
-	{
-		//役職の設定
-		data.Input(static_cast<SceneManager::ROLE>(role_), playerNum_);
-
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
-	}
-
-	//選択する矢印
-	if (!pointR_.isToggle_ &&
-		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::RIGHT)
-	{
-		pointR_.isToggle_ = true;
-		pointL_.isToggle_ = false;
-	}
-
-	if (!pointL_.isToggle_ &&
-		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::LEFT)
-	{
-		pointR_.isToggle_ = false;
-		pointL_.isToggle_ = true;
-	}
-
-	//UV座標（テクスチャ座標）
-	vertices_[0].u = (float)(role_) / 4.0f;				vertices_[0].v = 1.0f;	// 左下
-	vertices_[1].u = ((float)(role_) + 1.0f) / 4.0f;	vertices_[1].v = 1.0f;	// 右下
-	vertices_[2].u = (float)(role_) / 4.0f;				vertices_[2].v = 0.0f;	// 左上
-	vertices_[3].u = ((float)(role_) +1.0f) / 4.0f;		vertices_[3].v = 0.0f;	// 右上
-
-	player_->SetRole(role_);
 }
 
 void SelectImage::NumberDraw(void)
@@ -482,13 +391,6 @@ void SelectImage::NumberDraw(void)
 	// 三角形を描画
 	DrawPolygon3D(triangle1, 2, *imgPlayerNum_, true);  // 1つ目の三角形
 	DrawPolygon3D(triangle2, 2, *imgPlayerNum_, true);  // 2つ目の三角形
-
-	////人数選択画像の描画
-	//DrawRotaGraph(Application::SCREEN_SIZE_X / 2,
-	//	Application::SCREEN_SIZE_Y / 2,
-	//	1.0f, 0.0f,
-	//	imgPlayerNum_[playerNum_ - 1],	//配列は0～3なので
-	//	true, false);
 
 	PointsDraw();
 
@@ -579,6 +481,107 @@ void SelectImage::PointsDraw(void)
 	}
 }
 
+void SelectImage::ChangeObject(SceneManager::CNTL cntl, int obj)
+{
+		DataBank& data = DataBank::GetInstance();
+	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
+
+	//右の三角形がONの時にキーの右に値する入力をし続けると
+	if (pointR_.isToggle_ &&
+		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::RIGHT)
+	{
+		if (!press_)
+		{
+			press_ = true;
+
+			//役職を選択
+			role_[obj] = (role_[obj] + 1) % SceneManager::PLAYER_NUM;
+		}
+
+		//キーが押されている間経過時間を加算していく
+		keyPressTime_ += delta;
+
+		//経過時間がある一定時間経った場合
+		if (keyPressTime_ > SELECT_TIME)
+		{
+			//インターバルを加算していく
+			interval_ += delta;
+
+			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
+			(interval_ > INTERVAL_TIME) ?
+				interval_ = 0.0f, role_[obj] = (role_[obj] + 1) % SceneManager::PLAYER_NUM : interval_;
+		}
+	}
+	else if (pointR_.isToggle_)
+	{
+		keyPressTime_ = 0.0f;
+		interval_ = INTERVAL_TIME;
+		press_ = false;
+	}
+
+	if (pointL_.isToggle_ &&
+		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::LEFT)
+	{
+		if (!press_)
+		{
+			press_ = true;
+
+			//役職を選択
+			role_[obj] = (role_[obj] - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM;
+		}
+		//キーが押されている間経過時間を加算していく
+		keyPressTime_ += delta;
+
+		//経過時間がある一定時間経った場合
+		if (keyPressTime_ > SELECT_TIME)
+		{
+			//インターバルを加算していく
+			interval_ += delta;
+
+			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
+			(interval_ > INTERVAL_TIME) ?
+				interval_ = 0.0f, role_[obj] = (role_[obj] - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM : interval_;
+		}
+	}
+	else if (pointL_.isToggle_)
+	{
+		keyPressTime_ = 0.0f;
+		interval_ = INTERVAL_TIME;
+		press_ = false;
+	}
+
+	//スペースキー押下でゲーム画面へ
+	if (selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::DECIDE)
+	{
+		//役職の設定
+		data.Input(static_cast<SceneManager::ROLE>(role_[obj]), playerNum_);
+
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+	}
+
+	//選択する矢印
+	if (!pointR_.isToggle_ &&
+		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::RIGHT)
+	{
+		pointR_.isToggle_ = true;
+		pointL_.isToggle_ = false;
+	}
+
+	if (!pointL_.isToggle_ &&
+		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::LEFT)
+	{
+		pointR_.isToggle_ = false;
+		pointL_.isToggle_ = true;
+	}
+
+	//UV座標（テクスチャ座標）
+	vertices_[0].u = (float)(role_[obj]) / 4.0f;				vertices_[0].v = 1.0f;	// 左下
+	vertices_[1].u = ((float)(role_[obj]) + 1.0f) / 4.0f;	vertices_[1].v = 1.0f;	// 右下
+	vertices_[2].u = (float)(role_[obj]) / 4.0f;				vertices_[2].v = 0.0f;	// 左上
+	vertices_[3].u = ((float)(role_[obj]) +1.0f) / 4.0f;		vertices_[3].v = 0.0f;	// 右上
+
+}
+
 void SelectImage::InitVertex(void)
 {
 	leftTop_ = { VERTEX_LEFT_X, VERTEX_TOP_Y, VERTEX_Z };
@@ -591,6 +594,15 @@ void SelectImage::InitVertex(void)
 	vertices_[1].pos = rightBottom_;	// 右下
 	vertices_[2].pos = leftTop_;		// 左上
 	vertices_[3].pos = rightTop_;		// 右上
+
+	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+	{
+		//座標(四角形を作るために2つの三角形を使う)
+		mesh_[i].vertex_[0].pos = leftBottom_;		// 左下
+		mesh_[i].vertex_[1].pos = rightBottom_;		// 右下
+		mesh_[i].vertex_[2].pos = leftTop_;			// 左上
+		mesh_[i].vertex_[3].pos = rightTop_;		// 右上
+	}
 }
 
 VECTOR SelectImage::RotateVertex(VECTOR pos, VECTOR center, float angle)
@@ -621,6 +633,16 @@ VECTOR SelectImage::RotateVertex(VECTOR pos, VECTOR center, float angle)
 		vertices_[i].pos.z = Center.z + (-DIS * (cosf(angle_)));
 	}
 	return AsoUtility::VECTOR_ZERO;
+}
+
+VECTOR SelectImage::RotTargetPos(VECTOR pos)
+{
+	float newX = target_.z;   // Y軸回りの90度回転
+	float newZ = -target_.x;
+	target_.x = newX;
+	target_.z = newZ;
+
+	return pos;
 }
 
 void SelectImage::Point::PointDraw(void)

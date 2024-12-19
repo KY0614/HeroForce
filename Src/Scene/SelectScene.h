@@ -39,11 +39,11 @@ public:
 
 	//カメラ関連
 	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 100.0f, -500.0f };		//カメラの座標
-	static constexpr VECTOR DEFAULT_TARGET_ONE = { 0.0f, 150.0f, -100.0f };		//カメラの注視点座標
 	static constexpr VECTOR DEFAULT_TARGET_POS = { 0.0f, 150.0f, -100.0f };		//カメラの注視点座標
-	static constexpr VECTOR DEFAULT_TARGET_TWO = { 100.0f, 150.0f, -100.0f };		//カメラの注視点座標
-	static constexpr VECTOR DEFAULT_TARGET_THREE = { 0.0f, 150.0f, 100.0f };		//カメラの注視点座標
-	static constexpr VECTOR DEFAULT_TARGET_FOUR = { -100.0f, 150.0f, -100.0f };		//カメラの注視点座標
+
+	static constexpr VECTOR DEFAULT_TARGET_TWO = { 100.0f, 150.0f, -100.0f };	//カメラの注視点座標
+	static constexpr VECTOR DEFAULT_TARGET_THREE = { 0.0f, 150.0f, 100.0f };	//カメラの注視点座標
+	static constexpr VECTOR DEFAULT_TARGET_FOUR = { -100.0f, 150.0f, -100.0f };	//カメラの注視点座標
 
 	static constexpr float CHARACTER_SCALE = 0.5f;
 
@@ -89,9 +89,6 @@ public:
 	/// </summary>
 	/// <param name="_state">遷移する状態</param>
 	void ChangeSelect(const SELECT _state);
-
-	
-
 
 	////選択するもの(人数or役職)の種類を変える
 	//void ChangeSelect(SELECT select);
@@ -141,14 +138,17 @@ private:
 	//背景のステージ
 	StageManager* stage_;
 
+	//---------------------------------------------
 	Transform trans_;
 	Transform tests_[SceneManager::PLAYER_NUM];
+	//----------------------------------------------
 
 	//選択中の種類
 	SELECT select_;
 
 	//デバイス
 	SceneManager::CNTL device_;
+	SceneManager::CNTL devices_[SceneManager::PLAYER_NUM];
 
 	//キーコンフィグ
 	KEY_CONFIG key_;

@@ -92,17 +92,7 @@ void SelectScene::Init(void)
 
 	key_ = KEY_CONFIG::NONE;
 
-	ChangeDevice(SceneManager::CNTL::KEYBOARD);
-
-	//playerNum_ = 1;
-
-	//isPad_ = false;
-
-	//role_ = 0;
-
-
-	//keyPressTime_ = 0.0f;
-	//interval_ = 0.0f;
+	//ChangeDevice(SceneManager::CNTL::KEYBOARD);
 
 }
 
@@ -231,9 +221,10 @@ void SelectScene::OperationUpdate(void)
 
 void SelectScene::RoleUpdate(void)
 {
-	for (auto& i : images_)
+	for (int i = 0; i < 4;i++)
 	{
-		i->Update();
+		images_[i]->Update();
+		images_[i]->ChangeObject(devices_[i], i);
 	}
 }
 
@@ -312,7 +303,7 @@ void SelectScene::DrawDebug(void)
 #endif // DEBUG_RECT
 
 	//現在の入力デバイス
-	DrawFormatString(0, 820, 0x000000, "(key_:0)(pad:1) %d", GetDevice());
+	//DrawFormatString(0, 820, 0x000000, "(key_:0)(pad:1) %d", GetDevice());
 	//入力の種類
 	DrawFormatString(0,
 		800,
@@ -352,7 +343,7 @@ void SelectScene::KeyConfigSetting(void)
 {
 	auto& ins = InputManager::GetInstance();
 
-	// 何も押されてないときは移動しないように
+	// 何も押されてないとき
 	key_ = KEY_CONFIG::NONE;
 	
 	// 左スティックの横軸
@@ -430,7 +421,7 @@ SceneManager::CNTL SelectScene::GetDevice(void)
 	//返り値用のret等で運用すること
 	//1Pの操作選択後であったら使用デバイスを固定(とりあえず)
 	SceneManager::CNTL ret;
-	if (device_ == SceneManager::CNTL::KEYBOARD)ret = SceneManager::CNTL::KEYBOARD;
+	if (device_ == SceneManager::CNTL::KEYBOARD)	ret = SceneManager::CNTL::KEYBOARD;
 	else if(device_ == SceneManager::CNTL::PAD)	ret = SceneManager::CNTL::PAD;
 	
 	return ret;
