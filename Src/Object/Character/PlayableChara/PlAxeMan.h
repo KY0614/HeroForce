@@ -51,6 +51,7 @@ public:
     static constexpr float SKILL_TWO_POW = 5.0f;
 
     //ó≠ÇﬂÉÇÅ[ÉVÉáÉì
+    static constexpr float SKILLONE_CHARGE_STEP = 13.5f;
 
     //í èÌçUåÇÇÃç≈ëÂíl
     static constexpr ATK ATK_MAX{ ATK_COL_LOCAL_POS,COL_ATK,ATK_POW,FRAME_ATK_DURATION,FRAME_ATK_BACKRASH,0.0f,false };
@@ -78,6 +79,8 @@ public:
     PlAxe(const SceneManager::PLAY_MODE _mode, const InputManager::JOYPAD_NO _padNum);
     ~PlAxe(void) = default;
     void SetParam(void)override;
+
+    void ChargeAct(void)override;
 protected:
 
     void AtkFunc(void)override;

@@ -40,6 +40,36 @@ void PlAxe::SetParam(void)
 
 	atkStartRange_ = ATK_START_RANGE;
 }
+void PlAxe::ChargeAct(void)
+{
+	chargeActUpdate_();
+
+	if (isCool_[static_cast<int>(ATK_ACT::SKILL1)])return;
+	//スキル(長押しでガード状態維持)
+	if (CheckAct(ACT_CNTL::CHARGE_SKILL_DOWN))
+	{
+		ResetParam(atk_);
+		CntUp(atkStartCnt_);
+	}
+	if (CheckAct(ACT_CNTL::CHARGE_SKILL_KEEP))
+	{
+		//スキルごとにアニメーションを決めて、カウント開始
+		ChangeAct(static_cast<ATK_ACT>(skillNo_));
+
+		//押している反応
+		isPush_ = true;
+	}
+	else if (CheckAct(ACT_CNTL::CHARGE_SKILL_UP))
+	{
+		//InitAtk();
+		isPush_ = false;
+		//actCntl_ = ACT_CNTL::NONE;
+	}
+
+
+
+	
+}
 void PlAxe::InitAct(void)
 {
 	//通常攻撃の最大値
@@ -64,7 +94,7 @@ void PlAxe::InitAct(void)
 
 	//攻撃タイプ
 	atkTypes_[static_cast<int>(ATK_ACT::ATK)] = ATK_TYPE::NORMALATK;
-	atkTypes_[static_cast<int>(ATK_ACT::SKILL1)] = ATK_TYPE::NORMALATK;
+	atkTypes_[static_cast<int>(ATK_ACT::SKILL1)] = ATK_TYPE::CHARGEATK;
 	atkTypes_[static_cast<int>(ATK_ACT::SKILL2)] = ATK_TYPE::NORMALATK;
 }
 
@@ -87,13 +117,27 @@ void PlAxe::Skill1Func(void)
 	//moveAble_ = false;
 	//クールタイムの初期化
 	//coolTime_[static_cast<int>(act_)] = 0.0f;
+
+	if (isCool_[static_cast<int>(ATK_ACT::SKILL1)])return;
+
 	if (IsAtkStart())
 	{
-		if (stepAnim_ >= 16.9f)
+		CntUp(atkStartCnt_);
+		if (stepAnim_ >= SKILLONE_CHARGE_STEP)
 		{
-			stepAnim_ = 16.9f;
+			stepAnim_ = SKILLONE_CHARGE_STEP;
 		}
 	}
+	if ((CheckAct(ACT_CNTL::CHARGE_SKILL_UP) || IsFinishAtkStart())/*&&!atk_.IsFinishMotion()*/)
+	{
+		CntUp(atk_.cnt_);
+		coolTime_[static_cast<int>(act_)] = 0.0f;
+	}
+	if (atk_.IsFinishMotion())
+	{
+		InitAtk();
+	}
+	
 }
 
 void PlAxe::Skill2Func(void)
@@ -122,6 +166,4 @@ void PlAxe::Skill2Func(void)
 			multiHitInterval_ = 0.0f;
 		}
 	}
-	
-
 }

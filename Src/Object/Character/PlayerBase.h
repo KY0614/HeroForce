@@ -364,6 +364,9 @@ protected:
     //各アクションの共通処理
     void Action(void);
 
+    //どのアクションが入力されているかの確認
+    bool CheckAct(ACT_CNTL _actCntl) { return actCntl_ == _actCntl ? true : false; }
+
     //チャージなしの攻撃
     void NmlAct(void);
     //チャージなし攻撃(キーボード)
@@ -380,7 +383,7 @@ protected:
     void NmlActCommon(void);
 
     //チャージ攻撃
-    void ChargeAct(void);
+    virtual void ChargeAct(void);
     //チャージ攻撃(キーボード)
     void ChargeActKeyBoard(void);
     //チャージ攻撃(パッド)
@@ -507,7 +510,7 @@ private:
     std::map<ACT_CNTL, std::function<void(void)>>changeActCntl_;        //アクションごとに返すボタンを変更
     std::function<bool(void)>actCntlUpdate_;  
 
-    bool CheckAct(ACT_CNTL _actCntl) { return actCntl_ == _actCntl ? true : false; }
+  
 
     void ProcessAct(void);
 
