@@ -18,6 +18,11 @@ public:
 	static constexpr int NUMBERS_NUM_Y = 2;
 	static constexpr int NUMBERS_SIZE = 128;
 
+	//レベルアップ画面エフェクト用定数
+	static constexpr int LV_EFE_NUM_X = 10;
+	static constexpr int LV_EFE_NUM_Y = 6;
+	static constexpr int LV_EFE_SIZE = 256;
+
 	// リソース名
 	enum class SRC
 	{
@@ -73,9 +78,17 @@ public:
 		LEVEL_UP,
 		SELECT_UI,
 		CARSOLS,
+		LEVEL_SCREEN_EFE,
+
+		//強化(体力上昇)
+		ATTACK_UP_EFE,
+		DEFENCE_UP_EFE,
+		SPEED_UP_EFE,
+		LIFE_UP_EFE,
 
 		//CPU
 		CHICKEN,
+		HELP,
 
 	};
 

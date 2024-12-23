@@ -3,13 +3,13 @@
 #include "../../Manager/ResourceManager.h"
 #include "../../Manager/SceneManager.h"
 #include "../../Manager/TextManager.h"
+#include "../../Manager/Camera.h"
 #include "../Common/Vector2.h"
 #include "LevelupNotice.h"
 
 LevelupNotice::LevelupNotice() 
 {
 	newLevel_ = -1;
-	img_ = -1;
 	cnt_ = -1;
 	scl_ = -1.0f;
 	state_ = STATE::NONE;
@@ -53,7 +53,18 @@ void LevelupNotice::Draw()
 	bool trans = true;
 	bool reverse = false;
 	int c = TextManager::CENTER_TEXT;
-	int cH = TextManager::CENTER_TEXT_H;
+	int cH = TextManager::CENTER_TEXT_H;	
+	
+	//エフェクト描画
+	if (isEfe_) {
+		DrawRotaGraph(EFFECT_POS_X,
+			EFFECT_POS_Y,
+			1.5f,
+			0.0f,
+			imgEfe_[efeAnimNum_],
+			true,
+			false);
+	}
 
 	//メッセージ描画
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)alphaMes_);
@@ -88,12 +99,9 @@ void LevelupNotice::Load()
 		FONT_LEVEL_SIZE,
 		FONT_THICK);
 
-	//画像
-	img_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::LEVEL_UP).handleId_;
-	if (img_ == -1)
-	{
-		return;
-	}
+	//エフェクト
+	imgEfe_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::LEVEL_SCREEN_EFE).handleIds_;
+
 }
 
 void LevelupNotice::Reset()
@@ -103,6 +111,10 @@ void LevelupNotice::Reset()
 	alphaMes_ = 0.0f;
 	alphaLevel_ = 0.0f;
 	ChangeState(LevelupNotice::STATE::NONE);
+	efeStep_ = 0;
+	efeSpeed_ = EFFECT_ANIM_SPPED;
+	efeAnimNum_ = 0;
+	isEfe_ = false;
 }
 
 void LevelupNotice::ChangeState(const STATE state)
@@ -154,7 +166,11 @@ void LevelupNotice::UpdateFade()
 
 	//透過処理
 	alphaMes_ += rate;
-	if (cnt_ <= 0) { alphaLevel_ += rate; }
+	if (cnt_ <= 0) { 
+		alphaLevel_ += rate; 
+		isEfe_ = true;
+		EffectUpdate();
+	}
 
 	//アルファ値の最大確認
 	if (alphaMes_ >= max) { alphaMes_ = max; }
@@ -171,6 +187,9 @@ void LevelupNotice::UpdateMaintain()
 	//カウント更新
 	cnt_ -= SceneManager::GetInstance().GetDeltaTime();
 	
+	//エフェクト更新
+	EffectUpdate();
+
 	if (cnt_ <= 0.0f)
 	{
 		//次の状態へ変更
@@ -180,6 +199,21 @@ void LevelupNotice::UpdateMaintain()
 
 void LevelupNotice::UpdateFin()
 {
+}
+
+void LevelupNotice::EffectUpdate()
+{
+	//エフェクト更新処理
+	efeStep_++;
+
+	//アニメーション番号割り当て
+	const int ANIM_NUM = ResourceManager::LV_EFE_NUM_X * ResourceManager::LV_EFE_NUM_Y;
+	efeAnimNum_ = efeStep_ / efeSpeed_ % ANIM_NUM;
+	
+	//エフェクトの非表示
+	if (efeSpeed_ * ANIM_NUM < efeStep_) {
+		isEfe_ = false;
+	}
 }
 
 void LevelupNotice::DrawMessage()

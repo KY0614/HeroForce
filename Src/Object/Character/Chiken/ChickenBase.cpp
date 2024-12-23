@@ -2,11 +2,14 @@
 
 ChickenBase::ChickenBase()
 {
+	imgHelp_ = -1;
 	moveSpeed_ = -1.0f;
 	fadeStep_ = -1.0f;
 	state_ = STATE::NONE;
 	aliveState_ = ALIVE_MOVE::MAX;
 	targetPos_ = AsoUtility::VECTOR_ZERO;
+	isHelp_ = false;
+	isHelpCnt_ = -1;
 
 	// 状態管理
 	stateChanges_.emplace(STATE::NONE, std::bind(&ChickenBase::ChangeStateNone, this));
@@ -32,6 +35,9 @@ void ChickenBase::Create(VECTOR &pos)
 	//モデル設定
 	ModelSet();
 
+	//画像読み込み
+	LoadImages();
+
 	//アニメーション管理番号の初期化
 	InitAnimNum();
 
@@ -50,6 +56,9 @@ void ChickenBase::Update(void)
 	// 更新ステップ
  	stateUpdate_();
 
+	//画像表示確認
+	CheckIsHelp();
+
 	//トランスフォーム更新
 	trans_.Update();
 }
@@ -60,6 +69,21 @@ void ChickenBase::Draw(void)
 
 	//デバッグ描画
 	DebagDraw();
+
+	//ビルボード描画
+	DrawHelp();
+
+	DrawFormatString(100, 100, 0x00ff00, "cnt = %d", isHelpCnt_);
+
+}
+
+void ChickenBase::SetIsHelp()
+{
+	//表示
+	isHelp_ = true;
+
+	//表示時間の設定
+	isHelpCnt_ = IS_HELP_CNT;
 }
 
 void ChickenBase::ModelSet()
@@ -78,6 +102,12 @@ void ChickenBase::ModelSet()
 	trans_.Update();
 }
 
+void ChickenBase::LoadImages()
+{
+	//ヘルプ画像
+	imgHelp_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::HELP).handleId_;
+}
+
 void ChickenBase::SetParam()
 {
 	//移動スピード
@@ -88,6 +118,10 @@ void ChickenBase::SetParam()
 
 	// フェード時間
 	fadeStep_ = TIME_FADE;
+
+	//画像表示
+	isHelp_ = false; 
+	isHelpCnt_ = 0;
 	
 	//生存時の行動をランダムで決める
 	aliveState_ = static_cast<ALIVE_MOVE>(GetRand(ALIVE_MOVE_MAX - 1));
@@ -146,6 +180,9 @@ void ChickenBase::ChangeStateDamage()
 {
 	stateUpdate_ = std::bind(&ChickenBase::UpdateDamage, this);
 	stateDraw_ = std::bind(&ChickenBase::DrawDamage, this);
+
+	//画像表示
+	SetIsHelp();
 }
 
 void ChickenBase::ChangeStateDeath()
@@ -192,6 +229,7 @@ void ChickenBase::UpdateDamage()
 {
 	//アニメーションを変更
 	ResetAnim(ANIM::DAMAGE, DEFAULT_SPEED_ANIM);
+
 }
 
 void ChickenBase::UpdateDeath()
@@ -322,6 +360,47 @@ void ChickenBase::FinishAnim(void)
 	case UnitBase::ANIM::DEATH:
 		//1回で終了
 		break;
+	}
+}
+
+void ChickenBase::CheckIsHelp()
+{
+	//画像が非表示の場合処理しない
+	if (!isHelp_) { return; }
+
+	isHelpCnt_ -= SceneManager::GetInstance().GetDeltaTime();
+
+	if (isHelpCnt_ <= 0)
+	{
+		isHelp_ = false;
+	}
+
+}
+
+void ChickenBase::DrawHelp()
+{
+	VECTOR pos = VAdd(trans_.pos, LOCAL_HELP_POS);
+	pos = ConvWorldPosToScreenPos(pos);
+
+	//画像表示
+	if (isHelp_ &&
+		(state_ == STATE::ALIVE ||
+			state_ == STATE::DAMAGE)) {
+		//DrawBillboard3D(
+		//	pos,	//位置
+		//	0.5f, 0.5f,	//中心位置
+		//	100.0f,		//サイズ
+		//	0.0f,		//角度
+		//	imgHelp_,	//画像
+		//	true);		//透過
+
+		DrawRotaGraph(
+			pos.x,
+			pos.y,
+			1.0f,
+			0.0f,
+			imgHelp_,
+			true);
 	}
 }
 

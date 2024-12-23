@@ -2,6 +2,8 @@
 #include "../../Application.h"
 #include "../../Manager/InputManager.h"
 #include "../../Manager/ResourceManager.h"
+#include "../../Manager/EffectManager.h"
+#include "../../Manager/DataBank.h"
 #include "../../Common/Vector2.h"
 #include "../Common/Fader.h"
 #include "LevelupNotice.h"
@@ -31,7 +33,7 @@ LevelScreenManager::~LevelScreenManager(void)
 void LevelScreenManager::Init(void)
 {
 	//レベルの初期設定
-	nowLevel_ = 10;
+	nowLevel_ = 1;
 
 	//インスタンス設定
 	Load();
@@ -170,16 +172,18 @@ void LevelScreenManager::DrawEnd()
 
 void LevelScreenManager::DrawLevelUI()
 {
-	Vector2 pos = { 100, 100 };
+	Vector2 pos = { 
+		GAGE_IMG_SIZE / 2,
+		GAGE_IMG_SIZE / 2 };
 	float percent = 100.0f / gauge_ * exp_;
 
 	//経験値ゲージ
 	DrawCircleGauge(pos.x, pos.y,
-		percent, imgGage_);
+		percent, imgGage_, 0.0f, GAGE_SCALE_RATE);
 
 	//現在レベル
 	if (nowLevel_ < 10) {	//1桁の場合
-		DrawRotaGraph(pos.x, pos.y, 0.8f, 0.0f, imgNumbers_[nowLevel_], true, false);
+		DrawRotaGraph(pos.x, pos.y, GAGE_SCALE_RATE, 0.0f, imgNumbers_[nowLevel_], true, false);
 	}
 	else {	//2桁の場合
 		int leftNum = nowLevel_ / 10;
@@ -188,13 +192,12 @@ void LevelScreenManager::DrawLevelUI()
 		//左数字
 		Vector2 leftPos = pos;
 		leftPos.x -= 64 / 1.5;
-		DrawRotaGraph(leftPos.x, leftPos.y, 0.8f, 0.0f, imgNumbers_[leftNum], true, false);
+		DrawRotaGraph(leftPos.x, leftPos.y, GAGE_SCALE_RATE, 0.0f, imgNumbers_[leftNum], true, false);
 		//右数字
 		Vector2 rightPos = pos;
 		rightPos.x += 32 * 1.5f;
-		DrawRotaGraph(rightPos.x, rightPos.y, 0.8f, 0.0f, imgNumbers_[rightNum], true, false);
+		DrawRotaGraph(rightPos.x, rightPos.y, GAGE_SCALE_RATE, 0.0f, imgNumbers_[rightNum], true, false);
 	}
-
 }
 
 void LevelScreenManager::Release(void)
@@ -214,12 +217,29 @@ void LevelScreenManager::Load(void)
 
 	imgGage_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CIRCLE_GAGE).handleId_;
 	imgNumbers_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::NUMBERS).handleIds_;
+
+	//エフェクト関係
+	EffectManager::GetInstance().Add(
+		EffectManager::EFFECT::ATTACK_UP,
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::ATTACK_UP_EFE).handleId_);
+
+	EffectManager::GetInstance().Add(
+		EffectManager::EFFECT::DEFENCE_UP,
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::DEFENCE_UP_EFE).handleId_);
+
+	EffectManager::GetInstance().Add(
+		EffectManager::EFFECT::SPEED_UP,
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::SPEED_UP_EFE).handleId_);
+
+	EffectManager::GetInstance().Add(
+		EffectManager::EFFECT::LIFE_UP,
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::LIFE_UP_EFE).handleId_);
 }
 
 void LevelScreenManager::Reset()
 {
 	//各プレイヤーごとの強化要素初期化
-	playerNum_ = 2;	//仮プレイヤー人数
+	playerNum_ = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
 	selectTypes_.resize(playerNum_, TYPE::MAX);
 
 	//経験値ゲージ量
@@ -244,6 +264,60 @@ void LevelScreenManager::SetGage(const int level)
 {
 	//敵の経験値量を決めて修正予定
 	gauge_ = level * CONSTANT_GAGE;
+}
+
+void LevelScreenManager::Reflection(PlayerBase& player, const int playerNum)
+{
+	//反映効果
+	TYPE type = selectTypes_[playerNum];
+
+	switch (type)
+	{
+	case TYPE::ATTACK:
+		//player.SetAtack(float 3.0f);
+		//引数の値は上昇%の値
+		//現在のステータスを%で上昇させる
+		EffectManager::GetInstance().Play(
+			EffectManager::EFFECT::ATTACK_UP,
+			player.GetPos(),
+			Quaternion(),
+			EFFECT_SCALE);
+		break;
+
+	case TYPE::DEFENSE:
+		//player.SetDefense(float 3.0f);
+		EffectManager::GetInstance().Play(
+			EffectManager::EFFECT::DEFENCE_UP,
+			player.GetPos(),
+			Quaternion(),
+			EFFECT_SCALE);
+		break;
+
+	case TYPE::LIFE:
+		//player.SetMaxLife(float 3.0f);
+		EffectManager::GetInstance().Play(
+			EffectManager::EFFECT::LIFE_UP,
+			player.GetPos(),
+			Quaternion(),
+			EFFECT_SCALE);
+
+		break;
+
+	case TYPE::SPEED:
+		//player.SetSpeed(float 3.0f);
+		EffectManager::GetInstance().Play(
+			EffectManager::EFFECT::SPEED_UP,
+			player.GetPos(),
+			Quaternion(),
+			EFFECT_SCALE);
+		break;
+
+	default:
+		break;
+	}
+
+	selectTypes_[playerNum] = TYPE::MAX;
+
 }
 
 void LevelScreenManager::CheckExp()

@@ -63,6 +63,12 @@ public:
 	static constexpr COLOR_F FADE_C_FROM = { 1.0f, 1.0f, 1.0f, 1.0f };
 	static constexpr COLOR_F FADE_C_TO = { 0.8f, 0.1f, 0.1f, 0.0f };
 
+	//HELP画像表示時間
+	static constexpr int IS_HELP_CNT = 3 * Application::DEFAULT_FPS;
+
+	//HELP相対位置
+	static constexpr VECTOR LOCAL_HELP_POS = { 0,150,0 };
+
 	ChickenBase();
 	~ChickenBase();
 
@@ -70,14 +76,8 @@ public:
 	void Update(void)override;
 	void Draw(void)override;
 	
-	//モデル設定
-	void ModelSet();
-
-	//パラメーターの設定
-	virtual void SetParam();
-
-	//アニメーション番号の初期化
-	virtual void InitAnimNum(void);
+	//画像表示の設定
+	void SetIsHelp();
 
 	//ターゲットの座標設定
 	void SetTarget(const VECTOR pos);
@@ -87,11 +87,18 @@ public:
 
 private:
 
+	//画像
+	int imgHelp_;
+
 	//移動スピード
 	float moveSpeed_;
 
 	//フェード用ステップ
 	float fadeStep_;
+
+	//画像の表示
+	bool isHelp_;
+	int isHelpCnt_;
 
 	//ターゲット用情報
 	VECTOR targetPos_;
@@ -115,6 +122,18 @@ private:
 
 	// 生存時状態管理
 	std::function<void(void)> stateAliveUpdate_;
+
+	//モデル設定
+	void ModelSet();
+
+	//画像読み込み
+	void LoadImages();
+
+	//パラメーターの設定
+	virtual void SetParam();
+
+	//アニメーション番号の初期化
+	virtual void InitAnimNum(void);
 
 	//状態変更
 	void ChangeState(STATE state);
@@ -150,6 +169,12 @@ private:
 
 	//アニメーションの終了処理
 	void FinishAnim() override;
+
+	//画像の表示確認
+	void CheckIsHelp();
+
+	//ヘルプ描画
+	void DrawHelp();
 
 	//デバッグ
 	void DebagUpdate();

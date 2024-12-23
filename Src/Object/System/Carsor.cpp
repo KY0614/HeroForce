@@ -102,7 +102,7 @@ void Carsor::Reset()
 	pos_ = { DEFAULT_POS_X * playerNum_,DEFAULT_POS_Y};
 
 	//Šg‘å—¦
-	rate_ = 1.0f;
+	rate_ = SCALE_RATE;
 }
 
 void Carsor::SetContllorKey(const int right, const int left, const int up, const int down, const int decide)

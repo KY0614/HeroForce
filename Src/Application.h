@@ -9,8 +9,12 @@ class Application
 
 public:
 #ifdef DEBUG_SCREEN
-	static constexpr int SCREEN_SIZE_X = 800;
-	static constexpr int SCREEN_SIZE_Y = 600;
+
+	static constexpr int DEFA_SCREEN_SIZE_X = 1920;
+	static constexpr int DEFA_SCREEN_SIZE_Y = 1080;
+
+	static constexpr int SCREEN_SIZE_X = 1920;
+	static constexpr int SCREEN_SIZE_Y = 1080;
 #else
 	// スクリーンサイズ
 

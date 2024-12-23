@@ -4,6 +4,7 @@
 #include "../Application.h"
 #include "../../Manager/ResourceManager.h"
 #include "../../Manager/TextManager.h"
+#include "../../Manager/DataBank.h"
 #include "LevelupSelect.h"
 #include "Carsor.h"
 
@@ -34,7 +35,7 @@ LevelupSelect::~LevelupSelect()
 void LevelupSelect::Init()
 {
 	//仮プレイヤー人数
-	plNum_ = 2;
+	plNum_ = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
 
 	//読み込み
 	Load();
@@ -432,7 +433,6 @@ bool LevelupSelect::IsCollisionBoxCircle(Vector2 pos1, Vector2 size1, Vector2 po
 		//衝突している
 		return true;
 	}
-
 	
 	return false;
 }

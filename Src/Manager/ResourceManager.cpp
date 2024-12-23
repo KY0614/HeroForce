@@ -47,12 +47,33 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Carsors.png", CARSORS_NUM_X, CARSORS_NUM_Y, CARSORS_SIZE, CARSORS_SIZE);
 	resourcesMap_.emplace(SRC::CARSOLS, res);
 
+	//経験値ゲージ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Circle.png");
 	resourcesMap_.emplace(SRC::CIRCLE_GAGE, res);
 
 	//ゲームUI用数字画像
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Numbers.png", NUMBERS_NUM_X,NUMBERS_NUM_Y, NUMBERS_SIZE, NUMBERS_SIZE);
 	resourcesMap_.emplace(SRC::NUMBERS, res);
+
+	//レベル画面用エフェクト
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "LevelUpEffect.png", LV_EFE_NUM_X, LV_EFE_NUM_Y, LV_EFE_SIZE, LV_EFE_SIZE);
+	resourcesMap_.emplace(SRC::LEVEL_SCREEN_EFE, res);
+
+	//強化体力上昇
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "LifeUp.efkefc");
+	resourcesMap_.emplace(SRC::LIFE_UP_EFE, res);
+
+	//強化攻撃上昇
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "AttackUp.efkefc");
+	resourcesMap_.emplace(SRC::ATTACK_UP_EFE, res);
+
+	//強化防御上昇
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "DefenceUp.efkefc");
+	resourcesMap_.emplace(SRC::DEFENCE_UP_EFE, res);
+
+	//強化スピード上昇
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "SpeedUp.efkefc");
+	resourcesMap_.emplace(SRC::SPEED_UP_EFE, res);
 
 	ResourcePlayer();
 	ResourceEnemy();
@@ -61,6 +82,10 @@ void ResourceManager::InitGame(void)
 	//チキン
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Chicken/Chicken.mv1");
 	resourcesMap_.emplace(SRC::CHICKEN, res);
+
+	//ヘルプ画像
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Help!.png");
+	resourcesMap_.emplace(SRC::HELP, res);
 }
 
 void ResourceManager::InitResult(void)

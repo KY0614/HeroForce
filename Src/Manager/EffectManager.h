@@ -9,9 +9,13 @@ public:
 	enum class EFFECT
 	{
 		//使用するエフェクトを羅列
+		LIFE_UP,
+		ATTACK_UP,
+		DEFENCE_UP,
+		SPEED_UP,
 	};
 
-	// インスタンスの生成
+
 	static void CreateInstance(void);
 
 	// インスタンスの取得

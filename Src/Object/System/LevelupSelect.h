@@ -32,12 +32,12 @@ public:
 	static constexpr float SCALE_RATE = 0.01f;
 
 	//拡大最大
-	static constexpr float SCALE_MAX = 0.8f;
+	static constexpr float SCALE_MAX = Application::SCREEN_SIZE_X * 1.2f / Application::DEFA_SCREEN_SIZE_X;
 
 	//フォント関連
-	static constexpr int FONT_MES_SIZE = 56;
+	static constexpr int FONT_MES_SIZE = Application::SCREEN_SIZE_X * 72 / Application::DEFA_SCREEN_SIZE_X;
 	static constexpr int FONT_MES_THICK = 5;
-	static constexpr int FONT_EXP_SIZE = 28;
+	static constexpr int FONT_EXP_SIZE = Application::SCREEN_SIZE_X * 36 / Application::DEFA_SCREEN_SIZE_X;
 	static constexpr int FONT_EXP_THICK = 3;
 
 	//メッセージ描画位置

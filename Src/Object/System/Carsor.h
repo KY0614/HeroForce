@@ -1,4 +1,5 @@
 #pragma once
+#include "../Application.h"
 #include "../Manager/InputManager.h"
 #include "../Common/Vector2.h"
 
@@ -21,6 +22,9 @@ public:
 
 	//角度
 	static constexpr float ANGLE = 315.0f;
+
+	//カーソルサイズ
+	static constexpr float SCALE_RATE = Application::SCREEN_SIZE_X * 1.5f / Application::DEFA_SCREEN_SIZE_X;
 
 	//キー操作
 	struct Key

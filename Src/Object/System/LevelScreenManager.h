@@ -1,6 +1,8 @@
 #pragma once
 #include <functional>
 #include <vector>
+#include "../Character/PlayerBase.h"
+
 class LevelupNotice;
 class LevelupSelect;
 
@@ -37,6 +39,12 @@ public:
 	//ゲージ最大値
 	static constexpr float CONSTANT_GAGE = 120.0f;
 
+	//ゲージUI拡大率
+	static constexpr float GAGE_SCALE_RATE = Application::SCREEN_SIZE_X * 1.5f / Application::DEFA_SCREEN_SIZE_X;
+
+	//ゲージ画像サイズ
+	static constexpr int GAGE_IMG_SIZE = 128 * GAGE_SCALE_RATE;
+
 	//アルファ値最大
 	static constexpr float ALPHA_MAX = 150.0f;
 
@@ -45,6 +53,9 @@ public:
 
 	//種類最大
 	static constexpr int TYPE_MAX = static_cast<int>(TYPE::MAX);
+
+	//エフェクトサイズ
+	static constexpr float EFFECT_SCALE = 20.0f;
 
 	LevelScreenManager(void);
 	~LevelScreenManager(void);
@@ -65,6 +76,9 @@ public:
 
 	//ゲージの設定
 	void SetGage(const int level);
+
+	//効果反映
+	void Reflection(PlayerBase &player,const int playerNum);
 
 	//ステートの設定
 	void ChangeState(const STATE state);

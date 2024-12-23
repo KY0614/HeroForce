@@ -1,6 +1,7 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/Camera.h"
 #include "../Manager/Collision.h"
+#include "../Manager/DataBank.h"
 #include "../Object/Grid.h"
 #include "../Object/Character/PlayerBase.h"
 #include "../Object/Character/PlayableChara/PlAxeMan.h"
@@ -135,10 +136,10 @@ void GameScene::Update(void)
 		mng.ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
 
-	if (ins.IsTrgDown(KEY_INPUT_RETURN))
+	/*if (ins.IsTrgDown(KEY_INPUT_RETURN))
 	{
 		ChangePhase();
-	}
+	}*/
 }
 
 void GameScene::Draw(void)
@@ -465,31 +466,16 @@ void GameScene::DrawPhase(void)
 void GameScene::LevelUpReflection()
 {
 	//ステート確認
-	if (level_->GetState() == LevelScreenManager::STATE::END)
+	if (level_->GetState() != LevelScreenManager::STATE::NONE)
 	{
+		//通常時以外は処理しない
 		return;
 	}
 
-	//int plNum = 1;
-	//for (int i = 0; i < plNum; i++) {
-
-	//	//ここでプレイヤーの強化を反映
-	//	switch (level_->GetType(i))
-	//	{
-	//	case LevelScreenManager::TYPE::ATTACK:
-	//		break;
-
-	//	case LevelScreenManager::TYPE::DEFENSE:
-	//		break;
-
-	//	case LevelScreenManager::TYPE::LIFE:
-	//		break;
-
-	//	case LevelScreenManager::TYPE::SPEED:
-	//		break;
-
-	//	default:
-	//		break;
-	//	}
-	//}
+	//プレイヤーごとに強化反映
+	int plNum = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
+	for (int i = 0; i < plNum; i++)
+	{
+		level_->Reflection(*players_[i], i);
+	}
 }
