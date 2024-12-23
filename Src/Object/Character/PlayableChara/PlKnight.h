@@ -104,8 +104,6 @@ protected:
 
     void ResetGuardCnt(void)override;
 
-    void ChargeAct(void)override;
-
     //ŠeƒXƒLƒ‹‚Ìˆ—
     void Skill1Func(void)override;
     void Skill2Func(void)override;

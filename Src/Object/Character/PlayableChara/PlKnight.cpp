@@ -84,33 +84,6 @@ void PlKnight::ResetGuardCnt(void)
 	}
 }
 
-void PlKnight::ChargeAct(void)
-{
-	chargeActUpdate_();
-	if (CheckAct(ACT_CNTL::CHARGE_SKILL_DOWN))
-	{
-		//ボタンの押しはじめの時に値初期化
-		ResetGuardCnt();
-	}
-
-
-	//スキル(長押しでガード状態維持)
-	if (CheckAct(ACT_CNTL::CHARGE_SKILL_KEEP))
-	{
-		//スキルごとにアニメーションを決めて、カウント開始
-		ChangeAct(static_cast<ATK_ACT>(skillNo_));
-
-		//押している反応
-		isPush_ = true;
-	}
-	else if (CheckAct(ACT_CNTL::CHARGE_SKILL_UP))
-	{
-		InitAtk();
-		isPush_ = false;
-		actCntl_ = ACT_CNTL::NONE;
-	}
-}
-
 
 
 void PlKnight::Skill1Func(void)
