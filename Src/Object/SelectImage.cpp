@@ -11,32 +11,40 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	imgLeftPoint_ = -1;
 	imgRightPoint_ = -1;
 
-	//座標(四角形を作るために2つの三角形を使う)
-	vertices_[0].pos = VGet(VERTEX_LEFT_X, VERTEX_UNDER_Y, VERTEX_Z + 12.0f);	// 左下
-	vertices_[1].pos = VGet(VERTEX_RIGHT_X, VERTEX_UNDER_Y, VERTEX_Z + 12.0f);	// 右下
-	vertices_[2].pos = VGet(VERTEX_LEFT_X, VERTEX_TOP_Y, VERTEX_Z);				// 左上
-	vertices_[3].pos = VGet(VERTEX_RIGHT_X, VERTEX_TOP_Y, VERTEX_Z);			// 右上
+	for (int n = 0; n < SceneManager::PLAYER_NUM; n++) {
+		//座標(四角形を作るために2つの三角形を使う)
+		mesh_[n].vertex_[0].pos = VGet(VERTEX_LEFT_X, VERTEX_UNDER_Y, VERTEX_Z + 12.0f);	// 左下
+		mesh_[n].vertex_[1].pos = VGet(VERTEX_RIGHT_X, VERTEX_UNDER_Y, VERTEX_Z + 12.0f);	// 右下
+		mesh_[n].vertex_[2].pos = VGet(VERTEX_LEFT_X, VERTEX_TOP_Y, VERTEX_Z);				// 左上
+		mesh_[n].vertex_[3].pos = VGet(VERTEX_RIGHT_X, VERTEX_TOP_Y, VERTEX_Z);			// 右上
 
-	//UV座標（テクスチャ座標）
-	vertices_[0].u = 0.0f / 4.0f;	vertices_[0].v = 1.0f;	// 左下
-	vertices_[1].u = 1.0f / 4.0f;	vertices_[1].v = 1.0f;	// 右下
-	vertices_[2].u = 0.0f / 4.0f;	vertices_[2].v = 0.0f;	// 左上
-	vertices_[3].u = 1.0f / 4.0f;	vertices_[3].v = 0.0f;	// 右上
+		//UV座標（テクスチャ座標）
+		mesh_[n].vertex_[0].u = 0.0f / 4.0f;	mesh_[n].vertex_[0].v = 1.0f;	// 左下
+		mesh_[n].vertex_[1].u = 1.0f / 4.0f;	mesh_[n].vertex_[1].v = 1.0f;	// 右下
+		mesh_[n].vertex_[2].u = 0.0f / 4.0f;	mesh_[n].vertex_[2].v = 0.0f;	// 左上
+		mesh_[n].vertex_[3].u = 1.0f / 4.0f;	mesh_[n].vertex_[3].v = 0.0f;	// 右上
 
+	}
 
 	// 法線の設定（今回は省略、適当な値を設定）
-	for (int i = 0; i < VERTEX_NUM; i++) {
-		vertices_[i].norm = VGet(0.0f, 0.0f, 1.0f);  // 法線は-Z軸方向
+	for (int n = 0; n < SceneManager::PLAYER_NUM; n++) {
+		for (int i = 0; i < VERTEX_NUM; i++) {
+			mesh_[n].vertex_[i].norm = VGet(0.0f, 0.0f, 1.0f);  // 法線は-Z軸方向
+		}
 	}
 
 	// 色の設定（ディフューズカラー）
-	for (int i = 0; i < VERTEX_NUM; i++) {
-		vertices_[i].dif = GetColorU8(255, 255, 255, 255);  // 白色
+	for (int n = 0; n < SceneManager::PLAYER_NUM; n++) {
+		for (int i = 0; i < VERTEX_NUM; i++) {
+			mesh_[n].vertex_[i].dif = GetColorU8(255, 255, 255, 255);  // 白色
+		}
 	}
 
 	// 色の設定（ディフューズカラー）
-	for (int i = 0; i < VERTEX_NUM; i++) {
-		vertices_[i].spc = GetColorU8(0, 0, 0, 0);  // 白色
+	for (int n = 0; n < SceneManager::PLAYER_NUM; n++) {
+		for (int i = 0; i < VERTEX_NUM; i++) {
+			mesh_[n].vertex_[i].spc = GetColorU8(0, 0, 0, 0);  // 白色
+		}
 	}
 
 	leftTop_ = AsoUtility::VECTOR_ZERO;
@@ -68,7 +76,8 @@ void SelectImage::Init(void)
 	
 	pointR_ = { RIGHT_POS_X,POINT_POS_Y,POINT_SCALE,POINT_SCALE,false,imgRightPoint_ };
 
-	target_ = SelectScene::DEFAULT_TARGET_POS;
+	target_[0] = SelectScene::DEFAULT_TARGET_POS;
+	target_[1] = SelectScene::DEFAULT_TARGET_POS;
 }
 
 void SelectImage::Update(void)
@@ -128,7 +137,7 @@ void SelectImage::Draw(void)
 	
 	for (int i = 0; i < 4; i++)
 	{
-		DrawFormatString(0, 40 + (20 * i), 0xFF0000, "pos %0.2f,%0.2f,%0.2f", vertices_[i].pos.x, vertices_[i].pos.y, vertices_[i].pos.z);
+		DrawFormatString(0, 40 + (20 * i), 0xFF0000, "target %0.2f,%0.2f,%0.2f", target_[i].x, target_[i].y, target_[i].z);
 	}
 }
 
@@ -241,10 +250,14 @@ void SelectImage::NumberUpdate(void)
 
 		//カメラの設定
 		auto cameras = SceneManager::GetInstance().GetCameras();
-		for (int i = 0; i < cameras.size(); i++)
+		for (int i = 1; i < cameras.size(); i++)
 		{
-			RotTargetPos(target_);
-			cameras[i]->SetPos(SelectScene::DEFAULT_CAMERA_POS,target_);
+			//最初の座標を保持
+			VECTOR prevPos = target_[i - 1];
+			//XZ平面で座標を回転させる
+			target_[i] = AsoUtility::RotXZPos(SelectScene::DEFAULT_CAMERA_POS, prevPos, AsoUtility::Deg2RadF(90.0f));
+
+			cameras[i]->SetPos(SelectScene::DEFAULT_CAMERA_POS, target_[i]);
 			cameras[i]->ChangeMode(Camera::MODE::FIXED_POINT);
 		}
 
@@ -266,11 +279,14 @@ void SelectImage::NumberUpdate(void)
 		pointL_.isToggle_ = true;
 	}
 
-	//UV座標（テクスチャ座標）
-	vertices_[0].u = ((float)(playerNum_)-1.0f) / 4.0f;		vertices_[0].v = 1.0f;	// 左下
-	vertices_[1].u = (float)(playerNum_) / 4.0f;			vertices_[1].v = 1.0f;	// 右下
-	vertices_[2].u = ((float)(playerNum_)-1.0f) / 4.0f;		vertices_[2].v = 0.0f;	// 左上
-	vertices_[3].u = (float)(playerNum_) / 4.0f;			vertices_[3].v = 0.0f;	// 右上
+	for (int n = 0; n < SceneManager::PLAYER_NUM; n++) {
+		//UV座標（テクスチャ座標）
+		mesh_[n].vertex_[0].u = ((float)(playerNum_)-1.0f) / 4.0f;		mesh_[n].vertex_[0].v = 1.0f;	// 左下
+		mesh_[n].vertex_[1].u = (float)(playerNum_) / 4.0f;				mesh_[n].vertex_[1].v = 1.0f;	// 右下
+		mesh_[n].vertex_[2].u = ((float)(playerNum_)-1.0f) / 4.0f;		mesh_[n].vertex_[2].v = 0.0f;	// 左上
+		mesh_[n].vertex_[3].u = (float)(playerNum_) / 4.0f;				mesh_[n].vertex_[3].v = 0.0f;	// 右上
+	}
+
 }
 
 void SelectImage::OperationUpdate(void)
@@ -374,23 +390,22 @@ void SelectImage::OperationUpdate(void)
 
 void SelectImage::RoleUpdate(void)
 {
-	for (auto& r : role_)
-	{
-		player_->SetRole(r);
-	}
+	player_->SetRole(role_);
 }
 
 void SelectImage::NumberDraw(void)
 {
-	// 2つの三角形を描画（テクスチャ付き）
-	// 1つ目の三角形
-	VERTEX3D triangle1[3] = { vertices_[2], vertices_[1], vertices_[0] };
-	// 2つ目の三角形
-	VERTEX3D triangle2[3] = { vertices_[1], vertices_[2], vertices_[3] };
+	//// 2つの三角形を描画（テクスチャ付き）
+	//// 1つ目の三角形
+	//VERTEX3D triangle1[3] = { vertices_[2], vertices_[1], vertices_[0] };
+	//// 2つ目の三角形
+	//VERTEX3D triangle2[3] = { vertices_[1], vertices_[2], vertices_[3] };
 
-	// 三角形を描画
-	DrawPolygon3D(triangle1, 2, *imgPlayerNum_, true);  // 1つ目の三角形
-	DrawPolygon3D(triangle2, 2, *imgPlayerNum_, true);  // 2つ目の三角形
+	//// 三角形を描画
+	//DrawPolygon3D(triangle1, 2, *imgPlayerNum_, true);  // 1つ目の三角形
+	//DrawPolygon3D(triangle2, 2, *imgPlayerNum_, true);  // 2つ目の三角形
+
+	mesh_[1].DrawTwoMesh(*imgPlayerNum_);
 
 	PointsDraw();
 
@@ -481,9 +496,9 @@ void SelectImage::PointsDraw(void)
 	}
 }
 
-void SelectImage::ChangeObject(SceneManager::CNTL cntl, int obj)
+void SelectImage::ChangeObject(SceneManager::CNTL cntl, SelectImage* obj, int i)
 {
-		DataBank& data = DataBank::GetInstance();
+	DataBank& data = DataBank::GetInstance();
 	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
 
 	//右の三角形がONの時にキーの右に値する入力をし続けると
@@ -495,7 +510,7 @@ void SelectImage::ChangeObject(SceneManager::CNTL cntl, int obj)
 			press_ = true;
 
 			//役職を選択
-			role_[obj] = (role_[obj] + 1) % SceneManager::PLAYER_NUM;
+			obj->role_ = (role_ + 1) % SceneManager::PLAYER_NUM;
 		}
 
 		//キーが押されている間経過時間を加算していく
@@ -509,7 +524,7 @@ void SelectImage::ChangeObject(SceneManager::CNTL cntl, int obj)
 
 			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
 			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, role_[obj] = (role_[obj] + 1) % SceneManager::PLAYER_NUM : interval_;
+				interval_ = 0.0f, role_ = (role_ + 1) % SceneManager::PLAYER_NUM : interval_;
 		}
 	}
 	else if (pointR_.isToggle_)
@@ -527,7 +542,7 @@ void SelectImage::ChangeObject(SceneManager::CNTL cntl, int obj)
 			press_ = true;
 
 			//役職を選択
-			role_[obj] = (role_[obj] - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM;
+			role_ = (role_ - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM;
 		}
 		//キーが押されている間経過時間を加算していく
 		keyPressTime_ += delta;
@@ -540,7 +555,7 @@ void SelectImage::ChangeObject(SceneManager::CNTL cntl, int obj)
 
 			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
 			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, role_[obj] = (role_[obj] - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM : interval_;
+				interval_ = 0.0f, role_ = (role_ - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM : interval_;
 		}
 	}
 	else if (pointL_.isToggle_)
@@ -554,7 +569,7 @@ void SelectImage::ChangeObject(SceneManager::CNTL cntl, int obj)
 	if (selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::DECIDE)
 	{
 		//役職の設定
-		data.Input(static_cast<SceneManager::ROLE>(role_[obj]), playerNum_);
+		data.Input(static_cast<SceneManager::ROLE>(role_), playerNum_);
 
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 	}
@@ -575,10 +590,10 @@ void SelectImage::ChangeObject(SceneManager::CNTL cntl, int obj)
 	}
 
 	//UV座標（テクスチャ座標）
-	vertices_[0].u = (float)(role_[obj]) / 4.0f;				vertices_[0].v = 1.0f;	// 左下
-	vertices_[1].u = ((float)(role_[obj]) + 1.0f) / 4.0f;	vertices_[1].v = 1.0f;	// 右下
-	vertices_[2].u = (float)(role_[obj]) / 4.0f;				vertices_[2].v = 0.0f;	// 左上
-	vertices_[3].u = ((float)(role_[obj]) +1.0f) / 4.0f;		vertices_[3].v = 0.0f;	// 右上
+	vertices_[0].u = (float)(role_) / 4.0f;				vertices_[0].v = 1.0f;	// 左下
+	vertices_[1].u = ((float)(role_) + 1.0f) / 4.0f;	vertices_[1].v = 1.0f;	// 右下
+	vertices_[2].u = (float)(role_) / 4.0f;				vertices_[2].v = 0.0f;	// 左上
+	vertices_[3].u = ((float)(role_) +1.0f) / 4.0f;		vertices_[3].v = 0.0f;	// 右上
 
 }
 
@@ -637,12 +652,23 @@ VECTOR SelectImage::RotateVertex(VECTOR pos, VECTOR center, float angle)
 
 VECTOR SelectImage::RotTargetPos(VECTOR pos)
 {
-	float newX = target_.z;   // Y軸回りの90度回転
-	float newZ = -target_.x;
-	target_.x = newX;
-	target_.z = newZ;
+	float rad = AsoUtility::Deg2RadF(90.0f);  // 角度をラジアンに変換
+	//float newX = pos.z;   // Y軸回りの90度回転
+	//float newZ = -pos.x;
+	//pos.x = newX;
+	//pos.z = newZ;
 
-	return pos;
+	//return pos;
+
+	float cos_a = cosf(rad);
+	float sin_a = sinf(rad);
+
+	VECTOR result;
+	result.x = pos.x * cos_a + pos.z * sin_a;
+	result.y = pos.y;
+	result.z = -pos.x * sin_a + pos.z * cos_a;
+
+	return result;
 }
 
 void SelectImage::Point::PointDraw(void)
@@ -651,4 +677,17 @@ void SelectImage::Point::PointDraw(void)
 		POINT_SCALE_RATE, 0.0f,
 		imgHandle_,
 		true, false);
+}
+
+void SelectImage::Mesh::DrawTwoMesh(int handle)
+{
+	// 2つの三角形を描画（テクスチャ付き）
+	// 1つ目の三角形
+	VERTEX3D triangle1[3] = { vertex_[2], vertex_[1], vertex_[0] };
+	// 2つ目の三角形
+	VERTEX3D triangle2[3] = { vertex_[1], vertex_[2], vertex_[3] };
+
+	// 三角形を描画
+	DrawPolygon3D(triangle1, 2, handle, true);  // 1つ目の三角形
+	DrawPolygon3D(triangle2, 2, handle, true);  // 2つ目の三角形
 }

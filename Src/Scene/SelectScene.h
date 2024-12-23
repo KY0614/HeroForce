@@ -41,7 +41,7 @@ public:
 	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 100.0f, -500.0f };		//カメラの座標
 	static constexpr VECTOR DEFAULT_TARGET_POS = { 0.0f, 150.0f, -100.0f };		//カメラの注視点座標
 
-	static constexpr VECTOR DEFAULT_TARGET_TWO = { 100.0f, 150.0f, -100.0f };	//カメラの注視点座標
+	static constexpr VECTOR DEFAULT_TARGET_TWO = { 400.0f, 150.0f, 0.0f };		//カメラの注視点座標
 	static constexpr VECTOR DEFAULT_TARGET_THREE = { 0.0f, 150.0f, 100.0f };	//カメラの注視点座標
 	static constexpr VECTOR DEFAULT_TARGET_FOUR = { -100.0f, 150.0f, -100.0f };	//カメラの注視点座標
 

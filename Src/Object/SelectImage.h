@@ -37,6 +37,8 @@ public:
 	struct Mesh {
 		VERTEX3D vertex_[4];	//頂点情報
 		int imgHandle_;			//画像ハンドル
+
+		void DrawTwoMesh(int handle);
 	};
 
 	//矢印
@@ -92,10 +94,11 @@ public:
 	//-----------------------------------------------------------
 
 	//選択を変更する
-	void ChangeObject(SceneManager::CNTL cntl, int obj);
+	void ChangeObject(SceneManager::CNTL cntl, SelectImage* obj,int i);
 
 private:
 
+	//メッシュ
 	Mesh mesh_[SceneManager::PLAYER_NUM];
 	
 	//画像ハンドル
@@ -124,7 +127,7 @@ private:
 	bool isPad_;	
 
 	//職種
-	int role_[SceneManager::PLAYER_NUM];
+	int role_;
 
 	//キーを何秒押しているか
 	float keyPressTime_;
@@ -138,7 +141,7 @@ private:
 	SelectScene& selectScene_;
 	std::shared_ptr<SelectPlayer> player_;
 
-	VECTOR target_;
+	VECTOR target_[SceneManager::PLAYER_NUM];
 
 	void Load(void);	//読み込み用
 

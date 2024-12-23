@@ -224,7 +224,7 @@ void SelectScene::RoleUpdate(void)
 	for (int i = 0; i < 4;i++)
 	{
 		images_[i]->Update();
-		images_[i]->ChangeObject(devices_[i], i);
+		images_[i]->ChangeObject(devices_[i], images_[i].get(), i);
 	}
 }
 
