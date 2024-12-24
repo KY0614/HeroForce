@@ -64,7 +64,7 @@ void PlAxe::InitAct(void)
 
 	//攻撃タイプ
 	atkTypes_[static_cast<int>(ATK_ACT::ATK)] = ATK_TYPE::NORMALATK;
-	atkTypes_[static_cast<int>(ATK_ACT::SKILL1)] = ATK_TYPE::NORMALATK;
+	atkTypes_[static_cast<int>(ATK_ACT::SKILL1)] = ATK_TYPE::CHARGEATK;
 	atkTypes_[static_cast<int>(ATK_ACT::SKILL2)] = ATK_TYPE::NORMALATK;
 }
 
@@ -74,6 +74,37 @@ void PlAxe::InitCharaAnim(void)
 	animNum_.emplace(ANIM::UNIQUE_2, SPIN_NUM);
 	animNum_.emplace(ANIM::SKILL_1, SKILL_ONE_NUM);
 	animNum_.emplace(ANIM::SKILL_2, SKILL_TWO_NUM);
+}
+
+void PlAxe::ChargeAct(void)
+{
+	chargeActUpdate_();
+	if (CheckAct(ACT_CNTL::CHARGE_SKILL_DOWN)&&!isCool_[static_cast<int>(ATK_ACT::SKILL1)])
+	{
+		if (!IsAtkAction())
+		{
+			ResetParam(atk_);
+			moveAble_ = false;
+			CntUp(atkStartCnt_);
+		}
+		
+	}
+
+	//スキル(長押しでガード状態維持)
+	else if (CheckAct(ACT_CNTL::CHARGE_SKILL_KEEP) && !isCool_[static_cast<int>(ATK_ACT::SKILL1)])
+	{
+		//スキルごとにアニメーションを決めて、カウント開始
+		ChangeAct(static_cast<ATK_ACT>(skillNo_));
+
+		//押している反応
+		isPush_ = true;
+	}
+	else if (CheckAct(ACT_CNTL::CHARGE_SKILL_UP))
+	{
+		//InitAtk();
+		isPush_ = false;
+		actCntl_ = ACT_CNTL::NONE;
+	}
 }
 
 void PlAxe::AtkFunc(void)
@@ -89,9 +120,19 @@ void PlAxe::Skill1Func(void)
 	//coolTime_[static_cast<int>(act_)] = 0.0f;
 	if (IsAtkStart())
 	{
-		if (stepAnim_ >= 16.9f)
+		CntUp(atkStartCnt_);
+		if (stepAnim_ >= SKILL_CHARGE_STEPANIM)
 		{
-			stepAnim_ = 16.9f;
+			stepAnim_ = SKILL_CHARGE_STEPANIM;
+		}
+	}
+	if (IsFinishAtkStart())
+	{
+		CntUp(atk_.cnt_);
+		if (atk_.IsFinishMotion())
+		{
+			coolTime_[static_cast<int>(ATK_ACT::SKILL1)] = 0.0f;
+			InitAtk();
 		}
 	}
 }

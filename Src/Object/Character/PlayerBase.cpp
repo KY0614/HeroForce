@@ -110,6 +110,8 @@ void PlayerBase::Update(void)
 	//モデルの更新
 	trans_.Update();
 
+	SyncActPos(atk_);
+
 	colPos_ = VAdd(trans_.pos, VScale(PLAYER_COL_LOCAL_POS, CHARACTER_SCALE));
 
 
@@ -309,8 +311,7 @@ void PlayerBase::ChangeAct(const ATK_ACT _act)
 	//クールタイム中なら処理しない
 	if (isCool_[static_cast<int>(act_)] && !IsAtkable())return;
 	act_ = _act;
-	ResetParam(atk_);
-	SyncActPos(atk_);
+	
 
 	//変更点
 	changeAct_[_act]();
@@ -349,16 +350,15 @@ void PlayerBase::KeyBoardControl(void)
 {
 	auto& ins = InputManager::GetInstance();
 
-	if (ins.IsNew(MOVE_FRONT_KEY) || ins.IsNew(MOVE_LEFT_KEY) 
-		|| ins.IsNew(MOVE_BACK_KEY) || ins.IsNew(MOVE_RIGHT_KEY))
-	{
-		actCntl_ = ACT_CNTL::MOVE;
-	}
+
+
 	if (ins.IsNew(MOVE_FRONT_KEY)){ moveDeg_ = 0.0f;}
 	else if (ins.IsNew(MOVE_LEFT_KEY)){ moveDeg_ = 270.0f;}
 	else if (ins.IsNew(MOVE_BACK_KEY)){moveDeg_ = 180.0f;}
 	else if (ins.IsNew(MOVE_RIGHT_KEY)){ moveDeg_ = 90.0f;}
 	else { actCntl_ = ACT_CNTL::NONE; }
+
+
 
 	if (ins.IsTrgDown(DODGE_KEY)) { actCntl_ = ACT_CNTL::DODGE; }
 	if (ins.IsTrgDown(ATK_KEY)
@@ -366,7 +366,20 @@ void PlayerBase::KeyBoardControl(void)
 	{ 
 		actCntl_ = ACT_CNTL::NMLATK;
 	}
+
+	if (ins.IsNew(MOVE_FRONT_KEY) || ins.IsNew(MOVE_LEFT_KEY)
+		|| ins.IsNew(MOVE_BACK_KEY) || ins.IsNew(MOVE_RIGHT_KEY))
+	{
+		actCntl_ = ACT_CNTL::MOVE;
+	}
+
+	//if (CheckHitKeyAll() == 0)
+	//{
+	//	actCntl_ = ACT_CNTL::NONE;
+	//}
+
 	if (ins.IsTrgDown(SKILL_CHANGE_KEY)) { SkillChange(); }
+
 
 
 	//長押ししているときに移動できるからどうにかする
@@ -438,19 +451,19 @@ void PlayerBase::DrawDebug(void)
 	//球体
 	//DrawSphere3D(trans_.pos, 20.0f, 8, 0x0, 0xff0000, true);
 	//値見る用
-	DrawFormatString(0, 32, 0xffffff
-		, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)"
-		, atk_.cnt_, atk_.IsAttack(), atk_.IsBacklash()
-		, dodgeCnt_, atk_.cnt_);
 	//DrawFormatString(0, 32, 0xffffff
-	//	, "AtkCooltime(%.2f)\nSkill1Cool(%.2f)\nSkill2Cool(%.2f)\natkDulation(%f)\nactCntl(%d)"
-	//	, coolTime_[static_cast<int>(ATK_ACT::ATK)]
-	//	, coolTime_[static_cast<int>(ATK_ACT::SKILL1)]
-	//	, coolTime_[static_cast<int>(ATK_ACT::SKILL2)]
-	//	, atkStartCnt_
-	//,actCntl_);
+	//	, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\nactCntl(%d)\natkStart(%f)"
+	//	, atk_.cnt_, atk_.IsAttack(), atk_.IsBacklash()
+	//	, dodgeCnt_, atk_.cnt_,actCntl_,atkStartCnt_);
+	DrawFormatString(0, 32, 0xffffff
+		, "AtkCooltime(%.2f)\nSkill1Cool(%.2f)\nSkill2Cool(%.2f)\natkDulation(%f)\nactCntl(%d)"
+		, coolTime_[static_cast<int>(ATK_ACT::ATK)]
+		, coolTime_[static_cast<int>(ATK_ACT::SKILL1)]
+		, coolTime_[static_cast<int>(ATK_ACT::SKILL2)]
+		, atk_.duration_
+	,actCntl_);
 
-	DrawFormatString(0, 32, 0xffffff, "atkPos(%f,%f,%f)", atk_.pos_.x, atk_.pos_.y, atk_.pos_.z);
+	//DrawFormatString(0, 32, 0xffffff, "atkPos(%f,%f,%f)", atk_.pos_.x, atk_.pos_.y, atk_.pos_.z);
 	DrawSphere3D(colPos_, CHARACTER_SCALE * 100, 8, color_Col_, color_Col_, false);
 	DrawSphere3D(atk_.pos_, atk_.radius_, 8, color_Atk_, color_Atk_, false);
 
@@ -562,6 +575,7 @@ void PlayerBase::NmlActCommon(void)
 	{
 		//スキルごとにアニメーションを決めて、カウント開始
 		ChangeAct(static_cast<ATK_ACT>(skillNo_));
+		ResetParam(atk_);
 		CntUp(atkStartCnt_);
 	}
 
@@ -895,6 +909,7 @@ void PlayerBase::ProcessAct(void)
 	{
 		if (isCool_[static_cast<int>(ATK_ACT::ATK)])return;
 		ChangeAct(ATK_ACT::ATK);
+		ResetParam(atk_);
 		CntUp(atkStartCnt_);
 	}
 
