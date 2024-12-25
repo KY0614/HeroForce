@@ -172,14 +172,17 @@ void LevelScreenManager::DrawEnd()
 
 void LevelScreenManager::DrawLevelUI()
 {
-	Vector2 pos = { 
-		GAGE_IMG_SIZE / 2,
-		GAGE_IMG_SIZE / 2 };
+	Vector2 pos = {
+		GAGE_IMG_SIZE / 2 + GAGE_POS_X,
+		GAGE_IMG_SIZE / 2 + GAGE_POS_Y };
 	float percent = 100.0f / gauge_ * exp_;
 
 	//経験値ゲージ
+	DrawRotaGraph(pos.x, pos.y,
+		GAGE_SCALE_RATE, 0.0f, imgGage_, true, false);
+
 	DrawCircleGauge(pos.x, pos.y,
-		percent, imgGage_, 0.0f, GAGE_SCALE_RATE);
+		percent, imgGageExp_, 0.0f, GAGE_SCALE_RATE);
 
 	//現在レベル
 	if (nowLevel_ < 10) {	//1桁の場合
@@ -215,7 +218,9 @@ void LevelScreenManager::Load(void)
 	select_ = std::make_unique<LevelupSelect>();
 	select_->Init();
 
+	//画像
 	imgGage_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CIRCLE_GAGE).handleId_;
+	imgGageExp_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CIRCLE_EXP_GAGE).handleId_;
 	imgNumbers_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::NUMBERS).handleIds_;
 
 	//エフェクト関係

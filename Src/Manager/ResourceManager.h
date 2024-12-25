@@ -72,6 +72,7 @@ public:
 
 		//UI
 		CIRCLE_GAGE,
+		CIRCLE_EXP_GAGE,
 		NUMBERS,
 
 		//ƒŒƒxƒ‹’Ê’m—p

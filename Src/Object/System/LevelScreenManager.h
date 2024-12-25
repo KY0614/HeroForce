@@ -40,7 +40,7 @@ public:
 	static constexpr float CONSTANT_GAGE = 120.0f;
 
 	//ゲージUI拡大率
-	static constexpr float GAGE_SCALE_RATE = Application::SCREEN_SIZE_X * 1.5f / Application::DEFA_SCREEN_SIZE_X;
+	static constexpr float GAGE_SCALE_RATE = Application::SCREEN_SIZE_X * 1.8f / Application::DEFA_SCREEN_SIZE_X;
 
 	//ゲージ画像サイズ
 	static constexpr int GAGE_IMG_SIZE = 128 * GAGE_SCALE_RATE;
@@ -56,6 +56,11 @@ public:
 
 	//エフェクトサイズ
 	static constexpr float EFFECT_SCALE = 20.0f;
+
+	//ゲージ座標
+	static constexpr int GAGE_POS_X = 20;
+	static constexpr int GAGE_POS_Y = 20;
+
 
 	LevelScreenManager(void);
 	~LevelScreenManager(void);
@@ -93,9 +98,12 @@ public:
 
 private:
 
+	//画像
 	int imgGage_;
+	int imgGageExp_;
 	int *imgNumbers_;
 
+	//プレイヤー人数
 	int playerNum_;
 
 	//状態

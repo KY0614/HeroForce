@@ -48,8 +48,12 @@ void ResourceManager::InitGame(void)
 	resourcesMap_.emplace(SRC::CARSOLS, res);
 
 	//経験値ゲージ
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Circle.png");
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "CircleGage.png");
 	resourcesMap_.emplace(SRC::CIRCLE_GAGE, res);
+
+	//経験値経験値ゲージ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "CircleExpGage.png");
+	resourcesMap_.emplace(SRC::CIRCLE_EXP_GAGE, res);
 
 	//ゲームUI用数字画像
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Numbers.png", NUMBERS_NUM_X,NUMBERS_NUM_Y, NUMBERS_SIZE, NUMBERS_SIZE);
