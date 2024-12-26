@@ -24,7 +24,14 @@ public:
 	//描画
 	virtual void Draw(void)override;
 
+	//セッター
 	void SetRole(int role);
+
+	void SetPos(VECTOR pos);
+
+	void SetRot(Quaternion quo) { for (auto& tran : trans_) { tran.quaRotLocal = quo; } };
+
+	VECTOR GetPos(void) { for (auto& tran : trans_) { return tran.pos; } };
 
 private:
 

@@ -92,7 +92,7 @@ void SelectScene::Init(void)
 
 	key_ = KEY_CONFIG::NONE;
 
-	//ChangeDevice(SceneManager::CNTL::KEYBOARD);
+	ChangeDevice(SceneManager::CNTL::NONE);
 
 }
 
@@ -113,25 +113,6 @@ void SelectScene::Update(void)
 	//}
 	//image_->Update();
 
-	//選択中の種類ごとの更新処理
-	//switch (select_)
-	//{
-	//case SELECT::NUMBER:  
-	//	NumberUpdate();
-	//	break;
-
-	//case SELECT::OPERATION:
-	//	OperationUpdate();
-	//	break;
-
-	//case SELECT::ROLE:
-	//	RoleUpdate();
-	//	break;
-
-	//default:
-	//	break;
-	//}
-
 	trans_.Update();
 	for (auto& i : tests_)
 	{
@@ -148,6 +129,10 @@ void SelectScene::Draw(void)
 
 	skyDome_->Draw();
 	stage_->Draw();
+	for (auto& p : players_)
+	{
+		p->Update();
+	}
 
 	//デバッグ描画
 	//DrawDebug();
@@ -226,10 +211,17 @@ void SelectScene::RoleUpdate(void)
 		images_[i]->Update();
 		images_[i]->ChangeObject(devices_[i], images_[i].get(), i);
 	}
+
+	for (int i = 1; i < SceneManager::PLAYER_NUM; i++)
+	{
+		players_[i]->SetPos(AsoUtility::RotXZPos(DEFAULT_CAMERA_POS, players_[i - 1]->GetPos(), AsoUtility::Deg2RadF(90.0f)));
+		players_[i]->SetRot(Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-90.0f * i), 0.0f));
+	}
 }
 
 void SelectScene::MaxUpdate(void)
 {
+	//何もしない
 }
 
 void SelectScene::NumberDraw(void)
@@ -247,44 +239,17 @@ void SelectScene::OperationDraw(void)
 
 void SelectScene::RoleDraw(void)
 {
-#ifdef DEBUG_RECT
-	if (role_ > static_cast<int>(SceneManager::ROLE::MAGE))
-	{
-		DrawFormatString(rc.pos.x, rc.pos.y,
-			0xFFFFFF, "ARCHER");
-	}
-	else if (role_ > static_cast<int>(SceneManager::ROLE::AXEMAN))
-	{
-		DrawFormatString(rc.pos.x, rc.pos.y,
-			0xFFFFFF, "MAGE");
-	}
-	else if (role_ > static_cast<int>(SceneManager::ROLE::KNIGHT))
-	{
-		DrawFormatString(rc.pos.x, rc.pos.y,
-			0xFFFFFF, "AXEMAN");
-	}
-	else
-	{
-		DrawFormatString(rc.pos.x, rc.pos.y,
-			0xFFFFFF, "KNIGHT");
-	}
-
-	DrawFormatString(Application::SCREEN_SIZE_X / 2 - 200, 0,
-		0x99FF99, "役職選択中");
-
-
-	for (auto& p : players_)
-	{
-		p->SetRole(role_);
-		p->Draw();
-	}
-#endif // DEBUG_RECT
 	//for (auto& i : images_)
 	//{
 	//	i->Draw();
 	//}
 
-	players_[0]->Draw();
+	for (auto& p : players_)
+	{
+		p->Draw();
+	}
+	//players_[0]->Draw();
+	//players_[1]->Draw();
 }
 
 void SelectScene::DrawDebug(void)
@@ -377,12 +342,12 @@ void SelectScene::KeyConfigSetting(void)
 		if (ins.IsNew(KEY_INPUT_RIGHT)	||	ins.IsNew(KEY_INPUT_D))	key_ = KEY_CONFIG::RIGHT;
 
 		//キーの押下判定(押した瞬間だけ)
-		if (ins.IsTrgDown(KEY_INPUT_UP) ||	ins.IsTrgDown(KEY_INPUT_W))key_ = KEY_CONFIG::UP_TRG;
+		if (ins.IsTrgDown(KEY_INPUT_UP)   ||ins.IsTrgDown(KEY_INPUT_W))key_ = KEY_CONFIG::UP_TRG;
 		if (ins.IsTrgDown(KEY_INPUT_DOWN) ||ins.IsTrgDown(KEY_INPUT_S))key_ = KEY_CONFIG::DOWN_TRG;
 		if (ins.IsTrgDown(KEY_INPUT_LEFT) ||ins.IsTrgDown(KEY_INPUT_A))key_ = KEY_CONFIG::LEFT_TRG;
 		if (ins.IsTrgDown(KEY_INPUT_RIGHT)||ins.IsTrgDown(KEY_INPUT_D))key_ = KEY_CONFIG::RIGHT_TRG;
 
-		if (ins.IsTrgDown(KEY_INPUT_SPACE))key_ = KEY_CONFIG::DECIDE;
+		if (ins.IsTrgDown(KEY_INPUT_SPACE)||ins.IsTrgDown(KEY_INPUT_RETURN))key_ = KEY_CONFIG::DECIDE;
 		break;
 
 	case SceneManager::CNTL::PAD:
@@ -421,8 +386,10 @@ SceneManager::CNTL SelectScene::GetDevice(void)
 	//返り値用のret等で運用すること
 	//1Pの操作選択後であったら使用デバイスを固定(とりあえず)
 	SceneManager::CNTL ret;
-	if (device_ == SceneManager::CNTL::KEYBOARD)	ret = SceneManager::CNTL::KEYBOARD;
-	else if(device_ == SceneManager::CNTL::PAD)	ret = SceneManager::CNTL::PAD;
+	//if (device_ == SceneManager::CNTL::KEYBOARD)	ret = SceneManager::CNTL::KEYBOARD;
+	//else if(device_ == SceneManager::CNTL::PAD)	ret = SceneManager::CNTL::PAD;
+
+	ret = device_; 
 	
 	return ret;
 

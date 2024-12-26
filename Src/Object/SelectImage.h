@@ -127,7 +127,7 @@ private:
 	bool isPad_;	
 
 	//Eí
-	int role_;
+	int role_[SceneManager::PLAYER_NUM];
 
 	//ƒL[‚ğ‰½•b‰Ÿ‚µ‚Ä‚¢‚é‚©
 	float keyPressTime_;
