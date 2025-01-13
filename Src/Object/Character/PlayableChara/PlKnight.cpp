@@ -70,8 +70,9 @@ void PlKnight::InitAct(void)
 
 void PlKnight::ChargeAct(void)
 {
+	auto& ins = InputManager::GetInstance();
 	chargeActUpdate_();
-	if (CheckAct(ACT_CNTL::CHARGE_SKILL_DOWN))
+	if (ins.IsTrgDown(KEY_INPUT_Q))
 	{
 		//ボタンの押しはじめの時に値初期化
 		ResetGuardCnt();
@@ -79,17 +80,16 @@ void PlKnight::ChargeAct(void)
 
 
 	//スキル(長押しでガード状態維持)
-	if (CheckAct(ACT_CNTL::CHARGE_SKILL_KEEP))
+	else if (ins.IsNew(KEY_INPUT_Q) && coolTime_[static_cast<int>(skillNo_)])
 	{
 		//スキルごとにアニメーションを決めて、カウント開始
-		ChangeAct(static_cast<ATK_ACT>(skillNo_));
+		//ChangeAct(static_cast<ATK_ACT>(skillNo_));
 
 		//押している反応
 		isPush_ = true;
 	}
-	else if (CheckAct(ACT_CNTL::CHARGE_SKILL_UP))
+	else if (ins.IsTrgUp(KEY_INPUT_Q))
 	{
-		InitAtk();
 		isPush_ = false;
 		actCntl_ = ACT_CNTL::NONE;
 	}
@@ -105,9 +105,11 @@ void PlKnight::ResetGuardCnt(void)
 	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > GUARD_STARTABLE_COOL&&!IsAtkStart())
 	{
 		isCool_[static_cast<int>(SKILL_NUM::TWO)] = false;
-		coolTime_[static_cast<int>(SKILL_NUM::TWO)] -= SKILL_TWO_START_COOLTIME;
+		ChangeAct(static_cast<ATK_ACT>(skillNo_));
 		ResetParam(atk_);
-		atkMax_[ATK_ACT::SKILL2].duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
+		coolTime_[static_cast<int>(SKILL_NUM::TWO)] -= SKILL_TWO_START_COOLTIME;
+		//atkMax_[ATK_ACT::SKILL2].duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
+		atk_.duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
 		CntUp(atkStartCnt_);
 	}
 }
@@ -133,7 +135,7 @@ void PlKnight::Skill2Func(void)
 	{
 		CntUp(atk_.cnt_);
 	}
-	if (IsAtkAction())
+	if (atk_.IsAttack())
 	{
 		if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > 0.0f)
 		{
@@ -149,6 +151,7 @@ void PlKnight::Skill2Func(void)
 	else if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] <= SKILL_TWO_START_COOLTIME)
 	{
 		isCool_[static_cast<int>(SKILL_NUM::TWO)] = true;
+		InitAtk();
 		return;
 	}
 }

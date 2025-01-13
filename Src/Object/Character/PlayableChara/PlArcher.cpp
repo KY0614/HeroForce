@@ -57,6 +57,7 @@ void PlArcher::InitAct(void)
 	coolTimeMax_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_COOLTIME;
 	coolTimeMax_[static_cast<int>(ATK_ACT::SKILL2)] = SKILL_TWO_COOLTIME;
 
+
 	//攻撃発生時間
 	atkStartTime_[static_cast<int>(ATK_ACT::ATK)] = ATK_START;
 	atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;
@@ -80,18 +81,17 @@ void PlArcher::InitAtk(void)
 	//攻撃カウント初期化
 	atk_.ResetCnt();
 
+	//消すかも
+	atk_.isHit_ = false;
+
 	//スキルが終わったらクールタイムのカウント開始
 	isCool_[static_cast<int>(act_)] = true;
 
 	//移動可能にする
 	moveAble_ = true;
 
-	//消すかも
-	atk_.isHit_ = false;
-
 	//攻撃の発生
 	atkStartCnt_ = 0.0f;
-
 
 	isShotArrow_ = false;
 
@@ -109,6 +109,8 @@ void PlArcher::CreateArrow(void)
 			arrow = std::make_shared<Arrow>();
 			arrow->Init(arrowMdlId_, trans_, ARROW_SPEED);
 
+			//arrowAtkの初期化
+			
 			//カウント増加
 			arrowCnt_++;
 
@@ -140,10 +142,11 @@ void PlArcher::Update(void)
 		if (atk_.IsFinishMotion())
 		{
 			arrow_[a].get()->Destroy();
+			InitAtk();
 		}
 			
 		//更新
-		arrow_[a].get()->Update(atk_);
+		arrow_[a].get()->Update(arrowAtk_[a]);
 	}
 }
 
@@ -160,9 +163,7 @@ void PlArcher::Draw(void)
 
 void PlArcher::AtkFunc(void)
 {
-	//明日からアーチャー作成する！！！
-
-
+	//明日からアーチャー作成する！
 	if (IsFinishAtkStart()&&!isShotArrow_)
 	{
 		CreateArrow();
@@ -181,4 +182,54 @@ void PlArcher::Skill1Func(void)
 
 void PlArcher::Skill2Func(void)
 {
+}
+
+void PlArcher::NmlActCommon(void)
+{
+	size_t arrowSize = arrow_.size();
+	for (int s = 0; s < arrowSize; s++)
+	{
+
+	}
+	if (CheckAct(ACT_CNTL::NMLSKILL)
+		&& IsSkillable() && !isCool_[static_cast<int>(skillNo_)])
+	{
+		//スキルごとにアニメーションを決めて、カウント開始
+		ChangeAct(static_cast<ATK_ACT>(skillNo_));
+		ResetParam(atk_);
+		CntUp(atkStartCnt_);
+	}
+
+	//近接攻撃用(atk_変数と遠距離で分ける)
+	if (IsAtkStart())
+	{
+		moveAble_ = false;
+		CntUp(atkStartCnt_);
+		if (IsFinishAtkStart())
+		{
+			CntUp(atk_.cnt_);
+		}
+	}
+	else if (IsFinishAtkStart())
+	{
+		if ((atk_.IsAttack() || atk_.IsBacklash()))
+		{
+			CntUp(atk_.cnt_);
+			//クールタイムの初期化
+			coolTime_[static_cast<int>(act_)] = 0.0f;
+		}
+		else //if(atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
+		{
+			InitAtk();
+		}
+	}
+}
+
+void PlArcher::InitArrowAtk(ATK& arrowAtk)
+{
+	//攻撃カウント初期化
+	arrowAtk.ResetCnt();
+
+	//消すかも
+	arrowAtk.isHit_ = false;
 }

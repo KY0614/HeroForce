@@ -7,8 +7,10 @@
 #include"../Manager/InputManager.h"
 #include "../UnitBase.h"
 
+//デバッグ
 #define DEBUG_ON
-//#define DEBUG_COOL
+//#define INPUT_DEBUG_ON
+#define DEBUG_COOL
 class PlayerBase :
     public UnitBase
 {
@@ -97,6 +99,10 @@ public:
     static constexpr int DODGE_KEY = KEY_INPUT_N;
     static constexpr InputManager::JOYPAD_BTN DODGE_BTN = InputManager::JOYPAD_BTN::LEFT;
 
+    
+
+
+
 
 
     PlayerBase(const SceneManager::PLAY_MODE _mode, const InputManager::JOYPAD_NO _padNum) :mode_(_mode), padNum_(_padNum) {}
@@ -141,7 +147,7 @@ public:
 
     //回避関連
    //---------------------------------------
-    const  bool IsDodge(void) { return 0.0f < dodgeCnt_ && dodgeCnt_ < FRAME_DODGE_MAX; }
+    const bool IsDodge(void)const { return 0.0f < dodgeCnt_ && dodgeCnt_ < FRAME_DODGE_MAX; }
 
     //-------------------------------------------------------------
     //ダメージ関数
@@ -380,7 +386,7 @@ protected:
     void ChangeNmlActPad(void);
 
     //短押し攻撃共通処理(攻撃カウントとか後隙とか)
-    void NmlActCommon(void);
+    virtual void NmlActCommon(void);
 
     //チャージ攻撃
     virtual void ChargeAct(void);
@@ -406,10 +412,10 @@ protected:
     void ChangeNmlAct(void);
 
     //攻撃発生中フラグ
-    bool IsAtkStart(void) { return 0.0f < atkStartCnt_ && atkStartCnt_ <= atkStartTime_[static_cast<int>(act_)]; }
+    const bool IsAtkStart(void)const { return 0.0f < atkStartCnt_ && atkStartCnt_ <= atkStartTime_[static_cast<int>(act_)]; }
 
     //攻撃発生したのを確認する
-    bool IsFinishAtkStart(void) { return atkStartCnt_ > atkStartTime_[static_cast<int>(act_)]; }
+    const bool IsFinishAtkStart(void)const { return atkStartCnt_ > atkStartTime_[static_cast<int>(act_)]; }
 
     //コントローラー変更
     void ChangeGamePad(void);
@@ -443,10 +449,10 @@ protected:
     //攻撃
     //-------------------------------------
     //攻撃中かどうか(UnitBaseで修正予定)
-    bool IsAtkAction(void) { return IsAtkStart() || atk_.IsAttack() || atk_.IsBacklash(); }
+    const bool IsAtkAction(void)const { return IsAtkStart() || atk_.IsAttack() || atk_.IsBacklash(); }
 
     //攻撃可能かどうか(true:可能)
-    bool IsAtkable(void) { return!IsAtkAction() && !IsDodge(); }
+    const bool IsAtkable(void)const { return!IsAtkAction() && !IsDodge(); }
 
 
     //回避関連
@@ -454,21 +460,14 @@ protected:
     //回避可能か
     //回避中かどうか
 
-    bool IsDodgeable(void) { return !IsDodge() && !IsAtkAction() && !IsCoolDodge(); }
+    const bool IsDodgeable(void)const { return !IsDodge() && !IsAtkAction() && !IsCoolDodge(); }
     //クールタイム中かどうか
-    bool IsCoolDodge(void) { return dodgeCdt_ < DODGE_CDT_MAX; }
+    const bool IsCoolDodge(void)const { return dodgeCdt_ < DODGE_CDT_MAX; }
     void Dodge(void);
 
     //ドッジカウント初期化
     void ResetDodgeFrame(void) { dodgeCnt_ = 0.0f; }
 
-    //スキル仮想関数
-    //-----------------------------------------
-    //スキル1の操作
-    virtual void SkillOneControll(void);
-
-    //スキル2の操作
-    virtual void SkillTwoControll(void);
 
     //スキル
     //virtual void Skill(void);
@@ -510,7 +509,46 @@ private:
     std::map<ACT_CNTL, std::function<void(void)>>changeActCntl_;        //アクションごとに返すボタンを変更
     std::function<bool(void)>actCntlUpdate_;  
 
-  
+#ifdef DEBUG_ON
+    //************************************************************************
+//キーボードとパッドの共通各アクションボタン設定(テスト用で使ったので一応残しておきます)
+//************************************************************************
+//コントローラーのボタン番号(あくまでテスト用なのでprivateに置いておきます)
+    static constexpr int RIGHT_BTN = PAD_INPUT_B;
+    static constexpr int TOP_BTN = PAD_INPUT_X;
+    static constexpr int R_BUTTON = PAD_INPUT_R;
+    static constexpr int LEFT_BTN = PAD_INPUT_Y;
+    //ボタン入力するための情報
+    struct InputMapInfo
+    {
+        SceneManager::CNTL type;     //コントローラータイプ
+
+        //ボタン番号
+        //std::variant<int, InputManager::JOYPAD_IN_STATE> buttonId_;
+        int buttonId_;
+    };
+
+
+    //パッドとキーボードの共通ボタンに名前を付ける
+    using InputActionMap_t = std::map<std::string, std::vector<InputMapInfo>>;
+    using InputType = SceneManager::CNTL;
+    std::map<std::string, bool>currentInput_;                           //今押されてるボタンを返す
+    std::map<std::string, bool>lastInput_;                              //前に押されたボタン
+    InputActionMap_t inputActionMap_;                                   //アクションボタンをまとめて扱うための変数
+
+    /// <summary>
+    /// 入力チェック
+    /// </summary>
+    /// <param name="action">調べたいアクションの名前</param>
+    /// <returns>true　押されてる　/　false　押されてない</returns>
+    bool IsPressed(const std::string& action)const;
+
+    //入力情報の更新
+    void InputUpdate(void);
+    //******************************************************************************************
+#endif // DEBUG_ON
+
+
 
     void ProcessAct(void);
 

@@ -46,6 +46,16 @@ void PlayerBase::Init(void)
 	changeChargeActCntl_.emplace(SceneManager::CNTL::KEYBOARD, std::bind(&PlayerBase::ChangeChargeActKeyBoard, this));
 	changeChargeActCntl_.emplace(SceneManager::CNTL::PAD, std::bind(&PlayerBase::ChangeChargeActPad, this));
 
+	//キーボードとパッドのボタンを共通させる(これらはInputManagerで定義したものから使えるようにしたい)
+	//------------------------------------------------------
+	inputActionMap_["ATTACK"] = { {InputType::KEYBOARD,ATK_KEY},{InputType::PAD,RIGHT_BTN} };
+	inputActionMap_["DODGE"] = { {InputType::KEYBOARD,DODGE_KEY},{InputType::PAD,LEFT_BTN} };
+	inputActionMap_["SKILL"] = { {InputType::KEYBOARD,SKILL_KEY},{InputType::PAD,TOP_BTN} };
+	inputActionMap_["SKILL_CHANGE"] = { {InputType::KEYBOARD,SKILL_CHANGE_KEY},{InputType::PAD,R_BUTTON} };
+
+
+
+
 	//攻撃の初期化(とりあえず通常攻撃で初期化しておく)
 	ChangeAct(ATK_ACT::ATK);
 
@@ -107,6 +117,11 @@ void PlayerBase::Update(void)
 	//アニメーションの更新
 	Anim();
 
+#ifdef INPUT_DEBUG_ON
+	InputUpdate();
+#endif // INPUT_DEBUG_ON
+
+
 	//モデルの更新
 	trans_.Update();
 
@@ -150,10 +165,10 @@ void PlayerBase::Update(void)
 	//スキルが終わったらクールタイムのカウント開始
 	CoolTimeCnt();
 
-	//それぞれの更新
+	//それぞれの更新(プレイヤーとCPU)
 	modeUpdate_();
 
-	//アクション判定
+	//各アクション(ATKやスキルの更新)
 	Action();
 
 	
@@ -203,6 +218,17 @@ void PlayerBase::Draw(void)
 	DrawDebug();
 
 #endif // DEBUG_ON
+#ifdef INPUT_DEBUG_ON
+	if (IsPressed("ATTACK"))
+	{
+		DrawString(0, 32, "ATTACK is pressed", 0x000000);
+	}
+	if (IsPressed("DODGE"))
+	{
+		DrawString(0, 32, "DODGE is pressed", 0x000000);
+	}
+#endif // INPUT_DEBUG_ON
+
 
 }
 
@@ -229,13 +255,30 @@ void PlayerBase::Move(float _deg, VECTOR _axis)
 void PlayerBase::UserUpdate(void)
 {
 	//停止状態の時のアニメーション
-	if (!IsMove() && !IsDodge() && !IsAtkAction())
+	//if (!IsMove() && !IsDodge())
+	//{
+	//	if (!IsAtkAction())
+	//	{
+	//		ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
+	//		moveSpeed_ = 0.0f;
+	//	}
+	//}
+
+
+	//それぞれの操作更新
+	cntlUpdate_();
+
+	atkTypeUpdate_();
+
+	
+
+	//停止アニメーションになる条件
+	if (!IsMove() && !IsDodge() && 0.0f >= atkStartCnt_ && !atk_.IsAttack() && !atk_.IsBacklash())
 	{
 		ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 		moveSpeed_ = 0.0f;
 	}
-	//それぞれの操作更新
-	cntlUpdate_();
+	
 
 	ProcessAct();
 
@@ -449,19 +492,19 @@ void PlayerBase::DrawDebug(void)
 {
 	const unsigned int ATK_COLOR = 0xff0000;
 	//球体
-	//DrawSphere3D(trans_.pos, 20.0f, 8, 0x0, 0xff0000, true);
+	DrawSphere3D(trans_.pos, 20.0f, 8, 0x0, 0xff0000, true);
 	//値見る用
-	//DrawFormatString(0, 32, 0xffffff
-	//	, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\nactCntl(%d)\natkStart(%f)"
-	//	, atk_.cnt_, atk_.IsAttack(), atk_.IsBacklash()
-	//	, dodgeCnt_, atk_.cnt_,actCntl_,atkStartCnt_);
 	DrawFormatString(0, 32, 0xffffff
-		, "AtkCooltime(%.2f)\nSkill1Cool(%.2f)\nSkill2Cool(%.2f)\natkDulation(%f)\nactCntl(%d)"
-		, coolTime_[static_cast<int>(ATK_ACT::ATK)]
-		, coolTime_[static_cast<int>(ATK_ACT::SKILL1)]
-		, coolTime_[static_cast<int>(ATK_ACT::SKILL2)]
-		, atk_.duration_
-	,actCntl_);
+		, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\nactCntl(%d)\natkStartTime(%f)\natkStartCnt(%f)"
+		, atk_.cnt_, atk_.IsAttack(), atk_.IsBacklash()
+		, dodgeCnt_, atk_.cnt_,actCntl_,atkStartTime_[static_cast<int>(SKILL_NUM::ONE)],atkStartCnt_);
+	//DrawFormatString(0, 32, 0xffffff
+	//	, "AtkCooltime(%.2f)\nSkill1Cool(%.2f)\nSkill2Cool(%.2f)\natkDulation(%f)\natkCnt(%f)"
+	//	, coolTime_[static_cast<int>(ATK_ACT::ATK)]
+	//	, coolTime_[static_cast<int>(ATK_ACT::SKILL1)]
+	//	, coolTime_[static_cast<int>(ATK_ACT::SKILL2)]
+	//	, atk_.duration_
+	//,atk_.cnt_);
 
 	//DrawFormatString(0, 32, 0xffffff, "atkPos(%f,%f,%f)", atk_.pos_.x, atk_.pos_.y, atk_.pos_.z);
 	DrawSphere3D(colPos_, CHARACTER_SCALE * 100, 8, color_Col_, color_Col_, false);
@@ -535,8 +578,6 @@ void PlayerBase::Action(void)
 void PlayerBase::NmlAct(void)
 {
 	nmlActUpdate_();
-	//共通
-	NmlActCommon();
 }
 
 void PlayerBase::NmlActKeyBoard(void)
@@ -687,7 +728,7 @@ void PlayerBase::ChangeChargeAct(void)
 
 void PlayerBase::ChangeNmlAct(void)
 {
-	atkTypeUpdate_ = std::bind(&PlayerBase::NmlAct, this);
+	atkTypeUpdate_ = std::bind(&PlayerBase::NmlActCommon, this);
 }
 
 void PlayerBase::InitAtk(void)
@@ -827,17 +868,6 @@ void PlayerBase::Dodge(void)
 #endif // DEBUG_ON
 	}
 }
-
-void PlayerBase::SkillOneControll(void)
-{
-
-}
-
-void PlayerBase::SkillTwoControll(void)
-{
-
-}
-
 void PlayerBase::Damage(void)
 {
 	//とりあえず1ダメージ減らす
@@ -926,8 +956,6 @@ void PlayerBase::ProcessAct(void)
 		}
 
 	}
-
-	atkTypeUpdate_();
 
 	//回避
 	if (CheckAct(ACT_CNTL::DODGE) && IsSkillable())
@@ -1048,5 +1076,44 @@ void PlayerBase::CpuBreakUpdate(void)
 	}
 	CntUp(breakCnt_);
 }
+#ifdef INPUT_DEBUG_ON
+void PlayerBase::InputUpdate(void)
+{
+	auto& ins = InputManager::GetInstance();
+	char keyState[256] = {};
+	int padState = {};
+	GetHitKeyStateAll(keyState);
+	padState = GetJoypadInputState(static_cast<int>(padNum_));
 
+	//それぞれのアクション名に割り当たっているすべての入力をチェック
+	for (const auto& mapInfo : inputActionMap_)
+	{
+		bool isPressed = false;
+		for (const auto& inputInfo : mapInfo.second)
+		{
+			isPressed = (inputInfo.type == InputType::KEYBOARD && keyState[inputInfo.buttonId_]) ||
+				(inputInfo.type == InputType::PAD && padState & inputInfo.buttonId_);
+			if (isPressed)
+			{
+				break;
+			}
+		}
+		//押されたら押されたアクションボタンがtrueになる？
+		currentInput_[mapInfo.first] = isPressed;
+	}
+}
+
+bool PlayerBase::IsPressed(const std::string& action)const
+{
+	auto it = currentInput_.find(action);
+	if (it == currentInput_.end())//未定義のボタン名が来たら無条件でfalseを返す
+	{
+		return false;
+	}
+	else
+	{
+		return it->second;
+	}
+}
+#endif // INPUT_DEBUG_ON
 

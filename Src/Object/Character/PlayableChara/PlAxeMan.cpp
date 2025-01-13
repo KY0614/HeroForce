@@ -17,6 +17,9 @@ void PlAxe::SetParam(void)
 {
 	InitAct();
 
+	//攻撃の初期化
+	InitAtk();
+
 	trans_.SetModel(
 		ResourceManager::GetInstance()
 		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_AXEMAN));
@@ -79,31 +82,42 @@ void PlAxe::InitCharaAnim(void)
 void PlAxe::ChargeAct(void)
 {
 	chargeActUpdate_();
-	if (CheckAct(ACT_CNTL::CHARGE_SKILL_DOWN)&&!isCool_[static_cast<int>(ATK_ACT::SKILL1)])
+	auto& ins = InputManager::GetInstance();
+	int skillOne = static_cast<int>(SKILL_NUM::ONE);
+	chargeActUpdate_();
+	if (!isCool_[static_cast<int>(ATK_ACT::SKILL1)])
 	{
-		if (!IsAtkAction())
+		//クール中にボタン長押しした状態で、クールが終わってから
+		//攻撃発生カウントするのを防ぐため
+		if (ins.IsTrgDown(SKILL_KEY))
 		{
-			ResetParam(atk_);
-			moveAble_ = false;
-			CntUp(atkStartCnt_);
+			if (!IsAtkAction())
+			{
+				//スキルごとにアニメーションを決めて、カウント開始
+				ChangeAct(static_cast<ATK_ACT>(skillNo_));
+				ResetParam(atk_);
+				CntUp(atkStartCnt_);
+				moveAble_ = false;
+			}
 		}
-		
-	}
 
-	//スキル(長押しでガード状態維持)
-	else if (CheckAct(ACT_CNTL::CHARGE_SKILL_KEEP) && !isCool_[static_cast<int>(ATK_ACT::SKILL1)])
-	{
-		//スキルごとにアニメーションを決めて、カウント開始
-		ChangeAct(static_cast<ATK_ACT>(skillNo_));
-
-		//押している反応
-		isPush_ = true;
-	}
-	else if (CheckAct(ACT_CNTL::CHARGE_SKILL_UP))
-	{
-		//InitAtk();
-		isPush_ = false;
-		actCntl_ = ACT_CNTL::NONE;
+		//スキル(長押しでガード状態維持)
+		else if (ins.IsNew(SKILL_KEY)&&IsAtkStart())
+		{
+			//押している反応
+			//CntUp(atkStartCnt_);
+		}
+		else if (ins.IsTrgUp(SKILL_KEY) && IsAtkStart())
+		{
+			if (atkStartCnt_ <= SKILL_ONE_START_NOCHARGE)
+			{
+				atkStartTime_[skillOne] = SKILL_ONE_START_NOCHARGE;
+			}
+			else
+			{
+				atkStartTime_[skillOne] = atkStartCnt_;
+			}
+		}
 	}
 }
 
@@ -117,8 +131,11 @@ void PlAxe::Skill1Func(void)
 	//力溜めて打ち込むやつ
 	//moveAble_ = false;
 	//クールタイムの初期化
-	//coolTime_[static_cast<int>(act_)] = 0.0f;
-	if (IsAtkStart())
+	if (isCool_[static_cast<int>(skillNo_)])
+	{
+		return;
+	}
+	if (0.0f < atkStartCnt_ && atkStartCnt_ < atkStartTime_[static_cast<int>(act_)])
 	{
 		CntUp(atkStartCnt_);
 		if (stepAnim_ >= SKILL_CHARGE_STEPANIM)
@@ -126,12 +143,16 @@ void PlAxe::Skill1Func(void)
 			stepAnim_ = SKILL_CHARGE_STEPANIM;
 		}
 	}
-	if (IsFinishAtkStart())
+	else if (atkStartCnt_ >= atkStartTime_[static_cast<int>(skillNo_)])
 	{
 		CntUp(atk_.cnt_);
 		if (atk_.IsFinishMotion())
 		{
 			coolTime_[static_cast<int>(ATK_ACT::SKILL1)] = 0.0f;
+
+			//スキル終わったら攻撃発生時間の最大時間をセットする
+			atkStartTime_[static_cast<int>(SKILL_NUM::ONE)] = SKILL_ONE_START;
+
 			InitAtk();
 		}
 	}
@@ -163,6 +184,4 @@ void PlAxe::Skill2Func(void)
 			multiHitInterval_ = 0.0f;
 		}
 	}
-	
-
 }

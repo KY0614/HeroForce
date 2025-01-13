@@ -14,15 +14,18 @@ public:
 #else // DEBUG_COOL
     //クールタイム
     static constexpr float ATK_COOLTIME = 2.0f;
-    static constexpr float SKILL_ONE_COOLTIME = 6.0f;
+    static constexpr float SKILL_ONE_COOLTIME = 10.0f;
     static constexpr float SKILL_TWO_COOLTIME = 5.0f;
 #endif // DEBUG_COOL
 
 
     //攻撃発生の時間
     static constexpr float ATK_START = 0.2f;
-    static constexpr float SKILL_ONE_START = 1.0f;
+    static constexpr float SKILL_ONE_START = 10.0f;
     static constexpr float SKILL_TWO_START = 0.2f;
+
+    //スキル１の長押ししていなかった時の攻撃発生
+    static constexpr float SKILL_ONE_START_NOCHARGE = 3.5f;
 
     //各攻撃の持続時間
     static constexpr float FRAME_ATK_DURATION = 0.5f - ATK_START;

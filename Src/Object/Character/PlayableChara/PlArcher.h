@@ -91,6 +91,12 @@ protected:
     void Skill1Func(void)override;
     void Skill2Func(void)override;
 
+    //‹|˜AË—p
+    void NmlActCommon (void)override;
+
+    //‹|–îˆê‚Â‚Ìatk‰Šú‰»
+    void InitArrowAtk(ATK& arrowAtk);
+
     std::vector<ATK>arrowAtk_;
     int arrowMdlId_;							//–î‚Ìƒ‚ƒfƒ‹
     std::vector<std::shared_ptr<Arrow>> arrow_;	//‹|–î
