@@ -1,6 +1,7 @@
 #include "../Manager/Generic/SceneManager.h"
 #include "../Manager/Generic/Camera.h"
 #include "../Manager/GameSystem/Collision.h"
+#include"../Manager/GameSystem/Timer.h"
 #include "../Object/Character/PlayerBase.h"
 #include "../Object/Character/PlayableChara/PlAxeMan.h"
 #include "../Object/Character/PlayableChara/PlArcher.h"
@@ -39,6 +40,9 @@ GameScene::~GameScene(void)
 
 void GameScene::Init(void)
 {
+	//タイマーの生成
+	Timer::CreateInstance();
+
 	unitLoad_ = std::make_unique<UnitPositionLoad>();
 	unitLoad_->Init();
 
@@ -106,6 +110,7 @@ void GameScene::Update(void)
 		{
 			//フェーズリザルトが終了したので明転
 			fader_->SetFade(Fader::STATE::FADE_IN);
+			Timer::GetInstance().Reset();
 			fazeResult_->Reset();
 			isFazeRezult_ = false;
 		}
@@ -121,7 +126,10 @@ void GameScene::Update(void)
 		return;
 	}
 
-	//grid_->Update();
+	Timer::GetInstance().Update();
+	//タイマーが終了したら
+	if (Timer::GetInstance().IsEnd())ChangePhase();
+
 	level_->Update();
 
 	//プレイヤー①だけを動かしています
@@ -189,6 +197,8 @@ void GameScene::Draw(void)
 	stage_->Draw();
 	chicken_->Draw();
 	level_->Draw();
+
+	Timer::GetInstance().Draw();
 
 	fader_->Draw();
 
