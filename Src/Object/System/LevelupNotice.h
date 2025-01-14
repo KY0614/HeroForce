@@ -3,7 +3,7 @@
 #include <memory>
 #include <functional>
 #include "../../Common/Fader.h"
-#include "../../Manager/EffectManager.h"
+#include "../../Manager/Decoration/EffectManager.h"
 #include "LevelScreenManager.h"
 
 class LevelScreenManager;

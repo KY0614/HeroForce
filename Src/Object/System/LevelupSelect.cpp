@@ -2,9 +2,9 @@
 #include <locale>
 #include <codecvt>
 #include "../Application.h"
-#include "../../Manager/ResourceManager.h"
-#include "../../Manager/TextManager.h"
-#include "../../Manager/DataBank.h"
+#include "../../Manager/Generic/ResourceManager.h"
+#include "../../Manager/GameSystem/TextManager.h"
+#include "../../Manager/GameSystem/DataBank.h"
 #include "LevelupSelect.h"
 #include "Carsor.h"
 

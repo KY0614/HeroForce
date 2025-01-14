@@ -1,6 +1,6 @@
 #pragma once
 #include "../Application.h"
-#include "../Manager/InputManager.h"
+#include "../Manager/Generic/InputManager.h"
 #include "../Common/Vector2.h"
 
 class Carsor

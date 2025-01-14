@@ -1,9 +1,9 @@
 #include <DxLib.h>
 #include "../../Application.h"
-#include "../../Manager/InputManager.h"
-#include "../../Manager/ResourceManager.h"
-#include "../../Manager/EffectManager.h"
-#include "../../Manager/DataBank.h"
+#include "../../Manager/Generic/InputManager.h"
+#include "../../Manager/Generic/ResourceManager.h"
+#include "../../Manager/Decoration/EffectManager.h"
+#include "../../Manager/GameSystem/DataBank.h"
 #include "../../Common/Vector2.h"
 #include "../Common/Fader.h"
 #include "LevelupNotice.h"
@@ -288,7 +288,7 @@ void LevelScreenManager::Reflection(PlayerBase& player, const int playerNum)
 			EffectManager::EFFECT::ATTACK_UP,
 			player.GetPos(),
 			Quaternion(),
-			EFFECT_SCALE);
+			EFFECT_SCALE,SoundManager::SOUND::NONE);
 		break;
 
 	case TYPE::DEFENSE:
@@ -297,7 +297,7 @@ void LevelScreenManager::Reflection(PlayerBase& player, const int playerNum)
 			EffectManager::EFFECT::DEFENCE_UP,
 			player.GetPos(),
 			Quaternion(),
-			EFFECT_SCALE);
+			EFFECT_SCALE, SoundManager::SOUND::NONE);
 		break;
 
 	case TYPE::LIFE:
@@ -306,7 +306,7 @@ void LevelScreenManager::Reflection(PlayerBase& player, const int playerNum)
 			EffectManager::EFFECT::LIFE_UP,
 			player.GetPos(),
 			Quaternion(),
-			EFFECT_SCALE);
+			EFFECT_SCALE, SoundManager::SOUND::NONE);
 
 		break;
 
@@ -316,7 +316,7 @@ void LevelScreenManager::Reflection(PlayerBase& player, const int playerNum)
 			EffectManager::EFFECT::SPEED_UP,
 			player.GetPos(),
 			Quaternion(),
-			EFFECT_SCALE);
+			EFFECT_SCALE, SoundManager::SOUND::NONE);
 		break;
 
 	default:

@@ -4,9 +4,9 @@
 #include <map>
 #include "../../Common/Transform.h"
 #include "../../../Utility/AsoUtility.h"
-#include "../../../Manager/ResourceManager.h"
-#include "../../../Manager/SceneManager.h"
-#include "../../../Manager/InputManager.h"
+#include "../../../Manager/Generic/ResourceManager.h"
+#include "../../../Manager/Generic/SceneManager.h"
+#include "../../../Manager/Generic/InputManager.h"
 #include "../../System/GameUi/CpuHpBar.h"
 #include "../../UnitBase.h"
 

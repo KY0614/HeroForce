@@ -1,5 +1,5 @@
 #include "CpuHpBar.h"
-#include "../../../Manager/ResourceManager.h"
+#include "../../../Manager/Generic/ResourceManager.h"
 #include "../../Character/Chiken/ChickenBase.h"
 
 CpuHpBar::CpuHpBar()

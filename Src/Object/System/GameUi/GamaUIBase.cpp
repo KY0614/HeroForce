@@ -1,5 +1,5 @@
 #include "../../../Utility/AsoUtility.h"
-#include "../../../Manager/ResourceManager.h"
+#include "../../../Manager/Generic/ResourceManager.h"
 #include "GamaUIBase.h"
 
 GamaUIBase::GamaUIBase()
