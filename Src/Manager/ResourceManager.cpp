@@ -63,21 +63,36 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "LevelUpEffect.png", LV_EFE_NUM_X, LV_EFE_NUM_Y, LV_EFE_SIZE, LV_EFE_SIZE);
 	resourcesMap_.emplace(SRC::LEVEL_SCREEN_EFE, res);
 
-	//強化体力上昇
+	//強化系エフェクト
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "LifeUp.efkefc");
 	resourcesMap_.emplace(SRC::LIFE_UP_EFE, res);
-
-	//強化攻撃上昇
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "AttackUp.efkefc");
 	resourcesMap_.emplace(SRC::ATTACK_UP_EFE, res);
-
-	//強化防御上昇
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "DefenceUp.efkefc");
 	resourcesMap_.emplace(SRC::DEFENCE_UP_EFE, res);
-
-	//強化スピード上昇
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "SpeedUp.efkefc");
 	resourcesMap_.emplace(SRC::SPEED_UP_EFE, res);
+
+	//強化UI
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "AttackUp.png");
+	resourcesMap_.emplace(SRC::ATTACK_UP_UI, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "DefenseUp.png");
+	resourcesMap_.emplace(SRC::DEFENCE_UP_UI, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "SpeedUp.png");
+	resourcesMap_.emplace(SRC::SPEED_UP_UI, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "LifeUp.png");
+	resourcesMap_.emplace(SRC::LIFE_UP_UI, res);
+
+	//HP関係UI
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "HpGage.png");
+	resourcesMap_.emplace(SRC::HP_GAGE, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "HpBarPlayer.png");
+	resourcesMap_.emplace(SRC::HP_PLAYER, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "HpBarEnemy.jpg");
+	resourcesMap_.emplace(SRC::HP_ENEMY, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "HpBarCpu.jpg");
+	resourcesMap_.emplace(SRC::HP_CPU, res);
+
 
 	ResourcePlayer();
 	ResourceEnemy();

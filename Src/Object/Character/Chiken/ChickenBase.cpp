@@ -43,6 +43,9 @@ void ChickenBase::Create(VECTOR &pos)
 
 	//パラメーター設定
 	SetParam();
+
+	hpUi_ = std::make_unique<CpuHpBar>();
+	hpUi_->Init();
 }
 
 void ChickenBase::Update(void)
@@ -59,6 +62,9 @@ void ChickenBase::Update(void)
 	//画像表示確認
 	CheckIsHelp();
 
+	//UI設定
+	SetUiParam();
+
 	//トランスフォーム更新
 	trans_.Update();
 }
@@ -68,13 +74,13 @@ void ChickenBase::Draw(void)
 	stateDraw_();
 
 	//デバッグ描画
-	DebagDraw();
+	//DebagDraw();
+
+	//HPUI表示
+	hpUi_->Draw();
 
 	//ビルボード描画
 	DrawHelp();
-
-	DrawFormatString(100, 100, 0x00ff00, "cnt = %d", isHelpCnt_);
-
 }
 
 void ChickenBase::SetIsHelp()
@@ -110,7 +116,10 @@ void ChickenBase::LoadImages()
 
 void ChickenBase::SetParam()
 {
-	//移動スピード
+	//ステータス設定
+	hp_ = DEFAULT_LIFE;
+	def_ = DEFAULT_DEF;
+	atkPow_ = DEFAULT_ATK;
 	moveSpeed_ = DEFAULT_SPEED;
 
 	//衝突判定用半径
@@ -140,6 +149,16 @@ void ChickenBase::InitAnimNum(void)
 	animNum_.emplace(ANIM::DAMAGE, ANIM_DAMAGE);
 	animNum_.emplace(ANIM::DEATH, ANIM_DEATH);
 	animNum_.emplace(ANIM::UNIQUE_1, ANIM_CALL);
+}
+
+void ChickenBase::SetUiParam()
+{
+	//座標設定
+	VECTOR pos = VAdd(trans_.pos, LOCAL_HP_POS);
+	hpUi_->SetPos(pos);
+
+	//HP設定
+	hpUi_->SetHP(hp_);
 }
 
 void ChickenBase::SetTarget(const VECTOR pos)

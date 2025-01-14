@@ -7,7 +7,10 @@
 #include "../../../Manager/ResourceManager.h"
 #include "../../../Manager/SceneManager.h"
 #include "../../../Manager/InputManager.h"
+#include "../../System/GameUi/CpuHpBar.h"
 #include "../../UnitBase.h"
+
+class CpuHpBar;
 
 class ChickenBase : public UnitBase
 {
@@ -69,6 +72,9 @@ public:
 	//HELP相対位置
 	static constexpr VECTOR LOCAL_HELP_POS = { 0,150,0 };
 
+	//HP描画
+	static constexpr VECTOR LOCAL_HP_POS = { 0, 120, 0 };
+
 	ChickenBase();
 	~ChickenBase();
 
@@ -123,6 +129,9 @@ private:
 	// 生存時状態管理
 	std::function<void(void)> stateAliveUpdate_;
 
+	//UIインスタンス生成
+	std::unique_ptr<CpuHpBar> hpUi_;
+
 	//モデル設定
 	void ModelSet();
 
@@ -134,6 +143,9 @@ private:
 
 	//アニメーション番号の初期化
 	virtual void InitAnimNum(void);
+
+	//UI設定
+	void SetUiParam();
 
 	//状態変更
 	void ChangeState(STATE state);

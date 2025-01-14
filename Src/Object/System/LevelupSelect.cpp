@@ -21,6 +21,11 @@ LevelupSelect::LevelupSelect()
 	int value = -1;
 	imgCarsors_ = &value;
 
+	//画像
+	for (int i = 0; i < LevelScreenManager::TYPE_MAX; i++) {
+		imgSelects_[i] = -1;
+	}
+
 	// 状態管理
 	stateChanges_.emplace(STATE::NONE, std::bind(&LevelupSelect::ChangeStateNone, this));
 	stateChanges_.emplace(STATE::EXPANSION, std::bind(&LevelupSelect::ChangeStateExpansion, this));
@@ -82,12 +87,14 @@ void LevelupSelect::Draw()
 
 	for (auto ele : ele_)
 	{
+		int type = static_cast<int>(ele.type_);
+
 		//画像描画
 		DrawRotaGraph(
 			ele.pos_.x, ele.pos_.y,
 			ele.scl_,
 			0.0f,
-			img_,
+			imgSelects_[type],
 			true,
 			false);
 
@@ -96,7 +103,6 @@ void LevelupSelect::Draw()
 			if (ele.isText_) {
 
 				//テキスト描画
-				int type = static_cast<int>(ele.type_);
 				int pow = 30;
 				color = 0xff0000;
 				length = expTexts_[type].length();
@@ -147,6 +153,13 @@ void LevelupSelect::Reset()
 	//初期状態の設定
 	ChangeState(LevelupSelect::STATE::NONE);
 
+	//強化要素の種類
+	ele_[static_cast<int>(LevelScreenManager::TYPE::ATTACK)].type_ = LevelScreenManager::TYPE::ATTACK;
+	ele_[static_cast<int>(LevelScreenManager::TYPE::DEFENSE)].type_ = LevelScreenManager::TYPE::DEFENSE;
+	ele_[static_cast<int>(LevelScreenManager::TYPE::LIFE)].type_ = LevelScreenManager::TYPE::LIFE;
+	ele_[static_cast<int>(LevelScreenManager::TYPE::SPEED)].type_ = LevelScreenManager::TYPE::SPEED;
+
+
 	//強化要素関係の初期化
 	for (int i = 0; i < ele_.size(); i++)
 	{
@@ -154,7 +167,7 @@ void LevelupSelect::Reset()
 		ele_[i].scl_ = 0.00f;
 
 		//強化要素の種類
-		ele_[i].type_ = GetRandType();
+		//ele_[i].type_ = GetRandType();
 
 		//サイズ
 		ele_[i].size_ = { static_cast<int>(ELE_IMG_SIZE_X * SCALE_MAX),
@@ -180,7 +193,12 @@ void LevelupSelect::Reset()
 void LevelupSelect::Load()
 {
 	//画像
-	img_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::SELECT_UI).handleId_;
+	auto& res = ResourceManager::GetInstance();
+	img_ = res.Load(ResourceManager::SRC::SELECT_UI).handleId_;
+	imgSelects_[static_cast<int>(LevelScreenManager::TYPE::ATTACK)] = res.Load(ResourceManager::SRC::ATTACK_UP_UI).handleId_;
+	imgSelects_[static_cast<int>(LevelScreenManager::TYPE::DEFENSE)] = res.Load(ResourceManager::SRC::DEFENCE_UP_UI).handleId_;
+	imgSelects_[static_cast<int>(LevelScreenManager::TYPE::LIFE)] = res.Load(ResourceManager::SRC::LIFE_UP_UI).handleId_;
+	imgSelects_[static_cast<int>(LevelScreenManager::TYPE::SPEED)] = res.Load(ResourceManager::SRC::SPEED_UP_UI).handleId_;
 	imgCarsors_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CARSOLS).handleIds_;
 	
 	//テキスト関係

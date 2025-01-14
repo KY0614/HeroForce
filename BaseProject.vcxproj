@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\System\GameUi\CpuHpBar.cpp" />
+    <ClCompile Include="Src\Object\System\GameUi\GamaUIBase.cpp" />
     <ClCompile Include="Src\Manager\SoundManager.cpp" />
     <ClCompile Include="Src\Manager\EffectManager.cpp" />
     <ClCompile Include="Src\Manager\InputController.cpp" />
@@ -69,6 +71,8 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\System\GameUi\CpuHpBar.h" />
+    <ClInclude Include="Src\Object\System\GameUi\GamaUIBase.h" />
     <ClInclude Include="Src\Manager\SoundManager.h" />
     <ClInclude Include="Src\Manager\EffectManager.h" />
     <ClInclude Include="Src\Manager\InputController.h" />

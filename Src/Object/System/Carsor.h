@@ -15,7 +15,7 @@ public:
 	static constexpr int NUM_MAX = 4;
 
 	//ˆÚ“®—Ê
-	static constexpr int MOVE_POW = 5;
+	static constexpr int MOVE_POW = 14;
 
 	//”¼Œa
 	static constexpr int RADIUS = 32;
@@ -38,6 +38,7 @@ public:
 		int stickY_;
 		int decide_;
 	};
+
 	// ‰Šú‰»ˆ—
 	Carsor();
 	~Carsor();

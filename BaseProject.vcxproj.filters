@@ -61,6 +61,8 @@
     <ClCompile Include="Src\Object\Character\EnemySort\EneMage.cpp" />
     <ClCompile Include="Src\Manager\EffectManager.cpp" />
     <ClCompile Include="Src\Manager\SoundManager.cpp" />
+    <ClCompile Include="Src\Object\System\GameUi\GamaUIBase.cpp" />
+    <ClCompile Include="Src\Object\System\GameUi\CpuHpBar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Manager\InputController.h" />
@@ -181,6 +183,8 @@
     <ClInclude Include="Src\Object\Character\EnemySort\EneMage.h" />
     <ClInclude Include="Src\Manager\EffectManager.h" />
     <ClInclude Include="Src\Manager\SoundManager.h" />
+    <ClInclude Include="Src\Object\System\GameUi\GamaUIBase.h" />
+    <ClInclude Include="Src\Object\System\GameUi\CpuHpBar.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">

@@ -32,7 +32,7 @@ public:
 	static constexpr float SCALE_RATE = 0.01f;
 
 	//拡大最大
-	static constexpr float SCALE_MAX = Application::SCREEN_SIZE_X * 1.2f / Application::DEFA_SCREEN_SIZE_X;
+	static constexpr float SCALE_MAX = Application::SCREEN_SIZE_X * 1.5f / Application::DEFA_SCREEN_SIZE_X;
 
 	//フォント関連
 	static constexpr int FONT_MES_SIZE = Application::SCREEN_SIZE_X * 72 / Application::DEFA_SCREEN_SIZE_X;
@@ -88,6 +88,7 @@ private:
 
 	//画像
 	int img_;
+	int imgSelects_[LevelScreenManager::TYPE_MAX];
 	int *imgCarsors_;
 
 	//強化要素数

@@ -14,6 +14,7 @@ LevelScreenManager::LevelScreenManager(void)
 	notice_ = nullptr;
 	select_ = nullptr;
 	exp_ = -1.0f;
+	restExp_ = -1.0f;
 	nowLevel_ = -1;
 	gauge_ = -1.0f;
 	alpha_ = -1.0f;
@@ -34,6 +35,7 @@ void LevelScreenManager::Init(void)
 {
 	//レベルの初期設定
 	nowLevel_ = 1;
+	restExp_ = 0;
 
 	//インスタンス設定
 	Load();
@@ -262,7 +264,7 @@ void LevelScreenManager::Reset()
 
 void LevelScreenManager::AddExp(const float value)
 {
-	exp_ += value;
+	restExp_ += value;
 }
 
 void LevelScreenManager::SetGage(const int level)
@@ -327,6 +329,13 @@ void LevelScreenManager::Reflection(PlayerBase& player, const int playerNum)
 
 void LevelScreenManager::CheckExp()
 {
+	//経験値を1ずつ増やす
+	if (restExp_ > 0)
+	{
+		restExp_--;
+		exp_++;
+	}
+
 	//経験値が次のレベル条件まで達したら
 	if (exp_ >= gauge_)
 	{
@@ -364,9 +373,9 @@ void LevelScreenManager::DebagUpdate()
 {
 	// シーン遷移
 	InputManager& ins = InputManager::GetInstance();
-	if (ins.IsNew(KEY_INPUT_B))
+	if (ins.IsTrgDown(KEY_INPUT_B))
 	{
-		AddExp(1);
+		AddExp(30);
 	}
 }
 

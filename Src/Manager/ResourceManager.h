@@ -71,6 +71,10 @@ public:
 		STAGE_WOOD,
 
 		//UI
+		HP_PLAYER,
+		HP_ENEMY,
+		HP_CPU,
+		HP_GAGE,
 		CIRCLE_GAGE,
 		CIRCLE_EXP_GAGE,
 		NUMBERS,
@@ -81,7 +85,11 @@ public:
 		CARSOLS,
 		LEVEL_SCREEN_EFE,
 
-		//ã≠âª(ëÃóÕè„è∏)
+		//ã≠âª
+		ATTACK_UP_UI,
+		DEFENCE_UP_UI,
+		SPEED_UP_UI,
+		LIFE_UP_UI,
 		ATTACK_UP_EFE,
 		DEFENCE_UP_EFE,
 		SPEED_UP_EFE,

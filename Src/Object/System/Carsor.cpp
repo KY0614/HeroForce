@@ -60,10 +60,38 @@ void Carsor::Update()
 	int stickY = ins.GetJPadInputState(pad_).AKeyLY;
 
 	//‘€ìˆ—
-	if (ins.IsNew(key_.right_) || stickX > 0) { pos_.x += MOVE_POW; }
-	if (ins.IsNew(key_.left_) || stickX < 0)	{ pos_.x -= MOVE_POW; }
-	if (ins.IsNew(key_.up_) || stickY < 0)	{ pos_.y -= MOVE_POW; }
-	if (ins.IsNew(key_.down_) || stickY > 0)	{ pos_.y += MOVE_POW; }
+	if (ins.IsNew(key_.right_) || stickX > 0) 
+	{ 
+		pos_.x += MOVE_POW; 
+		if (pos_.x > Application::SCREEN_SIZE_X)
+		{
+			pos_.x = Application::SCREEN_SIZE_X;
+		}
+	}
+	if (ins.IsNew(key_.left_) || stickX < 0)	
+	{
+		pos_.x -= MOVE_POW; 
+		if (pos_.x < 0)
+		{
+			pos_.x = 0;
+		}
+	}
+	if (ins.IsNew(key_.up_) || stickY < 0)	
+	{ 
+		pos_.y -= MOVE_POW; 
+		if (pos_.y < 0)
+		{
+			pos_.y = 0;
+		}
+	}
+	if (ins.IsNew(key_.down_) || stickY > 0)	
+	{ 
+		pos_.y += MOVE_POW;
+		if (pos_.y > Application::SCREEN_SIZE_Y)
+		{
+			pos_.y = Application::SCREEN_SIZE_Y;
+		}
+	}
 
 	//Œˆ’è
 	if (ins.IsTrgDown(key_.decide_) ||

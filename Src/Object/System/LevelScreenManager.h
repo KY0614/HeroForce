@@ -117,6 +117,7 @@ private:
 
 	//経験値
 	float exp_;
+	float restExp_;
 
 	//ゲージ(次のレベルまでの経験値量)
 	float gauge_;
