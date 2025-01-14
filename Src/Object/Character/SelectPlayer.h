@@ -25,7 +25,7 @@ public:
 	virtual void Draw(void)override;
 
 	//セッター
-	void SetRole(int role);
+	void SetRole(int role){ role_ = role; };
 
 	void SetPos(VECTOR pos);
 
@@ -40,4 +40,3 @@ private:
 
 	void Init3DModel(void);
 };
-

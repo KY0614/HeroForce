@@ -88,12 +88,9 @@ void SelectScene::Init(void)
 	//人数選択から
 	ChangeSelect(SELECT::NUMBER);
 
-	KeyConfigSetting();
-
 	key_ = KEY_CONFIG::NONE;
-
+	SetDevice(0,SceneManager::CNTL::KEYBOARD);
 	ChangeDevice(SceneManager::CNTL::NONE);
-
 }
 
 void SelectScene::Update(void)
@@ -155,6 +152,11 @@ void SelectScene::Draw(void)
 	default:
 		break;
 	}
+
+	for (int i = 0; i < 4; i++)
+	{
+		DrawFormatString(0, 120 + (20 * i), 0x00AA00, "devices_ %d", devices_[i]);
+	}
 }
 
 void SelectScene::Release(void)
@@ -206,13 +208,14 @@ void SelectScene::OperationUpdate(void)
 
 void SelectScene::RoleUpdate(void)
 {
-	for (int i = 0; i < 4;i++)
+	auto camera = SceneManager::GetInstance().GetCameras();
+	for (int i = 0; i < camera.size(); i++)
 	{
 		images_[i]->Update();
-		images_[i]->ChangeObject(devices_[i], images_[i].get(), i);
+		images_[i]->ChangeObject(devices_[i], i);
 	}
 
-	for (int i = 1; i < SceneManager::PLAYER_NUM; i++)
+	for (int i = 1; i < camera.size(); i++)
 	{
 		players_[i]->SetPos(AsoUtility::RotXZPos(DEFAULT_CAMERA_POS, players_[i - 1]->GetPos(), AsoUtility::Deg2RadF(90.0f)));
 		players_[i]->SetRot(Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-90.0f * i), 0.0f));
@@ -235,14 +238,15 @@ void SelectScene::OperationDraw(void)
 	{
 		i->Draw();
 	}
+
 }
 
 void SelectScene::RoleDraw(void)
 {
-	//for (auto& i : images_)
-	//{
-	//	i->Draw();
-	//}
+	for (auto& i : images_)
+	{
+		i->Draw();
+	}
 
 	for (auto& p : players_)
 	{
@@ -252,20 +256,21 @@ void SelectScene::RoleDraw(void)
 	//players_[1]->Draw();
 }
 
+void SelectScene::SetDevice(int num, SceneManager::CNTL cntl)
+{
+	//プレイ人数を超えないように
+	if (num > 3 || num < 0)
+	{
+		return;
+	}
+
+	devices_[num] = cntl;
+}
+
 void SelectScene::DrawDebug(void)
 {
 	InputManager& ins = InputManager::GetInstance();
 	Vector2 mPos = ins.GetMousePos();
-
-#ifdef DEBUG_RECT
-	//選択用の四角形と選択している種類または数字を表示する
-	rc.Draw(rc.color_);
-
-	//三角形描画
-	triL.LeftDraw(triL.color_);
-	triR.RightDraw(triR.color_);
-
-#endif // DEBUG_RECT
 
 	//現在の入力デバイス
 	//DrawFormatString(0, 820, 0x000000, "(key_:0)(pad:1) %d", GetDevice());
@@ -275,13 +280,6 @@ void SelectScene::DrawDebug(void)
 		0x000000,
 		"%d",
 		key_);
-
-	////プレイ人数
-	//DrawFormatString(Application::SCREEN_SIZE_X / 2, 0, 0x000000, "number : %d", playerNum_);
-	////1Pかパッド操作かどうか
-	//DrawFormatString(Application::SCREEN_SIZE_X / 2, 20, 0x000000, "operation : %d", isPad_);
-	//役職
-	//DrawFormatString(Application::SCREEN_SIZE_X / 2, 40, 0x000000, "role_ : %d", role_);
 
 	DrawFormatString(Application::SCREEN_SIZE_X / 2, 100, 0x000000, "pos : %2.f,%2.f,%2.f", trans_.pos.x,trans_.pos.y,trans_.pos.z);
 
@@ -307,30 +305,26 @@ void SelectScene::ChangeSelect(const SELECT _state)
 void SelectScene::KeyConfigSetting(void)
 {
 	auto& ins = InputManager::GetInstance();
+	auto camera = SceneManager::GetInstance().GetCameras();
 
 	// 何も押されてないとき
 	key_ = KEY_CONFIG::NONE;
 	
 	// 左スティックの横軸
-	int leftStickX_ = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLX;
+	int leftStickX_[SceneManager::PLAYER_NUM];
+	leftStickX_[0] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLX;
+	leftStickX_[1] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD2).AKeyLX;
+	leftStickX_[2] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD3).AKeyLX;
+	leftStickX_[3] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD3).AKeyLX;
 
 	//縦軸
-	int leftStickY_ = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLY;
+	int leftStickY_[SceneManager::PLAYER_NUM];
+	leftStickX_[0] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLY;
+	leftStickX_[1] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD2).AKeyLY;
+	leftStickX_[2] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD3).AKeyLY;
+	leftStickX_[3] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD4).AKeyLY;
 
-	//0がスティックが動いていない状態
-	
-	//							//スティックを最大まで倒したときの数値
-	int stickXRight = 900;		//0～1000
-	int stickXLeft = -900;		//0～-1000
-	int stickYDown = 900;		//0～1000
-	int stickYUp = -900;		//0～-1000
-
-	//スティックが倒されているかどうか
-	bool isStickMoved = (leftStickX_ != 0 || leftStickY_ != 0);
-	bool isStickPressed = false; // スティックが倒されたかどうかのフラグ
-	bool lastStickState = false; // 最後のスティック状態（倒されているかどうか）
-
-	switch (GetDevice())
+	switch (Get1PDevice())
 	{
 	case SceneManager::CNTL::KEYBOARD:
 		ChangeDevice(SceneManager::CNTL::KEYBOARD);
@@ -352,22 +346,29 @@ void SelectScene::KeyConfigSetting(void)
 
 	case SceneManager::CNTL::PAD:
 		ChangeDevice(SceneManager::CNTL::PAD);
-		if (leftStickY_ < -1)
+		for (auto& leftStickY : leftStickY_)
 		{
-			key_ = KEY_CONFIG::UP;
-			
+			if (leftStickY < -1)
+			{
+				key_ = KEY_CONFIG::UP;
+
+			}
+			if (leftStickY > 1)
+			{
+				key_ = KEY_CONFIG::DOWN;
+			}
 		}
-		if (leftStickY_ > 1)
+		
+		for (auto& leftStickX : leftStickX_)
 		{
-			key_ = KEY_CONFIG::DOWN;
-		}
-		if (leftStickX_ < stickXLeft)
-		{
-			key_ = KEY_CONFIG::LEFT;
-		}
-		if (leftStickX_ > 1)
-		{
-			key_ = KEY_CONFIG::RIGHT;
+			if (leftStickX < -900)
+			{
+				key_ = KEY_CONFIG::LEFT;
+			}
+			if (leftStickX > 1)
+			{
+				key_ = KEY_CONFIG::RIGHT;
+			}
 		}
 
 		if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
@@ -379,27 +380,6 @@ void SelectScene::KeyConfigSetting(void)
 	default:
 		break;
 	}
-}
-
-SceneManager::CNTL SelectScene::GetDevice(void)
-{
-	//返り値用のret等で運用すること
-	//1Pの操作選択後であったら使用デバイスを固定(とりあえず)
-	SceneManager::CNTL ret;
-	//if (device_ == SceneManager::CNTL::KEYBOARD)	ret = SceneManager::CNTL::KEYBOARD;
-	//else if(device_ == SceneManager::CNTL::PAD)	ret = SceneManager::CNTL::PAD;
-
-	ret = device_; 
-	
-	return ret;
-
-	//if (selectedCntl_ == SceneManager::CNTL::KEYBOARD)
-	//{
-	//	ChangeDevice(SceneManager::CNTL::KEYBOARD);
-	//	return SceneManager::CNTL::KEYBOARD;
-	//}
-	//ChangeDevice(SceneManager::CNTL::PAD);
-	//return SceneManager::CNTL::PAD;
 }
 
 void SelectScene::ChangeDevice(SceneManager::CNTL device)

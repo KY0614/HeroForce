@@ -72,6 +72,7 @@ void SelectImage::Init(void)
 
 	InitVertex();
 
+	//矢印画像の初期値
 	pointL_ = { LEFT_POS_X,POINT_POS_Y,POINT_SCALE,POINT_SCALE,false,imgLeftPoint_ };	
 	
 	pointR_ = { RIGHT_POS_X,POINT_POS_Y,POINT_SCALE,POINT_SCALE,false,imgRightPoint_ };
@@ -244,6 +245,7 @@ void SelectImage::NumberUpdate(void)
 	{
 		//プレイヤー人数の設定
 		data.Input(SceneManager::PLAY_MODE::USER, playerNum_);
+
 		//ディスプレイの設定
 		data.Input(DataBank::INFO::DHISPLAY_NUM, playerNum_);
 		data.Input(DataBank::INFO::USER_NUM, playerNum_);
@@ -267,12 +269,14 @@ void SelectImage::NumberUpdate(void)
 			cameras[i]->ChangeMode(Camera::MODE::FIXED_POINT);
 		}
 
+		//ここを追加すると4人プレイだけなぜか画面分割が２つに減る
 		if (playerNum_ > 1)
 		{
 			//プレイヤー2以上の場合、2P以上のコントローラーをPAD操作に設定
 			for (int num = 2; num <= playerNum_; num++)
 			{
 				data.Input(SceneManager::CNTL::PAD, num);
+				selectScene_.SetDevice(num - 1, SceneManager::CNTL::PAD);
 			}
 		}
 
@@ -447,7 +451,6 @@ void SelectImage::OperationDraw(void)
 
 	DrawFormatString(Application::SCREEN_SIZE_X / 2,
 		Application::SCREEN_SIZE_Y / 2, 0x000000, "ope : %d",isPad_);
-
 }
 
 void SelectImage::RoleDraw(void)
@@ -461,13 +464,6 @@ void SelectImage::RoleDraw(void)
 	// 三角形を描画
 	DrawPolygon3D(triangle1, 2, *imgPlayerNum_, true);  // 1つ目の三角形
 	DrawPolygon3D(triangle2, 2, *imgPlayerNum_, true);  // 2つ目の三角形
-
-	////仮置き
-	//DrawRotaGraph(Application::SCREEN_SIZE_X / 2,
-	//	Application::SCREEN_SIZE_Y / 2,
-	//	1.0f, 0.0f,
-	//	imgPlayerNum_[(int)(role_)],
-	//	true, false);
 
 	PointsDraw();
 
@@ -513,11 +509,10 @@ void SelectImage::PointsDraw(void)
 		pointL_.PointDraw();
 		pointR_.PointDraw();
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
 	}
 }
 
-void SelectImage::ChangeObject(SceneManager::CNTL cntl, SelectImage* obj, int i)
+void SelectImage::ChangeObject(SceneManager::CNTL cntl, int i)
 {
 	DataBank& data = DataBank::GetInstance();
 	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();

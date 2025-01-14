@@ -73,6 +73,13 @@ public:
 		DECIDE
 	};
 
+	//デバイス情報
+	struct DEVICE
+	{
+		SceneManager::CNTL cntl_;	//入力するデバイス
+		KEY_CONFIG config_;			//キーコンフィグ
+	};	
+
 	// コンストラクタ
 	SelectScene(void);
 
@@ -96,9 +103,6 @@ public:
 	//キー入力とコントローラ入力を共通化
 	void KeyConfigSetting(void);
 
-	//今使用している入力デバイスを取得する
-	SceneManager::CNTL GetDevice(void);
-
 	//入力デバイス変更(もうちょっといい実装方法がありそう)
 	void ChangeDevice(SceneManager::CNTL device);	
 
@@ -107,9 +111,15 @@ public:
 
 	//ゲッター	----------------------------------------------------------
 
+	SceneManager::CNTL Get1PDevice(void) { return devices_[0]; };		//1Pの入力デバイスを取得する
+
 	KEY_CONFIG GetKeyConfig(void) { return key_; }	//入力キーを取得
 
 	SELECT GetSelect(void) { return select_; }		//現在の選択フェーズを取得
+
+	//セッター -----------------------------------------------------------
+
+	void SetDevice(int num, SceneManager::CNTL cntl);
 
 	//デバッグ関連--------------------------------------------------------
 
@@ -151,6 +161,9 @@ private:
 
 	//キーコンフィグ
 	KEY_CONFIG key_;
+	//KEY_CONFIG key_[SceneManager::PLAYER_NUM];
+
+	DEVICE control_[SceneManager::PLAYER_NUM];
 
 	//状態遷移
 	void ChangeStateNumber(void);

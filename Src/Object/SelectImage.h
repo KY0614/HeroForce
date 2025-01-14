@@ -94,7 +94,7 @@ public:
 	//-----------------------------------------------------------
 
 	//‘I‘ğ‚ğ•ÏX‚·‚é
-	void ChangeObject(SceneManager::CNTL cntl, SelectImage* obj,int i);
+	void ChangeObject(SceneManager::CNTL cntl,int i);
 
 private:
 

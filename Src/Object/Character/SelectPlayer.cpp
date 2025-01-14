@@ -31,11 +31,6 @@ void SelectPlayer::Draw(void)
 	MV1DrawModel(trans_[role_].modelId);
 }
 
-void SelectPlayer::SetRole(int role)
-{
-	this->role_ = role;
-}
-
 void SelectPlayer::SetPos(VECTOR pos)
 {
 	for (int i = 0;i < SceneManager::PLAYER_NUM;i++)
