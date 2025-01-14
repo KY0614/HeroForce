@@ -1,20 +1,37 @@
-#include "FazeResult.h"
+#include<DxLib.h>
 #include<cassert>
+#include"../Manager/Generic/InputManager.h"
 
+#include "FazeResult.h"
 void FazeResult::Init(void)
 {
+	rankString_[static_cast<int>(RANK::S)] = 'S';
+	rankString_[static_cast<int>(RANK::A)] = 'A';
+	rankString_[static_cast<int>(RANK::B)] = 'B';
+	rankString_[static_cast<int>(RANK::C)] = 'C';
+
+	rank_ = RANK::S;
+	isEnd_ = false;
+	exp_ = 0.0f;
 }
 
 void FazeResult::Update(void)
 {
+	ChangeRank();
 }
 
 void FazeResult::Draw(void)
 {
+	DrawFormatString(0, 20, 0xffffff, "RANK=%c", rankString_[static_cast<int>(rank_)]);
 }
 
 void FazeResult::Release(void)
 {
+}
+
+void FazeResult::Reset(void)
+{
+	isEnd_ = false;
 }
 
 float FazeResult::GetBonusExp(const RANK _rank) const
@@ -42,4 +59,15 @@ float FazeResult::GetBonusExp(const RANK _rank) const
 	}
 
 	return exp;
+}
+
+void FazeResult::ChangeRank(void)
+{
+	InputManager& ins = InputManager::GetInstance();
+
+	if (ins.IsTrgDown(KEY_INPUT_S))rank_ = RANK::S;
+	if (ins.IsTrgDown(KEY_INPUT_A))rank_ = RANK::A;
+	if (ins.IsTrgDown(KEY_INPUT_B))rank_ = RANK::B;
+	if (ins.IsTrgDown(KEY_INPUT_C))rank_ = RANK::C;
+	if (ins.IsTrgDown(KEY_INPUT_SPACE))isEnd_ = true;
 }

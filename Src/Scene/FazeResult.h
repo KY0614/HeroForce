@@ -4,17 +4,21 @@ class FazeResult :
     public SceneBase
 {
 public:
+
+    //ランクの種類数
+    static constexpr int RANK_MAX_NUM = 4;
+    //ランクの各種倍率
     static constexpr float BNS_RANK_S = 2.0f;
     static constexpr float BNS_RANK_A = 1.5f;
     static constexpr float BNS_RANK_B = 1.3f;
     static constexpr float BNS_RANK_C = 1.0f;
     
     enum class RANK {
-        NONE,
         S,
         A,
         B,
-        C
+        C,
+        MAX
     };
 
     void Init(void) override;
@@ -22,11 +26,24 @@ public:
     void Draw(void) override;
     void Release(void) override;
 
+    //終了しているか
+    const bool IsEnd(void) { return isEnd_; };
+    //リセット
+    void Reset(void);
+
 private:
 
+    //仮置き
+    char rankString_[RANK_MAX_NUM];
+
     float exp_; //基礎経験値
+    RANK rank_; //ランク
+    bool isEnd_;//終了しているか
     
     //経験値の倍率を計算したものを取得
     float GetBonusExp(const RANK _rank)const;
+
+    //ランクの変更(デバッグ用)
+    void ChangeRank(void);
 };
 

@@ -13,6 +13,7 @@
 #include "../Object/Stage/SkyDome.h"
 #include "../Object/System/LevelScreenManager.h"
 #include "../Object/System/UnitPositionLoad.h"
+#include"FazeResult.h"
 #include "GameScene.h"
 
 #include "../Manager/Generic/InputManager.h"
@@ -23,7 +24,12 @@ GameScene::GameScene(void)
 {
 	stage_ = nullptr;
 	sky_ = nullptr;
+	fader_ = nullptr;
 	level_ = nullptr;
+	chicken_ = nullptr;
+	unitLoad_ = nullptr;
+	fazeResult_ = nullptr;
+
 	isPhaseChanging_ = false;
 }
 
@@ -83,10 +89,29 @@ void GameScene::Init(void)
 
 	//フェーダーの作成
 	fader_ = std::make_unique<Fader>();
+	fader_->Init();
+	//フェーズリザルトの作成
+	fazeResult_ = std::make_unique<FazeResult>();
+	fazeResult_->Init();
 }
 
 void GameScene::Update(void)
 {
+	//フェーズリザルト
+	if (isFazeRezult_)
+	{
+		fazeResult_->Update();
+
+		if (fazeResult_->IsEnd())
+		{
+			//フェーズリザルトが終了したので明転
+			fader_->SetFade(Fader::STATE::FADE_IN);
+			fazeResult_->Reset();
+			isFazeRezult_ = false;
+		}
+		return;
+	}
+
 	//フェーズ遷移中
 	if (isPhaseChanging_)
 	{
@@ -142,6 +167,12 @@ void GameScene::Update(void)
 
 void GameScene::Draw(void)
 {
+	if (isFazeRezult_)
+	{
+		fazeResult_->Draw();
+		return;
+	}
+
 	sky_->Draw();
 #ifdef _DEBUG_COL
 	playerTest_->Draw();
@@ -425,7 +456,11 @@ void GameScene::Fade(void)
 		{
 			//ここの処理をフェーズ遷移がわかりやすいようなやつ始動に変える。
 			// 暗転から明転へ
+			//ある程度完全暗転の時間を用意
 			fader_->SetFade(Fader::STATE::FADE_KEEP);
+
+			//フェーズリザルトの状態に
+			isFazeRezult_ = true;
 		}
 		break;
 	case Fader::STATE::FADE_KEEP:
@@ -446,12 +481,12 @@ void GameScene::ChangePhase(void)
 
 void GameScene::UpdatePhase(void)
 {
-	phaseCnt_++;
+	/*phaseCnt_++;
 	if (phaseCnt_ > PHASE_TIME)
 	{
 		fader_->SetFade(Fader::STATE::FADE_IN);
 		phaseCnt_ = 0;
-	}
+	}*/
 }
 
 void GameScene::DrawPhase(void)

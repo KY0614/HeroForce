@@ -149,7 +149,7 @@ public:
     //-----------------------------------------------
 
     //UŒ‚ŠJn”»’è
-    const float GetAtkStartRange(void) { return atkStartRange_; }
+    const float GetAtkStartRange(void) { return static_cast<float>(atkStartRange_); }
 
     //õ“G”»’è
     const float GetSearchRange(void) { return searchRange_; }

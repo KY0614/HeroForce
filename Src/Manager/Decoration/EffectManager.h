@@ -43,7 +43,7 @@ public:
 	/// <param name="_sound">効果音</param>
 	void Play(const EFFECT& _efc,
 		const VECTOR& _pos, const Quaternion& _qua, const float& _size,
-		const SoundManager::SOUND _sound = SoundManager::SOUND::NONE);
+		SoundManager::SOUND _sound);
 
 	/// <summary>
 	/// エフェクトの再生停止
