@@ -2,11 +2,10 @@
 #include <math.h>
 #include<algorithm>
 #include "../Application.h"
-#include "../Manager/SceneManager.h"
-#include "../Manager/InputManager.h"
-#include "../Manager/ResourceManager.h"
-#include "../Manager/Camera.h"
-#include "../Manager/DataBank.h"
+#include "../Manager/Generic/InputManager.h"
+#include "../Manager/Generic/ResourceManager.h"
+#include "../Manager/Generic/Camera.h"
+#include "../Manager/GameSystem/DataBank.h"
 #include "../Utility/AsoUtility.h"
 #include "../Object/Stage/StageManager.h"
 #include "../Object/Stage/StageObject.h"

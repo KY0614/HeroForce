@@ -3,8 +3,7 @@
 #include<functional>
 #include<variant>
 #include"../Utility/AsoUtility.h"
-#include"../Manager/SceneManager.h"
-#include"../Manager/InputManager.h"
+#include"../Manager/Generic/SceneManager.h"
 #include "../UnitBase.h"
 
 #define DEBUG_ON
@@ -150,7 +149,7 @@ public:
     //-----------------------------------------------
 
     //UŒ‚ŠJn”»’è
-    const float GetAtkStartRange(void) { return atkStartRange_; }
+    const float GetAtkStartRange(void) { return static_cast<float>(atkStartRange_); }
 
     //õ“G”»’è
     const float GetSearchRange(void) { return searchRange_; }

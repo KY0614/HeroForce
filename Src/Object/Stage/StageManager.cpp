@@ -1,6 +1,6 @@
 #include "../../Application.h"
-#include "../../Manager/ResourceManager.h"
-#include "../../Manager/InputManager.h"
+#include "../../Manager/Generic/ResourceManager.h"
+#include "../../Manager/Generic/InputManager.h"
 #include "../../Lib/nlohmann/json.hpp"
 #include "../../Utility/AsoUtility.h"
 #include "StageManager.h"

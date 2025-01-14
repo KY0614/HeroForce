@@ -16,6 +16,12 @@ EffectManager& EffectManager::GetInstance(void)
 	return *instance_;
 }
 
+EffectManager::EffectManager(void) {
+	int i[NONE_MAX] = {};
+
+	//effectTest_.emplace(EFFECT::NONE,i);
+}
+
 /// <summary>
 /// エフェクトの追加
 /// </summary>
@@ -39,13 +45,12 @@ void EffectManager::Add(const EFFECT& _efc, int _data)
 /// <param name="_pos">再生位置</param>
 /// <param name="_qua">角度</param>
 /// <param name="_size">大きさ</param>
-void EffectManager::Play(const EFFECT& _efc, const VECTOR& _pos, const Quaternion& _qua, const float& _size)
+void EffectManager::Play(const EFFECT& _efc, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const SoundManager::SOUND _sound)
 {
-	//要質問
-	//(シングルトン化されているエフェクトマネージャにおいてPlayIdは臨時変数の一つだけでいいのか？)
-	//(PlayIdも連想配列にすべきなのか？そもそもPlayIdが必要なのか？)
-	
-	//配列内に要素が入っていないかを検索
+	//元データがないときは警告
+	if (effectRes_.find(_efc) == effectRes_.end())assert("設定していないエフェクトを再生しようとしています。");
+
+	//再生配列内に要素が入っていないかを検索
 	if (effectPlay_.find(_efc) == effectPlay_.end()) {
 		//入っていないとき要素を追加する
 		effectPlay_.emplace(_efc, PlayEffekseer3DEffect(effectRes_[_efc]));
@@ -54,14 +59,13 @@ void EffectManager::Play(const EFFECT& _efc, const VECTOR& _pos, const Quaternio
 		effectPlay_[_efc] = PlayEffekseer3DEffect(effectRes_[_efc]);
 	}
 
-	//その他各種設定
-	//大きさ
-		SetScalePlayingEffekseer3DEffect(effectPlay_[_efc], _size, _size, _size);
-	//角度
-		SetRotationPlayingEffekseer3DEffect(effectPlay_[_efc], _qua.ToEuler().x, _qua.ToEuler().y, _qua.ToEuler().z);
-	//位置
-		SetPosPlayingEffekseer3DEffect(effectPlay_[_efc], _pos.x, _pos.y, _pos.z);
+	//各種設定同期
+	SyncEffect(_efc, _pos, _qua, _size);
 
+	//効果音の再生
+		if (_sound != SoundManager::SOUND::NONE) {
+			SoundManager::GetInstance().Play(_sound);
+		}
 }
 
 
@@ -75,6 +79,17 @@ void EffectManager::Stop(const EFFECT& _efc)
 	if (effectPlay_.find(_efc) == effectPlay_.end())assert("設定していないエフェクトを停止しようとしています。");
 	//再生停止
 	StopEffekseer3DEffect(effectPlay_[_efc]);
+}
+
+void EffectManager::SyncEffect(const EFFECT& _efc, const VECTOR& _pos, const Quaternion& _qua, const float& _size)
+{
+	//その他各種設定
+	//大きさ
+	SetScalePlayingEffekseer3DEffect(effectPlay_[_efc], _size, _size, _size);
+	//角度
+	SetRotationPlayingEffekseer3DEffect(effectPlay_[_efc], _qua.ToEuler().x, _qua.ToEuler().y, _qua.ToEuler().z);
+	//位置
+	SetPosPlayingEffekseer3DEffect(effectPlay_[_efc], _pos.x, _pos.y, _pos.z);
 }
 
 //解放処理

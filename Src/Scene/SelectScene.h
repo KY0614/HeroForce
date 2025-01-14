@@ -1,7 +1,7 @@
 #pragma once
 #include "SceneBase.h"
 #include "../Object/Common/Transform.h"
-#include "../Manager/SceneManager.h"
+#include "../Manager/Generic/SceneManager.h"
 #include "../Common/Vector2.h"
 
 class SkyDome;
@@ -47,10 +47,10 @@ public:
 		Rect(float x, float y, int inw, int inh) :
 			pos(x, y), w(inw), h(inh) {}
 
-		float Left() { return pos.x - w / 2; }
-		float Top() { return pos.y - h / 2; }
-		float Right() { return pos.x + w / 2; }
-		float Bottom() { return pos.y + h / 2; }
+		float Left() { return static_cast<float>(pos.x - w / 2); }
+		float Top() { return static_cast<float>(pos.y - h / 2); }
+		float Right() { return static_cast<float>(pos.x + w / 2); }
+		float Bottom() { return static_cast<float>(pos.y + h / 2); }
 
 		int color_;
 

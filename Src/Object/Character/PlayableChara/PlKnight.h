@@ -1,5 +1,4 @@
 #pragma once
-#include"../Manager/SceneManager.h"
 #include "../PlayerBase.h"
 class PlKnight :
     public PlayerBase

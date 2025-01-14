@@ -1,7 +1,9 @@
 ﻿#pragma once
 #include"Common/Transform.h"
 #include<unordered_map>
-
+#include"../Manager/Generic/ResourceManager.h"
+#include"../Manager/Generic/InputManager.h"
+#include"../Manager/GameSystem/Collision.h"
 
 //test
 

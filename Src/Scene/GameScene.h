@@ -12,6 +12,7 @@ class SkyDome;
 class LevelScreenManager;
 class UnitPositionLoad;
 class ChickenManager;
+class FazeResult;
 
 class GameScene : public SceneBase
 {
@@ -47,6 +48,15 @@ private:
 
 	//フェーダー
 	std::unique_ptr<Fader>fader_;
+	//ゲームシーンのフェーズ遷移中判定
+	bool isPhaseChanging_;
+	int phaseCnt_;
+
+
+	//フェーズリザルト
+	std::unique_ptr<FazeResult>fazeResult_;
+	//リザルト中か
+	bool isFazeRezult_;
 
 	//プレイヤー
 	std::unique_ptr<PlayerBase>players_[PLAYER_NUM];
@@ -62,9 +72,6 @@ private:
 
 	std::unique_ptr<UnitPositionLoad> unitLoad_;
 
-	//ゲームシーンのフェーズ遷移中判定
-	bool isPhaseChanging_;
-	int phaseCnt_;
 
 	//当たり判定（他項目に干渉するもののみ）
 	void Collision(void);
@@ -77,7 +84,7 @@ private:
 
 	//フェーズ遷移
 	void ChangePhase(void);
-	//フェーズ更新
+	//フェーズ更新(完全暗転中)
 	void UpdatePhase(void);
 	//フェーズ描画
 	void DrawPhase(void);

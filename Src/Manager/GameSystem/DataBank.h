@@ -1,6 +1,6 @@
 #pragma once
 #include<DxLib.h>
-#include"SceneManager.h"
+#include"../Manager/Generic/SceneManager.h"
 
 class DataBank
 {
