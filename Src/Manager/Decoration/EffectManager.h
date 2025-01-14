@@ -43,7 +43,7 @@ public:
 	/// <param name="_sound">効果音</param>
 	void Play(const EFFECT& _efc,
 		const VECTOR& _pos, const Quaternion& _qua, const float& _size,
-		SoundManager::SOUND _sound);
+		const SoundManager::SOUND _sound);
 
 	/// <summary>
 	/// エフェクトの再生停止
@@ -70,7 +70,7 @@ private:
 	//エフェクトデータ格納用
 	std::unordered_map<EFFECT,int> effectRes_;	//初期データ
 	std::unordered_map<EFFECT,int> effectPlay_;	//再生データ
-	std::unordered_map<EFFECT,int[]> effectTest_;	//再生データ
+	//std::unordered_map<EFFECT,int[]> effectTest_;	//再生データ
 	std::unordered_map<EFFECT, int> effectMax_;		//再生データの最大所持数
 
 	//コンストラクタ＆デストラクタ

@@ -37,6 +37,7 @@ private:
     char rankString_[RANK_MAX_NUM];
 
     float exp_; //基礎経験値
+    float afterExp_;//計算後の経験値
     RANK rank_; //ランク
     bool isEnd_;//終了しているか
     

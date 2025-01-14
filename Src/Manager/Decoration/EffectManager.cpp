@@ -19,7 +19,7 @@ EffectManager& EffectManager::GetInstance(void)
 EffectManager::EffectManager(void) {
 	int i[NONE_MAX] = {};
 
-	effectTest_.emplace(EFFECT::NONE,i);
+	//effectTest_.emplace(EFFECT::NONE,i);
 }
 
 /// <summary>
@@ -45,7 +45,7 @@ void EffectManager::Add(const EFFECT& _efc, int _data)
 /// <param name="_pos">再生位置</param>
 /// <param name="_qua">角度</param>
 /// <param name="_size">大きさ</param>
-void EffectManager::Play(const EFFECT& _efc, const VECTOR& _pos, const Quaternion& _qua, const float& _size, SoundManager::SOUND _sound = SoundManager::SOUND::NONE)
+void EffectManager::Play(const EFFECT& _efc, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const SoundManager::SOUND _sound)
 {
 	//元データがないときは警告
 	if (effectRes_.find(_efc) == effectRes_.end())assert("設定していないエフェクトを再生しようとしています。");

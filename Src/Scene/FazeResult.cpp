@@ -12,7 +12,9 @@ void FazeResult::Init(void)
 
 	rank_ = RANK::S;
 	isEnd_ = false;
-	exp_ = 0.0f;
+
+	//獲得経験値量はフェーズ終了時のプレイヤーたちの経験値をデータバンクから取得する
+	exp_ = 1500.0f;
 }
 
 void FazeResult::Update(void)
@@ -22,7 +24,8 @@ void FazeResult::Update(void)
 
 void FazeResult::Draw(void)
 {
-	DrawFormatString(0, 20, 0xffffff, "RANK=%c", rankString_[static_cast<int>(rank_)]);
+	DrawFormatString(0, 20, 0x000000, "RANK=%c", rankString_[static_cast<int>(rank_)]);
+	DrawFormatString(0, 40, 0x000000, "GetExp=%d", static_cast<int>(afterExp_));
 }
 
 void FazeResult::Release(void)
@@ -70,4 +73,6 @@ void FazeResult::ChangeRank(void)
 	if (ins.IsTrgDown(KEY_INPUT_B))rank_ = RANK::B;
 	if (ins.IsTrgDown(KEY_INPUT_C))rank_ = RANK::C;
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))isEnd_ = true;
+
+	afterExp_ = GetBonusExp(rank_);
 }
