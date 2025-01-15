@@ -77,6 +77,7 @@ public:
 	void InitSelect(void);
 	void InitGame(void);
 	void InitResult(void);
+	void InitGameOver(void);
 
 	void ResourcePlayer(void);
 	void ResourceEnemy(void);

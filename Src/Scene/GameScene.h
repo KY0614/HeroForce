@@ -91,5 +91,8 @@ private:
 
 	//強化要素反映
 	void LevelUpReflection();
+
+	//ゲームオーバー判定
+	bool IsGameOver(void);
 };
 

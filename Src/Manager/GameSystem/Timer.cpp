@@ -65,8 +65,8 @@ void Timer::ReduceTime(void)
 		minute_--;
 		//•b”‚ğ‚T‚X•b‚É
 		second_ = TIME_MAX;
-
-		//•ª”‚ª‚O–¢–‚Ì‚Æ‚«I—¹ó‘Ô‚É
-		if (minute_ < TIME_MIN)isEnd_ = true;
 	}
+
+	//•ª”‚ª‚O–¢–‚Ì‚Æ‚«I—¹ó‘Ô‚É
+	if (minute_ <= TIME_MIN && second_ <= TIME_MIN)isEnd_ = true;
 }

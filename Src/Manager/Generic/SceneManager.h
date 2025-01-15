@@ -27,6 +27,7 @@ public:
 		SELECT,
 		GAME,
 		CLEAR,
+		GAMEOVER,
 	};
 
 	//ƒRƒ“ƒgƒ[ƒ‰Œn“

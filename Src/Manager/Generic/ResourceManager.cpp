@@ -60,6 +60,11 @@ void ResourceManager::InitResult(void)
 	Resource res;
 }
 
+void ResourceManager::InitGameOver(void)
+{
+	Resource res;
+}
+
 //ÉvÉåÉCÉÑÅ[
 //*************************************************************************************************************
 void ResourceManager::ResourcePlayer(void)

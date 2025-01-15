@@ -55,15 +55,6 @@ void GameScene::Init(void)
 	level_ = std::make_unique<LevelScreenManager>();
 	level_->Init();
 
-
-#ifdef _DEBUG_COL
-	playerTest_ = new PlAxe(SceneManager::PLAY_MODE::USER);
-	playerTest_->Init();
-	playerTest_->ChangeControll(SceneManager::CNTL::KEYBOARD);
-	enemyTest_ = new EneAxe();
-	enemyTest_->Init();
-#endif
-
 	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU));
 	chicken_->Init();
 
@@ -101,6 +92,9 @@ void GameScene::Init(void)
 
 void GameScene::Update(void)
 {
+	//ゲームオーバー判定
+	if(IsGameOver())SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+
 	//フェーズリザルト
 	if (isFazeRezult_)
 	{
@@ -142,11 +136,6 @@ void GameScene::Update(void)
 	}
 	
 
-#ifdef _DEBUG_COL
-	playerTest_->Update();
-	enemyTest_->SetTargetPos(playerTest_->GetPos());
-	enemyTest_->Update();
-#endif
 	chicken_->SetTargetPos(players_[0]->GetPos());
 	chicken_->Update();
 
@@ -182,10 +171,6 @@ void GameScene::Draw(void)
 	}
 
 	sky_->Draw();
-#ifdef _DEBUG_COL
-	playerTest_->Draw();
-	enemyTest_->Draw();
-#endif
 
 	for (auto& p : players_)
 		p->Draw();
@@ -225,13 +210,6 @@ void GameScene::Release(void)
 	{
 		e->Destroy();
 	}
-
-#ifdef _DEBUG_COL
-	playerTest_->Destroy();
-	delete playerTest_;
-	enemyTest_->Destroy();
-	delete enemyTest_;
-#endif
 }
 
 
@@ -244,89 +222,6 @@ void GameScene::Collision(void)
 	CollisionEnemy();
 	CollisionPlayer();
 
-#ifdef _DEBUG_COL
-
-	auto ePos = enemyTest_->GetPos();
-	auto eAtk = enemyTest_->GetAtk();
-	auto pPos = playerTest_->GetPos();
-	auto pAtk = playerTest_->GetAtk();
-
-	//敵側索敵
-	if (col.Search(ePos, pPos, enemyTest_->GetSearchRange()))
-	{
-		//移動を開始
-		enemyTest_->SetIsMove(true);
-	}
-	else
-	{
-		//移動を停止
-		enemyTest_->SetIsMove(false);
-	}
-
-
-	if (col.Search(ePos, pPos, enemyTest_->GetAtkStartRange())&&enemyTest_->GetState()==Enemy::STATE::NORMAL)
-	{
-		//状態を変更
-		enemyTest_->ChangeState(Enemy::STATE::ALERT);
-	}
-
-		//プレイヤー攻撃判定
-		//攻撃中でありその攻撃が一度も当たっていないか
-		if (pAtk.IsAttack() && !pAtk.isHit_)
-		{
-			//当たり判定
-			if (col.IsHitAtk(playerTest_, enemyTest_))
-			{
-				//被弾
-				enemyTest_->Damage(5, 4);
-				//攻撃判定の終了
-				playerTest_->SetIsHit(true);
-			}
-		}
-
-		//プレイヤーがCPUの時だけサーチしたい
-		if (playerTest_->GetPlayMode() == SceneManager::PLAY_MODE::CPU)
-		{
-			//プレイヤー側索敵
-			if (col.Search(pPos, ePos, playerTest_->GetSearchRange())
-				&& enemyTest_->IsAlive() && !playerTest_->GetIsCalledPlayer())
-			{
-				//敵をサーチしたかを返す
-				playerTest_->SetisEnemySerch(true);
-				playerTest_->SetTargetPos(ePos);
-			}
-			else if (!enemyTest_->IsAlive())
-			{
-				//敵をサーチしたかを返す
-				playerTest_->SetisEnemySerch(false);
-			}
-
-			if (col.Search(playerTest_->GetPos(), enemyTest_->GetPos(), playerTest_->GetAtkStartRange())
-				&& playerTest_->GetState() == PlayerBase::CPU_STATE::NORMAL
-				&& enemyTest_->IsAlive()
-				&& !playerTest_->GetIsCalledPlayer())
-			{
-				//状態を変更
-				playerTest_->ChangeState(PlayerBase::CPU_STATE::ATTACK);
-			}
-
-		}
-	
-	//敵の攻撃判定
-	//アタック中であり攻撃判定が終了していないとき
-	if (eAtk.IsAttack() && !eAtk.isHit_)
-	{
-		//攻撃が当たる範囲であり、プレイヤーが回避していないとき
-		if (col.IsHitAtk(enemyTest_, playerTest_) && !playerTest_->IsDodge())
-		{
-			//ダメージ
-			playerTest_->Damage();
-			//使用した攻撃を判定終了に
-			enemyTest_->SetIsHit(true);
-		}
-	}
-
-#endif
 }
 
 //敵関係の当たり判定
@@ -529,4 +424,12 @@ void GameScene::LevelUpReflection()
 	default:
 		break;
 	}
+}
+
+bool GameScene::IsGameOver(void)
+{
+	for (auto& p : players_) {
+		if (p->IsAlive())return false;
+	}
+	return true;
 }

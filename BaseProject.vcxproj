@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\EnemyManager.cpp" />
     <ClCompile Include="Src\Scene\FazeResult.cpp" />
     <ClCompile Include="Src\Scene\GameOverScene.cpp" />
     <ClCompile Include="Src\Manager\Decoration\SoundManager.cpp" />
@@ -71,6 +72,7 @@
     <ClCompile Include="Src\Manager\GameSystem\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\EnemyManager.h" />
     <ClInclude Include="Src\Scene\FazeResult.h" />
     <ClInclude Include="Src\Scene\GameOverScene.h" />
     <ClInclude Include="Src\Manager\Decoration\SoundManager.h" />
