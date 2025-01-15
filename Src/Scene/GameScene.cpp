@@ -6,6 +6,7 @@
 #include "../Object/Character/PlayableChara/PlAxeMan.h"
 #include "../Object/Character/PlayableChara/PlArcher.h"
 #include"../Object/Character/Enemy.h"
+#include"../Object/Character/EnemyManager.h"
 #include"../Object/Character/Chiken/ChickenManager.h"
 #include"../Object/Character/EnemySort/EneAxe.h"
 #include"../Object/Character/EnemySort/EneGolem.h"
@@ -65,7 +66,10 @@ void GameScene::Init(void)
 		players_[i]->Init();
 	}
 
-	//敵の生成(とりあえず一体だけ)
+	//敵マネージャの生成
+	enmMng_ = std::make_unique<EnemyManager>();
+	enmMng_->Init();
+
 	std::unique_ptr<Enemy> e=std::make_unique<EneAxe>();
 	e->Init();
 	enemys_.push_back(std::move(e));
@@ -129,6 +133,9 @@ void GameScene::Update(void)
 	//プレイヤー①だけを動かしています
 	players_[0]->Update();
 
+
+	//敵の更新
+	enmMng_->Update();
 	for (auto& e : enemys_)
 	{
 		e->SetTargetPos(players_[0]->GetPos());
@@ -178,6 +185,7 @@ void GameScene::Draw(void)
 	for (auto& e : enemys_){
 		e->Draw();
 	}
+	enmMng_->Draw();
 
 	stage_->Draw();
 	chicken_->Draw();
@@ -210,6 +218,7 @@ void GameScene::Release(void)
 	{
 		e->Destroy();
 	}
+	enmMng_->Release();
 }
 
 
@@ -263,7 +272,7 @@ void GameScene::CollisionEnemy(void)
 			for (auto& p : players_)
 			{
 				//攻撃が当たる範囲 && プレイヤーが回避していないとき
-				if (col.IsHitAtk(*e, *p) && !playerTest_->IsDodge())
+				if (col.IsHitAtk(*e, *p) && !p->IsDodge())
 				{
 					//ダメージ
 					p->Damage();
@@ -330,7 +339,7 @@ void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
 			_player.SetTargetPos(ePos);
 		}
 
-		if (col.Search(_player.GetPos(), enemyTest_->GetPos(), _player.GetAtkStartRange())
+		if (col.Search(_player.GetPos(), ePos, _player.GetAtkStartRange())
 			&& _player.GetState() == PlayerBase::CPU_STATE::NORMAL
 			&& !_player.GetIsCalledPlayer())
 		{

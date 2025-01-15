@@ -7,6 +7,7 @@
 class Grid;
 class PlayerBase;
 class Enemy;
+class EnemyManager;
 class StageManager;
 class SkyDome;
 class LevelScreenManager;
@@ -60,10 +61,10 @@ private:
 
 	//プレイヤー
 	std::unique_ptr<PlayerBase>players_[PLAYER_NUM];
-	PlayerBase* playerTest_;
+
 	//敵
 	std::vector<std::unique_ptr<Enemy>> enemys_;
-	Enemy* enemyTest_;
+	std::unique_ptr<EnemyManager>enmMng_;
 
 	//チキン
 	std::unique_ptr<ChickenManager> chicken_;
