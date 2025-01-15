@@ -11,6 +11,8 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	imgLeftPoint_ = -1;
 	imgRightPoint_ = -1;
 
+	state_ = SelectScene::SELECT::NUMBER;
+
 	for (int n = 0; n < SceneManager::PLAYER_NUM; n++) {
 		//座標(四角形を作るために2つの三角形を使う)
 		mesh_[n].vertex_[0].pos = VGet(VERTEX_LEFT_X, VERTEX_UNDER_Y, VERTEX_Z + 12.0f);	// 左下
@@ -60,6 +62,15 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	interval_ = 0.0f;
 	press_ = false;
 	angle_ = 0.0f;
+
+	// 状態管理
+	stateChanges_.emplace(
+		SelectScene::SELECT::NUMBER, std::bind(&SelectImage::ChangeStateNumber, this));
+	stateChanges_.emplace(
+		SelectScene::SELECT::OPERATION, std::bind(&SelectImage::ChangeStateOperation, this));
+	stateChanges_.emplace(
+		SelectScene::SELECT::ROLE, std::bind(&SelectImage::ChangeStateRole, this));
+
 }
 
 void SelectImage::Destroy(void)
@@ -79,33 +90,37 @@ void SelectImage::Init(void)
 
 	target_[0] = SelectScene::DEFAULT_TARGET_POS;
 	target_[1] = SelectScene::DEFAULT_TARGET_POS;
+
+	//人数選択から
+	ChangeSelect(SelectScene::SELECT::NUMBER);
 }
 
 void SelectImage::Update(void)
 {
-	switch (selectScene_.GetSelect())
-	{
-	case SelectScene::SELECT::NUMBER:
-		NumberUpdate();
-		break;
+	//更新ステップ
+	stateUpdate_();
 
-	case SelectScene::SELECT::OPERATION:
-		OperationUpdate();
-		break;
+	//switch (state_)
+	//{
+	//case SelectScene::SELECT::NUMBER:
+	//	NumberUpdate();
+	//	break;
 
-	case SelectScene::SELECT::ROLE:
-		RoleUpdate();
-		break;
+	//case SelectScene::SELECT::OPERATION:
+	//	OperationUpdate();
+	//	break;
 
-	default:
-		break;
-	}
+	//case SelectScene::SELECT::ROLE:
+	//	RoleUpdate();
+	//	break;
+
+	//default:
+	//	break;
+	//}
 }
 
 void SelectImage::Draw(void)
 {
-	//将来的にはDrawPolygon3Dで描画
-
 	switch (selectScene_.GetSelect())
 	{
 	case SelectScene::SELECT::NUMBER:
@@ -147,6 +162,7 @@ void SelectImage::Draw(void)
 	{
 		DrawFormatString(0, 40 + (20 * i), 0xFF0000, "Output %d", data.Output(i + 1).cntrol_);
 	}
+
 }
 
 void SelectImage::Load(void)
@@ -174,7 +190,7 @@ void SelectImage::NumberUpdate(void)
 
 	//右の矢印がONの時にキーの右に値する入力をし続けると
 	if (pointR_.isToggle_ &&
-		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::RIGHT)
+		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::RIGHT)
 	{
 		if (!press_)
 		{
@@ -207,7 +223,7 @@ void SelectImage::NumberUpdate(void)
 
 	//左
 	if (pointL_.isToggle_ &&
-		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::LEFT)
+		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::LEFT)
 	{
 		if (!press_)
 		{
@@ -241,7 +257,7 @@ void SelectImage::NumberUpdate(void)
 	}
 
 	//スペースキー押下で決定&入力デバイス選択へ
-	if (selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::DECIDE)
+	if (selectScene_.GetConfig() == SelectScene::KEY_CONFIG::DECIDE)
 	{
 		//プレイヤー人数の設定
 		data.Input(SceneManager::PLAY_MODE::USER, playerNum_);
@@ -270,29 +286,29 @@ void SelectImage::NumberUpdate(void)
 		}
 
 		//ここを追加すると4人プレイだけなぜか画面分割が２つに減る
-		if (playerNum_ > 1)
-		{
-			//プレイヤー2以上の場合、2P以上のコントローラーをPAD操作に設定
-			for (int num = 2; num <= playerNum_; num++)
-			{
-				data.Input(SceneManager::CNTL::PAD, num);
-				selectScene_.SetDevice(num - 1, SceneManager::CNTL::PAD);
-			}
-		}
+		//if (playerNum_ > 1)
+		//{
+		//	//プレイヤー2以上の場合、2P以上のコントローラーをPAD操作に設定
+		//	for (int num = 2; num <= playerNum_; num++)
+		//	{
+		//		data.Input(SceneManager::CNTL::PAD, num);
+		//	}
+		//}
 
-		selectScene_.ChangeSelect(SelectScene::SELECT::OPERATION);
+		//selectScene_.ChangeSelect(SelectScene::SELECT::OPERATION);
+		ChangeSelect(SelectScene::SELECT::OPERATION);
 	}
 
 	//選択する矢印
 	if (!pointR_.isToggle_ &&
-		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::RIGHT)
+		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::RIGHT)
 	{
 		pointR_.isToggle_ = true;
 		pointL_.isToggle_ = false;
 	}
 
 	if (!pointL_.isToggle_ &&
-		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::LEFT)
+		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::LEFT)
 	{
 		pointR_.isToggle_ = false;
 		pointL_.isToggle_ = true;
@@ -314,7 +330,7 @@ void SelectImage::OperationUpdate(void)
 
 	//右の矢印がONの時にキーの右に値する入力をし続けると
 	if (pointR_.isToggle_ &&
-		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::RIGHT)
+		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::RIGHT)
 	{
 		if (!press_)
 		{
@@ -346,7 +362,7 @@ void SelectImage::OperationUpdate(void)
 
 	//左
 	if (pointL_.isToggle_ &&
-		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::LEFT)
+		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::LEFT)
 	{
 		if (!press_)
 		{
@@ -377,25 +393,27 @@ void SelectImage::OperationUpdate(void)
 	}
 
 	//スペースキー押下で決定&役職選択へ
-	if (selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::DECIDE)
+	if (selectScene_.GetConfig() == SelectScene::KEY_CONFIG::DECIDE)
 	{
 		//1Pの操作の設定
 		(isPad_) ? data.Input(SceneManager::CNTL::PAD, 1) : data.Input(SceneManager::CNTL::KEYBOARD, 1);
+		(isPad_) ? selectScene_.Set1PDevice(SceneManager::CNTL::PAD) : selectScene_.Set1PDevice(SceneManager::CNTL::KEYBOARD);
 		//selectedCntl_ = (isPad_) ? SceneManager::CNTL::PAD : SceneManager::CNTL::KEYBOARD;
 
 		selectScene_.ChangeSelect(SelectScene::SELECT::ROLE);
+		ChangeSelect(SelectScene::SELECT::ROLE);
 	}
 
 	//選択する矢印
 	if (!pointR_.isToggle_ &&
-		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::RIGHT)
+		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::RIGHT)
 	{
 		pointR_.isToggle_ = true;
 		pointL_.isToggle_ = false;
 	}
 
 	if (!pointL_.isToggle_ &&
-		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::LEFT)
+		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::LEFT)
 	{
 		pointR_.isToggle_ = false;
 		pointL_.isToggle_ = true;
@@ -457,18 +475,30 @@ void SelectImage::RoleDraw(void)
 {
 	// 2つの三角形を描画（テクスチャ付き）
 	// 1つ目の三角形
-	VERTEX3D triangle1[3] = { vertices_[2], vertices_[1], vertices_[0] };
-	// 2つ目の三角形
-	VERTEX3D triangle2[3] = { vertices_[1], vertices_[2], vertices_[3] };
+	//VERTEX3D triangle1[3] = { vertices_[2], vertices_[1], vertices_[0] };
+	//// 2つ目の三角形
+	//VERTEX3D triangle2[3] = { vertices_[1], vertices_[2], vertices_[3] };
 
-	// 三角形を描画
-	DrawPolygon3D(triangle1, 2, *imgPlayerNum_, true);  // 1つ目の三角形
-	DrawPolygon3D(triangle2, 2, *imgPlayerNum_, true);  // 2つ目の三角形
+	//// 三角形を描画
+	//DrawPolygon3D(triangle1, 2, *imgPlayerNum_, true);  // 1つ目の三角形
+	//DrawPolygon3D(triangle2, 2, *imgPlayerNum_, true);  // 2つ目の三角形
+
+	auto camera = SceneManager::GetInstance().GetCameras();
+
+	//for (int i = 1; i < camera.size(); i++)
+	//{
+	//	for (int n = 0; n < 4; n++) {
+	//		//最初の座標を保持
+	//		VECTOR prevPos = mesh_[i - 1].vertex_[n].pos;
+	//		//XZ平面で座標を回転させる
+	//		mesh_[i].vertex_[n].pos = AsoUtility::RotXZPos(SelectScene::DEFAULT_CAMERA_POS, prevPos, AsoUtility::Deg2RadF(90.0f));
+	//	}
+	//	mesh_[i].DrawTwoMesh(*imgPlayerNum_);
+	//}
+
+	mesh_[0].DrawTwoMesh(*imgPlayerNum_);
 
 	PointsDraw();
-
-	DrawFormatString(Application::SCREEN_SIZE_X / 2,
-		Application::SCREEN_SIZE_Y / 2, 0x000000, "role : %d",role_);
 }
 
 void SelectImage::PointsDraw(void)
@@ -512,21 +542,21 @@ void SelectImage::PointsDraw(void)
 	}
 }
 
-void SelectImage::ChangeObject(SceneManager::CNTL cntl, int i)
+void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 {
 	DataBank& data = DataBank::GetInstance();
 	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
 
 	//右の三角形がONの時にキーの右に値する入力をし続けると
 	if (pointR_.isToggle_ &&
-		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::RIGHT)
+		input.config_ == SelectScene::KEY_CONFIG::RIGHT)
 	{
 		if (!press_)
 		{
 			press_ = true;
 
 			//役職を選択
-			role_[i] = (role_[i] + 1) % SceneManager::PLAYER_NUM;
+			role_ = (role_ + 1) % SceneManager::PLAYER_NUM;
 		}
 
 		//キーが押されている間経過時間を加算していく
@@ -540,7 +570,7 @@ void SelectImage::ChangeObject(SceneManager::CNTL cntl, int i)
 
 			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
 			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, role_[i] = (role_[i] + 1) % SceneManager::PLAYER_NUM : interval_;
+				interval_ = 0.0f, role_ = (role_ + 1) % SceneManager::PLAYER_NUM : interval_;
 		}
 	}
 	else if (pointR_.isToggle_)
@@ -551,14 +581,14 @@ void SelectImage::ChangeObject(SceneManager::CNTL cntl, int i)
 	}
 
 	if (pointL_.isToggle_ &&
-		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::LEFT)
+		input.config_ == SelectScene::KEY_CONFIG::LEFT)
 	{
 		if (!press_)
 		{
 			press_ = true;
 
 			//役職を選択
-			role_[i] = (role_[i] - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM;
+			role_ = (role_ - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM;
 		}
 		//キーが押されている間経過時間を加算していく
 		keyPressTime_ += delta;
@@ -571,7 +601,7 @@ void SelectImage::ChangeObject(SceneManager::CNTL cntl, int i)
 
 			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
 			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, role_[i] = (role_[i] - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM : interval_;
+				interval_ = 0.0f, role_ = (role_ - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM : interval_;
 		}
 	}
 	else if (pointL_.isToggle_)
@@ -582,36 +612,54 @@ void SelectImage::ChangeObject(SceneManager::CNTL cntl, int i)
 	}
 
 	//スペースキー押下でゲーム画面へ
-	if (selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::DECIDE)
+	if (input.config_ == SelectScene::KEY_CONFIG::DECIDE)
 	{
 		//役職の設定
-		data.Input(static_cast<SceneManager::ROLE>(role_[i]), playerNum_);
+		data.Input(static_cast<SceneManager::ROLE>(role_), playerNum_);
 
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 	}
 
 	//選択する矢印
 	if (!pointR_.isToggle_ &&
-		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::RIGHT)
+		input.config_ == SelectScene::KEY_CONFIG::RIGHT)
 	{
 		pointR_.isToggle_ = true;
 		pointL_.isToggle_ = false;
 	}
 
 	if (!pointL_.isToggle_ &&
-		selectScene_.GetKeyConfig() == SelectScene::KEY_CONFIG::LEFT)
+		input.config_ == SelectScene::KEY_CONFIG::LEFT)
 	{
 		pointR_.isToggle_ = false;
 		pointL_.isToggle_ = true;
 	}
 
-	//UV座標（テクスチャ座標）
-	vertices_[0].u = (float)(role_[i]) / 4.0f;				vertices_[0].v = 1.0f;	// 左下
-	vertices_[1].u = ((float)(role_[i]) + 1.0f) / 4.0f;	vertices_[1].v = 1.0f;	// 右下
-	vertices_[2].u = (float)(role_[i]) / 4.0f;				vertices_[2].v = 0.0f;	// 左上
-	vertices_[3].u = ((float)(role_[i]) +1.0f) / 4.0f;		vertices_[3].v = 0.0f;	// 右上
+	////UV座標（テクスチャ座標）
+	//vertices_[0].u = (float)(role_) / 4.0f;				vertices_[0].v = 1.0f;	// 左下
+	//vertices_[1].u = ((float)(role_) + 1.0f) / 4.0f;	vertices_[1].v = 1.0f;	// 右下
+	//vertices_[2].u = (float)(role_) / 4.0f;				vertices_[2].v = 0.0f;	// 左上
+	//vertices_[3].u = ((float)(role_) +1.0f) / 4.0f;		vertices_[3].v = 0.0f;	// 右上
 
-	player_->SetRole(role_[i]);
+	for (int n = 0; n < SceneManager::PLAYER_NUM; n++)
+	{
+		//UV座標（テクスチャ座標）
+		mesh_[n].vertex_[0].u = (float)(role_) / 4.0f;			mesh_[n].vertex_[0].v = 1.0f;	// 左下
+		mesh_[n].vertex_[1].u = ((float)(role_)+1.0f) / 4.0f;	mesh_[n].vertex_[1].v = 1.0f;	// 右下
+		mesh_[n].vertex_[2].u = (float)(role_) / 4.0f;			mesh_[n].vertex_[2].v = 0.0f;	// 左上
+		mesh_[n].vertex_[3].u = ((float)(role_)+1.0f) / 4.0f;	mesh_[n].vertex_[3].v = 0.0f;	// 右上
+	}
+
+	//player_->SetRole(role_);
+}
+
+void SelectImage::ChangeSelect(const SelectScene::SELECT _state)
+{
+	//状態遷移
+	state_ = _state;
+
+	// 各状態遷移の初期処理
+	stateChanges_[state_]();
 }
 
 void SelectImage::InitVertex(void)
@@ -667,25 +715,19 @@ VECTOR SelectImage::RotateVertex(VECTOR pos, VECTOR center, float angle)
 	return AsoUtility::VECTOR_ZERO;
 }
 
-VECTOR SelectImage::RotTargetPos(VECTOR pos)
+void SelectImage::ChangeStateNumber(void)
 {
-	float rad = AsoUtility::Deg2RadF(90.0f);  // 角度をラジアンに変換
-	//float newX = pos.z;   // Y軸回りの90度回転
-	//float newZ = -pos.x;
-	//pos.x = newX;
-	//pos.z = newZ;
+	stateUpdate_ = std::bind(&SelectImage::NumberUpdate, this);
+}
 
-	//return pos;
+void SelectImage::ChangeStateOperation(void)
+{
+	stateUpdate_ = std::bind(&SelectImage::OperationUpdate, this);
+}
 
-	float cos_a = cosf(rad);
-	float sin_a = sinf(rad);
-
-	VECTOR result;
-	result.x = pos.x * cos_a + pos.z * sin_a;
-	result.y = pos.y;
-	result.z = -pos.x * sin_a + pos.z * cos_a;
-
-	return result;
+void SelectImage::ChangeStateRole(void)
+{
+	stateUpdate_ = std::bind(&SelectImage::RoleUpdate, this);
 }
 
 void SelectImage::Point::PointDraw(void)

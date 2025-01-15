@@ -1,10 +1,12 @@
 #pragma once
+#include <functional>
 #include"../Utility/AsoUtility.h"
 #include"Common/Transform.h"
 #include "../Common/Vector2.h"
 #include "./UnitBase.h"
+#include "../Scene/SelectScene.h"
 
-class SelectScene;
+//class SelectScene;
 class SelectPlayer;
 
 class SelectImage : public UnitBase
@@ -72,31 +74,26 @@ public:
 	//描画
 	virtual void Draw(void)override;
 
-	//関数ポインタ使ってすっきりさせたい
-	//更新処理関連-----------------------------------------------
-
-	void NumberUpdate(void);		//人数選択中の処理
-
-	void OperationUpdate(void);		//操作方法選択中の処理(1Pのみ)
-
-	void RoleUpdate(void);			//役職選択中の処理
-
-	//描画処理関連-----------------------------------------------
-
-	void NumberDraw(void);			//人数選択中の処理
-
-	void OperationDraw(void);		//操作方法選択中の処理(1Pのみ)
-
-	void RoleDraw(void);			//役職選択中の処理
-
-	void PointsDraw(void);			//矢印（２つとも）描画
-
-	//-----------------------------------------------------------
-
 	//選択を変更する
-	void ChangeObject(SceneManager::CNTL cntl,int i);
+	void ChangeObject(SelectScene::Device& input,int i);
+
+	/// <summary>
+	/// 状態遷移
+	/// </summary>
+	/// <param name="_state">遷移する状態</param>
+	void ChangeSelect(const SelectScene::SELECT _state);
+
+	int GetRole(void) { return role_; };
 
 private:
+
+	//状態管理(更新ステップ)
+	std::function<void(void)> stateUpdate_;
+	//状態管理(状態遷移時初期処理)
+	std::map<SelectScene::SELECT, std::function<void(void)>> stateChanges_;
+
+	//選択中の種類
+	SelectScene::SELECT state_;
 
 	//メッシュ
 	Mesh mesh_[SceneManager::PLAYER_NUM];
@@ -127,7 +124,8 @@ private:
 	bool isPad_;	
 
 	//職種
-	int role_[SceneManager::PLAYER_NUM];
+	int role_;
+	//int role_[SceneManager::PLAYER_NUM];
 
 	//キーを何秒押しているか
 	float keyPressTime_;
@@ -143,11 +141,36 @@ private:
 
 	VECTOR target_[SceneManager::PLAYER_NUM];
 
+	//関数-------------------------------------------------------------------------------------
+
 	void Load(void);	//読み込み用
 
 	void InitVertex(void);
 	VECTOR RotateVertex(VECTOR pos, VECTOR center, float angle);
 
-	VECTOR RotTargetPos(VECTOR pos);
+	//状態遷移
+	void ChangeStateNumber(void);
+	void ChangeStateOperation(void);
+	void ChangeStateRole(void);
+
+	//更新処理関連-----------------------------------------------
+
+	void NumberUpdate(void);		//人数選択中の処理
+
+	void OperationUpdate(void);		//操作方法選択中の処理(1Pのみ)
+
+	void RoleUpdate(void);			//役職選択中の処理
+
+	//描画処理関連-----------------------------------------------
+
+	void NumberDraw(void);			//人数選択中の処理
+
+	void OperationDraw(void);		//操作方法選択中の処理(1Pのみ)
+
+	void RoleDraw(void);			//役職選択中の処理
+
+	void PointsDraw(void);			//矢印（２つとも）描画
+
+	//-----------------------------------------------------------
 };
 

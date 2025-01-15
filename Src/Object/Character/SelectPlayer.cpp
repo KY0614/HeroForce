@@ -29,6 +29,11 @@ void SelectPlayer::Update(void)
 void SelectPlayer::Draw(void)
 {
 	MV1DrawModel(trans_[role_].modelId);
+
+	for (auto& tran_ : trans_) {
+		//ƒ‚ƒfƒ‹‚Ì‰Šú‰»
+		tran_.Update();
+	}
 }
 
 void SelectPlayer::SetPos(VECTOR pos)
@@ -77,4 +82,5 @@ void SelectPlayer::Init3DModel(void)
 		//ƒ‚ƒfƒ‹‚Ì‰Šú‰»
 		tran_.Update();
 	}
+
 }
