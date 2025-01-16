@@ -52,7 +52,13 @@ void EnemyManager::Release(void)
 	}
 }
 
+const std::vector<std::unique_ptr<Enemy>> EnemyManager::GetActiveEnemys(void)
+{
+	return activeEnms_;
+}
+
 void EnemyManager::SetActive(std::unique_ptr<Enemy> enm)
 {
 	//敵の更新等を掛けるやつをセット
+	activeEnms_.push_back(enm);
 }

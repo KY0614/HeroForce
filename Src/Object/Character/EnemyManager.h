@@ -23,6 +23,7 @@ public:
 	void Draw(void);
 	void Release(void);
 
+	const std::vector<std::unique_ptr<Enemy>> GetActiveEnemys(void);
 private:
 
 	//XV“™‚ğ‚©‚¯‚é“®‚«‚Ì‚ ‚é“G
