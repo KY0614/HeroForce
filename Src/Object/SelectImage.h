@@ -80,7 +80,11 @@ public:
 	//描画
 	virtual void Draw(void)override;
 
-	//選択を変更する
+	/// <summary>
+	/// 選択しているオブジェクトを変更する
+	/// </summary>
+	/// <param name="input">入力デバイス</param>
+	/// <param name="i">入力デバイスに応じたプレイヤーナンバー</param>
 	void ChangeObject(SelectScene::Device& input,int i);
 
 	/// <summary>
@@ -89,10 +93,24 @@ public:
 	/// <param name="_state">遷移する状態</param>
 	void ChangeSelect(const SelectScene::SELECT _state);
 
-	int GetRole(void) { return role_; };
+	//ゲッター　---------------------------------------------------
 
+	int GetRole(void) { return role_; };	//選んでいる役職を取得
+
+	/// <summary>
+	/// メッシュの頂点情報を取得
+	/// </summary>
+	/// <param name="i">vertex配列の指定</param>
+	/// <returns>指定したvertexの頂点情報</returns>
 	VERTEX3D GetMeshVertex(int i);
 
+	// セッター　--------------------------------------------------
+
+	/// <summary>
+	/// メッシュ座標を設定する
+	/// </summary>
+	/// <param name="pos">設定する座標</param>
+	/// <param name="i">設定するvertex配列の指定</param>
 	void SetMeshPos(VECTOR pos, int i);
 
 private:
@@ -114,15 +132,12 @@ private:
 	int imgLeftPoint_;		//左向きの矢印画像
 	int imgRightPoint_;		//右向きの矢印画像
 
-	//メッシュの頂点データ（4つの頂点）
-	//VERTEX3D vertices_[4];
-	//VERTEX3D triangle1_[3];
-	//VERTEX3D triangle2_[3];
-	VECTOR leftTop_;
-	VECTOR leftBottom_;
-	VECTOR rightTop_;
-	VECTOR rightBottom_;
-	float angle_;
+	//メッシュの頂点座標用（4つの頂点）
+	VECTOR leftTop_;		//左上
+	VECTOR leftBottom_;		//左下
+	VECTOR rightTop_;		//右上	
+	VECTOR rightBottom_;	//右下
+	float angle_;		
 
 	//矢印の構造体
 	Point pointL_;		//左
@@ -136,7 +151,6 @@ private:
 
 	//職種
 	int role_;
-	//int role_[SceneManager::PLAYER_NUM];
 
 	//キーを何秒押しているか
 	float keyPressTime_;
@@ -147,6 +161,7 @@ private:
 	//人数を一定間隔で加算していくためのインターバル用時間(加算して次加算するまでの間)
 	float interval_;
 
+	//インスタンス
 	SelectScene& selectScene_;
 	std::shared_ptr<SelectPlayer> player_;
 

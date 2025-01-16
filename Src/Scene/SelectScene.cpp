@@ -282,8 +282,11 @@ void SelectScene::KeyConfigSetting(void)
 	auto& ins = InputManager::GetInstance();
 	auto camera = SceneManager::GetInstance().GetCameras();
 
-	// ‰½‚à‰Ÿ‚³‚ê‚Ä‚È‚¢‚Æ‚«
-	input_[0].config_ = KEY_CONFIG::NONE;
+	for (auto& i : input_)
+	{
+		// ‰½‚à‰Ÿ‚³‚ê‚Ä‚È‚¢‚Æ‚«
+		i.config_ = KEY_CONFIG::NONE;
+	}
 	
 	for (int i = 1; i < SceneManager::PLAYER_NUM; i++) {
 		input_[i].cntl_ = SceneManager::CNTL::PAD;
@@ -333,10 +336,10 @@ void SelectScene::PadProcess(void)
 
 	//cŽ²
 	int leftStickY_[SceneManager::PLAYER_NUM];
-	leftStickX_[0] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLY;
-	leftStickX_[1] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD2).AKeyLY;
-	leftStickX_[2] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD3).AKeyLY;
-	leftStickX_[3] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD4).AKeyLY;
+	leftStickY_[0] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLY;
+	leftStickY_[1] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD2).AKeyLY;
+	leftStickY_[2] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD3).AKeyLY;
+	leftStickY_[3] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD4).AKeyLY;
 	
 	for (int i = 0;i < 4 ;i++)
 	{
@@ -350,7 +353,7 @@ void SelectScene::PadProcess(void)
 			input_[i].config_ = KEY_CONFIG::DOWN;
 		}
 	
-		if (leftStickX_[i] < -900)
+		if (leftStickX_[i] < -1)
 		{
 			input_[i].config_ = KEY_CONFIG::LEFT;
 		}
@@ -362,7 +365,7 @@ void SelectScene::PadProcess(void)
 
 	if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
 	{
-		key_ = KEY_CONFIG::DECIDE;
+		input_[0].config_ = KEY_CONFIG::DECIDE;
 	}
 }
 

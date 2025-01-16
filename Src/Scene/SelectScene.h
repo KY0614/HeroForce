@@ -160,7 +160,6 @@ private:
 
 	//キーコンフィグ
 	KEY_CONFIG key_;
-	//KEY_CONFIG key_[SceneManager::PLAYER_NUM];
 
 	Device input_[SceneManager::PLAYER_NUM];
 
