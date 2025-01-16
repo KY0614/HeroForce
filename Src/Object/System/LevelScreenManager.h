@@ -61,7 +61,6 @@ public:
 	static constexpr int GAGE_POS_X = 20;
 	static constexpr int GAGE_POS_Y = 20;
 
-
 	LevelScreenManager(void);
 	~LevelScreenManager(void);
 
@@ -91,10 +90,13 @@ public:
 	//経験値の状態確認
 	void CheckExp();
 
+	void EffectSyne(PlayerBase& player, const int playerNum);
+
 	//ゲッター
 	inline float GetExp(void)const { return exp_; };
 	inline STATE GetState(void)const { return state_; };
 	inline TYPE GetType(const int playerNum)const;
+	TYPE GetPreType(const int playerNum)const;
 
 private:
 
@@ -124,6 +126,9 @@ private:
 
 	//アルファ値
 	float alpha_;
+
+	//前状態
+	std::vector<TYPE> preTypeData_;
 
 	// 状態管理(状態遷移時初期処理)
 	std::map<STATE, std::function<void(void)>> stateChanges_;

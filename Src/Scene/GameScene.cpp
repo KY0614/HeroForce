@@ -1,4 +1,5 @@
 #include "../Manager/Generic/SceneManager.h"
+#include "../Manager/Decoration/EffectManager.h"
 #include "../Manager/Generic/Camera.h"
 #include "../Manager/GameSystem/Collision.h"
 #include "../Manager/GameSystem/DataBank.h"
@@ -148,8 +149,6 @@ void GameScene::Update(void)
 
 	//強化要素の反映
 	LevelUpReflection();
-
-
 
 	//いずれ消す
 	auto& ins = InputManager::GetInstance();
@@ -496,6 +495,16 @@ void GameScene::DrawPhase(void)
 }
 void GameScene::LevelUpReflection()
 {
+	//プレイヤーごとに強化反映
+	int plNum = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
+	for (int i = 0; i < plNum; i++)
+	{
+		if (level_->GetPreType(i) != LevelScreenManager::TYPE::MAX)
+		{
+			level_->EffectSyne(*players_[i], i);
+		}
+	}
+	
 	//ステート確認
 	if (level_->GetState() != LevelScreenManager::STATE::NONE)
 	{
@@ -503,8 +512,6 @@ void GameScene::LevelUpReflection()
 		return;
 	}
 
-	//プレイヤーごとに強化反映
-	int plNum = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
 	for (int i = 0; i < plNum; i++)
 	{
 		level_->Reflection(*players_[i], i);

@@ -16,6 +16,7 @@ ChickenBase::ChickenBase()
 	stateChanges_.emplace(STATE::ALIVE , std::bind(&ChickenBase::ChangeStateAlive, this));
 	stateChanges_.emplace(STATE::DAMAGE , std::bind(&ChickenBase::ChangeStateDamage, this));
 	stateChanges_.emplace(STATE::DEATH , std::bind(&ChickenBase::ChangeStateDeath, this));
+	stateChanges_.emplace(STATE::END , std::bind(&ChickenBase::ChangeStateEnd, this));
 
 	// 生存状態管理
 	aliveChanges_.emplace(ALIVE_MOVE::IDLE, std::bind(&ChickenBase::ChangeAliveIdle, this));
@@ -59,6 +60,14 @@ void ChickenBase::Update(void)
 	// 更新ステップ
  	stateUpdate_();
 
+	//残量HPの処理
+	SubHp();
+
+	//HPが0以下の場合
+	if (hp_ <= 0) {
+		ChangeState(STATE::DEATH);
+	}
+
 	//画像表示確認
 	CheckIsHelp();
 
@@ -75,9 +84,6 @@ void ChickenBase::Draw(void)
 
 	//デバッグ描画
 	//DebagDraw();
-
-	//HPUI表示
-	hpUi_->Draw();
 
 	//ビルボード描画
 	DrawHelp();
@@ -210,6 +216,12 @@ void ChickenBase::ChangeStateDeath()
 	stateDraw_ = std::bind(&ChickenBase::DrawDeath, this);
 }
 
+void ChickenBase::ChangeStateEnd()
+{
+	stateUpdate_ = std::bind(&ChickenBase::UpdateEnd, this);
+	stateDraw_ = std::bind(&ChickenBase::DrawEnd, this);
+}
+
 void ChickenBase::ChangeAliveState(ALIVE_MOVE state)
 {
 	// 状態変更
@@ -263,6 +275,11 @@ void ChickenBase::UpdateDeath()
 	ResetAnim(ANIM::DEATH, DEFAULT_SPEED_ANIM);
 }
 
+void ChickenBase::UpdateEnd()
+{
+
+}
+
 void ChickenBase::DrawNone()
 {
 
@@ -271,11 +288,17 @@ void ChickenBase::DrawNone()
 void ChickenBase::DrawAlive()
 {
 	MV1DrawModel(trans_.modelId);
+
+	//HPUI表示
+	hpUi_->Draw();
 }
 
 void ChickenBase::DrawDamage()
 {
 	MV1DrawModel(trans_.modelId);
+
+	//HPUI表示
+	hpUi_->Draw();
 }
 
 void ChickenBase::DrawDeath()
@@ -292,6 +315,14 @@ void ChickenBase::DrawDeath()
 	}
 	// モデルの描画
 	MV1DrawModel(trans_.modelId);
+
+	//HPUI表示
+	hpUi_->Draw();
+}
+
+void ChickenBase::DrawEnd()
+{
+
 }
 
 void ChickenBase::AliveIdle()
@@ -377,7 +408,7 @@ void ChickenBase::FinishAnim(void)
 		break;
 
 	case UnitBase::ANIM::DEATH:
-		//1回で終了
+		ChangeState(STATE::END);
 		break;
 	}
 }
@@ -398,6 +429,7 @@ void ChickenBase::CheckIsHelp()
 
 void ChickenBase::DrawHelp()
 {
+	//3Dから2Dへ座標変換
 	VECTOR pos = VAdd(trans_.pos, LOCAL_HELP_POS);
 	pos = ConvWorldPosToScreenPos(pos);
 
@@ -405,13 +437,6 @@ void ChickenBase::DrawHelp()
 	if (isHelp_ &&
 		(state_ == STATE::ALIVE ||
 			state_ == STATE::DAMAGE)) {
-		//DrawBillboard3D(
-		//	pos,	//位置
-		//	0.5f, 0.5f,	//中心位置
-		//	100.0f,		//サイズ
-		//	0.0f,		//角度
-		//	imgHelp_,	//画像
-		//	true);		//透過
 
 		DrawRotaGraph(
 			pos.x,
@@ -436,6 +461,7 @@ void ChickenBase::DebagUpdate()
 	else if (ins.IsTrgDown(KEY_INPUT_O))
 	{
 		ChangeState(STATE::DAMAGE);
+		SetDamage(30);
 	}
 }
 

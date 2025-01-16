@@ -44,4 +44,5 @@ void GamaUIBase::SetPos(const VECTOR pos)
 void GamaUIBase::SetHP(const int hp)
 {
 	hp_ = hp;
+	if (hp_ <= 0) { hp_ = 0; }
 }

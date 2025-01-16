@@ -22,6 +22,7 @@ public:
 		HANAZOME,
 		BANANA,
 		PENGS,
+		KAKUMEI,
 		MAX
 	};
 

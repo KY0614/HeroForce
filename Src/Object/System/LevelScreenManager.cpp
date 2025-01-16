@@ -42,6 +42,9 @@ void LevelScreenManager::Init(void)
 
 	//初期化処理
 	Reset();
+
+	//前データの保持
+	preTypeData_.resize(playerNum_, TYPE::MAX);
 }
 
 void LevelScreenManager::Update(void)
@@ -128,6 +131,7 @@ void LevelScreenManager::UpdateEnd(void)
 	//強化要素設定
 	for (int i = 0; i < playerNum_; i++) {
 		selectTypes_[i] = select_->GetType(i);
+		preTypeData_[i] = selectTypes_[i];
 	}
 
 	//各種リセット
@@ -353,9 +357,49 @@ void LevelScreenManager::CheckExp()
 	}
 }
 
+void LevelScreenManager::EffectSyne(PlayerBase& player, const int playerNum)
+{
+	//反映効果
+	TYPE type = preTypeData_[playerNum];
+	EffectManager::EFFECT effectType = EffectManager::EFFECT::NONE;
+	switch (type)
+	{
+	case TYPE::ATTACK:
+		effectType = EffectManager::EFFECT::ATTACK_UP;
+		break;
+
+	case TYPE::DEFENSE:
+		effectType = EffectManager::EFFECT::DEFENCE_UP;
+		break;
+
+	case TYPE::LIFE:
+		effectType = EffectManager::EFFECT::LIFE_UP;
+		break;
+
+	case TYPE::SPEED:
+		effectType = EffectManager::EFFECT::SPEED_UP;
+		break;
+
+	default:
+		break;
+	}
+
+	//エフェクト設定
+	EffectManager::GetInstance().SyncEffect(
+		effectType,
+		player.GetPos(),
+		Quaternion(),
+		EFFECT_SCALE);
+}
+
 inline LevelScreenManager::TYPE LevelScreenManager::GetType(const int playerNum) const
 {
 	return selectTypes_[playerNum];
+}
+
+LevelScreenManager::TYPE LevelScreenManager::GetPreType(const int playerNum) const
+{
+	return preTypeData_[playerNum];
 }
 
 void LevelScreenManager::FaderDraw()

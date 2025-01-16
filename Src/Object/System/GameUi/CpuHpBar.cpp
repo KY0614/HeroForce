@@ -27,6 +27,9 @@ void CpuHpBar::SetParam()
 
 void CpuHpBar::Draw()
 {
+
+	if (hp_ <= 0) { return; }
+
 	VECTOR pos = ConvWorldPosToScreenPos(pos_);
 
 	DrawRotaGraph(
@@ -39,12 +42,14 @@ void CpuHpBar::Draw()
 
 	//デバッグ関連変数
 	int hpMax = ChickenBase::DEFAULT_LIFE;
-	int parcent = (int)SIZE.x % (hpMax * hp_);
+	float divSize = SIZE.x * 2 / hpMax;
 	pos = VAdd(pos, LOCAL_HPBAR_POS);
+
+	int barLength = static_cast<int>(divSize * hp_);
 
 	DrawExtendGraph(
 		pos.x - SIZE.x, pos.y - SIZE.y,
-		pos.x + parcent, pos.y + SIZE.y,
+		pos.x - SIZE.x + barLength,pos.y + SIZE.y,
 		imgHpBar_,
 		true);
 }

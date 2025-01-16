@@ -85,6 +85,7 @@ void TextManager::InitFont()
     fontPath_[static_cast<int>(FONT_TYPE::HANAZOME)] = "PENGS.ttf";
     fontPath_[static_cast<int>(FONT_TYPE::BANANA)] = "YDWbananaslipplus.otf";
     fontPath_[static_cast<int>(FONT_TYPE::PENGS)] = "PENGS.ttf";
+    fontPath_[static_cast<int>(FONT_TYPE::KAKUMEI)] = "NikkyouSans-mLKax.ttf";
 
     //フォント名前設定
     fontName_[static_cast<int>(FONT_TYPE::NORMAR)] = "ＭＳ ゴシック";
@@ -94,6 +95,7 @@ void TextManager::InitFont()
     fontName_[static_cast<int>(FONT_TYPE::HANAZOME)] = "はなぞめフォント";
     fontName_[static_cast<int>(FONT_TYPE::BANANA)] = "ＹＤＷ バナナスリップ plus plus";
     fontName_[static_cast<int>(FONT_TYPE::PENGS)] = "PENGS";
+    fontName_[static_cast<int>(FONT_TYPE::KAKUMEI)] = "Nikkyou Sans";
 
     // フォントをシステムに登録
     for (int i = 0; i < static_cast<int>(FONT_TYPE::MAX); i++)

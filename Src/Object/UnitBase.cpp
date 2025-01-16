@@ -137,6 +137,26 @@ void UnitBase::SetIsHit(const bool _flag)
 	atk_.isHit_ = _flag;
 }
 
+void UnitBase::SetDamage(const int damage)
+{
+	//与えるダメージを増やす
+	damage_ += damage;
+}
+
+void UnitBase::SubHp()
+{
+	//ダメージが0より大きいか調べる
+	if(0 < damage_)
+	{
+		//残りダメージを減らす;
+		damage_--;
+		//Hpを減らす
+		hp_--;
+		//HP下限
+		if (hp_ < 0) { hp_ = 0; }
+	}
+}
+
 //アニメ終了時の動き
 void UnitBase::FinishAnim(void)
 {

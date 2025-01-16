@@ -91,11 +91,11 @@ void LevelupNotice::Load()
 
 	//ƒtƒHƒ“ƒg
 	fontMes_ = CreateFontToHandle(
-		text_m.GetFontName(TextManager::FONT_TYPE::PENGS).c_str(),
+		text_m.GetFontName(TextManager::FONT_TYPE::KAKUMEI).c_str(),
 		FONT_TEXT_SIZE,
 		FONT_THICK);
 	fontLevel_ = CreateFontToHandle(
-		text_m.GetFontName(TextManager::FONT_TYPE::PENGS).c_str(),
+		text_m.GetFontName(TextManager::FONT_TYPE::KAKUMEI).c_str(),
 		FONT_LEVEL_SIZE,
 		FONT_THICK);
 

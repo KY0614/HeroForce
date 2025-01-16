@@ -5,7 +5,7 @@ class GamaUIBase
 {
 public:
 
-	enum HPBAR_TYPE
+	enum class HPBAR_TYPE
 	{
 		PLAYER,
 		ENEMY,

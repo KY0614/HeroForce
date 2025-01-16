@@ -31,8 +31,8 @@ public:
 	static constexpr int MAINTAIN_SECONDS = 1.5 * Application::DEFAULT_FPS;
 
 	//フォント関連
-	static constexpr int FONT_TEXT_SIZE = Application::SCREEN_SIZE_X * 128 / Application::DEFA_SCREEN_SIZE_X;
-	static constexpr int FONT_LEVEL_SIZE = Application::SCREEN_SIZE_X * 156 / Application::DEFA_SCREEN_SIZE_X;
+	static constexpr int FONT_TEXT_SIZE = Application::SCREEN_SIZE_X * 156 / Application::DEFA_SCREEN_SIZE_X;
+	static constexpr int FONT_LEVEL_SIZE = Application::SCREEN_SIZE_X * 172 / Application::DEFA_SCREEN_SIZE_X;
 	static constexpr int FONT_THICK = 3;
 
 	//透過開始時間(レベルテキスト)

@@ -70,7 +70,7 @@ public:
 	static constexpr int IS_HELP_CNT = 3 * Application::DEFAULT_FPS;
 
 	//HELP相対位置
-	static constexpr VECTOR LOCAL_HELP_POS = { 0,150,0 };
+	static constexpr VECTOR LOCAL_HELP_POS = { 0,180,0 };
 
 	//HP描画
 	static constexpr VECTOR LOCAL_HP_POS = { 0, 120, 0 };
@@ -90,6 +90,9 @@ public:
 
 	//ダメージを与える
 	void SetDamage(const int damage);
+
+	//状態を返す
+	inline STATE GetState() const { return state_; }
 
 private:
 
@@ -153,6 +156,7 @@ private:
 	void ChangeStateAlive();
 	void ChangeStateDamage();
 	void ChangeStateDeath();
+	void ChangeStateEnd();
 
 	void ChangeAliveState(ALIVE_MOVE state);
 	void ChangeAliveIdle();
@@ -164,12 +168,14 @@ private:
 	void UpdateAlive();
 	void UpdateDamage();
 	void UpdateDeath();
+	void UpdateEnd();
 
 	//状態別描画
 	void DrawNone();
 	void DrawAlive();
 	void DrawDamage();
 	void DrawDeath();
+	void DrawEnd();
 
 	//生存状態での状態別更新
 	void AliveIdle();

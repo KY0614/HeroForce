@@ -48,10 +48,10 @@ private:
 
 	//フェーダー
 	std::unique_ptr<Fader>fader_;
+
 	//ゲームシーンのフェーズ遷移中判定
 	bool isPhaseChanging_;
 	int phaseCnt_;
-
 
 	//フェーズリザルト
 	std::unique_ptr<FazeResult>fazeResult_;

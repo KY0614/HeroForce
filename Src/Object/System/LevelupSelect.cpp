@@ -104,11 +104,19 @@ void LevelupSelect::Draw()
 
 				//テキスト描画
 				int pow = 30;
-				color = 0xff0000;
+				color = 0xffffff;
 				length = expTexts_[type].length();
 				pos = ele.pos_;
 				pos.x -= length * FONT_EXP_SIZE / 4;
-				pos.y += 80;
+				pos.y += 150;
+
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+				DrawBox(
+					pos.x, pos.y,
+					pos.x + length * FONT_EXP_SIZE / 2.3,
+					pos.y + FONT_EXP_SIZE,
+					0x000000, true);
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 				DrawFormatStringToHandle(
 					pos.x, pos.y,
@@ -258,7 +266,7 @@ void LevelupSelect::CreateFonts()
 
 	//説明用テキストフォント
 	fontExp_ =CreateFontToHandle(
-		text_m.GetFontName(TextManager::FONT_TYPE::HANAZOME).c_str(),
+		text_m.GetFontName(TextManager::FONT_TYPE::LOGO).c_str(),
 		FONT_EXP_SIZE,
 		FONT_EXP_THICK);
 }

@@ -42,7 +42,7 @@ public:
 
 	//メッセージ描画位置
 	static constexpr int MES_TEXT_POS_X = Application::SCREEN_SIZE_X / 2 + 30;
-	static constexpr int MES_TEXT_POS_Y = 28;
+	static constexpr int MES_TEXT_POS_Y = 48;
 
 	//強化要素位置
 	static constexpr int INTERVEL = 100;

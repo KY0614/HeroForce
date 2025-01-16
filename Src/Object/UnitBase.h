@@ -106,9 +106,16 @@ public:
 	//isHit設定用（外部）
 	void SetIsHit(const bool _flag);
 
+	//ダメージの設定
+	void SetDamage(const int damage);
+
+	//残量HPの処理(少しずつHpを減らす)
+	void SubHp();
+
 protected:
 
 	int hp_;			//体力
+	int damage_;		//ダメージ
 	Transform trans_;	//位置情報関係
 	float radius_;		//自身の当たり判定の半径
 	float def_;			//防御力
