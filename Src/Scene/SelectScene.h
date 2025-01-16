@@ -134,6 +134,7 @@ private:
 
 	//状態管理(更新ステップ)
 	std::function<void(void)> stateUpdate_;
+
 	//状態管理(状態遷移時初期処理)
 	std::map<SELECT, std::function<void(void)>> stateChanges_;
 
@@ -149,11 +150,6 @@ private:
 
 	//背景のステージ
 	StageManager* stage_;
-
-	//---------------------------------------------
-	Transform trans_;
-	Transform tests_[SceneManager::PLAYER_NUM];
-	//----------------------------------------------
 
 	//選択中の種類
 	SELECT select_;
@@ -192,10 +188,11 @@ private:
 
 	void RoleDraw(void);			//役職選択中の処理
 
+	void MaxDraw(void);				//無
+
 	//-----------------------------------------------------------
 
 	//デバッグ関連-------------------------------
-	SceneManager::CNTL selectedCntl_;
-	
+
 };
 

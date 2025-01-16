@@ -28,10 +28,23 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 
 	}
 
+	//座標(四角形を作るために2つの三角形を使う)
+	testMesh_.vertex_[0].pos = VGet(VERTEX_LEFT_X, VERTEX_UNDER_Y, VERTEX_Z + 12.0f);	// 左下
+	testMesh_.vertex_[1].pos = VGet(VERTEX_RIGHT_X, VERTEX_UNDER_Y, VERTEX_Z + 12.0f);	// 右下
+	testMesh_.vertex_[2].pos = VGet(VERTEX_LEFT_X, VERTEX_TOP_Y, VERTEX_Z);				// 左上
+	testMesh_.vertex_[3].pos = VGet(VERTEX_RIGHT_X, VERTEX_TOP_Y, VERTEX_Z);			// 右上
+
+	testMesh_.testVertex_[0].pos = VGet(-90.0f, 50.0f, VERTEX_Z + 12.0f);	// 左下
+	testMesh_.testVertex_[1].pos = VGet(0.0f, 50.0f, VERTEX_Z + 12.0f);	// 右下
+	testMesh_.testVertex_[2].pos = VGet(-90.0f, 190.0f, VERTEX_Z);				// 左上
+	testMesh_.testVertex_[3].pos = VGet(0.0f, 190.0f, VERTEX_Z);			// 右上
+
 	// 法線の設定（今回は省略、適当な値を設定）
 	for (int n = 0; n < SceneManager::PLAYER_NUM; n++) {
 		for (int i = 0; i < VERTEX_NUM; i++) {
 			mesh_[n].vertex_[i].norm = VGet(0.0f, 0.0f, 1.0f);  // 法線は-Z軸方向
+			testMesh_.vertex_[i].norm = VGet(0.0f, 0.0f, 1.0f);
+			testMesh_.testVertex_[i].norm = VGet(0.0f, 0.0f, 1.0f);
 		}
 	}
 
@@ -39,6 +52,8 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	for (int n = 0; n < SceneManager::PLAYER_NUM; n++) {
 		for (int i = 0; i < VERTEX_NUM; i++) {
 			mesh_[n].vertex_[i].dif = GetColorU8(255, 255, 255, 255);  // 白色
+			testMesh_.vertex_[i].dif = GetColorU8(255, 255, 255, 255);
+			testMesh_.testVertex_[i].dif = GetColorU8(255, 255, 255, 255);
 		}
 	}
 
@@ -46,6 +61,8 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	for (int n = 0; n < SceneManager::PLAYER_NUM; n++) {
 		for (int i = 0; i < VERTEX_NUM; i++) {
 			mesh_[n].vertex_[i].spc = GetColorU8(0, 0, 0, 0);  // 白色
+			testMesh_.vertex_[i].spc = GetColorU8(0, 0, 0, 0);  // 白色
+			testMesh_.testVertex_[i].spc = GetColorU8(0, 0, 0, 0);  // 白色
 		}
 	}
 
@@ -56,7 +73,11 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 
 	playerNum_ = 1;
 	isPad_ = false;
-	//role_ = 0;
+	role_ = 0;
+	//role_[0] = 0;
+	//role_[1] = 0;
+	//role_[2] = 0;
+	//role_[3] = 0;
 
 	keyPressTime_ = 0.0f;
 	interval_ = 0.0f;
@@ -99,24 +120,6 @@ void SelectImage::Update(void)
 {
 	//更新ステップ
 	stateUpdate_();
-
-	//switch (state_)
-	//{
-	//case SelectScene::SELECT::NUMBER:
-	//	NumberUpdate();
-	//	break;
-
-	//case SelectScene::SELECT::OPERATION:
-	//	OperationUpdate();
-	//	break;
-
-	//case SelectScene::SELECT::ROLE:
-	//	RoleUpdate();
-	//	break;
-
-	//default:
-	//	break;
-	//}
 }
 
 void SelectImage::Draw(void)
@@ -141,15 +144,20 @@ void SelectImage::Draw(void)
 	
 	DrawFormatString(Application::SCREEN_SIZE_X - 100,0, 0x000000, "L : %d", pointL_.isToggle_);
 	DrawFormatString(Application::SCREEN_SIZE_X - 100,20, 0x000000, "R : %d", pointR_.isToggle_);
+	DrawFormatString(Application::SCREEN_SIZE_X - 100,40, 0x000000, "num : %d", playerNum_);
+	DrawFormatString(Application::SCREEN_SIZE_X - 100,80, 0x000000, "pad : %d", isPad_);
+
+	//auto camera = SceneManager::GetInstance().GetCameras();
+	//DrawFormatString(Application::SCREEN_SIZE_X - 100, 120, 0x000000, "camera : %d", camera.size());
 	//球
 	//左下
-	DrawSphere3D(vertices_[0].pos, 10.0f, 10, 0xFF0000, 0xFF0000, false);
+	DrawSphere3D(testMesh_.vertex_[0].pos, 10.0f, 10, 0xFF0000, 0xFF0000, false);
 	//右下
-	DrawSphere3D(vertices_[1].pos, 10.0f, 10, 0x00FF00, 0x00FF00, false);
+	DrawSphere3D(testMesh_.vertex_[1].pos, 10.0f, 10, 0x00FF00, 0x00FF00, false);
 	//左上
-	DrawSphere3D(vertices_[2].pos, 10.0f, 10, 0x0000FF, 0x0000FF, false);
+	DrawSphere3D(testMesh_.vertex_[2].pos, 10.0f, 10, 0x0000FF, 0x0000FF, false);
 	//右上
-	DrawSphere3D(vertices_[3].pos, 10.0f, 10, 0x000000, 0x000000, false);
+	DrawSphere3D(testMesh_.vertex_[3].pos, 10.0f, 10, 0x000000, 0x000000, false);
 	
 	//
 	//for (int i = 0; i < 4; i++)
@@ -422,9 +430,9 @@ void SelectImage::OperationUpdate(void)
 	for (int n = 0; n < SceneManager::PLAYER_NUM; n++) {
 		//UV座標（テクスチャ座標）
 		mesh_[n].vertex_[0].u = (float)(isPad_) / 4.0f;				mesh_[n].vertex_[0].v = 1.0f;	// 左下
-		mesh_[n].vertex_[1].u = ((float)(isPad_)+1.0f) / 4.0f;	mesh_[n].vertex_[1].v = 1.0f;	// 右下
+		mesh_[n].vertex_[1].u = ((float)(isPad_)+1.0f) / 4.0f;		mesh_[n].vertex_[1].v = 1.0f;	// 右下
 		mesh_[n].vertex_[2].u = (float)(isPad_) / 4.0f;				mesh_[n].vertex_[2].v = 0.0f;	// 左上
-		mesh_[n].vertex_[3].u = ((float)(isPad_)+1.0f) / 4.0f;	mesh_[n].vertex_[3].v = 0.0f;	// 右上
+		mesh_[n].vertex_[3].u = ((float)(isPad_)+1.0f) / 4.0f;		mesh_[n].vertex_[3].v = 0.0f;	// 右上
 	}
 }
 
@@ -456,13 +464,6 @@ void SelectImage::NumberDraw(void)
 
 void SelectImage::OperationDraw(void)
 {
-	//仮置き
-	//DrawRotaGraph(Application::SCREEN_SIZE_X / 2,
-	//	Application::SCREEN_SIZE_Y / 2,
-	//	1.0f, 0.0f,
-	//	imgPlayerNum_[(int)(isPad_)],
-	//	true, false);
-
 	mesh_[0].DrawTwoMesh(*imgPlayerNum_);
 
 	PointsDraw();
@@ -496,9 +497,10 @@ void SelectImage::RoleDraw(void)
 	//	mesh_[i].DrawTwoMesh(*imgPlayerNum_);
 	//}
 
-	mesh_[0].DrawTwoMesh(*imgPlayerNum_);
+	//mesh_[0].DrawTwoMesh(*imgPlayerNum_);
+	testMesh_.DrawTwoMeshTest(*imgPlayerNum_);
 
-	PointsDraw();
+	//PointsDraw();
 }
 
 void SelectImage::PointsDraw(void)
@@ -615,7 +617,7 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 	if (input.config_ == SelectScene::KEY_CONFIG::DECIDE)
 	{
 		//役職の設定
-		data.Input(static_cast<SceneManager::ROLE>(role_), playerNum_);
+		data.Input(static_cast<SceneManager::ROLE>(role_), i + 1);
 
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 	}
@@ -635,20 +637,26 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 		pointL_.isToggle_ = true;
 	}
 
-	////UV座標（テクスチャ座標）
-	//vertices_[0].u = (float)(role_) / 4.0f;				vertices_[0].v = 1.0f;	// 左下
-	//vertices_[1].u = ((float)(role_) + 1.0f) / 4.0f;	vertices_[1].v = 1.0f;	// 右下
-	//vertices_[2].u = (float)(role_) / 4.0f;				vertices_[2].v = 0.0f;	// 左上
-	//vertices_[3].u = ((float)(role_) +1.0f) / 4.0f;		vertices_[3].v = 0.0f;	// 右上
+	//for (int n = 0; n < SceneManager::PLAYER_NUM; n++)
+	//{
+	//	//UV座標（テクスチャ座標）
+	//	mesh_[n].vertex_[0].u = (float)(role_) / 4.0f;			mesh_[n].vertex_[0].v = 1.0f;	// 左下
+	//	mesh_[n].vertex_[1].u = ((float)(role_)+1.0f) / 4.0f;	mesh_[n].vertex_[1].v = 1.0f;	// 右下
+	//	mesh_[n].vertex_[2].u = (float)(role_) / 4.0f;			mesh_[n].vertex_[2].v = 0.0f;	// 左上
+	//	mesh_[n].vertex_[3].u = ((float)(role_)+1.0f) / 4.0f;	mesh_[n].vertex_[3].v = 0.0f;	// 右上
+	//}
 
-	for (int n = 0; n < SceneManager::PLAYER_NUM; n++)
-	{
-		//UV座標（テクスチャ座標）
-		mesh_[n].vertex_[0].u = (float)(role_) / 4.0f;			mesh_[n].vertex_[0].v = 1.0f;	// 左下
-		mesh_[n].vertex_[1].u = ((float)(role_)+1.0f) / 4.0f;	mesh_[n].vertex_[1].v = 1.0f;	// 右下
-		mesh_[n].vertex_[2].u = (float)(role_) / 4.0f;			mesh_[n].vertex_[2].v = 0.0f;	// 左上
-		mesh_[n].vertex_[3].u = ((float)(role_)+1.0f) / 4.0f;	mesh_[n].vertex_[3].v = 0.0f;	// 右上
-	}
+	//UV座標（テクスチャ座標）
+	//testMesh_.vertex_[0].u = (float)(role_) / 4.0f;				testMesh_.vertex_[0].v = 1.0f;	// 左下
+	//testMesh_.vertex_[1].u = ((float)(role_)+1.0f) / 4.0f;		testMesh_.vertex_[1].v = 1.0f;	// 右下
+	//testMesh_.vertex_[2].u = (float)(role_) / 4.0f;				testMesh_.vertex_[2].v = 0.0f;	// 左上
+	//testMesh_.vertex_[3].u = ((float)(role_)+1.0f) / 4.0f;		testMesh_.vertex_[3].v = 0.0f;	// 右上
+
+																								//UV座標（テクスチャ座標）
+	testMesh_.testVertex_[0].u = (float)(role_) / 4.0f;			testMesh_.testVertex_[0].v = 1.0f;	// 左下
+	testMesh_.testVertex_[1].u = ((float)(role_)+1.0f) / 4.0f;	testMesh_.testVertex_[1].v = 1.0f;	// 右下
+	testMesh_.testVertex_[2].u = (float)(role_) / 4.0f;			testMesh_.testVertex_[2].v = 0.0f;	// 左上
+	testMesh_.testVertex_[3].u = ((float)(role_)+1.0f) / 4.0f;	testMesh_.testVertex_[3].v = 0.0f;	// 右上
 
 	//player_->SetRole(role_);
 }
@@ -662,6 +670,21 @@ void SelectImage::ChangeSelect(const SelectScene::SELECT _state)
 	stateChanges_[state_]();
 }
 
+VERTEX3D SelectImage::GetMeshVertex(int i)
+{
+	if (selectScene_.GetSelect() == SelectScene::SELECT::ROLE)
+	{
+		return testMesh_.testVertex_[i];
+	}
+	return testMesh_.vertex_[i];
+}
+
+void SelectImage::SetMeshPos(VECTOR pos, int i)
+{
+	testMesh_.vertex_[i].pos = pos;
+	testMesh_.testVertex_[i].pos = pos;
+}
+
 void SelectImage::InitVertex(void)
 {
 	leftTop_ = { VERTEX_LEFT_X, VERTEX_TOP_Y, VERTEX_Z };
@@ -669,11 +692,11 @@ void SelectImage::InitVertex(void)
 	rightTop_ = { VERTEX_RIGHT_X, VERTEX_TOP_Y, VERTEX_Z };
 	rightBottom_ = { VERTEX_RIGHT_X, VERTEX_UNDER_Y, VERTEX_Z /*+ 12.0f */};
 
-	//座標(四角形を作るために2つの三角形を使う)
-	vertices_[0].pos = leftBottom_;		// 左下
-	vertices_[1].pos = rightBottom_;	// 右下
-	vertices_[2].pos = leftTop_;		// 左上
-	vertices_[3].pos = rightTop_;		// 右上
+	////座標(四角形を作るために2つの三角形を使う)
+	//vertices_[0].pos = leftBottom_;		// 左下
+	//vertices_[1].pos = rightBottom_;	// 右下
+	//vertices_[2].pos = leftTop_;		// 左上
+	//vertices_[3].pos = rightTop_;		// 右上
 
 	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
 	{
@@ -701,17 +724,17 @@ VECTOR SelectImage::RotateVertex(VECTOR pos, VECTOR center, float angle)
 
 	// 回転行列を適用して頂点を回転
 
-	for (int i = 1; i < 4; i += 2)
-	{
+	//for (int i = 1; i < 4; i += 2)
+	//{
 		//XZ平面上で回転させる
-		vertices_[i].pos.x = Center.x + (DIS * (sinf(angle_)));
-		vertices_[i].pos.z = Center.z + (DIS * (cosf(angle_)));
-	}
-	for (int i = 0; i < 4; i += 2)
-	{
-		vertices_[i].pos.x = Center.x + (-DIS * (sinf(angle_)));
-		vertices_[i].pos.z = Center.z + (-DIS * (cosf(angle_)));
-	}
+	//	vertices_[i].pos.x = Center.x + (DIS * (sinf(angle_)));
+	//	vertices_[i].pos.z = Center.z + (DIS * (cosf(angle_)));
+	//}
+	//for (int i = 0; i < 4; i += 2)
+	//{
+	//	vertices_[i].pos.x = Center.x + (-DIS * (sinf(angle_)));
+	//	vertices_[i].pos.z = Center.z + (-DIS * (cosf(angle_)));
+	//}
 	return AsoUtility::VECTOR_ZERO;
 }
 
@@ -745,6 +768,19 @@ void SelectImage::Mesh::DrawTwoMesh(int handle)
 	VERTEX3D triangle1[3] = { vertex_[2], vertex_[1], vertex_[0] };
 	// 2つ目の三角形
 	VERTEX3D triangle2[3] = { vertex_[1], vertex_[2], vertex_[3] };
+
+	// 三角形を描画
+	DrawPolygon3D(triangle1, 2, handle, true);  // 1つ目の三角形
+	DrawPolygon3D(triangle2, 2, handle, true);  // 2つ目の三角形
+}
+
+void SelectImage::Mesh::DrawTwoMeshTest(int handle)
+{
+	// 2つの三角形を描画（テクスチャ付き）
+	// 1つ目の三角形
+	VERTEX3D triangle1[3] = { testVertex_[2], testVertex_[1], testVertex_[0] };
+	// 2つ目の三角形
+	VERTEX3D triangle2[3] = { testVertex_[1], testVertex_[2], testVertex_[3] };
 
 	// 三角形を描画
 	DrawPolygon3D(triangle1, 2, handle, true);  // 1つ目の三角形

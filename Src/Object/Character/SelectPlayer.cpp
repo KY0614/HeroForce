@@ -19,8 +19,11 @@ void SelectPlayer::Init(void)
 
 void SelectPlayer::Update(void)
 {
+	for (auto& tran_ : trans_) 
+	{
+		Quaternion yRot = Quaternion::AngleAxis(AsoUtility::Deg2RadF(ROT_SPEED), AsoUtility::AXIS_Y);
+		tran_.quaRot = Quaternion::Mult(tran_.quaRot, yRot);
 
-	for (auto& tran_ : trans_) {
 		//ÉÇÉfÉãÇÃèâä˙âª
 		tran_.Update();
 	}
@@ -70,7 +73,7 @@ void SelectPlayer::Init3DModel(void)
 	for (auto& tran_ : trans_) 
 	{
 		tran_.scl = { scale, scale, scale };
-		tran_.pos = { 40.0f, 60.0f, -300.0f };
+		tran_.pos = { 60.0f, 60.0f, -300.0f };
 		tran_.quaRot = Quaternion();
 		tran_.quaRotLocal = Quaternion::Euler(
 			0.0f, AsoUtility::Deg2RadF(0.0f),

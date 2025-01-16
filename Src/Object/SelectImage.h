@@ -35,12 +35,16 @@ public:
 	static constexpr float SELECT_TIME = 1.0f;		//キー押下経過時間
 	static constexpr float INTERVAL_TIME = 0.6f;	//インターバル上限
 
+	//構造体-----------------------------------------------------------------------
+	
 	//メッシュ
 	struct Mesh {
 		VERTEX3D vertex_[4];	//頂点情報
+		VERTEX3D testVertex_[4];	//頂点情報
 		int imgHandle_;			//画像ハンドル
 
 		void DrawTwoMesh(int handle);
+		void DrawTwoMeshTest(int handle);
 	};
 
 	//矢印
@@ -57,6 +61,8 @@ public:
 
 		void PointDraw(void);//矢印を描画する
 	};
+
+	//------------------------------------------------------------------------------
 
 	//コンストラクタ
 	SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> player);
@@ -85,6 +91,10 @@ public:
 
 	int GetRole(void) { return role_; };
 
+	VERTEX3D GetMeshVertex(int i);
+
+	void SetMeshPos(VECTOR pos, int i);
+
 private:
 
 	//状態管理(更新ステップ)
@@ -97,6 +107,7 @@ private:
 
 	//メッシュ
 	Mesh mesh_[SceneManager::PLAYER_NUM];
+	Mesh testMesh_;
 	
 	//画像ハンドル
 	int* imgPlayerNum_;		//人数選択画像
@@ -104,9 +115,9 @@ private:
 	int imgRightPoint_;		//右向きの矢印画像
 
 	//メッシュの頂点データ（4つの頂点）
-	VERTEX3D vertices_[4];
-	VERTEX3D triangle1_[3];
-	VERTEX3D triangle2_[3];
+	//VERTEX3D vertices_[4];
+	//VERTEX3D triangle1_[3];
+	//VERTEX3D triangle2_[3];
 	VECTOR leftTop_;
 	VECTOR leftBottom_;
 	VECTOR rightTop_;

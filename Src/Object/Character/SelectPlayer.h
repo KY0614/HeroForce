@@ -7,6 +7,8 @@
 class SelectPlayer : public UnitBase
 {
 public:
+	static constexpr float ROT_SPEED = 0.5f;
+
 	//コンストラクタ
 	SelectPlayer(void);
 

@@ -19,7 +19,6 @@ SelectScene::SelectScene(void)
 	key_ = KEY_CONFIG::NONE;
 	device_ = SceneManager::CNTL::KEYBOARD;
 	select_ = SELECT::NUMBER;
-	selectedCntl_ = SceneManager::CNTL::NONE;
 
 	// 状態管理
 	stateChanges_.emplace(
@@ -105,16 +104,9 @@ void SelectScene::Update(void)
 	//空を回転
 	skyDome_->Update();
 
-	//for (auto& i : images_)
-	//{
-	//	i->Update();
-	//}
-	//image_->Update();
-
-	trans_.Update();
-	for (auto& i : tests_)
+	for (auto& p : players_)
 	{
-		i.Update();
+		p->Update();
 	}
 
 	//更新ステップ
@@ -127,11 +119,6 @@ void SelectScene::Draw(void)
 
 	skyDome_->Draw();
 	stage_->Draw();
-
-	//for (auto& p : players_)
-	//{
-	//	p->Update();
-	//}
 
 	//選択中の種類ごとの更新処理
 	switch (select_)
@@ -162,11 +149,6 @@ void SelectScene::Release(void)
 
 	//image_->Destroy();
 
-	for (auto i : tests_)
-	{
-		MV1DeleteModel(i.modelId);
-	}
-	MV1DeleteModel(trans_.modelId);
 }
 
 void SelectScene::ChangeStateNumber(void)
@@ -202,16 +184,32 @@ void SelectScene::OperationUpdate(void)
 void SelectScene::RoleUpdate(void)
 {
 	auto camera = SceneManager::GetInstance().GetCameras();
+	VERTEX3D ver[4];
+
+	for (int m = 1; m < 4; m++)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			ver[i] = images_[m - 1]->GetMeshVertex(i);
+			VECTOR prevPos = ver[i].pos;
+
+			VECTOR pos = AsoUtility::RotXZPos(
+				DEFAULT_CAMERA_POS, prevPos,AsoUtility::Deg2RadF(90.0f));
+		
+			ver[i].pos = pos;
+
+			images_[m]->SetMeshPos(ver[i].pos, i);
+		}
+	}
+
 	for (int i = 0; i < camera.size(); i++)
 	{
-		images_[i]->Update();
-		images_[i]->ChangeObject(input_[i], i);
+		images_[i]->ChangeObject(input_[i], i );
 		players_[i]->SetRole(images_[i]->GetRole());
 	}
 	//キャラクターの位置と向きを設定
 	for (int i = 1; i < camera.size(); i++)
 	{
-		players_[i]->Update();
 		players_[i]->SetPos(AsoUtility::RotXZPos(DEFAULT_CAMERA_POS, players_[i - 1]->GetPos(), AsoUtility::Deg2RadF(90.0f)));
 		players_[i]->SetRot(Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-90.0f * i), 0.0f));
 	}
@@ -249,7 +247,10 @@ void SelectScene::RoleDraw(void)
 	{
 		players_[i]->Draw();
 	}
+}
 
+void SelectScene::MaxDraw(void)
+{
 }
 
 void SelectScene::DrawDebug(void)
@@ -261,7 +262,8 @@ void SelectScene::DrawDebug(void)
 	for (int i = 0; i < 4; i++)
 	{
 		DrawFormatString(0, 120 + (20 * i), 0x00CC00, "input_[%d]: %d", i, input_[i].cntl_);
-		DrawFormatString(500, 40 + (20 * i), 0x00CC00, "pos: %2.f,%2.f,%2.f", players_[i]->GetPos().x, players_[i]->GetPos().y, players_[i]->GetPos().z);
+		DrawFormatString(500, 40 + (20 * i), 0x00CC00, "pos: %2.f,%2.f,%2.f", images_[i]->GetMeshVertex(i).pos.x, images_[i]->GetMeshVertex(i).pos.y, images_[i]->GetMeshVertex(i).pos.z);
+		DrawFormatString(Application::SCREEN_SIZE_X - 100, 100 + (i*20), 0x000000, "role : %d", images_[i]->GetRole());
 	}
 	DrawFormatString(100, 120, 0x00CC00, "input_: %d", input_[0].config_);
 }
@@ -335,29 +337,26 @@ void SelectScene::PadProcess(void)
 	leftStickX_[1] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD2).AKeyLY;
 	leftStickX_[2] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD3).AKeyLY;
 	leftStickX_[3] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD4).AKeyLY;
-
-	for (auto& leftStickY : leftStickY_)
+	
+	for (int i = 0;i < 4 ;i++)
 	{
-		if (leftStickY < -1)
+		if (leftStickY_[i] < -1)
 		{
-			key_ = KEY_CONFIG::UP;
+			input_[i].config_ = KEY_CONFIG::UP;
 
 		}
-		if (leftStickY > 1)
+		if (leftStickY_[i] > 1)
 		{
-			key_ = KEY_CONFIG::DOWN;
+			input_[i].config_ = KEY_CONFIG::DOWN;
 		}
-	}
-
-	for (auto& leftStickX : leftStickX_)
-	{
-		if (leftStickX < -900)
+	
+		if (leftStickX_[i] < -900)
 		{
-			key_ = KEY_CONFIG::LEFT;
+			input_[i].config_ = KEY_CONFIG::LEFT;
 		}
-		if (leftStickX > 1)
+		if (leftStickX_[i] > 1)
 		{
-			key_ = KEY_CONFIG::RIGHT;
+			input_[i].config_ = KEY_CONFIG::RIGHT;
 		}
 	}
 
