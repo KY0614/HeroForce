@@ -94,9 +94,6 @@ public:
 	/// <param name="_targetPos">標的の座標</param>
 	void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; }
 
-	//標的の方向に向く
-	void LookTargetVec(void);
-
 	/// <summary>
 	/// ダメージ
 	/// </summary>
@@ -134,7 +131,7 @@ protected:
 
 	std::map<ATK_ACT, ATK> skills_;								//スキルの種類
 	std::vector<ATK> nowSkill_;									//現在のスキル
-	std::function<void(void)> createSkill_;					//スキルの生成
+	std::function<ATK&(void)> createSkill_;						//スキルの生成
 	std::function<void(void)> processSkill_;					//スキルの処理
 	std::map<ATK_ACT, std::function<void(void)>> changeSkill_;	//スキルの変更用
 
@@ -187,7 +184,8 @@ protected:
 	/// スキルの生成
 	/// </summary>
 	/// <param name="_atkAct">生成するスキル</param>
-	void CreateSkill(ATK_ACT _atkAct);
+	/// <returns>生成したスキル</returns>
+	ATK& CreateSkill(ATK_ACT _atkAct);
 
 	//アニメーション終了時の動き
 	virtual void FinishAnim(void)override;
@@ -197,7 +195,7 @@ protected:
 	//状態遷移(攻撃警告)
 	virtual void ChangeStateAlert(void);
 	//状態遷移(攻撃)
-	void ChangeStateAttack(void);
+	virtual void ChangeStateAtk(void);
 	//状態遷移(休憩)
 	virtual void ChangeStateBreak(void);
 
@@ -206,9 +204,12 @@ protected:
 	//更新(攻撃警告)
 	void UpdateAlert(void);
 	//更新(攻撃)
-	void UpdateAtk(void);
+	virtual void UpdateAtk(void);
 	//更新(休憩)
 	virtual void UpdateBreak(void);
+
+	//描画(※デバッグ)
+	virtual void DrawDebug(void);
 
 	/// <summary>
 	/// 標的までの移動ベクトルを返す

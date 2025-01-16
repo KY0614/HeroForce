@@ -18,7 +18,7 @@ void Enemy::Init(void)
 	//状態管理
 	stateChanges_.emplace(STATE::NORMAL, std::bind(&Enemy::ChangeStateNormal, this));
 	stateChanges_.emplace(STATE::ALERT, std::bind(&Enemy::ChangeStateAlert, this));
-	stateChanges_.emplace(STATE::ATTACK, std::bind(&Enemy::ChangeStateAttack, this));
+	stateChanges_.emplace(STATE::ATTACK, std::bind(&Enemy::ChangeStateAtk, this));
 	stateChanges_.emplace(STATE::BREAK, std::bind(&Enemy::ChangeStateBreak, this));
 
 	//キャラ固有設定
@@ -52,10 +52,10 @@ void Enemy::Update(void)
 	//入力用
 	InputManager& ins = InputManager::GetInstance();
 
-	if (ins.IsNew(KEY_INPUT_W)) { targetPos_.z+= 3.0f; }
-	if (ins.IsNew(KEY_INPUT_D)) { targetPos_.x+= 3.0f; }
-	if (ins.IsNew(KEY_INPUT_S)) { targetPos_.z-= 3.0f; }
-	if (ins.IsNew(KEY_INPUT_A)) { targetPos_.x-= 3.0f; }
+	//if (ins.IsNew(KEY_INPUT_W)) { targetPos_.z+= 3.0f; }
+	//if (ins.IsNew(KEY_INPUT_D)) { targetPos_.x+= 3.0f; }
+	//if (ins.IsNew(KEY_INPUT_S)) { targetPos_.z-= 3.0f; }
+	//if (ins.IsNew(KEY_INPUT_A)) { targetPos_.x-= 3.0f; }
 
 	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_Q)) { Damage(1, 10); }
 #endif // DEBUG_ENEMY
@@ -72,15 +72,6 @@ void Enemy::Update(void)
 
 	//モデル制御
 	trans_.Update();
-}
-
-void Enemy::LookTargetVec(void)
-{
-	//方向ベクトル取得
-	VECTOR targetVec = GetTargetVec();
-
-	//向き回転
-	trans_.quaRot = trans_.quaRot.LookRotation(targetVec);
 }
 
 void Enemy::Damage(const int _damage, const int _stunPow)
@@ -126,10 +117,13 @@ void Enemy::ChangeStateAlert(void)
 
 }
 
-void Enemy::ChangeStateAttack(void)
+void Enemy::ChangeStateAtk(void)
 {
 	//更新処理の中身初期化
 	stateUpdate_ = std::bind(&Enemy::UpdateAtk, this);
+
+	//攻撃生成
+	createSkill_();
 }
 
 void Enemy::ChangeStateBreak(void)
@@ -212,9 +206,6 @@ void Enemy::UpdateAlert(void)
 		//ランダムで攻撃生成
 		RandSkill();
 
-		//攻撃生成
-		createSkill_();
-
 		//攻撃状態に遷移
 		ChangeState(STATE::ATTACK);
 
@@ -279,9 +270,8 @@ void Enemy::UpdateBreak(void)
 	CntUp(breakCnt_);
 }
 
-void Enemy::Draw(void)
+void Enemy::DrawDebug(void)
 {
-#ifdef DEBUG_ENEMY
 	//デバッグ
 	DrawFormatString(0, Application::SCREEN_SIZE_Y - 16, 0xffffff, "EnemyHP = %d", hp_);
 	int statePos = Application::SCREEN_SIZE_Y - 32;
@@ -311,6 +301,15 @@ void Enemy::Draw(void)
 	DrawSphere3D(trans_.pos, atkStartRange_, 2, state_ == STATE::ALERT ? 0xff0000 : 0xffffff, state_ == STATE::ALERT ? 0x0000ff : 0xffffff, false);
 	//ターゲットの座標
 	DrawSphere3D(targetPos_, 3.0f, 10, 0x0000ff, 0x0000ff, true);
+}
+
+void Enemy::Draw(void)
+{
+#ifdef DEBUG_ENEMY
+	
+	//デバッグ
+	DrawDebug();
+
 #endif // DEBUG_ENEMY
 
 	//敵モデルの描画
@@ -326,7 +325,7 @@ void Enemy::Draw(void)
 
 const VECTOR Enemy::GetTargetVec(const float _speed) const
 {
-	//標的への方向ベクトルを取得						※TODO:targetPosはSceneGameからもらう
+	//標的への方向ベクトルを取得						※targetPosはSceneGameからもらう
 	VECTOR targetVec = VSub(targetPos_, trans_.pos);
 
 	//正規化
@@ -343,7 +342,7 @@ const VECTOR Enemy::GetTargetVec(const float _speed) const
 
 const VECTOR Enemy::GetTargetVec(const VECTOR _pos, const float _speed) const
 {
-	//標的への方向ベクトルを取得						※TODO:targetPosはSceneGameからもらう
+	//標的への方向ベクトルを取得						※targetPosはSceneGameからもらう
 	VECTOR targetVec = VSub(targetPos_, _pos);
 
 	//正規化
@@ -373,7 +372,7 @@ void Enemy::Move(void)
 	trans_.pos = VAdd(trans_.pos, targetVec);
 }
 
-void Enemy::CreateSkill(ATK_ACT _atkAct)
+Enemy::ATK& Enemy::CreateSkill(ATK_ACT _atkAct)
 {
 	//**********************************************************
 	//使い終わった攻撃がある場合
@@ -392,10 +391,10 @@ void Enemy::CreateSkill(ATK_ACT _atkAct)
 			nowSkill.ResetCnt();
 
 			//ヒット判定の初期化
-			nowSkill_.back().isHit_ = false;
+			nowSkill.isHit_ = false;
 
 			//処理終了
-			return;
+			return nowSkill;
 		}
 	}
 
@@ -412,6 +411,9 @@ void Enemy::CreateSkill(ATK_ACT _atkAct)
 
 	//ヒット判定の初期化
 	nowSkill_.back().isHit_ = false;
+
+	//処理終了
+	return nowSkill_.back();
 }
 
 void Enemy::FinishAnim(void)

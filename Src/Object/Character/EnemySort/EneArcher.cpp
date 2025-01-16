@@ -63,11 +63,18 @@ void EneArcher::InitSkill(void)
 
 void EneArcher::Attack(void)
 {
+	//各攻撃のカウント
+	for (auto& nowSkill : nowSkill_)
+	{
+		//攻撃のカウント
+		CntUp(nowSkill.cnt_);
+	}
+
 	//リロード中　又は　矢を放った判定なら攻撃しない
 	if (IsReload() || isShotArrow_)return;
 
-	//攻撃の基本処理
-	Enemy::Attack();
+	//対応スキル発動
+	processSkill_();
 }
 
 void EneArcher::Skill_One(void)
@@ -194,14 +201,18 @@ void EneArcher::UpdateBreak(void)
 	//**********************************************************
 	//動作処理
 	//**********************************************************
+		
+	//リロード
+	if (IsReload())
+	{
+		ReloadArrow();
+		return;
+	}
+	//攻撃休憩時間カウンタ
+	else CntUp(breakCnt_);
 
 	//待機アニメーション
 	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
-
-	//リロード
-	if (IsReload())ReloadArrow();
-	//攻撃休憩時間カウンタ
-	else CntUp(breakCnt_);
 }
 
 void EneArcher::Draw(void)

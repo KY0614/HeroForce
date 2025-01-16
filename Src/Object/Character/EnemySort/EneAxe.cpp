@@ -56,7 +56,8 @@ void EneAxe::InitSkill(void)
 void EneAxe::Skill_One(void)
 {
 	//UŒ‚‚ÌÄ¶¬
-	if (nowSkill_.back().IsFinishMotion())createSkill_();
+	if (nowSkill_.back().IsFinishMotion())
+		createSkill_();
 
 	//‘O•ûŒü
 	VECTOR dir = trans_.quaRot.GetForward();
