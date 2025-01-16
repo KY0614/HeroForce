@@ -66,7 +66,8 @@ public:
 	//スキルの全体時間
 	static constexpr float SKILL_ONE_ALL_TIME =				//スキル１の全体時間
 		SKILL_ONE_MAX_CNT * SKILL_ONE_SHOT_DELAY
-		+ SKILL_ONE_DURATION + SKILL_ONE_BACKLASH;
+		+ SKILL_ONE_DURATION + SKILL_ONE_BACKLASH
+		+ 0.5f;
 
 	//スキル関係
 	static constexpr ATK SKILL_ONE = { AsoUtility::VECTOR_ZERO	//スキル１の要素

@@ -69,10 +69,6 @@ void EneMage::Attack(void)
 
 void EneMage::Skill_One(void)
 {
-	//初期値設定
-	if (skillOneDelayCnt_ == 0.0f)
-		skillOneShot_ = trans_.pos;
-
 	//スキル１の生成上限
 	if (skillOneShotCnt_ < SKILL_ONE_MAX_CNT)
 	{
@@ -128,6 +124,9 @@ void EneMage::ChangeStateAlert(void)
 	//更新処理の中身初期化
 	Enemy::ChangeStateAlert();
 
+	//向きを改めて設定
+	trans_.quaRot = trans_.quaRot.LookRotation(GetTargetVec());
+
 	//待機アニメーション
 	ResetAnim(ANIM::UNIQUE_1, changeSpeedAnim_[ANIM::UNIQUE_1]);
 }
@@ -136,6 +135,12 @@ void EneMage::ChangeStateAtk(void)
 {
 	//更新処理の中身初期化
 	stateUpdate_ = std::bind(&EneMage::UpdateAtk, this);
+
+	//向きを改めて設定
+	trans_.quaRot = trans_.quaRot.LookRotation(GetTargetVec());
+
+	//座標の初期設定
+	skillOneShot_ = MV1GetFramePosition(trans_.modelId, FRAME_ROD);
 }
 
 void EneMage::UpdateAtk(void)
