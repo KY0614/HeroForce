@@ -70,14 +70,6 @@ void GameScene::Init(void)
 	enmMng_ = std::make_unique<EnemyManager>();
 	enmMng_->Init();
 
-	std::unique_ptr<Enemy> e=std::make_unique<EneAxe>();
-	e->Init();
-	enemys_.push_back(std::move(e));
-
-	std::unique_ptr<Enemy> g = std::make_unique<EneGolem>();
-	g->Init();
-	enemys_.push_back(std::move(g));
-
 	//ƒJƒƒ‰‚Ìİ’è
 	auto cameras = SceneManager::GetInstance().GetCameras();
 	for (int i = 0; i < cameras.size(); i++)
@@ -135,12 +127,7 @@ void GameScene::Update(void)
 
 
 	//“G‚ÌXV
-	enmMng_->Update();
-	for (auto& e : enemys_)
-	{
-		e->SetTargetPos(players_[0]->GetPos());
-		e->Update();
-	}
+	enmMng_->Update(players_[0]->GetPos());
 	
 
 	chicken_->SetTargetPos(players_[0]->GetPos());
@@ -182,9 +169,7 @@ void GameScene::Draw(void)
 	for (auto& p : players_)
 		p->Draw();
 
-	for (auto& e : enemys_){
-		e->Draw();
-	}
+
 	enmMng_->Draw();
 
 	stage_->Draw();
@@ -214,10 +199,6 @@ void GameScene::Release(void)
 		p->Destroy();
 	}
 
-	for (auto& e : enemys_)
-	{
-		e->Destroy();
-	}
 	enmMng_->Release();
 }
 
@@ -236,11 +217,17 @@ void GameScene::Collision(void)
 //“GŠÖŒW‚Ì“–‚½‚è”»’è
 void GameScene::CollisionEnemy(void)
 {
+	//Õ“Ë”»’èƒ}ƒl[ƒWƒƒæ“¾
 	auto& col = Collision::GetInstance();
+	//“G‚Ì‘”æ“¾
+	int maxCnt = enmMng_->GetActiveNum();
 
 	//‚ ‚½‚è”»’è(å‚Éõ“G)
-	for (auto& e : enmMng_->GetActiveEnemys())
+	for (int i = 0; i < maxCnt; i++)
 	{
+		//“G‚Ìæ“¾
+		Enemy* e = enmMng_->GetActiveEnemy(i);
+
 		//“GŒÂl‚ÌˆÊ’u‚ÆUŒ‚‚ğæ“¾
 		VECTOR ePos = e->GetPos();
 		UnitBase::ATK eAtk = e->GetAtk();
@@ -253,7 +240,8 @@ void GameScene::CollisionEnemy(void)
 		if (col.Search(ePos, pPos, e->GetSearchRange())) {
 			//ˆÚ“®‚ğŠJn
 			e->SetIsMove(true);
-		}else {
+		}
+		else {
 			//ˆÚ“®‚ğ’â~
 			e->SetIsMove(false);
 		}
@@ -286,7 +274,10 @@ void GameScene::CollisionEnemy(void)
 
 void GameScene::CollisionPlayer(void)
 {
+	//Õ“Ë”»’èƒ}ƒl[ƒWƒƒæ“¾
 	auto& col = Collision::GetInstance();
+	//“G‚Ì‘”æ“¾
+	int maxCnt = enmMng_->GetActiveNum();
 
 	for (auto& p : players_)
 	{
@@ -300,8 +291,10 @@ void GameScene::CollisionPlayer(void)
 		//UŒ‚‚µ‚Ä‚¢‚È‚¢ || UŒ‚‚ª‚·‚Å‚É“–‚½‚Á‚Ä‚¢‚é
 		if (!pAtk.IsAttack() || pAtk.isHit_)continue;
 
-		for (auto& e : enmMng_->GetActiveEnemys())
+		for (int i = 0; i < maxCnt; i++)
 		{
+			//“G‚Ìæ“¾
+			Enemy* e = enmMng_->GetActiveEnemy(i);
 			//“–‚½‚è”»’è
 			if (col.IsHitAtk(*p, *e)) {
 				//”í’e
@@ -316,15 +309,21 @@ void GameScene::CollisionPlayer(void)
 
 void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
 {
+	//Õ“Ë”»’èƒ}ƒl[ƒWƒƒæ“¾
 	auto& col = Collision::GetInstance();
+	//“G‚Ì‘”æ“¾
+	int maxCnt = enmMng_->GetActiveNum();
 
 	//“G‚ğƒT[ƒ`‰Šú‰»
 	_player.SetisEnemySerch(false);
 
 
 	//“G‚ÌŒÂ‘Ì•ªs‚¤
-	for (auto& e : enmMng_->GetActiveEnemys())
+	for (int i = 0; i < maxCnt; i++)
 	{
+		//“G‚Ìæ“¾
+		Enemy* e = enmMng_->GetActiveEnemy(i);
+
 		//“G‚ª€–S‚µ‚Ä‚¢‚½‚çˆ—‚µ‚È‚¢
 		if (!e->IsAlive())continue;
 

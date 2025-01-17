@@ -63,7 +63,6 @@ private:
 	std::unique_ptr<PlayerBase>players_[PLAYER_NUM];
 
 	//“G
-	std::vector<std::unique_ptr<Enemy>> enemys_;
 	std::unique_ptr<EnemyManager>enmMng_;
 
 	//ƒ`ƒLƒ“

@@ -9,56 +9,90 @@
 
 void EnemyManager::Init(void)
 {
-	for (int i = 0; i < ONETYPE_MAX; i++)
-	{
-		archer_[i] = std::make_unique<EneArcher>();
-		archer_[i]->Init();
-
-		axe_[i] = std::make_unique<EneAxe>();
-		axe_[i]->Init();
-
-		brig_[i] = std::make_unique<EneBrig>();
-		brig_[i]->Init();
-
-		mage_[i] = std::make_unique<EneMage>();
-		mage_[i]->Init();
-	}
-
-	golem_ = std::make_unique<EneGolem>();
-	golem_->Init();
+	activeNum_ = 0;
 }
 
-void EnemyManager::Update(void)
+void EnemyManager::Update(VECTOR _target)
 {
-	for (auto& enm : activeEnms_)enm->Update();
+	for (int i = 0; i < activeNum_; i++)
+	{
+		activeEnemys_[i]->SetTargetPos(_target);
+		activeEnemys_[i]->Update();
+	}
 }
 
 void EnemyManager::Draw(void)
 {
-	for (auto& enm : activeEnms_)enm->Draw();
+	for (int i = 0; i < activeNum_; i++)activeEnemys_[i]->Draw();
 }
 
 void EnemyManager::Release(void)
 {
-	for (int i = 0; i < ONETYPE_MAX; i++)
+	
+}
+
+
+
+void EnemyManager::CreateEnemy(void)
+{
+	//敵が最大数いたら生成処理を行わない
+	if (activeNum_ >= ENEMY_MAX)return;
+
+	Enemy* enm;
+
+	TYPE type = static_cast<TYPE>(GetRand(static_cast<int>(TYPE::MAX)-1));
+
+	switch (type)
 	{
-		archer_[i]->Destroy();
-
-		axe_[i]->Destroy();
-
-		brig_[i]->Destroy();
-
-		mage_[i]->Destroy();
+	case EnemyManager::TYPE::ARCHER:
+		enm = new EneArcher();
+		break;
+	case EnemyManager::TYPE::AXE:
+		enm = new EneAxe();
+		break;
+	case EnemyManager::TYPE::BRIG:
+		enm = new EneBrig();
+		break;
+	case EnemyManager::TYPE::GOLEM:
+		//ゴーレムはボスキャラなのでここでは生成しない
+		return;
+		break;
+	case EnemyManager::TYPE::MAGE:
+		enm = new EneMage();
+		break;
+	default:
+		break;
 	}
-}
+	//敵の初期化
+	enm->Init();
 
-const std::vector<std::unique_ptr<Enemy>> EnemyManager::GetActiveEnemys(void)
-{
-	return activeEnms_;
-}
-
-void EnemyManager::SetActive(std::unique_ptr<Enemy> enm)
-{
 	//敵の更新等を掛けるやつをセット
-	activeEnms_.push_back(enm);
+	activeEnemys_[activeNum_] = enm;
+
+	//カウンタ増加
+	activeNum_++;
+}
+
+void EnemyManager::DethEnemy(int _num)
+{
+	//倒された敵の消去
+	activeEnemys_[_num]->Destroy();
+	delete activeEnemys_[_num];
+
+	//総数の減少
+	//この時点でactiveNum_は配列の末尾の番号を示すようになる。
+	activeNum_--;
+
+	//配列の空きを埋めるためのソート
+	//配列の末尾の物を空きに移動させる
+	//倒された敵が末尾の物なら処理はしない
+	if (_num == activeNum_)return;
+
+	//挿入処理
+	//std::moveでもいいかも？分かり易いように下記のようにする
+	activeEnemys_[_num] = activeEnemys_[activeNum_];
+
+	//末尾の消去
+	activeEnemys_[activeNum_]->Destroy();
+	delete activeEnemys_[activeNum_];
 }
