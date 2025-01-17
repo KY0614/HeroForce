@@ -99,7 +99,7 @@ public:
     static constexpr int DODGE_KEY = KEY_INPUT_N;
     static constexpr InputManager::JOYPAD_BTN DODGE_BTN = InputManager::JOYPAD_BTN::LEFT;
 
-    
+
 
 
 
@@ -131,14 +131,14 @@ public:
     enum class ACT_CNTL
     {
         NONE    //何もしていないとき
-        ,MOVE   //移動
-        ,DODGE             //回避
-        ,NMLATK            //通常攻撃    
-        ,CHANGE_SKILL      //スキル切り替え
-        ,NMLSKILL          //短押しスキル
-        ,CHARGE_SKILL_DOWN  //長押しスキル(初期化用)
-        ,CHARGE_SKILL_KEEP  //長押しスキル(押しっぱなし)
-        ,CHARGE_SKILL_UP    //長押しスキル(離す)
+        , MOVE   //移動
+        , DODGE             //回避
+        , NMLATK            //通常攻撃    
+        , CHANGE_SKILL      //スキル切り替え
+        , NMLSKILL          //短押しスキル
+        , CHARGE_SKILL_DOWN  //長押しスキル(初期化用)
+        , CHARGE_SKILL_KEEP  //長押しスキル(押しっぱなし)
+        , CHARGE_SKILL_UP    //長押しスキル(離す)
     };
 
 
@@ -291,9 +291,12 @@ protected:
 
     std::map<SceneManager::CNTL, std::function<void(void)>>changeNmlActControll_;              //通常スキル
     std::function<void(void)>nmlActUpdate_;                                             //通常スキル更新
-
+     //チャージ攻撃
     std::map<SceneManager::CNTL, std::function<void(void)>>changeChargeActCntl_;       //コントローラーごとのスキル変更
-    std::function<void(void)>chargeActUpdate_;                                         //チャージ攻撃
+    std::function<void(void)>chargeActUpdate_;
+
+
+
 
     //アニメNo初期化
     void InitAnimNum(void);
@@ -343,7 +346,7 @@ protected:
     std::map < SceneManager::CNTL, std::function<void(void)>> changeCntl_;//コントローラー変更用
     std::function<void(void)> cntlUpdate_;                                 //それぞれの更新
 
-    SKILL_NUM skillNo_;     //スキル変更用
+    ATK_ACT skillNo_;     //スキル変更用
 
     //CPU
     //-------------------------------------------------
@@ -380,13 +383,17 @@ protected:
     //チャージなし攻撃(パッド)
     void NmlActPad(void);
 
-    //変更
+    //変更(キーボードとゲームパッド)
     void ChangeNmlActControll(void);
     void ChangeNmlActKeyBoard(void);
     void ChangeNmlActPad(void);
 
     //短押し攻撃共通処理(攻撃カウントとか後隙とか)
     virtual void NmlActCommon(void);
+
+    //短押し用atk更新
+    void NmlAtkUpdate(void);
+
 
     //チャージ攻撃
     virtual void ChargeAct(void);
@@ -427,7 +434,7 @@ protected:
     void SyncActPos(ATK& _atk);
 
     //スキルごとの操作更新
-    void ChangeSkillControll(SKILL_NUM _skill);
+    void ChangeSkillControll(ATK_ACT _skill);
 
     //攻撃終わった後の初期化
     virtual void InitAtk(void);
@@ -507,7 +514,7 @@ private:
     float moveDeg_;
 
     std::map<ACT_CNTL, std::function<void(void)>>changeActCntl_;        //アクションごとに返すボタンを変更
-    std::function<bool(void)>actCntlUpdate_;  
+    std::function<bool(void)>actCntlUpdate_;
 
 #ifdef DEBUG_ON
     //************************************************************************
@@ -535,7 +542,6 @@ private:
     std::map<std::string, bool>currentInput_;                           //今押されてるボタンを返す
     std::map<std::string, bool>lastInput_;                              //前に押されたボタン
     InputActionMap_t inputActionMap_;                                   //アクションボタンをまとめて扱うための変数
-
     /// <summary>
     /// 入力チェック
     /// </summary>
@@ -554,5 +560,11 @@ private:
 
     //スキル変更処理
     void SkillChange(void);
-   
+
+    //攻撃入力
+    virtual void NmlAtkInit(void);
+    //スキル入力
+    virtual void SkillOneInit(void);
+    virtual void SkillTwoInit(void);
+
 };

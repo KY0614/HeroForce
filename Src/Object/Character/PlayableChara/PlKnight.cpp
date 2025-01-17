@@ -72,15 +72,15 @@ void PlKnight::ChargeAct(void)
 {
 	auto& ins = InputManager::GetInstance();
 	chargeActUpdate_();
-	if (ins.IsTrgDown(KEY_INPUT_Q))
-	{
-		//ボタンの押しはじめの時に値初期化
-		ResetGuardCnt();
-	}
+	//if (ins.IsTrgDown(KEY_INPUT_Q))
+	//{
+	//	//ボタンの押しはじめの時に値初期化
+	//	ResetGuardCnt();
+	//}
 
 
 	//スキル(長押しでガード状態維持)
-	else if (ins.IsNew(KEY_INPUT_Q) && coolTime_[static_cast<int>(skillNo_)])
+	if (ins.IsNew(KEY_INPUT_Q) && coolTime_[static_cast<int>(skillNo_)])
 	{
 		//スキルごとにアニメーションを決めて、カウント開始
 		//ChangeAct(static_cast<ATK_ACT>(skillNo_));
@@ -91,34 +91,57 @@ void PlKnight::ChargeAct(void)
 	else if (ins.IsTrgUp(KEY_INPUT_Q))
 	{
 		isPush_ = false;
+		isCool_[static_cast<int>(SKILL_NUM::TWO)] = true;
+		InitAtk();
 		actCntl_ = ACT_CNTL::NONE;
 	}
 }
 
 void PlKnight::AtkFunc(void)
 {
-
+	NmlAtkUpdate();
 }
 
-void PlKnight::ResetGuardCnt(void)
+//void PlKnight::ResetGuardCnt(void)
+//{
+//	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > GUARD_STARTABLE_COOL&&!IsAtkStart())
+//	{
+//		isCool_[static_cast<int>(SKILL_NUM::TWO)] = false;
+//		ChangeAct(static_cast<ATK_ACT>(skillNo_));
+//		ResetParam(atk_);
+//		coolTime_[static_cast<int>(SKILL_NUM::TWO)] -= SKILL_TWO_START_COOLTIME;
+//		//atkMax_[ATK_ACT::SKILL2].duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
+//		atk_.duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
+//		CntUp(atkStartCnt_);
+//	}
+//}
+
+void PlKnight::SkillOneInit(void)
 {
-	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > GUARD_STARTABLE_COOL&&!IsAtkStart())
+	//スキルごとにアニメーションを決めて、カウント開始
+	ChangeAct(static_cast<ATK_ACT>(skillNo_));
+	ResetParam(atk_);
+	CntUp(atkStartCnt_);
+}
+
+void PlKnight::SkillTwoInit(void)
+{
+	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > GUARD_STARTABLE_COOL && !IsAtkStart())
 	{
 		isCool_[static_cast<int>(SKILL_NUM::TWO)] = false;
 		ChangeAct(static_cast<ATK_ACT>(skillNo_));
 		ResetParam(atk_);
 		coolTime_[static_cast<int>(SKILL_NUM::TWO)] -= SKILL_TWO_START_COOLTIME;
-		//atkMax_[ATK_ACT::SKILL2].duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
 		atk_.duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
 		CntUp(atkStartCnt_);
 	}
 }
 
 
-
 void PlKnight::Skill1Func(void)
 {
 	//斬撃飛ばす
+	NmlAtkUpdate();
 }
 
 void PlKnight::Skill2Func(void)

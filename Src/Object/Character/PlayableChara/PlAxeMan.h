@@ -96,5 +96,7 @@ protected:
 
     void ChargeAct(void)override;
 
+    void SkillOneInit(void)override;
+    void SkillTwoInit(void)override;
     //void ResetParam(ATK_ACT _act)override;
 };

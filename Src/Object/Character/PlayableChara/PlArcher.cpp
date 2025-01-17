@@ -38,6 +38,8 @@ void PlArcher::SetParam(void)
 	//acts_[ATK_ACT::ATK].radius_ = COL_ATK;
 
 	atkStartRange_ = ATK_START_RANGE;
+
+	atkAbleCnt_ = 0;
 }
 
 void PlArcher::InitAct(void)
@@ -78,12 +80,12 @@ void PlArcher::InitCharaAnim(void)
 
 void PlArcher::InitAtk(void)
 {
-	//攻撃カウント初期化
-	atk_.ResetCnt();
-
-	//消すかも
-	atk_.isHit_ = false;
-
+	//size_t size = arrowAtk_.size();
+	////攻撃の初期化
+	//for (int a = 0; a < size; a++)
+	//{
+	//	InitArrowAtk(arrowAtk_[a]);
+	//}
 	//スキルが終わったらクールタイムのカウント開始
 	isCool_[static_cast<int>(act_)] = true;
 
@@ -95,22 +97,31 @@ void PlArcher::InitAtk(void)
 
 	isShotArrow_ = false;
 
+	//攻撃可能時間
+	atkAbleCnt_ = 0.0f;
+
 }
 
 void PlArcher::CreateArrow(void)
 {
 	//矢の生成処理
+	//使い終わった攻撃がある場合
 	for (auto& arrow : arrow_)
 	{
+		// 破壊状態のとき
 		if (arrow->GetState() == Arrow::STATE::DESTROY)
 		{
 			//矢の情報を上書き
 			arrow = nullptr;
+
+			// 生成
 			arrow = std::make_shared<Arrow>();
+
+			// 初期化
 			arrow->Init(arrowMdlId_, trans_, ARROW_SPEED);
 
-			//arrowAtkの初期化
-			
+			arrow->ChangeState(Arrow::STATE::SHOT);
+
 			//カウント増加
 			arrowCnt_++;
 
@@ -118,9 +129,12 @@ void PlArcher::CreateArrow(void)
 		}
 	}
 
+
+	//新しく作る場合
 	//新しく配列を追加
 	std::shared_ptr<Arrow> arrow = std::make_shared<Arrow>();
 	arrow->Init(arrowMdlId_, trans_, ARROW_SPEED);
+	arrow->ChangeState(Arrow::STATE::SHOT);
 
 	//配列に格納
 	arrow_.emplace_back(arrow);
@@ -129,36 +143,63 @@ void PlArcher::CreateArrow(void)
 	arrowCnt_++;
 }
 
+void PlArcher::CreateAtk(void)
+{
+	for (auto& atk : arrowAtk_)
+	{
+		if (!atk.IsAttack())
+		{
+			//atk初期化
+			atk = atkMax_[act_];
+			return;
+		}
+	}
+	//新しく作る場合
+	arrowAtk_.emplace_back(atkMax_[act_]);
+}
+
 void PlArcher::Update(void)
 {
 	PlayerBase::Update();
 
 	size_t arrowSize = arrow_.size();
-
 	//矢と矢に対応した攻撃の更新
 	for (int a = 0; a < arrowSize; a++)
 	{
+		if (arrow_[a].get()->GetIsAlive())
+		{ 
+			CntUp(arrowAtk_[a].cnt_); 
+		}
 		//攻撃状態が終わったら矢を破壊
-		if (atk_.IsFinishMotion())
+		if (!arrowAtk_[a].IsAttack())
 		{
 			arrow_[a].get()->Destroy();
-			InitAtk();
+			InitArrowAtk(arrowAtk_[a]);
 		}
-			
 		//更新
 		arrow_[a].get()->Update(arrowAtk_[a]);
 	}
+
+	//for (int s = 0; s < arrowSize; s++)
+	//{
+	//	CntUp(arrowAtk_[s].cnt_);
+	//}
+		
+	
 }
 
 void PlArcher::Draw(void)
 {
 	PlayerBase::Draw();
 
+	//DrawFormatString(300, 100, 0xffffff, "arrowAtk(%f)", arrowAtk_[0].cnt_);
 	size_t arrowSize = arrow_.size();
-	for (int s = 0; s < arrowSize; s++)
+	for (auto& arrow:arrow_)
 	{
-		arrow_[s].get()->Draw();
+		arrow.get()->Draw();
+		//DrawFormatString(300, 100, 0xffffff, "arrowAtk(%f,%f,%f)", arrowAtk_[0].pos_.x, arrowAtk_[0].pos_.y, arrowAtk_[0].pos_.z);
 	}
+	DrawFormatString(300, 100, 0xffffff, "arrowSize(%d)", arrowSize);
 }
 
 void PlArcher::AtkFunc(void)
@@ -167,68 +208,92 @@ void PlArcher::AtkFunc(void)
 	if (IsFinishAtkStart()&&!isShotArrow_)
 	{
 		CreateArrow();
+		CreateAtk();
 		//矢を放つ
-		arrow_.back().get()->ChangeState(Arrow::STATE::SHOT);
-
+		//for (auto& arrow : arrow_)
+		//{
+		//	arrow->ChangeState(Arrow::STATE::SHOT);
+		//}
+		// 
+		
+		//範囲for文の意味
+		//for (int i = 0; i < arrow_.size; ++i)
+		//{
+		//	arrow_[i]->ChangeState(Arrow::STATE::SHOT)
+		//}
 		//矢を放った
 		isShotArrow_ = true;
 	}
-	
+	NmlActCommon();
 }
 
 void PlArcher::Skill1Func(void)
 {
+	
 }
 
 void PlArcher::Skill2Func(void)
+{
+
+}
+
+void PlArcher::NmlAtkInit(void)
+{
+	if (isCool_[static_cast<int>(ATK_ACT::ATK)])return;
+	ChangeAct(ATK_ACT::ATK);
+	ResetParam(atk_);
+	CntUp(atkStartCnt_);
+}
+
+void PlArcher::SkillOneInit(void)
+{
+	size_t arrowSize = arrow_.size();
+	for (int s = 0; s < arrowSize; s++)
+	{
+		if (IsSkillable() && !isCool_[static_cast<int>(skillNo_)])
+		{
+			//スキルごとにアニメーションを決めて、カウント開始
+			ChangeAct(static_cast<ATK_ACT>(skillNo_));
+			ResetParam(arrowAtk_[s]);
+			CntUp(atkStartCnt_);
+		}
+	}
+}
+
+void PlArcher::SkillTwoInit(void)
 {
 }
 
 void PlArcher::NmlActCommon(void)
 {
 	size_t arrowSize = arrow_.size();
-	for (int s = 0; s < arrowSize; s++)
-	{
-
-	}
-	if (CheckAct(ACT_CNTL::NMLSKILL)
-		&& IsSkillable() && !isCool_[static_cast<int>(skillNo_)])
-	{
-		//スキルごとにアニメーションを決めて、カウント開始
-		ChangeAct(static_cast<ATK_ACT>(skillNo_));
-		ResetParam(atk_);
-		CntUp(atkStartCnt_);
-	}
-
 	//近接攻撃用(atk_変数と遠距離で分ける)
 	if (IsAtkStart())
 	{
 		moveAble_ = false;
 		CntUp(atkStartCnt_);
-		if (IsFinishAtkStart())
-		{
-			CntUp(atk_.cnt_);
-		}
 	}
 	else if (IsFinishAtkStart())
 	{
-		if ((atk_.IsAttack() || atk_.IsBacklash()))
-		{
-			CntUp(atk_.cnt_);
-			//クールタイムの初期化
-			coolTime_[static_cast<int>(act_)] = 0.0f;
-		}
-		else //if(atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
+		CntUp(atkAbleCnt_);
+		//クールタイムの初期化
+		coolTime_[static_cast<int>(act_)] = 0.0f;
+		if (atkAbleCnt_ >= ATKABLE_TIME)
 		{
 			InitAtk();
 		}
 	}
 }
 
+
+
+
 void PlArcher::InitArrowAtk(ATK& arrowAtk)
 {
 	//攻撃カウント初期化
 	arrowAtk.ResetCnt();
+
+	SyncActPos(arrowAtk);
 
 	//消すかも
 	arrowAtk.isHit_ = false;

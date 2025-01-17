@@ -5,12 +5,36 @@ PlAxe::PlAxe(const SceneManager::PLAY_MODE _mode, const SceneManager::CNTL _cntl
 {
 	mode_ = _mode;
 	cntl_ = _cntl;
+	hp_ = MAX_HP;
+
+	//変数初期化
+	moveAble_ = true;
+
+	//当たり判定の設定
+	radius_ = MY_COL_RADIUS;
+	//acts_[ATK_ACT::ATK].radius_ = COL_ATK;
+
+	atkStartRange_ = ATK_START_RANGE;
+
+
+
 }
 
 PlAxe::PlAxe(const SceneManager::PLAY_MODE _mode, const InputManager::JOYPAD_NO _padNum) : PlayerBase(_mode, _padNum)
 {
 	mode_ = _mode;
 	padNum_ = _padNum;
+
+	//変数の初期化
+	hp_ = MAX_HP;
+
+	moveAble_ = true;
+
+	//当たり判定の設定
+	radius_ = MY_COL_RADIUS;
+	//acts_[ATK_ACT::ATK].radius_ = COL_ATK;
+
+	atkStartRange_ = ATK_START_RANGE;
 }
 
 void PlAxe::SetParam(void)
@@ -81,28 +105,13 @@ void PlAxe::InitCharaAnim(void)
 
 void PlAxe::ChargeAct(void)
 {
-	chargeActUpdate_();
+	//chargeActUpdate_();
 	auto& ins = InputManager::GetInstance();
-	int skillOne = static_cast<int>(SKILL_NUM::ONE);
-	chargeActUpdate_();
+	int skillOne = static_cast<int>(ATK_ACT::SKILL1);
 	if (!isCool_[static_cast<int>(ATK_ACT::SKILL1)])
 	{
-		//クール中にボタン長押しした状態で、クールが終わってから
-		//攻撃発生カウントするのを防ぐため
-		if (ins.IsTrgDown(SKILL_KEY))
-		{
-			if (!IsAtkAction())
-			{
-				//スキルごとにアニメーションを決めて、カウント開始
-				ChangeAct(static_cast<ATK_ACT>(skillNo_));
-				ResetParam(atk_);
-				CntUp(atkStartCnt_);
-				moveAble_ = false;
-			}
-		}
-
 		//スキル(長押しでガード状態維持)
-		else if (ins.IsNew(SKILL_KEY)&&IsAtkStart())
+		if (ins.IsNew(SKILL_KEY)&&IsAtkStart())
 		{
 			//押している反応
 			//CntUp(atkStartCnt_);
@@ -121,9 +130,34 @@ void PlAxe::ChargeAct(void)
 	}
 }
 
+void PlAxe::SkillOneInit(void)
+{
+	if (!IsAtkAction() && !isCool_[static_cast<int>(skillNo_)])
+	{
+		//スキルごとにアニメーションを決めて、カウント開始
+		ChangeAct(static_cast<ATK_ACT>(skillNo_));
+		ResetParam(atk_);
+		CntUp(atkStartCnt_);
+		moveAble_ = false;
+	}
+
+}
+
+void PlAxe::SkillTwoInit(void)
+{
+	if (!IsAtkAction() && !isCool_[static_cast<int>(skillNo_)])
+	{
+		//スキルごとにアニメーションを決めて、カウント開始
+		ChangeAct(static_cast<ATK_ACT>(skillNo_));
+		ResetParam(atk_);
+		CntUp(atkStartCnt_);
+		moveAble_ = false;
+	}
+}
+
 void PlAxe::AtkFunc(void)
 {
-	
+	NmlAtkUpdate();
 }
 
 void PlAxe::Skill1Func(void)
@@ -151,7 +185,7 @@ void PlAxe::Skill1Func(void)
 			coolTime_[static_cast<int>(ATK_ACT::SKILL1)] = 0.0f;
 
 			//スキル終わったら攻撃発生時間の最大時間をセットする
-			atkStartTime_[static_cast<int>(SKILL_NUM::ONE)] = SKILL_ONE_START;
+			atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;
 
 			InitAtk();
 		}
@@ -160,6 +194,7 @@ void PlAxe::Skill1Func(void)
 
 void PlAxe::Skill2Func(void)
 {
+	NmlAtkUpdate();
 	if (atk_.cnt_ >= SKILL2_CHANGE_ANIM_TIME)
 	{
 		if (stepAnim_ > 14.0f)ResetAnim(ANIM::UNIQUE_2, SPEED_ANIM_ATK);

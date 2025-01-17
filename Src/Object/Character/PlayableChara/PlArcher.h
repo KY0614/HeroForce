@@ -6,9 +6,10 @@ class PlArcher :
 {
 public:
     static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//攻撃開始判定の大きさ
+    static constexpr float ATKABLE_TIME = 1.0f;                         //連射受付時間
 
     //クールタイム
-    static constexpr float ATK_COOLTIME = 0.5f;
+    static constexpr float ATK_COOLTIME = 0.1f;
     static constexpr float SKILL_ONE_COOLTIME = 3.0f;
     static constexpr float SKILL_TWO_COOLTIME = 5.0f;
 
@@ -18,7 +19,7 @@ public:
     static constexpr float SKILL_TWO_START = 0.2f;
 
     //各攻撃の持続時間
-    static constexpr float FRAME_ATK_DURATION = 0.9f;
+    static constexpr float FRAME_ATK_DURATION = 2.0f;
     static constexpr float FRAME_SKILL1_DURATION = 0.7f;
     static constexpr float FRAME_SKILL2_DURATION = 3.0f - SKILL_TWO_START;
     static constexpr float SKILL2_CHANGE_ANIM_TIME = 0.25f;
@@ -82,6 +83,9 @@ public:
     //弓矢の作成
     void CreateArrow(void);
 
+    //arrowAtkの作成
+    void CreateAtk(void);
+
     void Update(void)override;
 
     void Draw(void)override;
@@ -90,6 +94,10 @@ protected:
     void AtkFunc(void)override;
     void Skill1Func(void)override;
     void Skill2Func(void)override;
+
+    void NmlAtkInit(void)override;
+    void SkillOneInit(void)override;
+    void SkillTwoInit(void)override;
 
     //弓連射用
     void NmlActCommon (void)override;
@@ -103,4 +111,6 @@ protected:
     bool isShotArrow_;							//矢を放ったかの判定(true:放った)
     int arrowCnt_;								//矢の使用個数カウンタ
     float reloadCnt_;							//矢のリロード時間
+
+    float atkAbleCnt_;                          //矢の発射可能カウント
 };

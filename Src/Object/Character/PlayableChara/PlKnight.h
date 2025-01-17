@@ -102,7 +102,11 @@ protected:
     void InitAct(void)override;
     void AtkFunc(void)override;
 
-    void ResetGuardCnt(void)override;
+    //void ResetGuardCnt(void)override;
+
+    void SkillOneInit(void)override;
+    void SkillTwoInit(void)override;
+
 
     //ŠeƒXƒLƒ‹‚Ìˆ—
     void Skill1Func(void)override;
