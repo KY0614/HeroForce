@@ -29,7 +29,7 @@ public:
 
 	/// <summary>
 	/// 目的の範囲に対象が入ったかを返す
-	/// </summary>
+	/// </summary>i5
 	/// <param name="_myPos">自身の座標</param>
 	/// <param name="_targetPos">対象の座標</param>
 	/// <param name="_rangeRadius">範囲用の半径</param>

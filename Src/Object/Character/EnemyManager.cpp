@@ -1,3 +1,5 @@
+#include<cassert>
+
 #include"Enemy.h"
 #include"EnemySort/EneArcher.h"
 #include"EnemySort/EneAxe.h"
@@ -10,6 +12,10 @@
 void EnemyManager::Init(void)
 {
 	activeNum_ = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		CreateEnemy();
+	}
 }
 
 void EnemyManager::Update(VECTOR _target)
@@ -38,10 +44,12 @@ void EnemyManager::CreateEnemy(void)
 	//敵が最大数いたら生成処理を行わない
 	if (activeNum_ >= ENEMY_MAX)return;
 
-	Enemy* enm;
+	Enemy* enm = nullptr;
 
+	//乱数で種類決める
 	TYPE type = static_cast<TYPE>(GetRand(static_cast<int>(TYPE::MAX)-1));
 
+	//インスタンス生成
 	switch (type)
 	{
 	case EnemyManager::TYPE::ARCHER:
@@ -61,8 +69,13 @@ void EnemyManager::CreateEnemy(void)
 		enm = new EneMage();
 		break;
 	default:
+		return;
 		break;
 	}
+
+	//念のためのエラー回避用
+	if (enm == nullptr)assert("敵の生成で問題がありました。");
+
 	//敵の初期化
 	enm->Init();
 
