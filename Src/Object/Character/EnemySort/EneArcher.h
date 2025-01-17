@@ -40,7 +40,7 @@ public:
 	static constexpr float ATK_START_RANGE = 500.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
 
 	//スキルの当たり判定半径
-	static constexpr float SKILL_ONE_COL_RADIUS = 10.0f;	//スキル１の当たり判定半径
+	static constexpr float SKILL_ONE_COL_RADIUS = 12.0f;	//スキル１の当たり判定半径
 
 	//スキルの攻撃力
 	static constexpr float SKILL_ONE_POW = 15.0f;			//スキル１の攻撃力
@@ -110,9 +110,6 @@ private:
 
 	//アニメーション終了時の動き
 	void FinishAnim(void)override;
-
-	//状態遷移(攻撃警告)
-	void ChangeStateAlert(void)override;
 
 	//状態遷移(休憩)
 	void ChangeStateBreak(void)override;

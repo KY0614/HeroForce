@@ -49,6 +49,9 @@ public:
 		ENTRY,		//出現
 		UNIQUE_1,	//固有のやつ①
 		UNIQUE_2,	//固有のやつ②
+		UNIQUE_3,	//固有のやつ③
+		UNIQUE_4,	//固有のやつ④
+		UNIQUE_5,	//固有のやつ⑤
 	};
 
 	//定数

@@ -9,7 +9,7 @@ public:
 	//****************************************************************
 
 	//アニメーション番号(キャラ固有)
-	static constexpr int ANIM_SKILL_ONE = 75;	//スキル1アニメーション
+	static constexpr int ANIM_SKILL_ONE = 77;	//スキル1アニメーション
 	static constexpr int ANIM_CHARGE = 79;		//溜めアニメーション(固有アニメーション)
 
 	//モデル関係
@@ -19,8 +19,8 @@ public:
 	static constexpr int FRAME_ROD = 18;	//杖
 
 	//攻撃関係
-	static constexpr float ALERT_TIME = 2.5f;	//攻撃の警告時間
-	static constexpr float BREAK_TIME = 4.0f;	//攻撃の休憩時間
+	static constexpr float ALERT_TIME = 1.0f;	//攻撃の警告時間
+	static constexpr float BREAK_TIME = 3.0f;	//攻撃の休憩時間
 
 	//敵自身の当たり判定半径
 	static constexpr float MY_COL_RADIUS = 100.0f * CHARACTER_SCALE;
@@ -118,9 +118,6 @@ private:
 
 	//アニメーション終了時の動き
 	void FinishAnim(void)override;
-
-	//状態遷移(攻撃警告)
-	void ChangeStateAlert(void)override;
 
 	//状態遷移(攻撃)
 	void ChangeStateAtk(void)override;

@@ -112,9 +112,14 @@ void Enemy::ChangeStateAlert(void)
 	//向きを改めて設定
 	trans_.quaRot = trans_.quaRot.LookRotation(GetTargetVec());
 
+	//ランダムで攻撃情報を生成
+	RandSkill();
+
+	//予備動作アニメーション
+	ResetAnim(nowSkillPreAnim_, changeSpeedAnim_[nowSkillPreAnim_]);
+
 	//警告カウンタ初期化
 	alertCnt_ = 0.0f;
-
 }
 
 void Enemy::ChangeStateAtk(void)
@@ -203,9 +208,6 @@ void Enemy::UpdateAlert(void)
 	//警告カウンタが終わったなら攻撃開始
 	if (!IsAlertTime())
 	{		
-		//ランダムで攻撃生成
-		RandSkill();
-
 		//攻撃状態に遷移
 		ChangeState(STATE::ATTACK);
 
@@ -383,8 +385,10 @@ Enemy::ATK& Enemy::CreateSkill(ATK_ACT _atkAct)
 	{
 		if (nowSkill.IsFinishMotion())
 		{
-			//上書き
+			//スキル上書き
 			nowSkill = skills_[_atkAct];
+			
+			//スキルに対応したアニメーションの記録
 			nowSkillAnim_ = skillAnims_[static_cast<int>(_atkAct)];
 
 			//カウンタの初期化
@@ -404,6 +408,8 @@ Enemy::ATK& Enemy::CreateSkill(ATK_ACT _atkAct)
 
 	//ランダムでとってきた攻撃の種類を今から発動するスキルに設定
 	nowSkill_.emplace_back(skills_[_atkAct]);
+
+	//スキルに対応したアニメーションの記録
 	nowSkillAnim_ = skillAnims_[static_cast<int>(_atkAct)];
 
 	//カウンタの初期化
@@ -450,6 +456,9 @@ void Enemy::RandSkill(void)
 
 	//スキル生成準備
 	SetUpSkill(act);
+
+	//スキルに対応した予備動作アニメーションの記録
+	nowSkillPreAnim_ = skillPreAnims_[static_cast<int>(act)];
 
 	//スキル生成
 	createSkill_ = std::bind(&Enemy::CreateSkill, this, act);

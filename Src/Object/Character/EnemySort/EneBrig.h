@@ -9,10 +9,14 @@ public:
 	//****************************************************************
 
 	//アニメーション番号(キャラ固有)
-	static constexpr int ANIM_SKILL_ONE = 2;	//スキル1アニメーション
+	static constexpr int ANIM_SKILL_ONE = 96;	//スキル1アニメーション(振りかざし)
+	static constexpr int ANIM_PRE_SWING = 95;	//スキル1アニメーション(振りかぶり)
 
 	//モデル関係
 	static constexpr VECTOR  LOCAL_CENTER_POS = { 0.0f,100.0f * CHARACTER_SCALE,0.0f };	//モデルの中心座標への相対座標
+
+	//フレーム(ボーン)番号
+	static constexpr int FRAME_KNIFE = 63;		//ナイフ
 
 	//攻撃関係
 	static constexpr float ALERT_TIME = 1.0f;	//攻撃の警告時間
@@ -36,7 +40,7 @@ public:
 	static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
 
 	//スキルの当たり判定半径
-	static constexpr float SKILL_ONE_COL_RADIUS = 10.0f;	//スキル１の当たり判定半径
+	static constexpr float SKILL_ONE_COL_RADIUS = 15.0f;	//スキル１の当たり判定半径
 
 	//スキルの攻撃力
 	static constexpr float SKILL_ONE_POW = 20.0f;			//スキル１の攻撃力
@@ -77,7 +81,7 @@ private:
 	//スキル1
 	void Skill_One(void)override;
 
-	//状態遷移(攻撃警告)
-	void ChangeStateAlert(void)override;
+	//アニメーション終了時の動き
+	void FinishAnim(void)override;
 };
 

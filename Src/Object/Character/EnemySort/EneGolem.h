@@ -13,13 +13,16 @@ public:
 	static constexpr int ANIM_IDLE = 1;		//待機アニメーション
 	static constexpr int ANIM_WALK = 2;		//歩きアニメーション
 	
-	static constexpr int ANIM_PUNCH = 5;		//殴りアニメーション(スキル１)
-	static constexpr int ANIM_MOWDOWN = 6;		//薙ぎ払いアニメーション(スキル２)
-	static constexpr int ANIM_SHOUT = 7;		//叫びアニメーション(スキル３)
-	static constexpr int ANIM_JUMP_ATK = 8;		//ジャンプ攻撃アニメーション(スキル４)
+	static constexpr int ANIM_PUNCH = 6;		//殴りアニメーション(スキル１)
+	static constexpr int ANIM_MOWDOWN = 8;		//薙ぎ払いアニメーション(スキル２)
+	static constexpr int ANIM_SHOUT = 10;		//叫びアニメーション(スキル３)
+	static constexpr int ANIM_JUMP_ATK = 11;	//ジャンプ攻撃アニメーション(スキル４)
 	
 	static constexpr int ANIM_JUMP = 3;			//ジャンプアニメーション(固有１)
 	static constexpr int ANIM_LANDING = 4;		//着地アニメーション(固有２)
+	static constexpr int ANIM_PRE_PUNCH = 5;	//殴り準備アニメーション(固有３)
+	static constexpr int ANIM_PRE_MOWDOWN = 7;	//薙ぎ払い準備アニメーション(固有４)
+	static constexpr int ANIM_PRE_SHOUT = 9;	//叫び準備アニメーション(固有５)
 
 	//TODO:のちに作る
 	//static constexpr int ANIM_ENTRY = 74;		//出現アニメーション
@@ -27,12 +30,14 @@ public:
 	//static constexpr int ANIM_DEATH = 24;		//やられアニメーション
 
 	//アニメーション速度
-	static constexpr float SPEED_ANIM_IDLE = 60.0f;		//待機アニメーション速度
-	static constexpr float SPEED_ANIM_WALK = 60.0f;		//歩きアニメーション速度
-	static constexpr float SPEED_ANIM_PUNCH = 60.0f;	//パンチアニメーション速度
-	static constexpr float SPEED_ANIM_MOWDOWN = 60.0f;	//薙ぎ払いアニメーション速度
-	static constexpr float SPEED_ANIM_SHOUT = 60.0f;	//叫びアニメーション速度
-	static constexpr float SPEED_ANIM_JUMP = 60.0f;		//ジャンプアニメーション速度
+	static constexpr float SPEED_ANIM_IDLE = 60.0f;			//待機アニメーション速度
+	static constexpr float SPEED_ANIM_WALK = 60.0f;			//歩きアニメーション速度
+	static constexpr float SPEED_ANIM_PUNCH = 60.0f;		//パンチアニメーション速度
+	static constexpr float SPEED_ANIM_PRE_PUNCH = 60.0f;	//パンチ前アニメーション速度
+	static constexpr float SPEED_ANIM_MOWDOWN = 60.0f;		//薙ぎ払いアニメーション速度
+	static constexpr float SPEED_ANIM_PRE_MOWDOWN = 30.0f;	//薙ぎ払いまえアニメーション速度
+	static constexpr float SPEED_ANIM_SHOUT = 60.0f;		//叫びアニメーション速度
+	static constexpr float SPEED_ANIM_JUMP = 60.0f;			//ジャンプアニメーション速度
 
 	//モデル関係
 	static constexpr VECTOR  LOCAL_CENTER_POS = { 0.0f,100.0f * CHARACTER_SCALE,0.0f };	//モデルの中心座標への相対座標
@@ -48,8 +53,8 @@ public:
 	static constexpr int FRAME_HEAD = 15;		//頭
 
 	//攻撃関係
-	static constexpr float ALERT_TIME = 1.0f;	//攻撃の警告時間
-	static constexpr float BREAK_TIME = 1.0f;	//攻撃の休憩時間
+	static constexpr float ALERT_TIME = 0.8f;	//攻撃の警告時間
+	static constexpr float BREAK_TIME = 0.5f;	//攻撃の休憩時間
 
 	//敵自身の当たり判定半径
 	static constexpr float MY_COL_RADIUS = 300.0f * CHARACTER_SCALE;
@@ -66,7 +71,7 @@ public:
 
 	//範囲関係
 	static constexpr float SEARCH_RANGE = 2000.0f * CHARACTER_SCALE;		//索敵判定の大きさ
-	static constexpr float ATK_START_RANGE = 500.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
+	static constexpr float ATK_START_RANGE = 700.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
 
 	//スキルの当たり判定半径
 	static constexpr float SKILL_ONE_COL_RADIUS = 50.0f;	//スキル１の当たり判定半径
@@ -100,7 +105,42 @@ public:
 		,SKILL_TWO_BACKLASH
 		,0.0f };
 
-private:
+	//スキルの当たり判定半径
+	static constexpr float SKILL_THREE_COL_RADIUS = 50.0f;	//スキル３の当たり判定半径
+	//スキルの攻撃力
+	static constexpr float SKILL_THREE_POW = 20.0f;			//スキル３の攻撃力
+	//スキルの持続時間
+	static constexpr float SKILL_THREE_DURATION = 1.0f;		//スキル３の持続時間
+	//スキルの後隙
+	static constexpr float SKILL_THREE_BACKLASH = 3.0f;		//スキル３の後隙
+	//スキル関係
+	static constexpr ATK SKILL_THREE = { AsoUtility::VECTOR_ZERO	//スキル３の要素
+		,SKILL_THREE_COL_RADIUS
+		,SKILL_THREE_POW
+		,SKILL_THREE_DURATION
+		,SKILL_THREE_BACKLASH
+		,0.0f };
+
+	//スキル３の効果範囲
+	static constexpr float SKILL_THREE_FALL_RADIUS = 300.0f;	//スキル３の隕石の落ちる範囲の半径
+
+	//攻撃生成間隔
+	static constexpr float SKILL_THREE_DELAY = 2.0f;			//スキル３の攻撃生成間隔
+
+	//攻撃回数
+	static constexpr int SKILL_THREE_MAX_CNT = 5;				//スキル３の攻撃回数
+
+private:	
+	//****************************************************************
+	//変数
+	//****************************************************************
+
+	int skillThreeCnt_;			//スキル３の生成カウンタ
+	float skillThreeDelayCnt_;	//スキル３の発生間隔用カウンタ
+
+	////スキルごとの状態遷移
+	//std::map<ATK_ACT, std::function<void(void)>> changeStateAlert_;		//スキルごとの状態遷移(警告)
+
 	//****************************************************************
 	//関数
 	//****************************************************************
@@ -119,16 +159,19 @@ private:
 	//休憩時間中かどうかを返す
 	const bool IsBreak(void)const override { return breakCnt_ < BREAK_TIME; }
 
-	//敵の攻撃処理
-	void Attack(void)override;
-
-	//スキル1
+	//スキル1(殴り)
 	void Skill_One(void)override;
 
-	//スキル2
+	//スキル2(薙ぎ払い)
 	void Skill_Two(void);
 
-	//状態遷移(攻撃警告)
-	void ChangeStateAlert(void)override;
+	//スキル3(叫び攻撃)
+	void Skill_Three(void);
+
+	//円範囲のランダム一点を取る
+	void GetRandomPointInCircle(const VECTOR _myPos, const int _r, VECTOR& _tPos);
+
+	//攻撃達が重なっていないか
+	bool isOverlap(VECTOR _tPos, float _minDist);
 };
 

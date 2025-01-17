@@ -55,7 +55,14 @@ void EneArcher::InitSkill(void)
 	skills_.emplace(ATK_ACT::SKILL_ONE, SKILL_ONE);
 
 	//ここにスキルの数分アニメーションを格納させる
+	//----------------------------------------------
+
+	//予備動作アニメーション
+	skillPreAnims_.emplace_back(ANIM::UNIQUE_1);
+
+	//動作アニメーション
 	skillAnims_.emplace_back(ANIM::SKILL_1);
+
 
 	//初期スキルを設定しておく
 	RandSkill();
@@ -147,15 +154,6 @@ void EneArcher::FinishAnim(void)
 	case UnitBase::ANIM::UNIQUE_2:
 		break;
 	}
-}
-
-void EneArcher::ChangeStateAlert(void)
-{
-	//更新処理の中身初期化
-	Enemy::ChangeStateAlert();
-
-	//エイムアニメーション
-	ResetAnim(ANIM::UNIQUE_1, changeSpeedAnim_[ANIM::UNIQUE_1]);
 }
 
 void EneArcher::ChangeStateBreak(void)

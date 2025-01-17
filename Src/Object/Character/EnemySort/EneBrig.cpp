@@ -32,9 +32,11 @@ void EneBrig::InitAnim(void)
 
 	//固有アニメーション初期化
 	animNum_.emplace(ANIM::SKILL_1, ANIM_SKILL_ONE);
+	animNum_.emplace(ANIM::UNIQUE_1, ANIM_PRE_SWING);
 
 	//アニメーション速度設定
 	changeSpeedAnim_.emplace(ANIM::SKILL_1, SPEED_ANIM);
+	changeSpeedAnim_.emplace(ANIM::UNIQUE_1, SPEED_ANIM);
 
 	//アニメーションリセット
 	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
@@ -46,7 +48,14 @@ void EneBrig::InitSkill(void)
 	skills_.emplace(ATK_ACT::SKILL_ONE, SKILL_ONE);
 
 	//ここにスキルの数分アニメーションを格納させる
+	//----------------------------------------------
+
+	//予備動作アニメーション
+	skillPreAnims_.emplace_back(ANIM::UNIQUE_1);
+
+	//動作アニメーション
 	skillAnims_.emplace_back(ANIM::SKILL_1);
+
 
 	//初期スキルを設定しておく
 	RandSkill();
@@ -60,15 +69,18 @@ void EneBrig::Skill_One(void)
 	for (auto& nowSkill : nowSkill_)
 	{
 		//座標の設定
-		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_ + radius_));
+		nowSkill.pos_ = MV1GetFramePosition(trans_.modelId, FRAME_KNIFE);
 	}
 }
 
-void EneBrig::ChangeStateAlert(void)
+void EneBrig::FinishAnim(void)
 {
-	//更新処理の中身初期化
-	Enemy::ChangeStateAlert();
+	//共通アニメーションの終了処理
+	Enemy::FinishAnim();
 
-	//待機アニメーション
-	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
+	switch (anim_)
+	{
+	case UnitBase::ANIM::UNIQUE_1:
+		break;
+	}
 }

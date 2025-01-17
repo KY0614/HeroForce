@@ -137,7 +137,9 @@ protected:
 	std::function<void(void)> processSkill_;					//スキルの処理
 	std::map<ATK_ACT, std::function<void(void)>> changeSkill_;	//スキルの変更用
 
+	std::vector<ANIM> skillPreAnims_;	//スキルに対応した予備アニメーション
 	std::vector<ANIM> skillAnims_;		//スキルに対応したアニメーション
+	ANIM nowSkillPreAnim_;				//現在のスキルの予備アニメーション
 	ANIM nowSkillAnim_;					//現在のスキルアニメーション
 
 	VECTOR localCenterPos_;	//敵中央の相対座標
@@ -195,7 +197,7 @@ protected:
 	//状態遷移(通常)
 	void ChangeStateNormal(void);
 	//状態遷移(攻撃警告)
-	virtual void ChangeStateAlert(void);
+	void ChangeStateAlert(void);
 	//状態遷移(攻撃)
 	virtual void ChangeStateAtk(void);
 	//状態遷移(休憩)
