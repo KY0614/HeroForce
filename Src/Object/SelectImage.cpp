@@ -74,10 +74,7 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	playerNum_ = 1;
 	isPad_ = false;
 	role_ = 0;
-	//role_[0] = 0;
-	//role_[1] = 0;
-	//role_[2] = 0;
-	//role_[3] = 0;
+	isReady_ = false;
 
 	keyPressTime_ = 0.0f;
 	interval_ = 0.0f;
@@ -164,12 +161,6 @@ void SelectImage::Draw(void)
 	//{
 	//	DrawFormatString(0, 40 + (20 * i), 0xFF0000, "target %0.2f,%0.2f,%0.2f", target_[i].x, target_[i].y, target_[i].z);
 	//}
-
-	DataBank& data = DataBank::GetInstance();
-	for (int i = 0; i < 4; i++)
-	{
-		DrawFormatString(0, 40 + (20 * i), 0xFF0000, "Output %d", data.Output(i + 1).cntrol_);
-	}
 
 }
 
@@ -438,7 +429,7 @@ void SelectImage::OperationUpdate(void)
 
 void SelectImage::RoleUpdate(void)
 {
-
+	
 }
 
 void SelectImage::NumberDraw(void)
@@ -498,7 +489,17 @@ void SelectImage::RoleDraw(void)
 	//}
 
 	//mesh_[0].DrawTwoMesh(*imgPlayerNum_);
-	testMesh_.DrawTwoMeshTest(*imgPlayerNum_);
+
+	if (GetReady() != true)
+	{
+		testMesh_.DrawTwoMeshTest(*imgPlayerNum_);
+	}
+	else
+	{
+		SetDrawBlendMode(DX_BLENDMODE_SUB, 128);
+		testMesh_.DrawTwoMeshTest(*imgPlayerNum_);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);	//ブレンドモードを戻す
+	}
 
 	//PointsDraw();
 }
@@ -619,7 +620,9 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 		//役職の設定
 		data.Input(static_cast<SceneManager::ROLE>(role_), i + 1);
 
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+		//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+
+		isReady_ = true;
 	}
 
 	//選択する矢印

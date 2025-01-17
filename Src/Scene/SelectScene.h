@@ -134,7 +134,6 @@ private:
 
 	//状態管理(更新ステップ)
 	std::function<void(void)> stateUpdate_;
-
 	//状態管理(状態遷移時初期処理)
 	std::map<SELECT, std::function<void(void)>> stateChanges_;
 
@@ -146,7 +145,6 @@ private:
 
 	// 画像
 	std::unique_ptr<SelectImage>images_[SceneManager::PLAYER_NUM];
-	std::unique_ptr<SelectImage>image_;
 
 	//背景のステージ
 	StageManager* stage_;
@@ -192,6 +190,8 @@ private:
 	//-----------------------------------------------------------
 
 	//デバッグ関連-------------------------------
-
+	int readyNum;
+	int okNum;
+	bool isOk_[SceneManager::PLAYER_NUM];
 };
 

@@ -39,9 +39,9 @@ public:
 	
 	//メッシュ
 	struct Mesh {
-		VERTEX3D vertex_[4];	//頂点情報
+		VERTEX3D vertex_[4];		//頂点情報
 		VERTEX3D testVertex_[4];	//頂点情報
-		int imgHandle_;			//画像ハンドル
+		int imgHandle_;				//画像ハンドル
 
 		void DrawTwoMesh(int handle);
 		void DrawTwoMeshTest(int handle);
@@ -104,6 +104,8 @@ public:
 	/// <returns>指定したvertexの頂点情報</returns>
 	VERTEX3D GetMeshVertex(int i);
 
+	bool GetReady(void) { return isReady_; };
+
 	// セッター　--------------------------------------------------
 
 	/// <summary>
@@ -152,6 +154,9 @@ private:
 	//職種
 	int role_;
 
+	//準備オッケーかどうか
+	bool isReady_;
+
 	//キーを何秒押しているか
 	float keyPressTime_;
 	
@@ -199,4 +204,3 @@ private:
 
 	//-----------------------------------------------------------
 };
-

@@ -28,7 +28,14 @@ SelectScene::SelectScene(void)
 	stateChanges_.emplace(
 		SELECT::ROLE, std::bind(&SelectScene::ChangeStateRole, this));
 	stateChanges_.emplace(
-		SELECT::ROLE, std::bind(&SelectScene::ChangeStateMax, this));
+		SELECT::MAX, std::bind(&SelectScene::ChangeStateMax, this));
+
+	readyNum = 0;
+	okNum = 0;
+	isOk_[0] = false;
+	isOk_[1] = false;
+	isOk_[2] = false;
+	isOk_[3] = false;
 }
 
 SelectScene::~SelectScene(void)
@@ -213,6 +220,51 @@ void SelectScene::RoleUpdate(void)
 		players_[i]->SetPos(AsoUtility::RotXZPos(DEFAULT_CAMERA_POS, players_[i - 1]->GetPos(), AsoUtility::Deg2RadF(90.0f)));
 		players_[i]->SetRot(Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-90.0f * i), 0.0f));
 	}
+
+	for (int i = 0; i < camera.size(); i++)
+	{
+		if (readyNum > camera.size())
+		{
+			break;
+		}
+		if (images_[i]->GetReady()) 
+		{
+			readyNum++;
+		}
+	}
+
+	if (readyNum >= camera.size() && input_[0].config_ == KEY_CONFIG::DECIDE)
+	{
+		readyNum++;
+	}
+
+	if (readyNum > camera.size())
+	{
+		//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+		for (int i = 0; i < camera.size(); i++)
+		{
+			if (isOk_[i])
+			{
+				continue;
+			}
+			if (input_[i].config_ == KEY_CONFIG::DECIDE)
+			{
+				isOk_[i] = true;
+				okNum++;
+			}
+		}
+	}
+
+	if (okNum >= camera.size() && input_[0].config_ == KEY_CONFIG::DECIDE)
+	{
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+	}
+
+	//if (readyNum >= camera.size() && 
+	//	input_[0].config_ == KEY_CONFIG::DECIDE)
+	//{
+	//	readyNum++;
+	//}
 }
 
 void SelectScene::MaxUpdate(void)
@@ -227,11 +279,11 @@ void SelectScene::NumberDraw(void)
 
 void SelectScene::OperationDraw(void)
 {
-	for (auto& i : images_)
-	{
-		i->Draw();
-	}
-
+	//for (auto& i : images_)
+	//{
+	//	i->Draw();
+	//}
+	images_[0]->Draw();
 }
 
 void SelectScene::RoleDraw(void)
@@ -262,8 +314,12 @@ void SelectScene::DrawDebug(void)
 	for (int i = 0; i < 4; i++)
 	{
 		DrawFormatString(0, 120 + (20 * i), 0x00CC00, "input_[%d]: %d", i, input_[i].cntl_);
-		DrawFormatString(500, 40 + (20 * i), 0x00CC00, "pos: %2.f,%2.f,%2.f", images_[i]->GetMeshVertex(i).pos.x, images_[i]->GetMeshVertex(i).pos.y, images_[i]->GetMeshVertex(i).pos.z);
-		DrawFormatString(Application::SCREEN_SIZE_X - 100, 100 + (i*20), 0x000000, "role : %d", images_[i]->GetRole());
+		//DrawFormatString(500, 40 + (20 * i), 0x00CC00, "pos: %2.f,%2.f,%2.f", images_[i]->GetMeshVertex(i).pos.x, images_[i]->GetMeshVertex(i).pos.y, images_[i]->GetMeshVertex(i).pos.z);
+		DrawFormatString(500, 40 + (20 * i), 0x00CC00, "isOk: %d", isOk_[i]);
+		DrawFormatString(Application::SCREEN_SIZE_X - 100, 100 + (i*20), 0xFF3333, "ready : %d", images_[i]->GetReady());
+		if (isOk_[i]) {
+			DrawCircle(Application::SCREEN_SIZE_X / 2 + (70 * i), Application::SCREEN_SIZE_Y / 2, 50, 0x00FF00, true);
+		}
 	}
 	DrawFormatString(100, 120, 0x00CC00, "input_: %d", input_[0].config_);
 }
@@ -340,6 +396,7 @@ void SelectScene::PadProcess(void)
 	leftStickY_[1] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD2).AKeyLY;
 	leftStickY_[2] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD3).AKeyLY;
 	leftStickY_[3] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD4).AKeyLY;
+
 	
 	for (int i = 0;i < 4 ;i++)
 	{
@@ -361,11 +418,10 @@ void SelectScene::PadProcess(void)
 		{
 			input_[i].config_ = KEY_CONFIG::RIGHT;
 		}
-	}
-
-	if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
-	{
-		input_[0].config_ = KEY_CONFIG::DECIDE;
+		if (ins.IsPadBtnTrgDown(static_cast<InputManager::JOYPAD_NO>(i + 1), InputManager::JOYPAD_BTN::RIGHT))
+		{
+			input_[i].config_ = KEY_CONFIG::DECIDE;
+		}
 	}
 }
 
@@ -380,6 +436,16 @@ void SelectScene::ControllDevice(void)
 	int key = CheckHitKeyAll(DX_CHECKINPUT_KEY);		//入力を調べる(キーボード)
 	int padNum = GetJoypadNum();
 	int padState = CheckHitKeyAll(DX_CHECKINPUT_PAD);	//入力を調べる(パッド)
+
+	DataBank& data = DataBank::GetInstance();
+	SceneManager::CNTL maincCntl = data.Output(1).cntrol_;
+
+	//1Pの操作方法決定後、入力デバイスを固定
+	if (GetSelect() == SELECT::ROLE)
+	{
+		ChangeDevice(maincCntl);
+		return;
+	}
 
 	//キーボード操作の時パッド操作をできないように
 	if (key != 0	&&
