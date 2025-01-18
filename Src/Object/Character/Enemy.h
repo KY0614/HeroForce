@@ -43,6 +43,7 @@ public:
 	{
 		SKILL_ONE
 		,SKILL_TWO
+		,SKILL_THREE
 		,MAX
 	};
 
@@ -125,8 +126,8 @@ protected:
 
 	std::map<ANIM, float>changeSpeedAnim_;	//アニメーション速度変更用
 
-	float alertCnt_;			//攻撃の警告時間カウンタ
-	float breakCnt_;			//攻撃の休憩時間カウンタ
+	float alertCnt_;		//攻撃の警告時間カウンタ
+	float breakCnt_;		//攻撃の休憩時間カウンタ
 
 	float walkSpeed_;		//敵ごとの歩く速度
 	float runSpeed_;		//敵ごとの走る速度
@@ -136,6 +137,7 @@ protected:
 	std::function<ATK&(void)> createSkill_;						//スキルの生成
 	std::function<void(void)> processSkill_;					//スキルの処理
 	std::map<ATK_ACT, std::function<void(void)>> changeSkill_;	//スキルの変更用
+	bool isEndAllAtk_;											//全攻撃が終了したか(true:終了した)
 
 	std::vector<ANIM> skillPreAnims_;	//スキルに対応した予備アニメーション
 	std::vector<ANIM> skillAnims_;		//スキルに対応したアニメーション
@@ -233,4 +235,3 @@ protected:
 	//移動
 	void Move(void);
 };
-
