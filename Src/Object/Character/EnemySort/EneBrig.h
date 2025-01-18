@@ -19,8 +19,8 @@ public:
 	static constexpr int FRAME_KNIFE = 63;		//ƒiƒCƒt
 
 	//UŒ‚ŠÖŒW
-	static constexpr float ALERT_TIME = 1.0f;	//UŒ‚‚ÌŒxŠÔ
-	static constexpr float BREAK_TIME = 1.0f;	//UŒ‚‚Ì‹xŒeŠÔ
+	static constexpr float ALERT_TIME = 0.4f;	//UŒ‚‚ÌŒxŠÔ
+	static constexpr float BREAK_TIME = 0.8f;	//UŒ‚‚Ì‹xŒeŠÔ
 
 	//“G©g‚Ì“–‚½‚è”»’è”¼Œa
 	static constexpr float MY_COL_RADIUS = 100.0f * CHARACTER_SCALE;
@@ -32,7 +32,7 @@ public:
 	static constexpr int STUN_DEF_MAX = 100;	//“G‚ÌÅ‘åƒXƒ^ƒ“–hŒä’l
 
 	//‘¬“xŠÖŒW
-	static constexpr float WALK_SPEED = 2.0f;	//•à‚«‚Ì‘¬“x
+	static constexpr float WALK_SPEED = 3.0f;	//•à‚«‚Ì‘¬“x
 	static constexpr float RUN_SPEED = 4.0f;	//‘–‚è‚Ì‘¬“x
 
 	//”ÍˆÍŠÖŒW

@@ -9,6 +9,8 @@ public:
 	//定数(キャラ固有)
 	//****************************************************************
 
+	//TODO:ゴーレムのテクスチャパスを確認すること
+
 	//アニメーション番号(キャラ固有)
 	static constexpr int ANIM_IDLE = 1;		//待機アニメーション
 	static constexpr int ANIM_WALK = 2;		//歩きアニメーション
@@ -168,10 +170,19 @@ private:
 	//スキル3(叫び攻撃)
 	void Skill_Three(void);
 
-	//円範囲のランダム一点を取る
+	/// <summary>
+	/// 円範囲のランダム一点を取る
+	/// </summary>
+	/// <param name="_myPos">攻撃者の座標</param>
+	/// <param name="_r">攻撃生成範囲</param>
+	/// <param name="_tPos">攻撃自体の座標</param>
 	void GetRandomPointInCircle(const VECTOR _myPos, const int _r, VECTOR& _tPos);
 
-	//攻撃達が重なっていないか
-	bool isOverlap(VECTOR _tPos, float _minDist);
+	/// <summary>
+	/// 攻撃達が重なっていないか
+	/// </summary>
+	/// <param name="_tPos">攻撃自体の座標</param>
+	/// <param name="_minDist">攻撃範囲の直径</param>
+	/// <returns>攻撃が重なったか(true:重なった)</returns>
+	bool IsOverlap(VECTOR _tPos, float _minDist);
 };
-

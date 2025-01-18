@@ -8,6 +8,7 @@ void EneGolem::SetParam(void)
 	//攻撃の遷移
 	changeSkill_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneGolem::Skill_One, this));
 	changeSkill_.emplace(ATK_ACT::SKILL_TWO, std::bind(&EneGolem::Skill_Two, this));
+	changeSkill_.emplace(ATK_ACT::SKILL_THREE, std::bind(&EneGolem::Skill_Three, this));
 
 	//モデル読み込み
 	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_GOLEM));
@@ -67,7 +68,7 @@ void EneGolem::InitSkill(void)
 	//ここにスキルの数分格納させる
 	skills_.emplace(ATK_ACT::SKILL_ONE, SKILL_ONE);
 	skills_.emplace(ATK_ACT::SKILL_TWO, SKILL_TWO);
-	//skills_.emplace(ATK_ACT::SKILL_THREE, SKILL_THREE);
+	skills_.emplace(ATK_ACT::SKILL_THREE, SKILL_THREE);
 
 	//ここにスキルの数分アニメーションを格納させる
 	//----------------------------------------------
@@ -75,11 +76,12 @@ void EneGolem::InitSkill(void)
 	//予備動作アニメーション
 	skillPreAnims_.emplace_back(ANIM::UNIQUE_3);
 	skillPreAnims_.emplace_back(ANIM::UNIQUE_4);
+	skillPreAnims_.emplace_back(ANIM::UNIQUE_5);
 
 	//動作アニメーション
 	skillAnims_.emplace_back(ANIM::SKILL_1);
 	skillAnims_.emplace_back(ANIM::SKILL_2);
-
+	skillAnims_.emplace_back(ANIM::SKILL_3);
 
 	//初期スキルを設定しておく
 	RandSkill();
@@ -107,6 +109,9 @@ void EneGolem::Skill_Three(void)
 {
 	if (skillThreeDelayCnt_ > SKILL_THREE_DELAY)
 	{
+		//間隔カウンタの初期化
+		skillThreeDelayCnt_ = 0.0f;
+
 		//攻撃生成できたかの判定
 		bool isGenelateAttack = false;
 
@@ -122,10 +127,11 @@ void EneGolem::Skill_Three(void)
 			//円範囲の中の一点を取る
 			GetRandomPointInCircle(trans_.pos, SKILL_THREE_FALL_RADIUS, thisAtk.pos_);
 
-			//if()
-
-			//生成完了
-			isGenelateAttack = true;
+			if (IsOverlap(thisAtk.pos_, SKILL_THREE_COL_RADIUS * 2))
+			{
+				//生成完了
+				isGenelateAttack = true;
+			}
 		}
 	}
 
@@ -146,7 +152,7 @@ void EneGolem::GetRandomPointInCircle(const VECTOR _myPos, const int _r, VECTOR&
 	_tPos.z = static_cast<int>(_myPos.z + radius * sin(theta));
 }
 
-bool EneGolem::isOverlap(VECTOR _tPos, float _minDist)
+bool EneGolem::IsOverlap(VECTOR _tPos, float _minDist)
 {
 	for (const auto& atk : nowSkill_) {
 		int dx = _tPos.x - atk.pos_.x;
