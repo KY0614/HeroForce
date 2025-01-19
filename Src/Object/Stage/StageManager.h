@@ -119,6 +119,7 @@ public:
 
 	//ゲッター
 	std::vector<Transform>GetTtans(MODEL_TYPE type);								//オブジェクトごとのトランスフォーム
+	HIT_TYPE GetHitType(MODEL_TYPE type);											//オブジェクトごとの衝突判定の方法を返す
 	float GetRadius(MODEL_TYPE type);												//衝突判定用半径
 	VECTOR GetHitCapsulePos(VECTOR pos, MODEL_TYPE type, Transform trans, LR lr);	//カプセル座標(LR:左右のどちらか指定)
 

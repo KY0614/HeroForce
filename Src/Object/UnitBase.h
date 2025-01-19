@@ -112,6 +112,9 @@ public:
 	//残量HPの処理(少しずつHpを減らす)
 	void SubHp();
 
+	//位置の設定
+	void SetPos(const VECTOR pos);
+
 protected:
 
 	int hp_;			//体力

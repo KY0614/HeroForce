@@ -87,21 +87,21 @@ void StageManager::ModelLoad()
 			src = RES_T::STAGE_BENCH;
 			name = "bench";
 			radius = BENCH_COLI_RADIUS;
-			hitType = HIT_TYPE::CAPSULE;
+			hitType = HIT_TYPE::MODEL;
 			break;
 
 		case MODEL_TYPE::FENCES_LONG:
 			src = RES_T::STAGE_FENCES_LONG;
 			name = "fencesLong";
 			radius = FENCES_LONG_COLI_RADIUS;
-			hitType = HIT_TYPE::CAPSULE;
+			hitType = HIT_TYPE::MODEL;
 			break;
 
 		case MODEL_TYPE::FENCES_SHORT:
 			src = RES_T::STAGE_FENCES_SHORT;
 			name = "fencesShort";
 			radius = FENCES_SHORT_COLI_RADIUS;
-			hitType = HIT_TYPE::CAPSULE;
+			hitType = HIT_TYPE::MODEL;
 			break;
 
 		case MODEL_TYPE::GROUND:
@@ -113,49 +113,49 @@ void StageManager::ModelLoad()
 			src = RES_T::STAGE_HOUSE_01;
 			name = "house01";
 			radius = HOUSE_01_COLI_RADIUS;
-			hitType = HIT_TYPE::CAPSULE;
+			hitType = HIT_TYPE::MODEL;
 			break;
 
 		case MODEL_TYPE::HOUSE_02:
 			src = RES_T::STAGE_HOUSE_02;
 			name = "house02";
 			radius = HOUSE_02_COLI_RADIUS;
-			hitType = HIT_TYPE::CAPSULE;
+			hitType = HIT_TYPE::MODEL;
 			break;
 
 		case MODEL_TYPE::HOUSE_03:
 			src = RES_T::STAGE_HOUSE_03;
 			name = "house03";
 			radius = HOUSE_03_COLI_RADIUS;
-			hitType = HIT_TYPE::CAPSULE;
+			hitType = HIT_TYPE::MODEL;
 			break;
 
 		case MODEL_TYPE::HOUSE_04:
 			src = RES_T::STAGE_HOUSE_04;
 			name = "house04";
 			radius = HOUSE_04_COLI_RADIUS;
-			hitType = HIT_TYPE::CAPSULE;
+			hitType = HIT_TYPE::MODEL;
 			break;
 
 		case MODEL_TYPE::HOUSE_05:
 			src = RES_T::STAGE_HOUSE_05;
 			name = "house05";
 			radius = HOUSE_05_COLI_RADIUS;
-			hitType = HIT_TYPE::CAPSULE;
+			hitType = HIT_TYPE::MODEL;
 			break;
 
 		case MODEL_TYPE::HUNGER_01:
 			src = RES_T::STAGE_HUNGER_01;
 			name = "hunger01";
 			radius = HUNGER_01_COLI_RADIUS;
-			hitType = HIT_TYPE::CAPSULE;
+			hitType = HIT_TYPE::MODEL;
 			break;
 
 		case MODEL_TYPE::HUNGER_02:
 			src = RES_T::STAGE_HUNGER_02;
 			name = "hunger02";
 			radius = HUNGER_02_COLI_RADIUS;
-			hitType = HIT_TYPE::CAPSULE;
+			hitType = HIT_TYPE::MODEL;
 			break;
 
 		case MODEL_TYPE::ROCK_01:
@@ -190,7 +190,7 @@ void StageManager::ModelLoad()
 			src = RES_T::STAGE_TABLE;
 			name = "table";
 			radius = TABLE_COLI_RADIUS;
-			hitType = HIT_TYPE::CAPSULE;
+			hitType = HIT_TYPE::MODEL;
 			break;
 
 		case MODEL_TYPE::TREE_01:
@@ -232,7 +232,7 @@ void StageManager::ModelLoad()
 			src = RES_T::STAGE_WAGON;
 			name = "wagon";
 			radius = WAGON_COLI_RADIUS;
-			hitType = HIT_TYPE::CAPSULE;
+			hitType = HIT_TYPE::MODEL;
 			break;
 
 		case MODEL_TYPE::WELL:
@@ -246,7 +246,7 @@ void StageManager::ModelLoad()
 			src = RES_T::STAGE_WOOD;
 			name = "wood";
 			radius = WOOD_COLI_RADIUS;
-			hitType = HIT_TYPE::CAPSULE;
+			hitType = HIT_TYPE::MODEL;
 			break;
 
 		default:
@@ -297,6 +297,11 @@ std::vector<Transform> StageManager::GetTtans(MODEL_TYPE type)
 		ret.push_back(obj->GetTrans());
 	}
 	return ret;
+}
+
+StageManager::HIT_TYPE StageManager::GetHitType(MODEL_TYPE type)
+{
+	return hitTypes_[static_cast<int>(type)];
 }
 
 float StageManager::GetRadius(MODEL_TYPE type)

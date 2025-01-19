@@ -233,6 +233,7 @@ void GameScene::Collision(void)
 
 	CollisionEnemy();
 	CollisionPlayer();
+	CollisionStageUnit();
 
 #ifdef _DEBUG_COL
 
@@ -433,6 +434,63 @@ void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
 			_player.ChangeState(PlayerBase::CPU_STATE::ATTACK);
 		}
 	}
+}
+
+void GameScene::CollisionStageUnit()
+{
+	for (int i = 0; i < StageManager::MODELS; i++)
+	{
+		//種類の設定
+		StageManager::MODEL_TYPE type = static_cast<StageManager::MODEL_TYPE>(i);
+
+		//衝突判定の種類を取得
+		StageManager::HIT_TYPE hitType = stage_->GetHitType(type);
+
+		//衝突判定を行わないモデルは処理を終える
+		if (hitType == StageManager::HIT_TYPE::NONE) { continue; }
+
+		//配列を取得
+		std::vector objs = stage_->GetTtans(type);
+
+		for (auto& obj : objs)
+		{
+			//各キャラクター衝突判定
+			CollisionStagePlayer(obj, type, hitType);	//プレイヤーの衝突判定
+		}
+	}
+}
+
+void GameScene::CollisionStagePlayer(Transform& trans, StageManager::MODEL_TYPE& type, StageManager::HIT_TYPE& hitType)
+{
+	auto& col = Collision::GetInstance();
+
+	for (auto& p : players_)
+	{
+		VECTOR prePos = p->GetPos();
+		switch (hitType)
+		{
+		case StageManager::HIT_TYPE::MODEL:
+			if (col.IsHitUnitStageObject(trans.modelId, p->GetPos(), p->GetRadius()))
+			{
+				p->SetTargetPos(prePos);
+			}
+			break;
+		case StageManager::HIT_TYPE::SPHERE:
+			if(AsoUtility::IsHitSpheres(trans.pos, stage_->GetRadius(type), p->GetPos(), p->GetRadius()))
+			{
+				p->SetTargetPos(prePos);
+			}
+			break;
+		}
+	}
+}
+
+void GameScene::CollisionStageEnemy()
+{
+}
+
+void GameScene::CollisionStageCpu()
+{
 }
 
 void GameScene::Fade(void)

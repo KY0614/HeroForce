@@ -157,6 +157,12 @@ void UnitBase::SubHp()
 	}
 }
 
+//座標の設定
+void UnitBase::SetPos(const VECTOR pos)
+{
+	trans_.pos = pos;
+}
+
 //アニメ終了時の動き
 void UnitBase::FinishAnim(void)
 {
