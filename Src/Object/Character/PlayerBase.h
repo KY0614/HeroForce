@@ -18,7 +18,7 @@ public:
 #ifdef DEBUG_ON
     void InitDebug(void);
     //デバッグ用関数
-    void DrawDebug(void);
+    virtual void DrawDebug(void);
     unsigned int color_Col_;
     unsigned int color_Atk_;
     unsigned int color_skl1_;
@@ -45,12 +45,11 @@ public:
     //攻撃の種類の数
     static constexpr int ATK_TOTAL = 3;
 
-
     // 移動スピード
     static constexpr float SPEED_MOVE = 5.0f;
     static constexpr float SPEED_DEG = 5.0f;
     static constexpr float SPEED_DODGE = 15.0f;
-    static constexpr float CALLED_MOVE_SPEED_SCALE = 3.0f;
+   
 
 
 
@@ -65,14 +64,6 @@ public:
     //自身の当たり判定半径
     static constexpr float MY_COL_RADIUS = 66.0f * CHARACTER_SCALE;
 
-    //CPU
-    //--------------------------------------------------------
-    //範囲関係
-    static constexpr float SEARCH_RANGE = 800.0f * CHARACTER_SCALE;		//索敵判定の大きさ
-    static constexpr float SEARCH_RADIUS = 400.0f;
-
-    //プレイヤー追従範囲
-    static constexpr float FOLLOW_PLAYER_RADIUS = 100.0f * CHARACTER_SCALE;
 
     //*************************************************
     //各アクション操作ボタン
@@ -105,28 +96,15 @@ public:
 
 
 
-    PlayerBase(const SceneManager::PLAY_MODE _mode, const InputManager::JOYPAD_NO _padNum) :mode_(_mode), padNum_(_padNum) {}
-    PlayerBase(const SceneManager::PLAY_MODE _mode, const SceneManager::CNTL _cntl) :mode_(_mode), cntl_(_cntl) {}
+    PlayerBase(const InputManager::JOYPAD_NO _padNum) :padNum_(_padNum) {}
+    PlayerBase(const SceneManager::CNTL _cntl) :cntl_(_cntl) {}
     ~PlayerBase(void) = default;
     void Destroy(void)override;
     virtual void SetParam(void) = 0;
     void Init(void)override;
     virtual void Update(void)override;
-    //virtual void UserUpdate(void);
-
-    //Cpu処理
-    virtual void CpuUpdate(void);
     virtual void Draw(void)override;
 
-
-
-    enum class CPU_STATE
-    {
-        NORMAL			//通常
-        , ATTACK		//攻撃
-        , BREAK			//休憩
-        , MAX
-    };
 
     enum class ACT_CNTL
     {
@@ -153,44 +131,9 @@ public:
     //ダメージ関数
     void Damage(void);
 
-    //ゲッタ
-    //-----------------------------------------------
-
-    //攻撃開始判定
-    const float GetAtkStartRange(void) { return atkStartRange_; }
-
-    //索敵判定
-    const float GetSearchRange(void) { return searchRange_; }
-
-    //プレイヤーに呼び出されたかどうか
-    const bool GetIsCalledPlayer(void) { return isMove2CallPlayer_; }
-
-    //状態変更
-    void ChangeState(const CPU_STATE _state);
-
-    //セッタ
-    //---------------------------------------------------
-
-    //CPUの状態セッタ
-    void SetState(const CPU_STATE _state) { cpuState_ = _state; }
-
-    //CPUの移動セッタ
-    void SetIsMove(const bool _isMove) { isMove_ = _isMove; }
-
-    //プレイヤーのモードゲッタ(CPUかUSERか)
-    SceneManager::PLAY_MODE GetPlayMode(void) { return mode_; }
-
-    //状態ゲッタ
-    CPU_STATE GetState(void) { return cpuState_; }
-
-    //敵サーチセッタ
-    void SetisEnemySerch(const bool _isEnemySerch) { isEnemySerch_ = _isEnemySerch; }
-
-    //追従対象をセット
-    void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; }
-
     //リセット
     void Reset(void);
+
 
 protected:
     //*************************************************
@@ -219,6 +162,20 @@ protected:
         NORMALATK
         , CHARGEATK
     };
+    struct PlayerAtk
+    {
+        ATK_ACT act_;
+        float atkStartCnt_;
+        ATK atk_;
+        float coolCnt_;
+        float CoolTime_[static_cast<int>(ATK_ACT::MAX)];
+        std::map<ATK_ACT, ATK>atkMax_;
+        float coolTimeMax_[static_cast<int>(ATK_ACT::MAX)];             //クールタイム最大
+        float atkStartTime_[static_cast<int>(ATK_ACT::MAX)];            //攻撃発生時間
+        bool IsAtkStart(void){ return 0.0f < atkStartCnt_ && atkStartCnt_ <= atkStartTime_[static_cast<int>(act_)]; }
+
+    };
+
 
     //*************************************************
     // メンバ変数
@@ -235,13 +192,14 @@ protected:
     float coolTime_[static_cast<int>(ATK_ACT::MAX)];            //それぞれのクールタイムカウント
     bool isCool_[static_cast<int>(ATK_ACT::MAX)];               //それぞれの攻撃使い終わりを格納する
     float multiHitInterval_;                                    //多段ヒットのダメージ間隔
-    ATK_TYPE atkType_;                                           //タイプ変数
-    ATK_TYPE atkTypes_[static_cast<int>(ATK_ACT::MAX)];          //攻撃のタイプ(チャージするかしないか)
+    ATK_TYPE atkType_;                                          //タイプ変数
+    ATK_TYPE atkTypes_[static_cast<int>(ATK_ACT::MAX)];         //攻撃のタイプ(チャージするかしないか)
     std::map<ATK_TYPE, std::function<void(void)>>changeAtkType_;//攻撃タイプ変更
     std::function<void(void)>atkTypeUpdate_;                    //攻撃タイプごとのアップデート
     bool isPush_;                                               //長押しスキル用のボタンを押しているかどうか  true:押している
-
-
+    bool moveAble_;             //移動可能かを返す  true:移動可能
+    bool isAtk_;                                                 //通常攻撃開始したかどうか
+    bool isSkill_;                                                 //スキル開始したかどうか
 
 
     //操作管理用
@@ -257,39 +215,26 @@ protected:
     int leftStickY_;            //パッドのスティックのY角度
     float stickDeg_;            //パッドのスティックの角度
 
+    float moveDeg_;             //移動方向
+
    //回避系
     float dodgeCnt_;            //ドッジカウント
     float dodgeCdt_;            //ドッジの後隙
 
-    //範囲系
-    int atkStartRange_;     //攻撃開始範囲
-    float searchRange_;      //索敵範囲
-
-
-    //CPU系
-    CPU_STATE cpuState_;        //状態
-    std::map < CPU_STATE, std::function<void(void)>> cpuStateChanges_;  //状態ごとの初期化
-    std::function<void(void)> cpuStateUpdate_;                          //状態ごとの更新
-    bool isMove_;               //動いているかどうか
-    bool isCall_;               //プレイヤーに呼び出されたか
-    bool isMove2CallPlayer_;    //強制呼び出され中か　true:呼び出されてプレイヤーまで移動中
-    bool isEnemySerch_;         //敵をサーチしたかしてないか
-    float calledMoveSpeed_;     //プレイヤーに呼び出されたときの加速用変数
-    float moveStartDelay_;      //移動の初めを遅らせる
-    bool moveAble_;             //移動可能かを返す  true:移動可能
+ 
     //*************************************************
     //メンバ関数
     //*************************************************
     VECTOR GetTargetVec(VECTOR _targetPos);
 
 
-    //プレイヤーがCPUかUSERか判別
-    SceneManager::PLAY_MODE mode_;
-    //モード変更しないけどデバッグしやすいようにする
-    std::map < SceneManager::PLAY_MODE, std::function<void(void)>>changeMode_;
-    std::function<void(void)>modeUpdate_;       //モードごとの処理
+    ////プレイヤーがCPUかUSERか判別
+    //SceneManager::PLAY_MODE mode_;
+    ////モード変更しないけどデバッグしやすいようにする
+    //std::map < SceneManager::PLAY_MODE, std::function<void(void)>>changeMode_;
+    //std::function<void(void)>modeUpdate_;       //モードごとの処理
 
-    std::map<SceneManager::CNTL, std::function<void(void)>>changeNmlActControll_;              //通常スキル
+    std::map<SceneManager::CNTL, std::function<void(void)>>changeNmlActControll_;       //通常スキル
     std::function<void(void)>nmlActUpdate_;                                             //通常スキル更新
      //チャージ攻撃
     std::map<SceneManager::CNTL, std::function<void(void)>>changeChargeActCntl_;       //コントローラーごとのスキル変更
@@ -327,10 +272,10 @@ protected:
     //ユーザーがいるときの更新
     void UserUpdate(void);
 
-    //デバッグしやすいようにチェンジ作る
-    void ChangeMode(SceneManager::PLAY_MODE _mode);
-    void ChangeUser(void);
-    void ChangeCpu(void);
+    ////デバッグしやすいようにチェンジ作る
+    //void ChangeMode(SceneManager::PLAY_MODE _mode);
+    //void ChangeUser(void);
+    //void ChangeCpu(void);
 
     //操作系（キーボード)
     void KeyBoardControl(void);
@@ -348,22 +293,7 @@ protected:
 
     ATK_ACT skillNo_;     //スキル変更用
 
-    //CPU
-    //-------------------------------------------------
-
-    //CPUのアップデート
-    void CpuActUpdate(ATK_ACT _act);
-
-    //各役割の初期化
-    void CpuChangeNml(void);
-    void CpuChangeAtk(void);
-    void CpuChangeBreak(void);
-
-    //各状態の更新
-    void CpuNmlUpdate(void);
-    void CpuAtkUpdate(void);
-    void CpuBreakUpdate(void);
-
+ 
     //プレイヤー(CPUとユーザー)共通処理
     //--------------------------------------------------
     //攻撃処理
@@ -402,21 +332,21 @@ protected:
     //チャージ攻撃(パッド)
     void ChargeActPad(void);
 
-    //Change関数
-    //チャージ攻撃(キーボード)
-    void ChangeChargeActKeyBoard(void);
-    //チャージ攻撃(パッド)
-    void ChangeChargeActPad(void);
+    ////Change関数
+    ////チャージ攻撃(キーボード)
+    //void ChangeChargeActKeyBoard(void);
+    ////チャージ攻撃(パッド)
+    //void ChangeChargeActPad(void);
 
-    //変更点
-    void ChangeChargeActControll(void);
+    ////変更点
+    //void ChangeChargeActControll(void);
 
-    void ChangeAtkType(ATK_ACT _act);
+    //void ChangeAtkType(ATK_ACT _act);
 
 
-    //攻撃タイプ変更
-    void ChangeChargeAct(void);
-    void ChangeNmlAct(void);
+    ////攻撃タイプ変更
+    //void ChangeChargeAct(void);
+    //void ChangeNmlAct(void);
 
     //攻撃発生中フラグ
     const bool IsAtkStart(void)const { return 0.0f < atkStartCnt_ && atkStartCnt_ <= atkStartTime_[static_cast<int>(act_)]; }
@@ -443,9 +373,6 @@ protected:
     //-------------------------------------
     //移動処理
     void Move(float _deg, VECTOR _axis);
-
-    //CPU移動
-    void CpuMove(VECTOR _targetPos);
 
     //方向処理
     void Turn(float _deg, VECTOR _axis);
@@ -498,26 +425,12 @@ protected:
     void CoolTimeCnt(void);
 
 private:
-    //CPUの前の攻撃格納用
-    ATK_ACT preAtk_;
-
-    //休憩カウント
-    float breakCnt_;
-
-    //誰をターゲットにするか
-    VECTOR targetPos_;
-
-    //前について行ってたターゲットの保存用
-    VECTOR preTargetPos_;
-
-    //移動する角度
-    float moveDeg_;
 
     std::map<ACT_CNTL, std::function<void(void)>>changeActCntl_;        //アクションごとに返すボタンを変更
     std::function<bool(void)>actCntlUpdate_;
 
 #ifdef DEBUG_ON
-    //************************************************************************
+//************************************************************************
 //キーボードとパッドの共通各アクションボタン設定(テスト用で使ったので一応残しておきます)
 //************************************************************************
 //コントローラーのボタン番号(あくまでテスト用なのでprivateに置いておきます)
@@ -534,7 +447,6 @@ private:
         //std::variant<int, InputManager::JOYPAD_IN_STATE> buttonId_;
         int buttonId_;
     };
-
 
     //パッドとキーボードの共通ボタンに名前を付ける
     using InputActionMap_t = std::map<std::string, std::vector<InputMapInfo>>;

@@ -66,8 +66,8 @@ public:
     static constexpr float ARROW_SPEED = 10.0f;	//–î‚ÌƒŠƒ[ƒhŠÔ
 
 
-    PlArcher(const SceneManager::PLAY_MODE _mode, const SceneManager::CNTL _cntl);
-    PlArcher(const SceneManager::PLAY_MODE _mode, const InputManager::JOYPAD_NO _padNum);
+    PlArcher(const SceneManager::CNTL _cntl);
+    PlArcher(const InputManager::JOYPAD_NO _padNum);
     ~PlArcher(void) = default;
     void SetParam(void)override;
 

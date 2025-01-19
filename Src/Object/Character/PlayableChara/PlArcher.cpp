@@ -1,14 +1,12 @@
 #include"../Manager/ResourceManager.h"
 #include"../../Arrow.h"
 #include "PlArcher.h"
-PlArcher::PlArcher(const SceneManager::PLAY_MODE _mode, const SceneManager::CNTL _cntl) :PlayerBase(_mode, _cntl)
+PlArcher::PlArcher(const SceneManager::CNTL _cntl) :PlayerBase(_cntl)
 {
-	mode_ = _mode;
 	cntl_ = _cntl;
 }
-PlArcher::PlArcher(const SceneManager::PLAY_MODE _mode, const InputManager::JOYPAD_NO _padNum) : PlayerBase(_mode, _padNum)
+PlArcher::PlArcher(const InputManager::JOYPAD_NO _padNum) : PlayerBase(_padNum)
 {
-	mode_ = _mode;
 	padNum_ = _padNum;
 }
 
@@ -36,8 +34,6 @@ void PlArcher::SetParam(void)
 	//“–‚½‚è”»’è‚ÌÝ’è
 	radius_ = MY_COL_RADIUS;
 	//acts_[ATK_ACT::ATK].radius_ = COL_ATK;
-
-	atkStartRange_ = ATK_START_RANGE;
 
 	atkAbleCnt_ = 0;
 }
@@ -179,25 +175,17 @@ void PlArcher::Update(void)
 		//XV
 		arrow_[a].get()->Update(arrowAtk_[a]);
 	}
-
-	//for (int s = 0; s < arrowSize; s++)
-	//{
-	//	CntUp(arrowAtk_[s].cnt_);
-	//}
-		
-	
 }
+
+
 
 void PlArcher::Draw(void)
 {
 	PlayerBase::Draw();
-
-	//DrawFormatString(300, 100, 0xffffff, "arrowAtk(%f)", arrowAtk_[0].cnt_);
 	size_t arrowSize = arrow_.size();
 	for (auto& arrow:arrow_)
 	{
 		arrow.get()->Draw();
-		//DrawFormatString(300, 100, 0xffffff, "arrowAtk(%f,%f,%f)", arrowAtk_[0].pos_.x, arrowAtk_[0].pos_.y, arrowAtk_[0].pos_.z);
 	}
 	DrawFormatString(300, 100, 0xffffff, "arrowSize(%d)", arrowSize);
 }

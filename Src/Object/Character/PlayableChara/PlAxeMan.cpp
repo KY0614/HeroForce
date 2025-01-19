@@ -1,40 +1,14 @@
 #include"../Manager/ResourceManager.h"
 #include "PlAxeMan.h"
 
-PlAxe::PlAxe(const SceneManager::PLAY_MODE _mode, const SceneManager::CNTL _cntl) : PlayerBase(_mode, _cntl)
+PlAxe::PlAxe(const SceneManager::CNTL _cntl) : PlayerBase(_cntl)
 {
-	mode_ = _mode;
 	cntl_ = _cntl;
-	hp_ = MAX_HP;
-
-	//変数初期化
-	moveAble_ = true;
-
-	//当たり判定の設定
-	radius_ = MY_COL_RADIUS;
-	//acts_[ATK_ACT::ATK].radius_ = COL_ATK;
-
-	atkStartRange_ = ATK_START_RANGE;
-
-
-
 }
 
-PlAxe::PlAxe(const SceneManager::PLAY_MODE _mode, const InputManager::JOYPAD_NO _padNum) : PlayerBase(_mode, _padNum)
+PlAxe::PlAxe(const InputManager::JOYPAD_NO _padNum) : PlayerBase(_padNum)
 {
-	mode_ = _mode;
 	padNum_ = _padNum;
-
-	//変数の初期化
-	hp_ = MAX_HP;
-
-	moveAble_ = true;
-
-	//当たり判定の設定
-	radius_ = MY_COL_RADIUS;
-	//acts_[ATK_ACT::ATK].radius_ = COL_ATK;
-
-	atkStartRange_ = ATK_START_RANGE;
 }
 
 void PlAxe::SetParam(void)
@@ -65,7 +39,6 @@ void PlAxe::SetParam(void)
 	radius_ = MY_COL_RADIUS;
 	//acts_[ATK_ACT::ATK].radius_ = COL_ATK;
 
-	atkStartRange_ = ATK_START_RANGE;
 }
 void PlAxe::InitAct(void)
 {
@@ -95,6 +68,17 @@ void PlAxe::InitAct(void)
 	atkTypes_[static_cast<int>(ATK_ACT::SKILL2)] = ATK_TYPE::NORMALATK;
 }
 
+void PlAxe::InitSkill(ATK_ACT _act)
+{
+	if (isAtk_||isSkill_)return;
+	//スキルごとにアニメーションを決めて、カウント開始
+	ChangeAct(static_cast<ATK_ACT>(_act));
+	ResetParam(atk_);
+	CntUp(atkStartCnt_);
+	moveAble_ = false;
+	isSkill_ = true;
+}
+
 void PlAxe::InitCharaAnim(void)
 {
 	animNum_.emplace(ANIM::UNIQUE_1, ATK_NUM);
@@ -105,13 +89,88 @@ void PlAxe::InitCharaAnim(void)
 
 void PlAxe::ChargeAct(void)
 {
-	//chargeActUpdate_();
+
+}
+
+void PlAxe::SkillOneInit(void)
+{
+	//if (!IsAtkAction() && !isCool_[static_cast<int>(skillNo_)])
+	//{
+	//	//スキルごとにアニメーションを決めて、カウント開始
+	//	ChangeAct(static_cast<ATK_ACT>(skillNo_));
+	//	ResetParam(atk_);
+	//	CntUp(atkStartCnt_);
+	//	moveAble_ = false;
+	//}
+
+}
+
+void PlAxe::SkillTwoInit(void)
+{
+	if (!IsAtkAction() && !isCool_[static_cast<int>(skillNo_)])
+	{
+		////スキルごとにアニメーションを決めて、カウント開始
+		//ChangeAct(static_cast<ATK_ACT>(skillNo_));
+		//ResetParam(atk_);
+		//CntUp(atkStartCnt_);
+		//moveAble_ = false;
+	}
+}
+
+void PlAxe::AtkFunc(void)
+{
+	if (isSkill_)return;
+	auto& ins = InputManager::GetInstance();
+	//近接攻撃用
+	if (ins.IsTrgDown(ATK_KEY)&&!isAtk_)
+	{
+		if (isCool_[static_cast<int>(ATK_ACT::ATK)])return;
+		ChangeAct(ATK_ACT::ATK);
+		ResetParam(atk_);
+		CntUp(atkStartCnt_);
+		isAtk_ = true;
+	}
+	if (!isAtk_)return;
+
+	if (IsAtkStart())
+	{
+		moveAble_ = false;
+		CntUp(atkStartCnt_);
+		if (IsFinishAtkStart())
+		{
+			CntUp(atk_.cnt_);
+		}
+	}
+	else if (IsFinishAtkStart())
+	{
+		if ((atk_.IsAttack() || atk_.IsBacklash()))
+		{
+			CntUp(atk_.cnt_);
+			//クールタイムの初期化
+			coolTime_[static_cast<int>(act_)] = 0.0f;
+		}
+		else //if(atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
+		{
+			InitAtk();
+			isAtk_ = false;
+		}
+	}
+}
+
+void PlAxe::Skill1Func(void)
+{
+	//入力
+	//--------------------------------------------------------------
 	auto& ins = InputManager::GetInstance();
 	int skillOne = static_cast<int>(ATK_ACT::SKILL1);
 	if (!isCool_[static_cast<int>(ATK_ACT::SKILL1)])
 	{
+		if (ins.IsTrgDown(SKILL_KEY) && !IsAtkStart())
+		{
+			InitSkill(skillNo_);
+		}
 		//スキル(長押しでガード状態維持)
-		if (ins.IsNew(SKILL_KEY)&&IsAtkStart())
+		if (ins.IsNew(SKILL_KEY) && IsAtkStart())
 		{
 			//押している反応
 			//CntUp(atkStartCnt_);
@@ -128,43 +187,9 @@ void PlAxe::ChargeAct(void)
 			}
 		}
 	}
-}
 
-void PlAxe::SkillOneInit(void)
-{
-	if (!IsAtkAction() && !isCool_[static_cast<int>(skillNo_)])
-	{
-		//スキルごとにアニメーションを決めて、カウント開始
-		ChangeAct(static_cast<ATK_ACT>(skillNo_));
-		ResetParam(atk_);
-		CntUp(atkStartCnt_);
-		moveAble_ = false;
-	}
 
-}
 
-void PlAxe::SkillTwoInit(void)
-{
-	if (!IsAtkAction() && !isCool_[static_cast<int>(skillNo_)])
-	{
-		//スキルごとにアニメーションを決めて、カウント開始
-		ChangeAct(static_cast<ATK_ACT>(skillNo_));
-		ResetParam(atk_);
-		CntUp(atkStartCnt_);
-		moveAble_ = false;
-	}
-}
-
-void PlAxe::AtkFunc(void)
-{
-	NmlAtkUpdate();
-}
-
-void PlAxe::Skill1Func(void)
-{
-	//力溜めて打ち込むやつ
-	//moveAble_ = false;
-	//クールタイムの初期化
 	if (isCool_[static_cast<int>(skillNo_)])
 	{
 		return;
@@ -188,13 +213,45 @@ void PlAxe::Skill1Func(void)
 			atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;
 
 			InitAtk();
+			isSkill_ = false;
 		}
 	}
 }
 
 void PlAxe::Skill2Func(void)
 {
-	NmlAtkUpdate();
+	auto& ins = InputManager::GetInstance();
+	//入力
+	if (ins.IsTrgDown(SKILL_KEY))
+	{
+		InitSkill(skillNo_);
+	}
+	//近接攻撃用(atk_変数と遠距離で分ける)
+	if (IsAtkStart())
+	{
+		moveAble_ = false;
+		CntUp(atkStartCnt_);
+		if (IsFinishAtkStart())
+		{
+			CntUp(atk_.cnt_);
+		}
+	}
+	else if (IsFinishAtkStart())
+	{
+		if ((atk_.IsAttack() || atk_.IsBacklash()))
+		{
+			CntUp(atk_.cnt_);
+			//クールタイムの初期化
+			coolTime_[static_cast<int>(act_)] = 0.0f;
+		}
+		else //if(atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
+		{
+			InitAtk();
+			isSkill_ = false;
+		}
+	}
+
+
 	if (atk_.cnt_ >= SKILL2_CHANGE_ANIM_TIME)
 	{
 		if (stepAnim_ > 14.0f)ResetAnim(ANIM::UNIQUE_2, SPEED_ANIM_ATK);

@@ -80,8 +80,8 @@ public:
     static constexpr float MULTIHIT_INTERVAL = 0.5f;
     static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//攻撃開始判定の大きさ
 
-    PlAxe(const SceneManager::PLAY_MODE _mode, const SceneManager::CNTL _cntl);
-    PlAxe(const SceneManager::PLAY_MODE _mode, const InputManager::JOYPAD_NO _padNum);
+    PlAxe(const SceneManager::CNTL _cntl);
+    PlAxe(const InputManager::JOYPAD_NO _padNum);
     ~PlAxe(void) = default;
     void SetParam(void)override;
 protected:
@@ -90,6 +90,7 @@ protected:
     void Skill1Func(void)override;
     void Skill2Func(void)override;
     void InitAct(void)override;
+    void InitSkill(ATK_ACT _act);
 
     //固有アニメーション番号の初期化
     void InitCharaAnim(void)override;
