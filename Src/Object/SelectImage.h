@@ -53,6 +53,7 @@ public:
 		int w, h;		//w:底辺,h:高さ	
 		bool isToggle_;	//オン、オフの切り替え用
 		int imgHandle_;	//画像ハンドル
+		Mesh pointMesh_;
 
 		//初期化
 		Point() : pos(0, 0), w(0), h(0), isToggle_(false),imgHandle_(-1) {}
@@ -127,7 +128,7 @@ private:
 
 	//メッシュ
 	Mesh mesh_[SceneManager::PLAYER_NUM];
-	Mesh testMesh_;
+	Mesh roleMesh_;
 	
 	//画像ハンドル
 	int* imgPlayerNum_;		//人数選択画像

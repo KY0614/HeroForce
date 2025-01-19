@@ -29,22 +29,22 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	}
 
 	//座標(四角形を作るために2つの三角形を使う)
-	testMesh_.vertex_[0].pos = VGet(VERTEX_LEFT_X, VERTEX_UNDER_Y, VERTEX_Z + 12.0f);	// 左下
-	testMesh_.vertex_[1].pos = VGet(VERTEX_RIGHT_X, VERTEX_UNDER_Y, VERTEX_Z + 12.0f);	// 右下
-	testMesh_.vertex_[2].pos = VGet(VERTEX_LEFT_X, VERTEX_TOP_Y, VERTEX_Z);				// 左上
-	testMesh_.vertex_[3].pos = VGet(VERTEX_RIGHT_X, VERTEX_TOP_Y, VERTEX_Z);			// 右上
+	roleMesh_.vertex_[0].pos = VGet(VERTEX_LEFT_X, VERTEX_UNDER_Y, VERTEX_Z + 12.0f);	// 左下
+	roleMesh_.vertex_[1].pos = VGet(VERTEX_RIGHT_X, VERTEX_UNDER_Y, VERTEX_Z + 12.0f);	// 右下
+	roleMesh_.vertex_[2].pos = VGet(VERTEX_LEFT_X, VERTEX_TOP_Y, VERTEX_Z);				// 左上
+	roleMesh_.vertex_[3].pos = VGet(VERTEX_RIGHT_X, VERTEX_TOP_Y, VERTEX_Z);			// 右上
 
-	testMesh_.testVertex_[0].pos = VGet(-90.0f, 50.0f, VERTEX_Z + 12.0f);	// 左下
-	testMesh_.testVertex_[1].pos = VGet(0.0f, 50.0f, VERTEX_Z + 12.0f);	// 右下
-	testMesh_.testVertex_[2].pos = VGet(-90.0f, 190.0f, VERTEX_Z);				// 左上
-	testMesh_.testVertex_[3].pos = VGet(0.0f, 190.0f, VERTEX_Z);			// 右上
+	roleMesh_.testVertex_[0].pos = VGet(-90.0f, 50.0f, VERTEX_Z + 12.0f);	// 左下
+	roleMesh_.testVertex_[1].pos = VGet(0.0f, 50.0f, VERTEX_Z + 12.0f);		// 右下
+	roleMesh_.testVertex_[2].pos = VGet(-90.0f, 190.0f, VERTEX_Z);			// 左上
+	roleMesh_.testVertex_[3].pos = VGet(0.0f, 190.0f, VERTEX_Z);			// 右上
 
 	// 法線の設定（今回は省略、適当な値を設定）
 	for (int n = 0; n < SceneManager::PLAYER_NUM; n++) {
 		for (int i = 0; i < VERTEX_NUM; i++) {
 			mesh_[n].vertex_[i].norm = VGet(0.0f, 0.0f, 1.0f);  // 法線は-Z軸方向
-			testMesh_.vertex_[i].norm = VGet(0.0f, 0.0f, 1.0f);
-			testMesh_.testVertex_[i].norm = VGet(0.0f, 0.0f, 1.0f);
+			roleMesh_.vertex_[i].norm = VGet(0.0f, 0.0f, 1.0f);
+			roleMesh_.testVertex_[i].norm = VGet(0.0f, 0.0f, 1.0f);
 		}
 	}
 
@@ -52,8 +52,8 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	for (int n = 0; n < SceneManager::PLAYER_NUM; n++) {
 		for (int i = 0; i < VERTEX_NUM; i++) {
 			mesh_[n].vertex_[i].dif = GetColorU8(255, 255, 255, 255);  // 白色
-			testMesh_.vertex_[i].dif = GetColorU8(255, 255, 255, 255);
-			testMesh_.testVertex_[i].dif = GetColorU8(255, 255, 255, 255);
+			roleMesh_.vertex_[i].dif = GetColorU8(255, 255, 255, 255);
+			roleMesh_.testVertex_[i].dif = GetColorU8(255, 255, 255, 255);
 		}
 	}
 
@@ -61,8 +61,8 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	for (int n = 0; n < SceneManager::PLAYER_NUM; n++) {
 		for (int i = 0; i < VERTEX_NUM; i++) {
 			mesh_[n].vertex_[i].spc = GetColorU8(0, 0, 0, 0);  // 白色
-			testMesh_.vertex_[i].spc = GetColorU8(0, 0, 0, 0);  // 白色
-			testMesh_.testVertex_[i].spc = GetColorU8(0, 0, 0, 0);  // 白色
+			roleMesh_.vertex_[i].spc = GetColorU8(0, 0, 0, 0);  // 白色
+			roleMesh_.testVertex_[i].spc = GetColorU8(0, 0, 0, 0);  // 白色
 		}
 	}
 
@@ -80,6 +80,11 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	interval_ = 0.0f;
 	press_ = false;
 	angle_ = 0.0f;
+
+	for (auto& t : target_)
+	{
+		t = AsoUtility::VECTOR_ZERO;
+	}
 
 	// 状態管理
 	stateChanges_.emplace(
@@ -107,7 +112,6 @@ void SelectImage::Init(void)
 	pointR_ = { RIGHT_POS_X,POINT_POS_Y,POINT_SCALE,POINT_SCALE,false,imgRightPoint_ };
 
 	target_[0] = SelectScene::DEFAULT_TARGET_POS;
-	target_[1] = SelectScene::DEFAULT_TARGET_POS;
 
 	//人数選択から
 	ChangeSelect(SelectScene::SELECT::NUMBER);
@@ -146,22 +150,17 @@ void SelectImage::Draw(void)
 
 	//auto camera = SceneManager::GetInstance().GetCameras();
 	//DrawFormatString(Application::SCREEN_SIZE_X - 100, 120, 0x000000, "camera : %d", camera.size());
+	
 	//球
 	//左下
-	DrawSphere3D(testMesh_.vertex_[0].pos, 10.0f, 10, 0xFF0000, 0xFF0000, false);
+	DrawSphere3D(roleMesh_.vertex_[0].pos, 10.0f, 10, 0xFF0000, 0xFF0000, false);
 	//右下
-	DrawSphere3D(testMesh_.vertex_[1].pos, 10.0f, 10, 0x00FF00, 0x00FF00, false);
+	DrawSphere3D(roleMesh_.vertex_[1].pos, 10.0f, 10, 0x00FF00, 0x00FF00, false);
 	//左上
-	DrawSphere3D(testMesh_.vertex_[2].pos, 10.0f, 10, 0x0000FF, 0x0000FF, false);
+	DrawSphere3D(roleMesh_.vertex_[2].pos, 10.0f, 10, 0x0000FF, 0x0000FF, false);
 	//右上
-	DrawSphere3D(testMesh_.vertex_[3].pos, 10.0f, 10, 0x000000, 0x000000, false);
+	DrawSphere3D(roleMesh_.vertex_[3].pos, 10.0f, 10, 0x000000, 0x000000, false);
 	
-	//
-	//for (int i = 0; i < 4; i++)
-	//{
-	//	DrawFormatString(0, 40 + (20 * i), 0xFF0000, "target %0.2f,%0.2f,%0.2f", target_[i].x, target_[i].y, target_[i].z);
-	//}
-
 }
 
 void SelectImage::Load(void)
@@ -492,12 +491,12 @@ void SelectImage::RoleDraw(void)
 
 	if (GetReady() != true)
 	{
-		testMesh_.DrawTwoMeshTest(*imgPlayerNum_);
+		roleMesh_.DrawTwoMeshTest(*imgPlayerNum_);
 	}
 	else
 	{
 		SetDrawBlendMode(DX_BLENDMODE_SUB, 128);
-		testMesh_.DrawTwoMeshTest(*imgPlayerNum_);
+		roleMesh_.DrawTwoMeshTest(*imgPlayerNum_);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);	//ブレンドモードを戻す
 	}
 
@@ -650,16 +649,16 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 	//}
 
 	//UV座標（テクスチャ座標）
-	//testMesh_.vertex_[0].u = (float)(role_) / 4.0f;				testMesh_.vertex_[0].v = 1.0f;	// 左下
-	//testMesh_.vertex_[1].u = ((float)(role_)+1.0f) / 4.0f;		testMesh_.vertex_[1].v = 1.0f;	// 右下
-	//testMesh_.vertex_[2].u = (float)(role_) / 4.0f;				testMesh_.vertex_[2].v = 0.0f;	// 左上
-	//testMesh_.vertex_[3].u = ((float)(role_)+1.0f) / 4.0f;		testMesh_.vertex_[3].v = 0.0f;	// 右上
+	//roleMesh_.vertex_[0].u = (float)(role_) / 4.0f;				roleMesh_.vertex_[0].v = 1.0f;	// 左下
+	//roleMesh_.vertex_[1].u = ((float)(role_)+1.0f) / 4.0f;		roleMesh_.vertex_[1].v = 1.0f;	// 右下
+	//roleMesh_.vertex_[2].u = (float)(role_) / 4.0f;				roleMesh_.vertex_[2].v = 0.0f;	// 左上
+	//roleMesh_.vertex_[3].u = ((float)(role_)+1.0f) / 4.0f;		roleMesh_.vertex_[3].v = 0.0f;	// 右上
 
 																								//UV座標（テクスチャ座標）
-	testMesh_.testVertex_[0].u = (float)(role_) / 4.0f;			testMesh_.testVertex_[0].v = 1.0f;	// 左下
-	testMesh_.testVertex_[1].u = ((float)(role_)+1.0f) / 4.0f;	testMesh_.testVertex_[1].v = 1.0f;	// 右下
-	testMesh_.testVertex_[2].u = (float)(role_) / 4.0f;			testMesh_.testVertex_[2].v = 0.0f;	// 左上
-	testMesh_.testVertex_[3].u = ((float)(role_)+1.0f) / 4.0f;	testMesh_.testVertex_[3].v = 0.0f;	// 右上
+	roleMesh_.testVertex_[0].u = (float)(role_) / 4.0f;			roleMesh_.testVertex_[0].v = 1.0f;	// 左下
+	roleMesh_.testVertex_[1].u = ((float)(role_)+1.0f) / 4.0f;	roleMesh_.testVertex_[1].v = 1.0f;	// 右下
+	roleMesh_.testVertex_[2].u = (float)(role_) / 4.0f;			roleMesh_.testVertex_[2].v = 0.0f;	// 左上
+	roleMesh_.testVertex_[3].u = ((float)(role_)+1.0f) / 4.0f;	roleMesh_.testVertex_[3].v = 0.0f;	// 右上
 
 	//player_->SetRole(role_);
 }
@@ -677,15 +676,15 @@ VERTEX3D SelectImage::GetMeshVertex(int i)
 {
 	if (selectScene_.GetSelect() == SelectScene::SELECT::ROLE)
 	{
-		return testMesh_.testVertex_[i];
+		return roleMesh_.testVertex_[i];
 	}
-	return testMesh_.vertex_[i];
+	return roleMesh_.vertex_[i];
 }
 
 void SelectImage::SetMeshPos(VECTOR pos, int i)
 {
-	testMesh_.vertex_[i].pos = pos;
-	testMesh_.testVertex_[i].pos = pos;
+	roleMesh_.vertex_[i].pos = pos;
+	roleMesh_.testVertex_[i].pos = pos;
 }
 
 void SelectImage::InitVertex(void)

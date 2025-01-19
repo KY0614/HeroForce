@@ -9,6 +9,9 @@ class SelectPlayer : public UnitBase
 public:
 	static constexpr float ROT_SPEED = 0.5f;
 
+	static constexpr float ANIM_SPEED = 20.0f;
+	static constexpr int IDLE_ANIM = 36;
+
 	//コンストラクタ
 	SelectPlayer(void);
 
@@ -33,7 +36,11 @@ public:
 
 	void SetRot(Quaternion quo) { for (auto& tran : trans_) { tran.quaRotLocal = quo; } };
 
-	VECTOR GetPos(void) { for (auto& tran : trans_) { return tran.pos; } };
+	//VECTOR GetPos(void) { for (auto& tran : trans_) { return tran.pos; } };
+	VECTOR GetPos(void) { for (auto& tran : transArray_) { return tran.pos; } };
+	VECTOR GetPosArray(int i) { return transArray_[i].pos; };
+	
+	//void Anim(void);
 
 private:
 
