@@ -40,8 +40,6 @@ public:
 	VECTOR GetPos(void) { for (auto& tran : transArray_) { return tran.pos; } };
 	VECTOR GetPosArray(int i) { return transArray_[i].pos; };
 	
-	//void Anim(void);
-
 private:
 
 	Transform trans_[SceneManager::PLAYER_NUM];

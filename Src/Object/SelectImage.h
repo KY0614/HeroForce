@@ -61,13 +61,13 @@ public:
 		Vector2 pos;	//座標
 		int w, h;		//w:底辺,h:高さ	
 		bool isToggle_;	//オン、オフの切り替え用
-		Mesh pointMesh_;
-		int imgHandle_;	//画像ハンドル
+		Mesh mesh_;
+		int* imgHandle_;	//画像ハンドル
 
 		//初期化
-		Point() : pos(0, 0), w(0), h(0), isToggle_(false), imgHandle_(-1) {}
-		Point(int x, int y, int inw, int inh, bool isT,int img) :
-			pos(x, y), w(inw), h(inh), isToggle_(isT) , imgHandle_(img) {}
+		Point() : pos(0, 0), w(0), h(0), isToggle_(false),mesh_(), imgHandle_(nullptr) {}
+		Point(int x, int y, int inw, int inh, bool isT,Mesh& mesh,int* img) :
+			pos(x, y), w(inw), h(inh), isToggle_(isT) , mesh_(mesh), imgHandle_(img) {}
 
 		void PointDraw(void);//矢印を描画する
 	};
@@ -145,8 +145,8 @@ private:
 	
 	//画像ハンドル
 	int* imgPlayerNum_;		//人数選択画像
-	int imgLeftPoint_;		//左向きの矢印画像
-	int imgRightPoint_;		//右向きの矢印画像
+	int* imgLeftPoint_;		//左向きの矢印画像
+	int* imgRightPoint_;		//右向きの矢印画像
 
 	//メッシュの頂点座標用（4つの頂点）
 	VECTOR leftTop_;		//左上
