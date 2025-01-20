@@ -76,6 +76,16 @@ void EneMage::Attack(void)
 
 void EneMage::Skill_One(void)
 {
+	//終了判定
+	if (skillAllCnt_ > SKILL_ONE_ALL_TIME)
+	{
+		//攻撃終了
+		isEndAllAtk_ = true;
+
+		//処理終了
+		return;
+	}
+
 	//スキル１の生成上限
 	if (skillOneShotCnt_ < SKILL_ONE_MAX_CNT)
 	{
@@ -126,6 +136,21 @@ void EneMage::FinishAnim(void)
 	}
 }
 
+void EneMage::ResetAtkJudge(void)
+{
+	//共通
+	Enemy::ResetAtkJudge();
+
+	//スキルの持続時間初期化
+	skillOneDelayCnt_ = 0.0f;
+
+	//攻撃回数初期化
+	skillOneShotCnt_ = 0;
+
+	//スキルのカウンタ初期化
+	skillAllCnt_ = 0.0f;
+}
+
 void EneMage::ChangeStateAtk(void)
 {
 	//更新処理の中身初期化
@@ -136,38 +161,4 @@ void EneMage::ChangeStateAtk(void)
 
 	//座標の初期設定
 	skillOneShot_ = MV1GetFramePosition(trans_.modelId, FRAME_ROD);
-}
-
-void EneMage::UpdateAtk(void)
-{
-	//**********************************************************
-	//終了処理
-	//**********************************************************
-
-	//攻撃が終わっているなら状態遷移
-	if (skillAllCnt_ > SKILL_ONE_ALL_TIME)
-	{
-		//スキルの持続時間初期化
-		skillOneDelayCnt_ = 0.0f;
-
-		//攻撃回数初期化
-		skillOneShotCnt_ = 0;
-
-		//スキルのカウンタ初期化
-		skillAllCnt_ = 0.0f;
-
-		//休憩状態に遷移
-		ChangeState(STATE::BREAK);
-		return;
-	}
-
-	//**********************************************************
-	//動作処理
-	//**********************************************************
-
-	//攻撃アニメーション
-	ResetAnim(nowSkillAnim_, changeSpeedAnim_[nowSkillAnim_]);
-
-	//攻撃処理
-	Attack();
 }

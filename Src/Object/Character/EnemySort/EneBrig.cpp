@@ -63,8 +63,15 @@ void EneBrig::InitSkill(void)
 
 void EneBrig::Skill_One(void)
 {
-	//前方向
-	VECTOR dir = trans_.quaRot.GetForward();
+	//終了判定
+	if (lastAtk_->IsFinishMotion())
+	{
+		//攻撃終了
+		isEndAllAtk_ = true;
+
+		//処理終了
+		return;
+	}
 
 	for (auto& nowSkill : nowSkill_)
 	{

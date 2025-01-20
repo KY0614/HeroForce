@@ -11,6 +11,9 @@
 void Enemy::Destroy(void)
 {
 	animNum_.clear();
+
+	lastAtk_ = nullptr;
+	delete lastAtk_;
 }
 
 void Enemy::Init(void)
@@ -35,6 +38,8 @@ void Enemy::Init(void)
 	alertCnt_ = 0.0f;
 	breakCnt_ = 0.0f;
 	stunDef_ = 0;
+	atkAct_ = ATK_ACT::MAX;
+	isEndAllAtk_ = false;
 
 	//攻撃情報の初期化
 	InitSkill();
@@ -128,7 +133,7 @@ void Enemy::ChangeStateAtk(void)
 	stateUpdate_ = std::bind(&Enemy::UpdateAtk, this);
 
 	//攻撃生成
-	createSkill_();
+	lastAtk_ = &createSkill_();
 }
 
 void Enemy::ChangeStateBreak(void)
@@ -229,8 +234,11 @@ void Enemy::UpdateAtk(void)
 	//**********************************************************
 
 	//攻撃が終わっているなら状態遷移
-	if (nowSkill_.back().IsFinishMotion())
+	if (isEndAllAtk_)
 	{
+		//攻撃終了判定の初期化
+		ResetAtkJudge();
+
 		//休憩状態に遷移
 		ChangeState(STATE::BREAK);
 		return;
@@ -240,11 +248,11 @@ void Enemy::UpdateAtk(void)
 	//動作処理
 	//**********************************************************
 
-	//攻撃アニメーション
-	ResetAnim(nowSkillAnim_, changeSpeedAnim_[nowSkillAnim_]);
-
 	//攻撃処理
 	Attack();
+
+	//攻撃アニメーション
+	ResetAnim(nowSkillAnim_, changeSpeedAnim_[nowSkillAnim_]);
 }
 
 void Enemy::UpdateBreak(void)
@@ -301,8 +309,6 @@ void Enemy::DrawDebug(void)
 	DrawSphere3D(trans_.pos, searchRange_, 2, isMove_ ? 0xff0000 : 0xffffff, isMove_ ? 0xff0000 : 0xffffff, false);
 	//敵の索敵判定
 	DrawSphere3D(trans_.pos, atkStartRange_, 2, state_ == STATE::ALERT ? 0xff0000 : 0xffffff, state_ == STATE::ALERT ? 0x0000ff : 0xffffff, false);
-	//ターゲットの座標
-	DrawSphere3D(targetPos_, 3.0f, 10, 0x0000ff, 0x0000ff, true);
 }
 
 void Enemy::Draw(void)
@@ -443,6 +449,12 @@ void Enemy::FinishAnim(void)
 	}
 }
 
+void Enemy::ResetAtkJudge(void)
+{
+	//攻撃終了判定の初期化
+	isEndAllAtk_ = false;
+}
+
 void Enemy::RandSkill(void)
 {
 	//スキルの数
@@ -452,16 +464,16 @@ void Enemy::RandSkill(void)
 	int rand = GetRand(size - 1);
 
 	//スキル
-	ATK_ACT act = static_cast<ATK_ACT>(rand);
+	atkAct_ = ATK_ACT::SKILL_THREE/*static_cast<ATK_ACT>(rand)*/;
 
 	//スキル生成準備
-	SetUpSkill(act);
+	SetUpSkill(atkAct_);
 
 	//スキルに対応した予備動作アニメーションの記録
-	nowSkillPreAnim_ = skillPreAnims_[static_cast<int>(act)];
+	nowSkillPreAnim_ = skillPreAnims_[static_cast<int>(atkAct_)];
 
 	//スキル生成
-	createSkill_ = std::bind(&Enemy::CreateSkill, this, act);
+	createSkill_ = std::bind(&Enemy::CreateSkill, this, atkAct_);
 }
 
 void Enemy::SetUpSkill(ATK_ACT _atkAct)

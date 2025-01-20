@@ -65,12 +65,15 @@ void EneAxe::InitSkill(void)
 void EneAxe::Skill_One(void)
 {
 	//攻撃の再生成
-	if (nowSkill_.back().IsFinishMotion())
-		createSkill_();
+	if (lastAtk_->IsFinishMotion())
+	{
+		//攻撃終了
+		isEndAllAtk_ = true;
 
-	//前方向
-	VECTOR dir = trans_.quaRot.GetForward();
-
+		//処理終了
+		return;
+	}
+	
 	for (auto& nowSkill : nowSkill_)
 	{
 		//座標の設定

@@ -119,10 +119,10 @@ private:
 	//アニメーション終了時の動き
 	void FinishAnim(void)override;
 
+	//攻撃判定の初期化
+	void ResetAtkJudge(void)override;
+
 	//状態遷移(攻撃)
 	void ChangeStateAtk(void)override;
-
-	//更新(攻撃中)
-	void UpdateAtk(void)override;
 };
 

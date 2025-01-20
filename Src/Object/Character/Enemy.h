@@ -10,8 +10,6 @@ public:
 
 #define DEBUG_ENEMY
 
-	//同期テスト
-
 	//****************************************************************
 	//定数(キャラ共通)
 	//****************************************************************
@@ -59,7 +57,7 @@ public:
 	~Enemy() = default;
 
 	//解放
-	void Destroy(void)override;
+	virtual void Destroy(void)override;
 
 	//初期化
 	void Init(void)override;
@@ -137,6 +135,8 @@ protected:
 	std::function<ATK&(void)> createSkill_;						//スキルの生成
 	std::function<void(void)> processSkill_;					//スキルの処理
 	std::map<ATK_ACT, std::function<void(void)>> changeSkill_;	//スキルの変更用
+	ATK_ACT atkAct_;											//スキルの種別用
+	ATK* lastAtk_;												//最後に生成されたスキル
 	bool isEndAllAtk_;											//全攻撃が終了したか(true:終了した)
 
 	std::vector<ANIM> skillPreAnims_;	//スキルに対応した予備アニメーション
@@ -196,6 +196,9 @@ protected:
 	//アニメーション終了時の動き
 	virtual void FinishAnim(void)override;
 
+	//攻撃判定の初期化
+	virtual void ResetAtkJudge(void);
+
 	//状態遷移(通常)
 	void ChangeStateNormal(void);
 	//状態遷移(攻撃警告)
@@ -203,14 +206,14 @@ protected:
 	//状態遷移(攻撃)
 	virtual void ChangeStateAtk(void);
 	//状態遷移(休憩)
-	virtual void ChangeStateBreak(void);
+	void ChangeStateBreak(void);
 
 	//更新(通常)
 	void UpdateNml(void);
 	//更新(攻撃警告)
 	void UpdateAlert(void);
 	//更新(攻撃)
-	virtual void UpdateAtk(void);
+	void UpdateAtk(void);
 	//更新(休憩)
 	virtual void UpdateBreak(void);
 

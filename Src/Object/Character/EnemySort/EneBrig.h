@@ -49,7 +49,7 @@ public:
 	static constexpr float SKILL_ONE_DURATION = 1.0f;		//スキル１の持続時間
 
 	//スキルの後隙
-	static constexpr float SKILL_ONE_BACKLASH = 2.0f;		//スキル１の後隙
+	static constexpr float SKILL_ONE_BACKLASH = 1.0f;		//スキル１の後隙
 
 	//スキル関係
 	static constexpr ATK SKILL_ONE = { AsoUtility::VECTOR_ZERO	//スキル１の要素

@@ -57,7 +57,7 @@ void EneGolem::InitAnim(void)
 	changeSpeedAnim_.emplace(ANIM::UNIQUE_2, SPEED_ANIM_JUMP);
 	changeSpeedAnim_.emplace(ANIM::UNIQUE_3, SPEED_ANIM_PRE_PUNCH);
 	changeSpeedAnim_.emplace(ANIM::UNIQUE_4, SPEED_ANIM_PRE_MOWDOWN);
-	changeSpeedAnim_.emplace(ANIM::UNIQUE_5, SPEED_ANIM_SHOUT);
+	changeSpeedAnim_.emplace(ANIM::UNIQUE_5, SPEED_ANIM_PRE_SHOUT);
 
 	//ƒAƒjƒ[ƒVƒ‡ƒ“ƒŠƒZƒbƒg
 	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
@@ -89,6 +89,16 @@ void EneGolem::InitSkill(void)
 
 void EneGolem::Skill_One(void)
 {
+	//UŒ‚‚ÌÄ¶¬
+	if (lastAtk_->IsFinishMotion())
+	{
+		//UŒ‚I—¹
+		isEndAllAtk_ = true;
+
+		//ˆ—I—¹
+		return;
+	}
+
 	for (auto& nowSkill : nowSkill_)
 	{
 		//À•W‚ÌÝ’è
@@ -98,6 +108,16 @@ void EneGolem::Skill_One(void)
 
 void EneGolem::Skill_Two(void)
 {
+	//UŒ‚‚ÌÄ¶¬
+	if (lastAtk_->IsFinishMotion())
+	{
+		//UŒ‚I—¹
+		isEndAllAtk_ = true;
+
+		//ˆ—I—¹
+		return;
+	}
+
 	for (auto& nowSkill : nowSkill_)
 	{
 		//À•W‚ÌÝ’è
@@ -107,7 +127,20 @@ void EneGolem::Skill_Two(void)
 
 void EneGolem::Skill_Three(void)
 {
-	if (skillThreeDelayCnt_ > SKILL_THREE_DELAY)
+	//UŒ‚I—¹”»’è
+	if (lastAtk_ == nullptr ? false : lastAtk_->IsFinishMotion()
+		&& skillThreeCnt_ >= SKILL_THREE_MAX_CNT)
+	{
+		//UŒ‚I—¹
+		isEndAllAtk_ = true;
+
+		//ˆ—I—¹
+		return;
+	}
+
+	//UŒ‚‚ÌŠÔŠu‚Æ¶¬ãŒÀ
+	if (skillThreeDelayCnt_ > SKILL_THREE_DELAY
+		&& skillThreeCnt_ < SKILL_THREE_MAX_CNT)
 	{
 		//ŠÔŠuƒJƒEƒ“ƒ^‚Ì‰Šú‰»
 		skillThreeDelayCnt_ = 0.0f;
@@ -120,6 +153,9 @@ void EneGolem::Skill_Three(void)
 
 		//ƒXƒLƒ‹¶¬
 		ATK& thisAtk = createSkill_();
+
+		//ÅŒã‚É¶¬‚³‚ê‚½UŒ‚‚ðŠi”[
+		lastAtk_ = &thisAtk;
 
 		//¶¬‚Å‚«‚é‚Ü‚ÅŒJ‚è•Ô‚·
 		while (!isGenelateAttack)
@@ -137,6 +173,28 @@ void EneGolem::Skill_Three(void)
 
 	//ŠÔŠuƒJƒEƒ“ƒ^
 	CntUp(skillThreeDelayCnt_);
+}
+
+void EneGolem::ResetAtkJudge(void)
+{
+	//‹¤’Ê
+	Enemy::ResetAtkJudge();
+
+	//ƒXƒLƒ‹‚R‚Ì¶¬ƒJƒEƒ“ƒ^‰Šú‰»
+	skillThreeCnt_ = 0;
+
+	//ƒXƒLƒ‹‚R‚Ì¶¬ŠÔŠuƒJƒEƒ“ƒ^‰Šú‰»
+	skillThreeDelayCnt_ = 0.0f;
+}
+
+void EneGolem::ChangeStateAtk(void)
+{
+	//XVˆ—‚Ì’†g‰Šú‰»
+	stateUpdate_ = std::bind(&EneGolem::UpdateAtk, this);
+
+	//Å‰‚ÉUŒ‚‚ð¶¬‚·‚é‚©
+	if (atkAct_ != ATK_ACT::SKILL_THREE)
+		lastAtk_ = &createSkill_();
 }
 
 void EneGolem::GetRandomPointInCircle(const VECTOR _myPos, const int _r, VECTOR& _tPos)

@@ -12,6 +12,7 @@ void Arrow::Init(const int _mdlId, const Transform& _trans, const float _speed)
 	//引数の引継ぎ
 	trans_ = _trans;
 	trans_.modelId = _mdlId;
+	speed_ = _speed;
 
 	//諸々モデルの初期化
 	VECTOR localPos = trans_.quaRot.PosAxis(ARROW_LOCAL_POS);
@@ -26,8 +27,6 @@ void Arrow::Init(const int _mdlId, const Transform& _trans, const float _speed)
 
 	ChangeState(STATE::NONE);
 	SetIsAlive(true);
-
-	speed_ = _speed;
 }
 
 void Arrow::Update(UnitBase::ATK& _atk)
@@ -58,8 +57,8 @@ void Arrow::Update(UnitBase::ATK& _atk)
 void Arrow::Draw(void)
 {
 	//ショット状態のときにのみ描画する
-	if (state_ == STATE::SHOT)DrawSphere3D(trans_.pos,5.0f,20,0x00ff00,0x00ff00,true);
-	/*MV1DrawModel(trans_.modelId)*/
+	if (state_ == STATE::SHOT)
+	MV1DrawModel(trans_.modelId);
 }
 
 void Arrow::Release()

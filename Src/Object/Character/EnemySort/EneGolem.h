@@ -38,7 +38,8 @@ public:
 	static constexpr float SPEED_ANIM_PRE_PUNCH = 60.0f;	//パンチ前アニメーション速度
 	static constexpr float SPEED_ANIM_MOWDOWN = 60.0f;		//薙ぎ払いアニメーション速度
 	static constexpr float SPEED_ANIM_PRE_MOWDOWN = 30.0f;	//薙ぎ払いまえアニメーション速度
-	static constexpr float SPEED_ANIM_SHOUT = 60.0f;		//叫びアニメーション速度
+	static constexpr float SPEED_ANIM_PRE_SHOUT = 60.0f;	//叫び前アニメーション速度
+	static constexpr float SPEED_ANIM_SHOUT = 40.0f;		//叫びアニメーション速度
 	static constexpr float SPEED_ANIM_JUMP = 60.0f;			//ジャンプアニメーション速度
 
 	//モデル関係
@@ -108,13 +109,13 @@ public:
 		,0.0f };
 
 	//スキルの当たり判定半径
-	static constexpr float SKILL_THREE_COL_RADIUS = 50.0f;	//スキル３の当たり判定半径
+	static constexpr float SKILL_THREE_COL_RADIUS = 100.0f;	//スキル３の当たり判定半径
 	//スキルの攻撃力
 	static constexpr float SKILL_THREE_POW = 20.0f;			//スキル３の攻撃力
 	//スキルの持続時間
 	static constexpr float SKILL_THREE_DURATION = 1.0f;		//スキル３の持続時間
 	//スキルの後隙
-	static constexpr float SKILL_THREE_BACKLASH = 3.0f;		//スキル３の後隙
+	static constexpr float SKILL_THREE_BACKLASH = 1.0f;		//スキル３の後隙
 	//スキル関係
 	static constexpr ATK SKILL_THREE = { AsoUtility::VECTOR_ZERO	//スキル３の要素
 		,SKILL_THREE_COL_RADIUS
@@ -124,10 +125,10 @@ public:
 		,0.0f };
 
 	//スキル３の効果範囲
-	static constexpr float SKILL_THREE_FALL_RADIUS = 300.0f;	//スキル３の隕石の落ちる範囲の半径
+	static constexpr float SKILL_THREE_FALL_RADIUS = 700.0f;	//スキル３の隕石の落ちる範囲の半径
 
 	//攻撃生成間隔
-	static constexpr float SKILL_THREE_DELAY = 2.0f;			//スキル３の攻撃生成間隔
+	static constexpr float SKILL_THREE_DELAY = 1.0f;			//スキル３の攻撃生成間隔
 
 	//攻撃回数
 	static constexpr int SKILL_THREE_MAX_CNT = 5;				//スキル３の攻撃回数
@@ -139,9 +140,6 @@ private:
 
 	int skillThreeCnt_;			//スキル３の生成カウンタ
 	float skillThreeDelayCnt_;	//スキル３の発生間隔用カウンタ
-
-	////スキルごとの状態遷移
-	//std::map<ATK_ACT, std::function<void(void)>> changeStateAlert_;		//スキルごとの状態遷移(警告)
 
 	//****************************************************************
 	//関数
@@ -169,6 +167,12 @@ private:
 
 	//スキル3(叫び攻撃)
 	void Skill_Three(void);
+
+	//攻撃判定の初期化
+	void ResetAtkJudge(void)override;
+
+	//状態遷移(攻撃)
+	void ChangeStateAtk(void)override;
 
 	/// <summary>
 	/// 円範囲のランダム一点を取る
