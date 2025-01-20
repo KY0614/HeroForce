@@ -22,10 +22,7 @@ public:
 	//#define _DEBUG_COL	//テスト用の敵とプレイヤーを一体ずつ生成（この行をコメントアウトすると消える）
 
 	//定数
-	//プレイヤーの数
-	static constexpr int PLAYER_NUM = 4;
-
-	static constexpr int PHASE_TIME = 180;
+	static constexpr int PHASE_TIME = 180;	//フェーズ切り替えの時間（仮）
 
 
 	// コンストラクタ

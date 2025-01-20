@@ -4,11 +4,6 @@
 #include<memory>
 
 class Enemy;
-class EneArcher;
-class EneAxe;
-class EneBrig;
-class EneGolem;
-class EneMage;
 
 class EnemyManager
 {

@@ -33,6 +33,7 @@ public:
 	//ƒRƒ“ƒgƒ[ƒ‰Œn“
 	enum class CNTL
 	{
+		NONE,
 		KEYBOARD,
 		PAD
 	};

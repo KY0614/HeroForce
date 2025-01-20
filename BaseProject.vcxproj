@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\Character\EnemyManager.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerAnim.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerCpu.cpp" />
@@ -33,10 +34,10 @@
     <ClCompile Include="Src\Object\Character\EnemySort\EneMage.cpp" />
     <ClCompile Include="Src\Scene\SelectScene.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneAxe.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlArcher.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlKnight.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlMage.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlAxeMan.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlArcher.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlKnight.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlMage.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlAxeMan.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\DataBank.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenManager.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenBase.cpp" />
@@ -74,6 +75,7 @@
     <ClCompile Include="Src\Manager\GameSystem\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\PlayerManager.h" />
     <ClInclude Include="Src\Object\Character\EnemyManager.h" />
     <ClInclude Include="Src\Object\Character\PlayerAnim.h" />
     <ClInclude Include="Src\Object\Character\PlayerCpu.h" />
@@ -98,10 +100,10 @@
     <ClInclude Include="Src\Object\Arrow.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneAxe.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Knight.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlArcher.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlAxeMan.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlKnight.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlMage.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\USER\PlArcher.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\USER\PlAxeMan.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\USER\PlKnight.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\USER\PlMage.h" />
     <ClInclude Include="Src\Object\Character\PlayerBase.h" />
     <ClInclude Include="Src\Object\Stage\SkyDome.h" />
     <ClInclude Include="Src\Object\Stage\StageObject.h" />
