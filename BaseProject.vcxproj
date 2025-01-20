@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\JobManagerBase.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Knight.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Mage.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Archer.cpp" />
@@ -83,6 +84,7 @@
     <ClCompile Include="Src\Manager\GameSystem\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\JobManagerBase.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Knight.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Mage.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Archer.h" />

@@ -55,26 +55,35 @@ void PlayerManager::Draw(void)
 void PlayerManager::Release(void)
 {
 	for (int i = 0; i < PLAYER_NUM; i++) {
-		players_[i].ins->Destroy();
+		players_[i].ins->Release();
 	}
 }
 
-PlayerBase* PlayerManager::CreateKeybordPlayer(const SceneManager::ROLE _role) const
+PlayerBase* PlayerManager::GetPlayer(const int _num)
 {
-	PlayerBase* ret = nullptr;
+	return players_[_num].ins->GetPlayer();
+}
+
+JobManagerBase* PlayerManager::CreateKeybordPlayer(const SceneManager::ROLE _role) const
+{
+	JobManagerBase* ret = nullptr;
 
 	switch (_role) {
 	case SceneManager::ROLE::AXEMAN:
-		ret = new PlAxe(SceneManager::CNTL::KEYBOARD);
+		//ret = new PlAxe(SceneManager::CNTL::KEYBOARD);  キャラクタ一人に必要な情報
+		ret = new PlAxe();
 		break;
 	case SceneManager::ROLE::ARCHER:
-		ret = new PlArcher(SceneManager::CNTL::KEYBOARD);
+		//ret = new PlArcher(SceneManager::CNTL::KEYBOARD);
+		ret = new PlArcher();
 		break;
 	case SceneManager::ROLE::KNIGHT:
-		ret = new PlKnight(SceneManager::CNTL::KEYBOARD);
+		//ret = new PlKnight(SceneManager::CNTL::KEYBOARD);
+		ret = new PlKnight();
 		break;
 	case SceneManager::ROLE::MAGE:
-		ret = new PlMage(SceneManager::CNTL::KEYBOARD);
+		//ret = new PlMage(SceneManager::CNTL::KEYBOARD);
+		ret = new PlMage();
 		break;
 	default:
 		assert("プレイヤーの役職情報が間違っています");
@@ -84,22 +93,26 @@ PlayerBase* PlayerManager::CreateKeybordPlayer(const SceneManager::ROLE _role) c
 	return ret;
 }
 
-PlayerBase* PlayerManager::CreatePadPlayer(const SceneManager::ROLE _role)
+JobManagerBase* PlayerManager::CreatePadPlayer(const SceneManager::ROLE _role)
 {
-	PlayerBase* ret = nullptr;
+	JobManagerBase* ret = nullptr;
 
 	switch (_role) {
 	case SceneManager::ROLE::AXEMAN:
-		ret = new PlAxe(static_cast<InputManager::JOYPAD_NO>(padNum_));
+		//ret = new PlAxe(static_cast<InputManager::JOYPAD_NO>(padNum_));
+		ret = new PlAxe();
 		break;
 	case SceneManager::ROLE::ARCHER:
-		ret = new PlArcher(static_cast<InputManager::JOYPAD_NO>(padNum_));
+		//ret = new PlArcher(static_cast<InputManager::JOYPAD_NO>(padNum_));
+		ret = new PlArcher();
 		break;
 	case SceneManager::ROLE::KNIGHT:
-		ret = new PlKnight(static_cast<InputManager::JOYPAD_NO>(padNum_));
+		//ret = new PlKnight(static_cast<InputManager::JOYPAD_NO>(padNum_));
+		ret = new PlKnight();
 		break;
 	case SceneManager::ROLE::MAGE:
-		ret = new PlMage(static_cast<InputManager::JOYPAD_NO>(padNum_));
+		//ret = new PlMage(static_cast<InputManager::JOYPAD_NO>(padNum_));
+		ret = new PlMage();
 		break;
 	default:
 		assert("プレイヤーの役職情報が間違っています");
@@ -111,22 +124,26 @@ PlayerBase* PlayerManager::CreatePadPlayer(const SceneManager::ROLE _role)
 	return ret;
 }
 
-PlayerBase* PlayerManager::CreateCpuPlayer(const SceneManager::ROLE _role)
+JobManagerBase* PlayerManager::CreateCpuPlayer(const SceneManager::ROLE _role)
 {
-	PlayerBase* ret = nullptr;
+	JobManagerBase* ret = nullptr;
 
 	switch (_role) {
 	case SceneManager::ROLE::AXEMAN:
-		ret = new PlAxe(SceneManager::CNTL::NONE);
+		//ret = new PlAxe(SceneManager::CNTL::NONE);
+		ret = new PlAxe();
 		break;
 	case SceneManager::ROLE::ARCHER:
-		ret = new PlArcher(SceneManager::CNTL::NONE);
+		//ret = new PlArcher(SceneManager::CNTL::NONE);
+		ret = new PlArcher();
 		break;
 	case SceneManager::ROLE::KNIGHT:
-		ret = new PlKnight(SceneManager::CNTL::NONE);
+		//ret = new PlKnight(SceneManager::CNTL::NONE);
+		ret = new PlKnight();
 		break;
 	case SceneManager::ROLE::MAGE:
-		ret = new PlMage(SceneManager::CNTL::NONE);
+		//ret = new PlMage(SceneManager::CNTL::NONE);
+		ret = new PlMage();
 		break;
 	default:
 		assert("プレイヤーの役職情報が間違っています");

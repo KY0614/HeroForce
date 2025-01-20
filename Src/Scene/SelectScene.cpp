@@ -11,7 +11,7 @@
 #include "../Object/Stage/StageObject.h"
 #include "../Object/Stage/SkyDome.h"
 #include "../Object/Character/PlayerBase.h"
-#include "../Object/Character/PlayableChara/PlAxeMan.h"
+#include "../Object/Character/PlayableChara/USER/PlAxeMan.h"
 #include "SelectScene.h"
 
 SelectScene::SelectScene(void)
@@ -793,6 +793,9 @@ SceneManager::CNTL SelectScene::GetDevice(void)
 	//返り値用のret等で運用すること
 	//1Pの操作選択後であったら使用デバイスを固定(とりあえず)
 	SceneManager::CNTL ret;
+
+	selectedCntl_ = SceneManager::CNTL::KEYBOARD;
+
 	if (selectedCntl_ == SceneManager::CNTL::KEYBOARD)	ret = SceneManager::CNTL::KEYBOARD;
 	else if(selectedCntl_ == SceneManager::CNTL::PAD)	ret = SceneManager::CNTL::PAD;
 	

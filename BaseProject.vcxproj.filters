@@ -73,6 +73,7 @@
     <ClCompile Include="Src\Object\Character\PlayableChara\Archer.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Knight.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Mage.cpp" />
+    <ClCompile Include="Src\Object\JobManagerBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Manager\Generic\InputController.h" />
@@ -188,6 +189,7 @@
     <ClInclude Include="Src\Object\Character\PlayableChara\Archer.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Knight.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Mage.h" />
+    <ClInclude Include="Src\Object\JobManagerBase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">

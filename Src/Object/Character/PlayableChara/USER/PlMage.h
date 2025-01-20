@@ -1,7 +1,15 @@
 #pragma once
-class PlMage 
+
+#include"../../../JobManagerBase.h"
+
+class PlMage :public JobManagerBase
 {
 public:
+
+	void Init(void)override;
+	void Update(void)override;
+	void Draw(void)override;
+	void Release(void)override;
 
 private:
 };

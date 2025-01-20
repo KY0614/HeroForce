@@ -5,6 +5,7 @@
 
 #include"../Object/Character/Enemy.h"
 #include"../Object/Character/EnemyManager.h"
+#include"../Object/Character/PlayerManager.h"
 #include"../Object/Character/Chiken/ChickenManager.h"
 #include"../Object/Character/EnemySort/EneAxe.h"
 #include"../Object/Character/EnemySort/EneGolem.h"
@@ -57,12 +58,9 @@ void GameScene::Init(void)
 	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU));
 	chicken_->Init();
 
-	////プレイヤー設定
-	//for (int i = 0; i < PLAYER_NUM; i++)
-	//{
-	//players_[i] = std::make_unique<PlAxe>(SceneManager::PLAY_MODE::USER, InputManager::JOYPAD_NO::PAD1);
-	//	players_[i]->Init();
-	//}
+	//プレイヤー設定
+	playerMng_ = std::make_unique<PlayerManager>();
+	playerMng_->Init();
 
 	//敵マネージャの生成
 	enmMng_ = std::make_unique<EnemyManager>();
@@ -72,7 +70,7 @@ void GameScene::Init(void)
 	auto cameras = SceneManager::GetInstance().GetCameras();
 	for (int i = 0; i < cameras.size(); i++)
 	{
-		cameras[i]->SetFollow(&players_[i]->GetTransform());
+		cameras[i]->SetFollow(&playerMng_->GetPlayer(i)->GetTransform());
 		cameras[i]->ChangeMode(Camera::MODE::FOLLOW_SPRING);
 	}
 
@@ -120,15 +118,16 @@ void GameScene::Update(void)
 
 	level_->Update();
 
-	//プレイヤー①だけを動かしています
-	players_[0]->Update();
+
+	//プレイヤーの更新
+	playerMng_->Update();
 
 
 	//敵の更新
-	enmMng_->Update(players_[0]->GetPos());
+	enmMng_->Update(playerMng_->GetPlayer(0)->GetPos());
 	
 
-	chicken_->SetTargetPos(players_[0]->GetPos());
+	chicken_->SetTargetPos(playerMng_->GetPlayer(0)->GetPos());
 	chicken_->Update();
 
 	//あたり判定
@@ -161,19 +160,21 @@ void GameScene::Draw(void)
 		fazeResult_->Draw();
 		return;
 	}
-
+	//スカイドーム
 	sky_->Draw();
 
-	for (auto& p : players_)
-		p->Draw();
+	//プレイヤー
+	playerMng_->Draw();
 
-
+	//敵
 	enmMng_->Draw();
-
+	//ステージ
 	stage_->Draw();
+	//チキン
 	chicken_->Draw();
+	//レベル
 	level_->Draw();
-
+	//制限時間
 	Timer::GetInstance().Draw();
 
 	fader_->Draw();
@@ -192,10 +193,7 @@ void GameScene::Release(void)
 	SceneManager::GetInstance().ResetCameras();
 	SceneManager::GetInstance().ReturnSolo();
 
-	for (auto& p : players_)
-	{
-		p->Destroy();
-	}
+	playerMng_->Release();
 
 	enmMng_->Release();
 }
@@ -231,7 +229,7 @@ void GameScene::CollisionEnemy(void)
 		UnitBase::ATK eAtk = e->GetAtk();
 
 		//動ける分だけ(のちに全員分に変える)
-		VECTOR pPos = players_[0]->GetPos();
+		VECTOR pPos = playerMng_->GetPlayer(0)->GetPos();
 
 		//索敵
 		//範囲内に入っているとき
@@ -255,8 +253,9 @@ void GameScene::CollisionEnemy(void)
 		if (eAtk.IsAttack() && !eAtk.isHit_)
 		{
 			//各プレイヤーと当たり判定を取る
-			for (auto& p : players_)
+			for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
 			{
+				PlayerBase* p = playerMng_->GetPlayer(i);
 				//攻撃が当たる範囲 && プレイヤーが回避していないとき
 				if (col.IsHitAtk(*e, *p) && !p->IsDodge())
 				{
@@ -277,8 +276,10 @@ void GameScene::CollisionPlayer(void)
 	//敵の総数取得
 	int maxCnt = enmMng_->GetActiveNum();
 
-	for (auto& p : players_)
+	for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
 	{
+		PlayerBase* p = playerMng_->GetPlayer(i);
+
 		auto pPos = p->GetPos();
 		auto pAtk = p->GetAtk();
 
@@ -435,7 +436,9 @@ void GameScene::LevelUpReflection()
 
 bool GameScene::IsGameOver(void)
 {
-	for (auto& p : players_) {
+	for (int i = 0; i < PlayerManager::PLAYER_NUM; i++) {
+		PlayerBase* p = playerMng_->GetPlayer(i);
+
 		if (p->IsAlive())return false;
 	}
 	return true;

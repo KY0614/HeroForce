@@ -5,7 +5,7 @@
 #include<memory>
 
 class Grid;
-class PlayerBase;
+class PlayerManager;
 class Enemy;
 class EnemyManager;
 class StageManager;
@@ -57,7 +57,8 @@ private:
 	bool isFazeRezult_;
 
 	//ƒvƒŒƒCƒ„[
-	std::unique_ptr<PlayerBase>players_[PLAYER_NUM];
+	std::unique_ptr<PlayerManager>playerMng_;
+
 
 	//“G
 	std::unique_ptr<EnemyManager>enmMng_;
