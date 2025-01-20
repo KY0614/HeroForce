@@ -2,7 +2,7 @@
 #include <string>
 #include<windows.h>
 
-#define DEBUG_SCREEN
+//#define DEBUG_SCREEN
 
 class Application
 {

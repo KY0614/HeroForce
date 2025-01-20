@@ -16,6 +16,8 @@ public:
     static constexpr float SKILL_ONE_COOLTIME = 3.0f;
     static constexpr float SKILL_TWO_COOLTIME = 10.0f;
 
+    void DrawDebug(void)override;
+
 #else // DEBUG_COOL
     //クールタイム
     static constexpr float ATK_COOLTIME = 1.0f;
@@ -91,7 +93,8 @@ public:
     static constexpr int SKILL_ONE_NUM = 2;
     static constexpr int SKILL_TWO_NUM = 18;
     static constexpr int BLOCKING_NUM = 21;
-    PlKnight(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum);
+    PlKnight(const SceneManager::CNTL _cntl);
+    PlKnight(const InputManager::JOYPAD_NO _padNum);
     ~PlKnight(void) = default;
     void SetParam(void)override;
 
@@ -100,14 +103,22 @@ protected:
     void InitAct(void)override;
     void AtkFunc(void)override;
 
-    void ResetGuardCnt(void)override;
+    //void ResetGuardCnt(void)override;
+
+    void SkillOneInit(void)override;
+    void SkillTwoInit(void)override;
+
 
     //各スキルの処理
+    void InitSkill(ATK_ACT _act);
     void Skill1Func(void)override;
     void Skill2Func(void)override;
 
     //固有アニメーション番号の初期化
     void InitCharaAnim(void)override;
+
+    //長押しスキル
+    void ChargeAct(void)override;
 
 private:
     float guardCnt_;        //ガード時間

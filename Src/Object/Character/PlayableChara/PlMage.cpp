@@ -1,11 +1,14 @@
 #include "PlMage.h"
 
-PlMage::PlMage(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum) :PlayerBase(_mode, _padNum)
+PlMage::PlMage(const SceneManager::CNTL _cntl) :PlayerBase(_cntl)
 {
-	mode_ = _mode;
-	padNum_ = _padNum;
+	cntl_ = _cntl;
 }
 
+PlMage::PlMage(const InputManager::JOYPAD_NO _padNum) :PlayerBase(_padNum)
+{
+	padNum_ = _padNum;
+}
 
 void PlMage::SetParam(void)
 {

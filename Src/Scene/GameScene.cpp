@@ -4,6 +4,7 @@
 #include"../Manager/GameSystem/Timer.h"
 #include "../Object/Character/PlayerBase.h"
 #include "../Object/Character/PlayableChara/PlAxeMan.h"
+#include "../Object/Character/PlayableChara/PlKnight.h"
 #include "../Object/Character/PlayableChara/PlArcher.h"
 #include"../Object/Character/Enemy.h"
 #include"../Object/Character/EnemyManager.h"
@@ -62,7 +63,7 @@ void GameScene::Init(void)
 	//ÉvÉåÉCÉÑÅ[ê›íË
 	for (int i = 0; i < PLAYER_NUM; i++)
 	{
-		players_[i] = std::make_unique<PlArcher>(SceneManager::PLAY_MODE::USER, InputManager::JOYPAD_NO::PAD1);
+		players_[i] = std::make_unique<PlAxe>(SceneManager::PLAY_MODE::USER, InputManager::JOYPAD_NO::PAD1);
 		players_[i]->Init();
 	}
 
@@ -179,6 +180,13 @@ void GameScene::Draw(void)
 	Timer::GetInstance().Draw();
 
 	fader_->Draw();
+
+	for (auto& p : players_)
+	{
+		p->Draw();
+		p->DrawDebug();
+	}
+
 
 	if (fader_->GetState() == Fader::STATE::FADE_KEEP)
 	{

@@ -93,6 +93,7 @@
     <ClInclude Include="Src\Object\Character\Enemy.h" />
     <ClInclude Include="Src\Object\Arrow.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneAxe.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Knight.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\PlArcher.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\PlAxeMan.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\PlKnight.h" />

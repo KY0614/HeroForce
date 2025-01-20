@@ -1,15 +1,19 @@
 #include "PlKnight.h"
-PlKnight::PlKnight(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum) :PlayerBase(_mode, _padNum)
+
+
+PlKnight::PlKnight(const SceneManager::CNTL _cntl) :PlayerBase(_cntl)
 {
-	mode_ = _mode;
+	cntl_ = _cntl;
+}
+
+PlKnight::PlKnight(const InputManager::JOYPAD_NO _padNum) :PlayerBase(_padNum)
+{
 	padNum_ = _padNum;
 }
 
 
 void PlKnight::SetParam(void)
 {
-	InitAct();
-
 	trans_.SetModel(
 		ResourceManager::GetInstance()
 		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_KNIGHT));
@@ -22,13 +26,6 @@ void PlKnight::SetParam(void)
 		0.0f
 	);
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
-
-	hp_ = MAX_HP;
-
-	//当たり判定の設定
-	radius_ = MY_COL_RADIUS;
-
-	atkStartRange_ = ATK_START_RANGE;
 }
 
 void PlKnight::InitAct(void)
@@ -60,44 +57,147 @@ void PlKnight::InitAct(void)
 
 }
 
-void PlKnight::AtkFunc(void)
+void PlKnight::ChargeAct(void)
 {
-
+	//chargeActUpdate_();
 }
 
-void PlKnight::ResetGuardCnt(void)
+void PlKnight::AtkFunc(void)
 {
-	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > GUARD_STARTABLE_COOL)
+	if (isSkill_)return;
+	auto& ins = InputManager::GetInstance();
+	//近接攻撃用
+	if (ins.IsTrgDown(ATK_KEY) && !isAtk_)
+	{
+		if (isCool_[static_cast<int>(ATK_ACT::ATK)])return;
+		ChangeAct(ATK_ACT::ATK);
+		ResetParam(atk_);
+		CntUp(atkStartCnt_);
+		isAtk_ = true;
+	}
+	if (!isAtk_)return;
+
+	if (IsAtkStart())
+	{
+		moveAble_ = false;
+		CntUp(atkStartCnt_);
+		if (IsFinishAtkStart())
+		{
+			CntUp(atk_.cnt_);
+		}
+	}
+	else if (IsFinishAtkStart())
+	{
+		if ((atk_.IsAttack() || atk_.IsBacklash()))
+		{
+			CntUp(atk_.cnt_);
+			//クールタイムの初期化
+			coolTime_[static_cast<int>(act_)] = 0.0f;
+		}
+		else //if(atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
+		{
+			InitAtk();
+			isAtk_ = false;
+		}
+	}
+}
+
+//void PlKnight::ResetGuardCnt(void)
+//{
+//	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > GUARD_STARTABLE_COOL&&!IsAtkStart())
+//	{
+//		isCool_[static_cast<int>(SKILL_NUM::TWO)] = false;
+//		ChangeAct(static_cast<ATK_ACT>(skillNo_));
+//		ResetParam(atk_);
+//		coolTime_[static_cast<int>(SKILL_NUM::TWO)] -= SKILL_TWO_START_COOLTIME;
+//		//atkMax_[ATK_ACT::SKILL2].duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
+//		atk_.duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
+//		CntUp(atkStartCnt_);
+//	}
+//}
+
+void PlKnight::SkillOneInit(void)
+{
+	//スキルごとにアニメーションを決めて、カウント開始
+	ChangeAct(static_cast<ATK_ACT>(skillNo_));
+	ResetParam(atk_);
+	CntUp(atkStartCnt_);
+}
+
+void PlKnight::SkillTwoInit(void)
+{
+	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > GUARD_STARTABLE_COOL && !IsAtkStart())
 	{
 		isCool_[static_cast<int>(SKILL_NUM::TWO)] = false;
+		ChangeAct(static_cast<ATK_ACT>(skillNo_));
+		ResetParam(atk_);
 		coolTime_[static_cast<int>(SKILL_NUM::TWO)] -= SKILL_TWO_START_COOLTIME;
-		atkMax_[ATK_ACT::SKILL2].duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
+		atk_.duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
 		CntUp(atkStartCnt_);
 	}
 }
 
 
+void PlKnight::InitSkill(ATK_ACT _act)
+{
+	if (isAtk_ || isSkill_)return;
+	//スキルごとにアニメーションを決めて、カウント開始
+	ChangeAct(static_cast<ATK_ACT>(_act));
+	ResetParam(atk_);
+	CntUp(atkStartCnt_);
+	moveAble_ = false;
+	isSkill_ = true;
+}
 
 void PlKnight::Skill1Func(void)
 {
 	//斬撃飛ばす
+	auto& ins = InputManager::GetInstance();
+	//入力
+	if (ins.IsTrgDown(SKILL_KEY))
+	{
+		InitSkill(skillNo_);
+	}
+	//近接攻撃用(atk_変数と遠距離で分ける)
+	if (IsAtkStart())
+	{
+		moveAble_ = false;
+		CntUp(atkStartCnt_);
+		if (IsFinishAtkStart())
+		{
+			CntUp(atk_.cnt_);
+		}
+	}
+	else if (IsFinishAtkStart())
+	{
+		if ((atk_.IsAttack() || atk_.IsBacklash()))
+		{
+			CntUp(atk_.cnt_);
+			//クールタイムの初期化
+			coolTime_[static_cast<int>(act_)] = 0.0f;
+		}
+		else //if(atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
+		{
+			InitAtk();
+			isSkill_ = false;
+		}
+	}
+
 }
 
 void PlKnight::Skill2Func(void)
 {
-	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] <= 0.0f || !isPush_)
+	//入力
+	auto& ins = InputManager::GetInstance();
+	if (ins.IsTrgDown(SKILL_KEY))
 	{
-		//スキル切り替え出来ないようにする
-		return;
+		//ボタンの押しはじめの時に値初期化
+		SkillTwoInit();
 	}
 
-	if (IsAtkStart())CntUp(atkStartCnt_);
 
-	if (IsFinishAtkStart())
-	{
-		CntUp(atk_.cnt_);
-	}
-	if (IsAtkAction())
+	//スキル(長押しでガード状態維持)
+	if (ins.IsNew(SKILL_KEY))
 	{
 		if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > 0.0f)
 		{
@@ -110,9 +210,37 @@ void PlKnight::Skill2Func(void)
 			}
 		}
 	}
+	else if (ins.IsTrgUp(SKILL_KEY))
+	{
+		isPush_ = false;
+		isCool_[static_cast<int>(SKILL_NUM::TWO)] = true;
+		InitAtk();
+		actCntl_ = ACT_CNTL::NONE;
+	}
+
+
+	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] <= 0.0f)
+	{
+		//スキル切り替え出来ないようにする
+		return;
+	}
+
+	if (IsAtkStart())CntUp(atkStartCnt_);
+
+	if (IsFinishAtkStart())
+	{
+		CntUp(atk_.cnt_);
+	}
+	if (atk_.IsAttack())
+	{
+	
+	}
+
+	//ボタンを押していても残りクールタイムが
 	else if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] <= SKILL_TWO_START_COOLTIME)
 	{
 		isCool_[static_cast<int>(SKILL_NUM::TWO)] = true;
+		InitAtk();
 		return;
 	}
 }
@@ -123,4 +251,17 @@ void PlKnight::InitCharaAnim(void)
 	animNum_.emplace(ANIM::UNIQUE_2, BLOCKING_NUM);
 	animNum_.emplace(ANIM::SKILL_1, SKILL_ONE_NUM);
 	animNum_.emplace(ANIM::SKILL_2, SKILL_TWO_NUM);
+}
+
+
+void PlKnight::DrawDebug(void)
+{
+
+	DrawFormatString(0, 32, 0xffffff
+		, "AtkCooltime(%.2f)\nSkill1Cool(%.2f)\nSkill2Cool(%.2f)\natkDulation(%f)\natkCnt(%f)"
+		, coolTime_[static_cast<int>(ATK_ACT::ATK)]
+		, coolTime_[static_cast<int>(ATK_ACT::SKILL1)]
+		, coolTime_[static_cast<int>(ATK_ACT::SKILL2)]
+		, atk_.duration_
+	,atkStartCnt_);
 }
