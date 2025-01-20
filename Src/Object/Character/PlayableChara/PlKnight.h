@@ -9,7 +9,7 @@ public:
     //スキル使用開始時にクールタイムを増やす時間
     static constexpr float SKILL_TWO_START_COOLTIME = 3.0f;
 
-    //ガード可能になる残りクールタイム(ガード時間1秒確保したいから)
+    //ガード可能になる残りクールタイム(ガード時間最低1秒確保したいから)
     static constexpr float GUARD_STARTABLE_COOL = 4.0f;
 #ifdef DEBUG_COOL
 //クールタイム

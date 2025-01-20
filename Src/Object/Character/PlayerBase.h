@@ -5,6 +5,7 @@
 #include"../Utility/AsoUtility.h"
 #include"../Manager/SceneManager.h"
 #include"../Manager/InputManager.h"
+#include"PlayerInput.h"
 #include "../UnitBase.h"
 
 //デバッグ
@@ -65,37 +66,6 @@ public:
     static constexpr float MY_COL_RADIUS = 66.0f * CHARACTER_SCALE;
 
 
-    //*************************************************
-    //各アクション操作ボタン
-    //*************************************************
-    //移動
-    static constexpr int MOVE_FRONT_KEY = KEY_INPUT_W;
-    static constexpr int MOVE_LEFT_KEY = KEY_INPUT_A;
-    static constexpr int MOVE_BACK_KEY = KEY_INPUT_S;
-    static constexpr int MOVE_RIGHT_KEY = KEY_INPUT_D;
-
-    //攻撃
-    static constexpr int ATK_KEY = KEY_INPUT_E;
-    static constexpr InputManager::JOYPAD_BTN ATK_BTN = InputManager::JOYPAD_BTN::RIGHT;
-
-    //スキル
-    static constexpr int SKILL_KEY = KEY_INPUT_Q;
-    static constexpr InputManager::JOYPAD_BTN SKILL_BTN = InputManager::JOYPAD_BTN::TOP;
-
-    //スキル変更キー
-    static constexpr int SKILL_CHANGE_KEY = KEY_INPUT_J;
-    static constexpr InputManager::JOYPAD_BTN SKILL_CHANGE_BTN = InputManager::JOYPAD_BTN::R_BUTTON;
-
-    //回避
-    static constexpr int DODGE_KEY = KEY_INPUT_N;
-    static constexpr InputManager::JOYPAD_BTN DODGE_BTN = InputManager::JOYPAD_BTN::LEFT;
-
-
-
-
-
-
-
     PlayerBase(const InputManager::JOYPAD_NO _padNum) :padNum_(_padNum) {}
     PlayerBase(const SceneManager::CNTL _cntl) :cntl_(_cntl) {}
     ~PlayerBase(void) = default;
@@ -106,18 +76,7 @@ public:
     virtual void Draw(void)override;
 
 
-    enum class ACT_CNTL
-    {
-        NONE    //何もしていないとき
-        , MOVE   //移動
-        , DODGE             //回避
-        , NMLATK            //通常攻撃    
-        , CHANGE_SKILL      //スキル切り替え
-        , NMLSKILL          //短押しスキル
-        , CHARGE_SKILL_DOWN  //長押しスキル(初期化用)
-        , CHARGE_SKILL_KEEP  //長押しスキル(押しっぱなし)
-        , CHARGE_SKILL_UP    //長押しスキル(離す)
-    };
+
 
 
     //コントローラー変更用関数
@@ -202,8 +161,7 @@ protected:
     bool isSkill_;                                                 //スキル開始したかどうか
 
 
-    //操作管理用
-    ACT_CNTL actCntl_;
+ 
 
     //それぞれの最大値セット用(攻撃の座標はローカル座標で設定してます)
     std::map<ATK_ACT, ATK>atkMax_;
@@ -282,9 +240,6 @@ protected:
 
     //ゲームパッド
     void GamePad(void);
-
-    //コントロール判定
-    bool CheckAct(ACT_CNTL _actCntl) { return actCntl_ == _actCntl ? true : false; }
 
 
     SceneManager::CNTL cntl_;
@@ -426,10 +381,10 @@ protected:
 
 private:
 
-    std::map<ACT_CNTL, std::function<void(void)>>changeActCntl_;        //アクションごとに返すボタンを変更
-    std::function<bool(void)>actCntlUpdate_;
+    //std::map<ACT_CNTL, std::function<void(void)>>changeActCntl_;        //アクションごとに返すボタンを変更
+    //std::function<bool(void)>actCntlUpdate_;
 
-#ifdef DEBUG_ON
+#ifdef DEBUG_INPUT
 //************************************************************************
 //キーボードとパッドの共通各アクションボタン設定(テスト用で使ったので一応残しておきます)
 //************************************************************************
@@ -465,9 +420,10 @@ private:
     void InputUpdate(void);
     //******************************************************************************************
 #endif // DEBUG_ON
-
-
-
+    //操作一元化
+    void ProcessInput(void);
+    
+    //アクションの発動条件
     void ProcessAct(void);
 
     //スキル変更処理

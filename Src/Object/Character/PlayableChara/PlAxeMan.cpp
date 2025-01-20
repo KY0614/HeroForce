@@ -120,9 +120,10 @@ void PlAxe::SkillTwoInit(void)
 void PlAxe::AtkFunc(void)
 {
 	if (isSkill_)return;
-	auto& ins = InputManager::GetInstance();
+	auto& ins = PlayerInput::GetInstance();
+	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	//近接攻撃用
-	if (ins.IsTrgDown(ATK_KEY)&&!isAtk_)
+	if (ins.CheckAct(ACT_CNTL::NMLATK) && !isAtk_)
 	{
 		if (isCool_[static_cast<int>(ATK_ACT::ATK)])return;
 		ChangeAct(ATK_ACT::ATK);
@@ -161,21 +162,22 @@ void PlAxe::Skill1Func(void)
 {
 	//入力
 	//--------------------------------------------------------------
-	auto& ins = InputManager::GetInstance();
+	auto& ins = PlayerInput::GetInstance();
+	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	int skillOne = static_cast<int>(ATK_ACT::SKILL1);
 	if (!isCool_[static_cast<int>(ATK_ACT::SKILL1)])
 	{
-		if (ins.IsTrgDown(SKILL_KEY) && !IsAtkStart())
+		if (ins.CheckAct(ACT_CNTL::SKILL_DOWN) && !IsAtkStart())
 		{
 			InitSkill(skillNo_);
 		}
 		//スキル(長押しでガード状態維持)
-		if (ins.IsNew(SKILL_KEY) && IsAtkStart())
+		if (ins.CheckAct(ACT_CNTL::SKILL_KEEP) && IsAtkStart())
 		{
 			//押している反応
 			//CntUp(atkStartCnt_);
 		}
-		else if (ins.IsTrgUp(SKILL_KEY) && IsAtkStart())
+		else if (ins.CheckAct(ACT_CNTL::SKILL_UP) && IsAtkStart())
 		{
 			if (atkStartCnt_ <= SKILL_ONE_START_NOCHARGE)
 			{
@@ -220,12 +222,11 @@ void PlAxe::Skill1Func(void)
 
 void PlAxe::Skill2Func(void)
 {
-	auto& ins = InputManager::GetInstance();
 	//入力
-	if (ins.IsTrgDown(SKILL_KEY))
-	{
-		InitSkill(skillNo_);
-	}
+	//if (CheckAct(ACT_CNTL::SKILL_DOWN))
+	//{
+	//	InitSkill(skillNo_);
+	//}
 	//近接攻撃用(atk_変数と遠距離で分ける)
 	if (IsAtkStart())
 	{
