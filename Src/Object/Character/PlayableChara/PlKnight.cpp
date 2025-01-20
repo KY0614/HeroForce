@@ -59,10 +59,6 @@ void PlKnight::InitAct(void)
 
 }
 
-void PlKnight::ChargeAct(void)
-{
-	//chargeActUpdate_();
-}
 
 void PlKnight::AtkFunc(void)
 {

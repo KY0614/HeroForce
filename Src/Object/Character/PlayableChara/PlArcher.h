@@ -100,7 +100,7 @@ protected:
     void SkillTwoInit(void)override;
 
     //‹|˜AË—p
-    void NmlActCommon (void)override;
+    //void NmlActCommon (void)override;
 
     //‹|–îˆê‚Â‚Ìatk‰Šú‰»
     void InitArrowAtk(ATK& arrowAtk);

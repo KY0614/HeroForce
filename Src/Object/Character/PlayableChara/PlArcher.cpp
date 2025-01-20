@@ -261,10 +261,10 @@ void PlArcher::SkillTwoInit(void)
 {
 }
 
-void PlArcher::NmlActCommon(void)
-{
-
-}
+//void PlArcher::NmlActCommon(void)
+//{
+//
+//}
 
 
 

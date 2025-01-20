@@ -65,6 +65,26 @@ public:
     //自身の当たり判定半径
     static constexpr float MY_COL_RADIUS = 66.0f * CHARACTER_SCALE;
 
+    //*************************************************
+    // 列挙型
+    //*************************************************
+
+    //攻撃種類
+    enum class ATK_ACT
+    {
+        ATK
+        , SKILL1
+        , SKILL2
+        , MAX
+    };
+
+    //スキル変更用
+    enum class SKILL_NUM
+    {
+        ONE = 1
+        , TWO = 2
+        , MAX
+    };
 
     PlayerBase(const InputManager::JOYPAD_NO _padNum) :padNum_(_padNum) {}
     PlayerBase(const SceneManager::CNTL _cntl) :cntl_(_cntl) {}
@@ -93,28 +113,19 @@ public:
     //リセット
     void Reset(void);
 
+    //ゲッタ
+    bool GetIsCool(ATK_ACT _act) { return isCool_[static_cast<int>(_act)]; }
+    ATK_ACT GetSkillNo(void) { return skillNo_; }
+    bool GetIsAtk(void){ return isAtk_; }
+    bool GetIsSkill(void){ return isSkill_; }
+
 
 protected:
     //*************************************************
     // 列挙型
     //*************************************************
 
-     //攻撃種類
-    enum class ATK_ACT
-    {
-        ATK
-        , SKILL1
-        , SKILL2
-        , MAX
-    };
 
-    //スキル変更用
-    enum class SKILL_NUM
-    {
-        ONE = 1
-        , TWO = 2
-        , MAX
-    };
 
     enum class ATK_TYPE
     {
@@ -273,19 +284,19 @@ protected:
     void ChangeNmlActKeyBoard(void);
     void ChangeNmlActPad(void);
 
-    //短押し攻撃共通処理(攻撃カウントとか後隙とか)
-    virtual void NmlActCommon(void);
+    ////短押し攻撃共通処理(攻撃カウントとか後隙とか)
+    //virtual void NmlActCommon(void);
 
-    //短押し用atk更新
-    void NmlAtkUpdate(void);
+    ////短押し用atk更新
+    //void NmlAtkUpdate(void);
 
 
-    //チャージ攻撃
-    virtual void ChargeAct(void);
-    //チャージ攻撃(キーボード)
-    void ChargeActKeyBoard(void);
-    //チャージ攻撃(パッド)
-    void ChargeActPad(void);
+    ////チャージ攻撃
+    //virtual void ChargeAct(void);
+    ////チャージ攻撃(キーボード)
+    //void ChargeActKeyBoard(void);
+    ////チャージ攻撃(パッド)
+    //void ChargeActPad(void);
 
     ////Change関数
     ////チャージ攻撃(キーボード)
@@ -378,6 +389,8 @@ protected:
 
     //クールタイムのカウント
     void CoolTimeCnt(void);
+
+  
 
 private:
 

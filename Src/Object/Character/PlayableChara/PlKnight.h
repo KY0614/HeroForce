@@ -118,8 +118,8 @@ protected:
     //固有アニメーション番号の初期化
     void InitCharaAnim(void)override;
 
-    //長押しスキル
-    void ChargeAct(void)override;
+    ////長押しスキル
+    //void ChargeAct(void)override;
 
 private:
     float guardCnt_;        //ガード時間

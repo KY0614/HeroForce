@@ -87,10 +87,10 @@ void PlAxe::InitCharaAnim(void)
 	animNum_.emplace(ANIM::SKILL_2, SKILL_TWO_NUM);
 }
 
-void PlAxe::ChargeAct(void)
-{
-
-}
+//void PlAxe::ChargeAct(void)
+//{
+//
+//}
 
 void PlAxe::SkillOneInit(void)
 {
@@ -123,6 +123,8 @@ void PlAxe::AtkFunc(void)
 	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	//近接攻撃用
+	//単押し処理
+	//---------------------------------------------------------
 	if (ins.CheckAct(ACT_CNTL::NMLATK) && !isAtk_)
 	{
 		if (isCool_[static_cast<int>(ATK_ACT::ATK)])return;
@@ -131,6 +133,8 @@ void PlAxe::AtkFunc(void)
 		CntUp(atkStartCnt_);
 		isAtk_ = true;
 	}
+	//---------------------------------------------------------
+
 	if (!isAtk_)return;
 
 	if (IsAtkStart())
@@ -150,7 +154,7 @@ void PlAxe::AtkFunc(void)
 			//クールタイムの初期化
 			coolTime_[static_cast<int>(act_)] = 0.0f;
 		}
-		else //if(atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
+		if(atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
 		{
 			InitAtk();
 			isAtk_ = false;
@@ -222,11 +226,16 @@ void PlAxe::Skill1Func(void)
 
 void PlAxe::Skill2Func(void)
 {
+	if (isAtk_)return;
 	//入力
-	//if (CheckAct(ACT_CNTL::SKILL_DOWN))
-	//{
-	//	InitSkill(skillNo_);
-	//}
+	auto& ins = PlayerInput::GetInstance();
+	using ACT_CNTL = PlayerInput::ACT_CNTL;
+	int skillOne = static_cast<int>(ATK_ACT::SKILL1);
+	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN))
+	{
+		InitSkill(skillNo_);
+	}
+	if (!isSkill_)return;
 	//近接攻撃用(atk_変数と遠距離で分ける)
 	if (IsAtkStart())
 	{

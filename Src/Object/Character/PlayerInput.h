@@ -1,6 +1,7 @@
 #pragma once
 #include<DxLib.h>
 #include"../../Manager/InputManager.h"
+class PlayerBase;
 class PlayerInput
 {
 public:
@@ -46,7 +47,7 @@ public:
     static void CreateInstance(void);
     static PlayerInput& GetInstance(void);
 
-    void Update(InputManager::JOYPAD_NO _padNum);
+    void Update(PlayerBase* _player,InputManager::JOYPAD_NO _padNum);
 
 
 
@@ -55,12 +56,14 @@ public:
 
     //ゲッタ
     ACT_CNTL GetAct(void) { return actCntl_; }
+    float GetStickDeg(void){ return stickDeg_; }
 
 private:
 
     //シングルトン化するために
 	PlayerInput(void);
 	~PlayerInput(void)=default;
+    PlayerBase* player_;
 
     float leftStickX_;
     float leftStickY_;

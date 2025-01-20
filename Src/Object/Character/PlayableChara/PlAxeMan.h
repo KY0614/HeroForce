@@ -95,7 +95,7 @@ protected:
     //固有アニメーション番号の初期化
     void InitCharaAnim(void)override;
 
-    void ChargeAct(void)override;
+    //void ChargeAct(void)override;
 
     void SkillOneInit(void)override;
     void SkillTwoInit(void)override;
