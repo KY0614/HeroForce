@@ -6,6 +6,7 @@
 
 class Grid;
 class PlayerManager;
+class PlayerBase;
 class Enemy;
 class EnemyManager;
 class StageManager;

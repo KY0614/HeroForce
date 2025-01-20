@@ -1,5 +1,5 @@
 #include <assert.h>
-#include "../Manager/ResourceManager.h"
+#include "../Manager/Generic/ResourceManager.h"
 #include "../Object/Character/PlayerBase.h"
 #include "SelectPlayer.h"
 
