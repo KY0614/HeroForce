@@ -62,6 +62,8 @@
     <ClCompile Include="Src\Scene\FazeResult.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\Timer.cpp" />
     <ClCompile Include="Src\Object\Character\EnemyManager.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerAnim.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerCpu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Manager\Generic\InputController.h" />
@@ -165,6 +167,9 @@
     <ClInclude Include="Src\Scene\FazeResult.h" />
     <ClInclude Include="Src\Manager\GameSystem\Timer.h" />
     <ClInclude Include="Src\Object\Character\EnemyManager.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Knight.h" />
+    <ClInclude Include="Src\Object\Character\PlayerAnim.h" />
+    <ClInclude Include="Src\Object\Character\PlayerCpu.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">

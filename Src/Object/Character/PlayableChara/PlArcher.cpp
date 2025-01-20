@@ -1,4 +1,4 @@
-#include"../Manager/ResourceManager.h"
+#include"../Manager/Generic/ResourceManager.h"
 #include"../../Arrow.h"
 #include "PlArcher.h"
 PlArcher::PlArcher(const SceneManager::CNTL _cntl) :PlayerBase(_cntl)

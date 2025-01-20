@@ -60,12 +60,12 @@ void GameScene::Init(void)
 	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU));
 	chicken_->Init();
 
-	//プレイヤー設定
-	for (int i = 0; i < PLAYER_NUM; i++)
-	{
-		players_[i] = std::make_unique<PlAxe>(SceneManager::PLAY_MODE::USER, InputManager::JOYPAD_NO::PAD1);
-		players_[i]->Init();
-	}
+	////プレイヤー設定
+	//for (int i = 0; i < PLAYER_NUM; i++)
+	//{
+	//	players_[i] = std::make_unique<PlAxe>(SceneManager::PLAY_MODE::USER, InputManager::JOYPAD_NO::PAD1);
+	//	players_[i]->Init();
+	//}
 
 	//敵マネージャの生成
 	enmMng_ = std::make_unique<EnemyManager>();
@@ -293,7 +293,7 @@ void GameScene::CollisionPlayer(void)
 		auto pAtk = p->GetAtk();
 
 		//プレイヤーがCPUの時だけサーチしたい
-		if (p->GetPlayMode() == SceneManager::PLAY_MODE::CPU)CollisionPlayerCPU(*p, pPos);
+		//if (p->GetPlayMode() == SceneManager::PLAY_MODE::CPU)CollisionPlayerCPU(*p, pPos);
 
 		//プレイヤー攻撃判定
 		//攻撃していない || 攻撃がすでに当たっている
@@ -317,44 +317,44 @@ void GameScene::CollisionPlayer(void)
 
 void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
 {
-	//衝突判定マネージャ取得
-	auto& col = Collision::GetInstance();
-	//敵の総数取得
-	int maxCnt = enmMng_->GetActiveNum();
+	////衝突判定マネージャ取得
+	//auto& col = Collision::GetInstance();
+	////敵の総数取得
+	//int maxCnt = enmMng_->GetActiveNum();
 
-	//敵をサーチ初期化
-	_player.SetisEnemySerch(false);
+	////敵をサーチ初期化
+	//_player.SetisEnemySerch(false);
 
 
-	//敵の個体分行う
-	for (int i = 0; i < maxCnt; i++)
-	{
-		//敵の取得
-		Enemy* e = enmMng_->GetActiveEnemy(i);
+	////敵の個体分行う
+	//for (int i = 0; i < maxCnt; i++)
+	//{
+	//	//敵の取得
+	//	Enemy* e = enmMng_->GetActiveEnemy(i);
 
-		//敵が死亡していたら処理しない
-		if (!e->IsAlive())continue;
+	//	//敵が死亡していたら処理しない
+	//	if (!e->IsAlive())continue;
 
-		//敵個人の位置と攻撃を取得
-		VECTOR ePos = e->GetPos();
+	//	//敵個人の位置と攻撃を取得
+	//	VECTOR ePos = e->GetPos();
 
-		//プレイヤー側索敵
-		if (col.Search(_pPos, ePos, _player.GetSearchRange())
-			&& !_player.GetIsCalledPlayer())
-		{
-			//敵をサーチしたかを返す
-			_player.SetisEnemySerch(true);
-			_player.SetTargetPos(ePos);
-		}
+	//	//プレイヤー側索敵
+	//	if (col.Search(_pPos, ePos, _player.GetSearchRange())
+	//		&& !_player.GetIsCalledPlayer())
+	//	{
+	//		//敵をサーチしたかを返す
+	//		_player.SetisEnemySerch(true);
+	//		_player.SetTargetPos(ePos);
+	//	}
 
-		if (col.Search(_player.GetPos(), ePos, _player.GetAtkStartRange())
-			&& _player.GetState() == PlayerBase::CPU_STATE::NORMAL
-			&& !_player.GetIsCalledPlayer())
-		{
-			//状態を変更
-			_player.ChangeState(PlayerBase::CPU_STATE::ATTACK);
-		}
-	}
+	//	if (col.Search(_player.GetPos(), ePos, _player.GetAtkStartRange())
+	//		&& _player.GetState() == PlayerBase::CPU_STATE::NORMAL
+	//		&& !_player.GetIsCalledPlayer())
+	//	{
+	//		//状態を変更
+	//		_player.ChangeState(PlayerBase::CPU_STATE::ATTACK);
+	//	}
+	//}
 }
 
 void GameScene::Fade(void)
