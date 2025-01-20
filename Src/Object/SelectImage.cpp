@@ -19,10 +19,10 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	mesh_.vertex_[2].pos = VGet(VERTEX_LEFT_X, VERTEX_TOP_Y, VERTEX_Z);				// 左上
 	mesh_.vertex_[3].pos = VGet(VERTEX_RIGHT_X, VERTEX_TOP_Y, VERTEX_Z);			// 右上
 
-	pointL_.mesh_.vertex_[0].pos = VGet(-132.0f, 94.0f, VERTEX_Z + 12.0f);		// 左下
-	pointL_.mesh_.vertex_[1].pos = VGet(-80.0f, 94.0f, VERTEX_Z + 12.0f);		// 右下
+	pointL_.mesh_.vertex_[0].pos = VGet(-132.0f, 94.0f, VERTEX_Z );		// 左下
+	pointL_.mesh_.vertex_[1].pos = VGet(-80.0f, 94.0f, VERTEX_Z);		// 右下
 	pointL_.mesh_.vertex_[2].pos = VGet(-132.0f, 146.0f, VERTEX_Z);				// 左上
-	pointL_.mesh_.vertex_[3].pos = VGet(-80.0f, 146.0f, VERTEX_Z);				// 右上
+	pointL_.mesh_.vertex_[3].pos = VGet(-80.0f, 146.0f, VERTEX_Z );				// 右上
 
 	//roleMesh_.testVertex_[0].pos = VGet(-90.0f, 50.0f, VERTEX_Z + 12.0f);	// 左下
 	//roleMesh_.testVertex_[1].pos = VGet(0.0f, 50.0f, VERTEX_Z + 12.0f);	// 右下
@@ -35,10 +35,10 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	mesh_.vertex_[2].u = 0.0f / 4.0f;	mesh_.vertex_[2].v = 0.0f;	// 左上
 	mesh_.vertex_[3].u = 1.0f / 4.0f;	mesh_.vertex_[3].v = 0.0f;	// 右上
 
-	pointL_.mesh_.vertex_[0].u = 0.0f / 4.0f;	pointL_.mesh_.vertex_[0].v = 1.0f;	// 左下
-	pointL_.mesh_.vertex_[1].u = 1.0f / 4.0f;	pointL_.mesh_.vertex_[1].v = 1.0f;	// 右下
-	pointL_.mesh_.vertex_[2].u = 0.0f / 4.0f;	pointL_.mesh_.vertex_[2].v = 0.0f;	// 左上
-	pointL_.mesh_.vertex_[3].u = 1.0f / 4.0f;	pointL_.mesh_.vertex_[3].v = 0.0f;	// 右上
+	pointL_.mesh_.vertex_[0].u = 0.0f;	pointL_.mesh_.vertex_[0].v = 1.0f;	// 左下
+	pointL_.mesh_.vertex_[1].u = 1.0f;	pointL_.mesh_.vertex_[1].v = 1.0f;	// 右下
+	pointL_.mesh_.vertex_[2].u = 0.0f;	pointL_.mesh_.vertex_[2].v = 0.0f;	// 左上
+	pointL_.mesh_.vertex_[3].u = 1.0f;	pointL_.mesh_.vertex_[3].v = 0.0f;	// 右上
 
 	pointR_.mesh_.vertex_[0].u = 0.0f / 4.0f;	pointR_.mesh_.vertex_[0].v = 1.0f;	// 左下
 	pointR_.mesh_.vertex_[1].u = 1.0f / 4.0f;	pointR_.mesh_.vertex_[1].v = 1.0f;	// 右下
@@ -108,9 +108,13 @@ void SelectImage::Init(void)
 	InitVertex();
 
 	//矢印画像の初期値
-	pointL_ = { LEFT_POS_X,POINT_POS_Y,POINT_SCALE,POINT_SCALE,false,imgLeftPoint_,pointL_.mesh_.vertex_};
-	
-	pointR_ = { RIGHT_POS_X,POINT_POS_Y,POINT_SCALE,POINT_SCALE,false,imgRightPoint_ ,pointL_.mesh_.vertex_};
+	//pointL_ = { LEFT_POS_X,POINT_POS_Y,POINT_SCALE,POINT_SCALE,false,imgLeftPoint_,pointL_.mesh_.vertex_};
+	//
+	//pointR_ = { RIGHT_POS_X,POINT_POS_Y,POINT_SCALE,POINT_SCALE,false,imgRightPoint_ ,pointL_.mesh_.vertex_};
+
+	pointL_.isToggle_ = false;
+
+	pointR_.isToggle_ = false;
 
 	target_[0] = SelectScene::DEFAULT_TARGET_POS;
 
@@ -152,7 +156,7 @@ void SelectImage::Draw(void)
 	DrawFormatString(Application::SCREEN_SIZE_X - 100,80, 0x000000, "pad : %d", isPad_);
 	for (int i = 0; i < 4; i++) 
 	{
-		DrawFormatString(Application::SCREEN_SIZE_X - 200, 100 + (20 * i), 0x000000,
+		DrawFormatString(Application::SCREEN_SIZE_X - 250, 100 + (20 * i), 0x000000,
 			"L_mesh : %0.2f,%0.2f,%0.2f", pointL_.mesh_.vertex_[i].pos.x,
 			pointL_.mesh_.vertex_[i].pos.y, pointL_.mesh_.vertex_[i].pos.z);
 	}
@@ -161,13 +165,13 @@ void SelectImage::Draw(void)
 	
 	//球
 	//左下
-	DrawSphere3D(mesh_.vertex_[0].pos, 10.0f, 10, 0xFF0000, 0xFF0000, false);
+	DrawSphere3D(pointL_.mesh_.vertex_[0].pos, 5.0f, 10, 0xFF0000, 0xFF0000, false);
 	//右下
-	DrawSphere3D(mesh_.vertex_[1].pos, 10.0f, 10, 0x00FF00, 0x00FF00, false);
+	DrawSphere3D(pointL_.mesh_.vertex_[1].pos, 5.0f, 10, 0x00FF00, 0x00FF00, false);
 	//左上
-	DrawSphere3D(mesh_.vertex_[2].pos, 10.0f, 10, 0x0000FF, 0x0000FF, false);
+	DrawSphere3D(pointL_.mesh_.vertex_[2].pos, 5.0f, 10, 0x0000FF, 0x0000FF, false);
 	//右上
-	DrawSphere3D(mesh_.vertex_[3].pos, 10.0f, 10, 0x000000, 0x000000, false);
+	DrawSphere3D(pointL_.mesh_.vertex_[3].pos, 5.0f, 10, 0x000000, 0x000000, false);
 	
 }
 
@@ -354,6 +358,11 @@ void SelectImage::NumberUpdate(void)
 	mesh_.vertex_[1].u = (float)(playerNum_) / 4.0f;			mesh_.vertex_[1].v = 1.0f;	// 右下
 	mesh_.vertex_[2].u = ((float)(playerNum_)-1.0f) / 4.0f;		mesh_.vertex_[2].v = 0.0f;	// 左上
 	mesh_.vertex_[3].u = (float)(playerNum_) / 4.0f;			mesh_.vertex_[3].v = 0.0f;	// 右上
+
+	pointL_.mesh_.vertex_[0].u = 0.0f;	pointL_.mesh_.vertex_[0].v = 1.0f;	// 左下
+	pointL_.mesh_.vertex_[1].u = 1.0f;	pointL_.mesh_.vertex_[1].v = 1.0f;	// 右下
+	pointL_.mesh_.vertex_[2].u = 0.0f;	pointL_.mesh_.vertex_[2].v = 0.0f;	// 左上
+	pointL_.mesh_.vertex_[3].u = 1.0f;	pointL_.mesh_.vertex_[3].v = 0.0f;	// 右上
 }
 
 void SelectImage::OperationUpdate(void)
@@ -501,7 +510,7 @@ void SelectImage::RoleDraw(void)
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);	//ブレンドモードを戻す
 	}
 
-	//PointsDraw();
+	PointsDraw();
 }
 
 void SelectImage::PointsDraw(void)
@@ -509,22 +518,22 @@ void SelectImage::PointsDraw(void)
 	//左の矢印の描画(右の矢印は暗めにする)
 	if (pointL_.isToggle_)
 	{
-		//右の矢印画像を描画し、同じ画像を減算ブレンドする
-		pointR_.PointDraw();
-		SetDrawBlendMode(DX_BLENDMODE_SUB, 128);
-		pointR_.PointDraw();
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);	//ブレンドモードを戻す
+		////右の矢印画像を描画し、同じ画像を減算ブレンドする
+		//pointR_.PointDraw();
+		//SetDrawBlendMode(DX_BLENDMODE_SUB, 128);
+		//pointR_.PointDraw();
+		//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);	//ブレンドモードを戻す
 
-		//普通に描画
-		pointL_.PointDraw();
+		////普通に描画
+		//pointL_.PointDraw();
 	}
 	//右の矢印の描画(左の矢印は暗めにする)
 	if (pointR_.isToggle_)
 	{
 		//左の矢印画像を描画し、同じ画像を減算ブレンドする
-		pointL_.PointDraw();
+		pointL_.mesh_.DrawTwoMesh(*imgLeftPoint_);
 		SetDrawBlendMode(DX_BLENDMODE_SUB, 128);
-		pointL_.PointDraw();
+		pointL_.mesh_.DrawTwoMesh(*imgLeftPoint_);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);	//ブレンドモードを戻す
 
 		//普通に描画
@@ -666,9 +675,9 @@ VERTEX3D SelectImage::GetMeshVertex(int i)
 void SelectImage::InitVertex(void)
 {
 	leftTop_ = { VERTEX_LEFT_X, VERTEX_TOP_Y, VERTEX_Z };
-	leftBottom_ = { VERTEX_LEFT_X, VERTEX_UNDER_Y, VERTEX_Z /*+ 12.0f*/ };
+	leftBottom_ = { VERTEX_LEFT_X, VERTEX_UNDER_Y, VERTEX_UNDER_Z };
 	rightTop_ = { VERTEX_RIGHT_X, VERTEX_TOP_Y, VERTEX_Z };
-	rightBottom_ = { VERTEX_RIGHT_X, VERTEX_UNDER_Y, VERTEX_Z /*+ 12.0f */ };
+	rightBottom_ = { VERTEX_RIGHT_X, VERTEX_UNDER_Y, VERTEX_UNDER_Z };
 
 	//座標(四角形を作るために2つの三角形を使う)
 	mesh_.vertex_[0].pos = leftBottom_;		// 左下
@@ -676,10 +685,10 @@ void SelectImage::InitVertex(void)
 	mesh_.vertex_[2].pos = leftTop_;			// 左上
 	mesh_.vertex_[3].pos = rightTop_;		// 右上
 
-	pointL_.mesh_.vertex_[0].pos = VGet(-132.0f, 94.0f, VERTEX_Z + 12.0f);		// 左下
-	pointL_.mesh_.vertex_[1].pos = VGet(-80.0f, 94.0f, VERTEX_Z + 12.0f);		// 右下
-	pointL_.mesh_.vertex_[2].pos = VGet(-132.0f, 146.0f, VERTEX_Z);				// 左上
-	pointL_.mesh_.vertex_[3].pos = VGet(-80.0f, 146.0f, VERTEX_Z);				// 右上
+	pointL_.mesh_.vertex_[0].pos = VGet(-110.0f, 94.0f, VERTEX_Z);		// 左下
+	pointL_.mesh_.vertex_[1].pos = VGet(-58.0f, 94.0f, VERTEX_Z);		// 右下
+	pointL_.mesh_.vertex_[2].pos = VGet(-110.0f, 146.0f, VERTEX_Z - 6.0f);				// 左上
+	pointL_.mesh_.vertex_[3].pos = VGet(-58.0f, 146.0f, VERTEX_Z - 6.0f);				// 右上
 
 }
 

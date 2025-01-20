@@ -30,6 +30,7 @@ public:
 	static constexpr float VERTEX_TOP_Y = 170.0f;	//画像上のY座標
 
 	static constexpr float VERTEX_Z = -350.0f;		//頂点Z座標
+	static constexpr float VERTEX_UNDER_Z = -338.0f;		//頂点Z座標
 
 	static constexpr float ROLE_LEFT_X = -90.0f;
 	static constexpr float ROLE_RIGHT_X = 0.0f;
@@ -47,11 +48,10 @@ public:
 	
 	//メッシュ
 	struct Mesh {
-		VERTEX3D vertex_[4];		//頂点情報
-		int imgHandle_;				//画像ハンドル
+		VERTEX3D vertex_[VERTEX_NUM];		//頂点情報
 
-		Mesh() : vertex_(),imgHandle_(-1){}
-		Mesh(int img) : vertex_(),imgHandle_(img){}
+		Mesh() : vertex_(){}
+		Mesh(int img) : vertex_(){}
 
 		void DrawTwoMesh(int handle);
 	};
@@ -62,12 +62,11 @@ public:
 		int w, h;		//w:底辺,h:高さ	
 		bool isToggle_;	//オン、オフの切り替え用
 		Mesh mesh_;
-		int* imgHandle_;	//画像ハンドル
 
 		//初期化
-		Point() : pos(0, 0), w(0), h(0), isToggle_(false),mesh_(), imgHandle_(nullptr) {}
-		Point(int x, int y, int inw, int inh, bool isT,Mesh& mesh,int* img) :
-			pos(x, y), w(inw), h(inh), isToggle_(isT) , mesh_(mesh), imgHandle_(img) {}
+		Point() : pos(0, 0), w(0), h(0), isToggle_(false),mesh_() {}
+		Point(int x, int y, int inw, int inh, bool isT,Mesh& mesh) :
+			pos(x, y), w(inw), h(inh), isToggle_(isT) , mesh_(mesh)  {}
 
 		void PointDraw(void);//矢印を描画する
 	};

@@ -100,7 +100,7 @@ void SelectScene::Init(void)
 	// カメラモード：定点カメラ
 	auto camera = SceneManager::GetInstance().GetCameras();
 	camera[0]->SetPos(DEFAULT_CAMERA_POS, DEFAULT_TARGET_POS);
-	camera[0]->ChangeMode(Camera::MODE::FIXED_POINT);
+	camera[0]->ChangeMode(Camera::MODE::FREE);
 
 	//人数選択から
 	ChangeSelect(SELECT::NUMBER);
