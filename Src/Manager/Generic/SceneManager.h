@@ -50,6 +50,7 @@ public:
 	//–ğE
 	enum class ROLE
 	{
+		NONE,
 		KNIGHT,
 		AXEMAN,
 		MAGE,

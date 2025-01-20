@@ -8,7 +8,7 @@ class SkyDome
 {
 public:
 
-	static constexpr float ROT_SPEED = 10.0f;
+	static constexpr float ROT_SPEED = 0.05f;
 
 	static constexpr float SCALE = 100.0f;
 	static constexpr VECTOR SCALES = { SCALE, SCALE, SCALE };

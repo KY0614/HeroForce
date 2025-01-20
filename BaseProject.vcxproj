@@ -37,6 +37,10 @@
     <ClCompile Include="Src\Manager\Decoration\SoundManager.cpp" />
     <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
     <ClCompile Include="Src\Manager\Generic\InputController.cpp" />
+    <ClCompile Include="Src\Object\SelectImage.cpp" />
+    <ClCompile Include="Src\Object\Character\SelectPlayer.cpp" />
+    <ClCompile Include="Src\Manager\Decoratio\EffectManager.cpp" />
+    <ClCompile Include="Src\Manager\Generic\InputController.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneArcher.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneBrig.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneGolem.cpp" />
@@ -100,6 +104,10 @@
     <ClInclude Include="Src\Scene\FazeResult.h" />
     <ClInclude Include="Src\Scene\GameOverScene.h" />
     <ClInclude Include="Src\Manager\Decoration\SoundManager.h" />
+    <ClInclude Include="Src\Manager\Decoration\EffectManager.h" />
+    <ClInclude Include="Src\Manager\Generic\InputController.h" />
+    <ClInclude Include="Src\Object\SelectImage.h" />
+    <ClInclude Include="Src\Object\Character\SelectPlayer.h" />
     <ClInclude Include="Src\Manager\Decoration\EffectManager.h" />
     <ClInclude Include="Src\Manager\Generic\InputController.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneArcher.h" />
