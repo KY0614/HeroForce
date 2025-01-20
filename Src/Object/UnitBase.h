@@ -96,6 +96,8 @@ public:
 	const ATK GetAtk(void)const;
 	//あたり判定
 	const float GetRadius(void)const;
+	//移動前の座標位置
+	const VECTOR GetPrePos()const;
 
 	//アニメーション関数
 	void Anim(void);
@@ -115,6 +117,9 @@ public:
 	//位置の設定
 	void SetPos(const VECTOR pos);
 
+	//衝突判定
+	void CollisionStage(const Transform& stageTrans);
+
 protected:
 
 	int hp_;			//体力
@@ -124,6 +129,7 @@ protected:
 	float def_;			//防御力
 	float atkPow_;		//攻撃力
 	ATK atk_;			//現在のスキル
+	VECTOR prePos_;		//移動前の座標位置
 
 	//アニメ関係
 	ANIM anim_;								//アニメステート

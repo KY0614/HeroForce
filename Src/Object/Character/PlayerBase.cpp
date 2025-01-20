@@ -103,6 +103,9 @@ void PlayerBase::Update(void)
 	//アニメーションの更新
 	Anim();
 
+	//座標のバックアップ
+	prePos_ = trans_.pos;
+
 	//モデルの更新
 	trans_.Update();
 

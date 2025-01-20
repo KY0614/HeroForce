@@ -51,6 +51,9 @@ void ChickenBase::Create(VECTOR &pos)
 
 void ChickenBase::Update(void)
 {
+	//バックアップ
+	prePos_ = trans_.pos;	
+
 	//デバッグ処理
 	DebagUpdate();
 
@@ -64,9 +67,7 @@ void ChickenBase::Update(void)
 	SubHp();
 
 	//HPが0以下の場合
-	if (hp_ <= 0) {
-		ChangeState(STATE::DEATH);
-	}
+	if (hp_ <= 0 && state_ != STATE::END) { ChangeState(STATE::DEATH); }
 
 	//画像表示確認
 	CheckIsHelp();
@@ -175,6 +176,11 @@ void ChickenBase::SetTarget(const VECTOR pos)
 void ChickenBase::SetDamage(const int damage)
 {
 	hp_ -= damage;
+}
+
+ChickenBase::STATE ChickenBase::GetState() const
+{
+	return state_;
 }
 
 void ChickenBase::ChangeState(STATE state)

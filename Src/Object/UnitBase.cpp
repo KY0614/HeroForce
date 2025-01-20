@@ -1,4 +1,5 @@
 #include"../Application.h"
+#include"../Utility/AsoUtility.h"
 #include "UnitBase.h"
 
 UnitBase::UnitBase(void)
@@ -13,6 +14,7 @@ UnitBase::UnitBase(void)
 	animTotalTime_ = -1;
 	stepAnim_ = -1.0f;
 	speedAnim_ = 1.0f;
+	prePos_ = AsoUtility::VECTOR_ZERO;
 }
 
 UnitBase::~UnitBase(void)
@@ -80,6 +82,11 @@ const UnitBase::ATK UnitBase::GetAtk(void) const
 const float UnitBase::GetRadius(void) const
 {
 	return radius_;
+}
+
+const VECTOR UnitBase::GetPrePos() const
+{
+	return prePos_;
 }
 
 /// <summary>
@@ -163,6 +170,15 @@ void UnitBase::SetPos(const VECTOR pos)
 	trans_.pos = pos;
 }
 
+void UnitBase::CollisionStage(const Transform &stageTrans)
+{
+	auto& col = Collision::GetInstance();
+	if (col.IsHitUnitStageObject(stageTrans.modelId, trans_.pos, radius_))
+	{
+		SetPos(prePos_);
+	}
+}
+
 //ÉAÉjÉÅèIóπéûÇÃìÆÇ´
 void UnitBase::FinishAnim(void)
 {
@@ -183,6 +199,3 @@ void UnitBase::CntDown(float& _count)
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	_count -= deltaTime;
 }
-
-
-

@@ -79,10 +79,7 @@ private:
 	void CollisionEnemy(void);	//敵関連の当たり判定
 	void CollisionPlayer(void);	//プレイヤー関連の当たり判定
 	void CollisionPlayerCPU(PlayerBase& _player,const VECTOR& _pPos);	//プレイヤー(CPU)関連の当たり判定
-	void CollisionStageUnit();
-	void CollisionStagePlayer(Transform& trans, StageManager::MODEL_TYPE& type ,StageManager::HIT_TYPE& hitType);
-	void CollisionStageEnemy();
-	void CollisionStageCpu();
+	//void CollisionStageUnit();
 
 	//フェード
 	void Fade(void);

@@ -62,15 +62,19 @@ void GameScene::Init(void)
 	enemyTest_->Init();
 #endif
 
-	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU));
-	chicken_->Init();
-
 	//プレイヤー設定
 	for (int i = 0; i < PLAYER_NUM; i++)
 	{
 		players_[i] = std::make_unique<PlArcher>(SceneManager::PLAY_MODE::USER, InputManager::JOYPAD_NO::PAD1);
 		players_[i]->Init();
 	}
+	
+	//チキン設定
+	chicken_ = std::make_unique<ChickenManager>(
+		unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU),
+		stage_->GetTtans(),
+		players_[0]->GetTransform());
+	chicken_->Init();
 
 	//敵の生成(とりあえず一体だけ)
 	std::unique_ptr<Enemy> e=std::make_unique<EneAxe>();
@@ -201,7 +205,6 @@ void GameScene::Draw(void)
 void GameScene::Release(void)
 {
 	level_->Release();
-	stage_->Release();
 
 	SceneManager::GetInstance().ResetCameras();
 	SceneManager::GetInstance().ReturnSolo();
@@ -233,7 +236,6 @@ void GameScene::Collision(void)
 
 	CollisionEnemy();
 	CollisionPlayer();
-	CollisionStageUnit();
 
 #ifdef _DEBUG_COL
 
@@ -436,62 +438,18 @@ void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
 	}
 }
 
-void GameScene::CollisionStageUnit()
-{
-	for (int i = 0; i < StageManager::MODELS; i++)
-	{
-		//種類の設定
-		StageManager::MODEL_TYPE type = static_cast<StageManager::MODEL_TYPE>(i);
-
-		//衝突判定の種類を取得
-		StageManager::HIT_TYPE hitType = stage_->GetHitType(type);
-
-		//衝突判定を行わないモデルは処理を終える
-		if (hitType == StageManager::HIT_TYPE::NONE) { continue; }
-
-		//配列を取得
-		std::vector objs = stage_->GetTtans(type);
-
-		for (auto& obj : objs)
-		{
-			//各キャラクター衝突判定
-			CollisionStagePlayer(obj, type, hitType);	//プレイヤーの衝突判定
-		}
-	}
-}
-
-void GameScene::CollisionStagePlayer(Transform& trans, StageManager::MODEL_TYPE& type, StageManager::HIT_TYPE& hitType)
-{
-	auto& col = Collision::GetInstance();
-
-	for (auto& p : players_)
-	{
-		VECTOR prePos = p->GetPos();
-		switch (hitType)
-		{
-		case StageManager::HIT_TYPE::MODEL:
-			if (col.IsHitUnitStageObject(trans.modelId, p->GetPos(), p->GetRadius()))
-			{
-				p->SetTargetPos(prePos);
-			}
-			break;
-		case StageManager::HIT_TYPE::SPHERE:
-			if(AsoUtility::IsHitSpheres(trans.pos, stage_->GetRadius(type), p->GetPos(), p->GetRadius()))
-			{
-				p->SetTargetPos(prePos);
-			}
-			break;
-		}
-	}
-}
-
-void GameScene::CollisionStageEnemy()
-{
-}
-
-void GameScene::CollisionStageCpu()
-{
-}
+//void GameScene::CollisionStageUnit()
+//{
+//	auto& col = Collision::GetInstance();
+//	stage_->GetTtans();
+//	for (auto& p : players_)
+//	{
+//		if (col.IsHitUnitStageObject(stage_->GetTtans().modelId, p->GetPos(), 20.0f))
+//		{
+//			p->SetPos(p->GetPrePos());
+//		}
+//	}
+//}
 
 void GameScene::Fade(void)
 {

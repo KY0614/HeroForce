@@ -164,8 +164,6 @@ void SelectScene::Draw(void)
 	default:
 		break;
 	}
-
-
 }
 
 void SelectScene::Release(void)

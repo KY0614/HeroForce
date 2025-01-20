@@ -171,109 +171,18 @@ void ResourceManager::ResourceEnemy(void)
 void ResourceManager::ResourceStage(void)
 {
 	Resource res;
+
+	//ステージ
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stage.mv1");
+	resourcesMap_.emplace(SRC::STAGE_01, res);
+
+	//装飾
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Deco.mv1");
+	resourcesMap_.emplace(SRC::DECO_01, res);
+
 	//スカイドーム
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_SKYDOME + "SkyDome.mv1");
 	resourcesMap_.emplace(SRC::SKY_DOME, res);
-
-	//ステージ[樽]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "barrel.mv1");
-	resourcesMap_.emplace(SRC::STAGE_BARREL, res);
-
-	//ステージ[ベンチ]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "bench.mv1");
-	resourcesMap_.emplace(SRC::STAGE_BENCH, res);
-
-	//ステージ[柵長い]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "fencesLong.mv1");
-	resourcesMap_.emplace(SRC::STAGE_FENCES_LONG, res);
-
-	//ステージ[柵短め]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "fencesShort.mv1");
-	resourcesMap_.emplace(SRC::STAGE_FENCES_SHORT, res);
-
-	//ステージ[地面]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "ground.mv1");
-	resourcesMap_.emplace(SRC::STAGE_GROUND, res);
-
-	//ステージ[家01]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "house01.mv1");
-	resourcesMap_.emplace(SRC::STAGE_HOUSE_01, res);
-
-	//ステージ[家02]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "house02.mv1");
-	resourcesMap_.emplace(SRC::STAGE_HOUSE_02, res);
-
-	//ステージ[家03]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "house03.mv1");
-	resourcesMap_.emplace(SRC::STAGE_HOUSE_03, res);
-
-	//ステージ[家04]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "house04.mv1");
-	resourcesMap_.emplace(SRC::STAGE_HOUSE_04, res);
-
-	//ステージ[家05]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "house05.mv1");
-	resourcesMap_.emplace(SRC::STAGE_HOUSE_05, res);
-
-	//ステージ[物干し01]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "hunger01.mv1");
-	resourcesMap_.emplace(SRC::STAGE_HUNGER_01, res);
-
-	//ステージ[物干し02]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "hunger02.mv1");
-	resourcesMap_.emplace(SRC::STAGE_HUNGER_02, res);
-
-	//ステージ[岩01]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "rock01.mv1");
-	resourcesMap_.emplace(SRC::STAGE_ROCK_01, res);
-
-	//ステージ[岩02]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "rock02.mv1");
-	resourcesMap_.emplace(SRC::STAGE_ROCK_02, res);
-
-	//ステージ[岩03]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "rock03.mv1");
-	resourcesMap_.emplace(SRC::STAGE_ROCK_03, res);
-
-	//ステージ[包袋]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "sack.mv1");
-	resourcesMap_.emplace(SRC::STAGE_SACK, res);
-
-	//ステージ[机]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "table.mv1");
-	resourcesMap_.emplace(SRC::STAGE_TABLE, res);
-
-	//ステージ[木01]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "tree01.mv1");
-	resourcesMap_.emplace(SRC::STAGE_TREE_01, res);
-
-	//ステージ[木02]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "tree02.mv1");
-	resourcesMap_.emplace(SRC::STAGE_TREE_02, res);
-
-	//ステージ[木03]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "tree03.mv1");
-	resourcesMap_.emplace(SRC::STAGE_TREE_03, res);
-
-	//ステージ[木04]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "tree04.mv1");
-	resourcesMap_.emplace(SRC::STAGE_TREE_04, res);
-
-	//ステージ[木05]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "tree05.mv1");
-	resourcesMap_.emplace(SRC::STAGE_TREE_05, res);
-
-	//ステージ[荷車]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "wagon.mv1");
-	resourcesMap_.emplace(SRC::STAGE_WAGON, res);
-
-	//ステージ[井戸]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "well.mv1");
-	resourcesMap_.emplace(SRC::STAGE_WELL, res);
-
-	//ステージ[丸太]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "wood.mv1");
-	resourcesMap_.emplace(SRC::STAGE_WOOD, res);
 }
 
 void ResourceManager::Release(void)

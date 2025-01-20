@@ -92,7 +92,7 @@ public:
 	void SetDamage(const int damage);
 
 	//ó‘Ô‚ğ•Ô‚·
-	inline STATE GetState() const { return state_; }
+	STATE GetState() const;
 
 private:
 
