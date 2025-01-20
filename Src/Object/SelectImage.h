@@ -23,13 +23,21 @@ public:
 	static constexpr int VERTEX_NUM = 4;			//頂点数
 	static constexpr float VERTEX_ROTSPEED = 1.0f;	//頂点を回転させる速度
 
-	static constexpr float VERTEX_LEFT_X = -50.0f;	//
-	static constexpr float VERTEX_RIGHT_X = 50.0f;	//
+	static constexpr float VERTEX_LEFT_X = -50.0f;	//画像(頂点)左のX座標
+	static constexpr float VERTEX_RIGHT_X = 50.0f;	//画像(頂点)右のX座標
 
-	static constexpr float VERTEX_UNDER_Y = 70.0f;
-	static constexpr float VERTEX_TOP_Y = 170.0f;
+	static constexpr float VERTEX_UNDER_Y = 70.0f;	//画像下のY座標
+	static constexpr float VERTEX_TOP_Y = 170.0f;	//画像上のY座標
 
-	static constexpr float VERTEX_Z = -350.0f;
+	static constexpr float VERTEX_Z = -350.0f;		//頂点Z座標
+
+	static constexpr float ROLE_LEFT_X = -90.0f;
+	static constexpr float ROLE_RIGHT_X = 0.0f;
+
+	static constexpr float ROLE_UNDER_Y = 50.0f;
+	static constexpr float ROLE_TOP_Y = 190.0f;
+
+	static constexpr float ROLE_VERTEX_Z = -338.0f;		//頂点Z座標
 
 	//キー入力関連
 	static constexpr float SELECT_TIME = 1.0f;		//キー押下経過時間
@@ -40,11 +48,12 @@ public:
 	//メッシュ
 	struct Mesh {
 		VERTEX3D vertex_[4];		//頂点情報
-		VERTEX3D testVertex_[4];	//頂点情報
 		int imgHandle_;				//画像ハンドル
 
+		Mesh() : vertex_(),imgHandle_(-1){}
+		Mesh(int img) : vertex_(),imgHandle_(img){}
+
 		void DrawTwoMesh(int handle);
-		void DrawTwoMeshTest(int handle);
 	};
 
 	//矢印
@@ -52,13 +61,13 @@ public:
 		Vector2 pos;	//座標
 		int w, h;		//w:底辺,h:高さ	
 		bool isToggle_;	//オン、オフの切り替え用
-		int imgHandle_;	//画像ハンドル
 		Mesh pointMesh_;
+		int imgHandle_;	//画像ハンドル
 
 		//初期化
-		Point() : pos(0, 0), w(0), h(0), isToggle_(false),imgHandle_(-1) {}
-		Point(float x, float y, int inw, int inh, bool isT,int img) :
-			pos(x, y), w(inw), h(inh), isToggle_(isT) ,imgHandle_(img) {}
+		Point() : pos(0, 0), w(0), h(0), isToggle_(false), imgHandle_(-1) {}
+		Point(int x, int y, int inw, int inh, bool isT,int img) :
+			pos(x, y), w(inw), h(inh), isToggle_(isT) , imgHandle_(img) {}
 
 		void PointDraw(void);//矢印を描画する
 	};
@@ -80,6 +89,8 @@ public:
 	virtual void Update(void)override;
 	//描画
 	virtual void Draw(void)override;
+
+	void MoveVertexPos(void);
 
 	/// <summary>
 	/// 選択しているオブジェクトを変更する
@@ -107,6 +118,7 @@ public:
 
 	bool GetReady(void) { return isReady_; };
 
+	VECTOR GetVerPos(void) { return mesh_.vertex_[0].pos; }
 	// セッター　--------------------------------------------------
 
 	/// <summary>
@@ -114,7 +126,9 @@ public:
 	/// </summary>
 	/// <param name="pos">設定する座標</param>
 	/// <param name="i">設定するvertex配列の指定</param>
-	void SetMeshPos(VECTOR pos, int i);
+	void RotMeshPos(VECTOR pos, int i) { mesh_.vertex_[i].pos = pos; }
+
+	void SetPrevPos(VECTOR pos, int i) { prevPos_[i] = pos; }
 
 private:
 
@@ -127,8 +141,7 @@ private:
 	SelectScene::SELECT state_;
 
 	//メッシュ
-	Mesh mesh_[SceneManager::PLAYER_NUM];
-	Mesh roleMesh_;
+	Mesh mesh_;	//人数選択と操作選択の時のメッシュ
 	
 	//画像ハンドル
 	int* imgPlayerNum_;		//人数選択画像
@@ -140,6 +153,7 @@ private:
 	VECTOR leftBottom_;		//左下
 	VECTOR rightTop_;		//右上	
 	VECTOR rightBottom_;	//右下
+	VECTOR prevPos_[SceneManager::PLAYER_NUM];
 	float angle_;		
 
 	//矢印の構造体
@@ -172,6 +186,8 @@ private:
 	std::shared_ptr<SelectPlayer> player_;
 
 	VECTOR target_[SceneManager::PLAYER_NUM];
+
+	float lerpTime_;
 
 	//関数-------------------------------------------------------------------------------------
 

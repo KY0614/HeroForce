@@ -103,6 +103,7 @@ public:
 	//キー入力とコントローラ入力を共通化
 	void KeyConfigSetting(void);
 
+	void KeyBoardProcess(void);
 	void PadProcess(void);
 
 	//入力デバイス変更(もうちょっといい実装方法がありそう)
@@ -114,7 +115,6 @@ public:
 	//ゲッター	----------------------------------------------------------
 
 	SceneManager::CNTL Get1PDevice(void) { return input_[0].cntl_; };		//1Pの入力デバイスを取得する
-	SceneManager::CNTL GetDevice(void) ;		//入力デバイスを取得する
 
 	KEY_CONFIG GetConfig(void);				//入力キーを取得
 
@@ -153,12 +153,13 @@ private:
 	SELECT select_;
 
 	//デバイス
-	SceneManager::CNTL device_;
-	SceneManager::CNTL devices_[SceneManager::PLAYER_NUM];
+	//SceneManager::CNTL device_;
+	//SceneManager::CNTL devices_[SceneManager::PLAYER_NUM];
 
 	//キーコンフィグ
 	KEY_CONFIG key_;
 
+	//それぞれのプレイヤーのデバイスと入力
 	Device input_[SceneManager::PLAYER_NUM];
 
 	//状態遷移
