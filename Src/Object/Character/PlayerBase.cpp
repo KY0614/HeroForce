@@ -2,6 +2,7 @@
 #include"../Manager/SceneManager.h"
 #include"../Manager/ResourceManager.h"
 #include"PlayerInput.h"
+#include"PlayerDodge.h"
 #include "PlayerBase.h"
 
 void PlayerBase::Destroy(void)
@@ -59,7 +60,9 @@ void PlayerBase::Init(void)
 
 	skillNo_ = ATK_ACT::SKILL1;
 
-	dodgeCdt_ = DODGE_CDT_MAX;
+	//dodgeCdt_ = DODGE_CDT_MAX;
+	dodge_ = new PlayerDodge();
+	dodge_->Init();
 
 	moveSpeed_ = 0.0f;
 
@@ -183,7 +186,7 @@ void PlayerBase::Move(float _deg, VECTOR _axis)
 	{
 		ResetAnim(ANIM::WALK, SPEED_ANIM_RUN);
 	}
-	if (!IsDodge() && moveAble_)
+	if (!dodge_->IsDodge() && moveAble_)
 	{
 		moveSpeed_ = SPEED_MOVE;
 		Turn(_deg, _axis);
@@ -205,7 +208,7 @@ void PlayerBase::UserUpdate(void)
 	//ProcessInput();
 
 	//停止アニメーションになる条件
-	if (!IsMove() && !IsDodge() && 0.0f >= atkStartCnt_ &&!isAtk_&&!isSkill_)
+	if (!IsMove() && !dodge_->IsDodge() && 0.0f >= atkStartCnt_ &&!isAtk_&&!isSkill_)
 	{
 		ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 		moveSpeed_ = 0.0f;
@@ -215,7 +218,16 @@ void PlayerBase::UserUpdate(void)
 	ProcessAct();
 
 	//回避
-	Dodge();
+	//Dodge();
+	dodge_->Update(trans_);
+	if (dodge_->IsDodge() && !dodge_->IsCoolDodge()) {
+		atk_.ResetCnt();
+		atkStartCnt_ = 0.0f;
+		isAtk_ = false;
+		isSkill_ = false;
+		moveAble_ = true;
+	}
+
 
 }
 
@@ -315,7 +327,7 @@ void PlayerBase::DrawDebug(void)
 	DrawFormatString(0, 32, 0xffffff
 		, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\natkStartTime(%f)\natkStartCnt(%f)\nskillType(%d)"
 		, atk_.cnt_, atk_.IsAttack(), atk_.IsBacklash()
-		, dodgeCnt_, atk_.cnt_, atkStartTime_[static_cast<int>(SKILL_NUM::ONE)], atkStartCnt_, atkType_);
+		, dodge_->GetDodgeCnt(), atk_.cnt_, atkStartTime_[static_cast<int>(SKILL_NUM::ONE)], atkStartCnt_, atkType_);
 
 
 	//DrawFormatString(0, 32, 0xffffff, "atkPos(%f,%f,%f)", atk_.pos_.x, atk_.pos_.y, atk_.pos_.z);
@@ -442,7 +454,8 @@ void PlayerBase::Reset(void)
 
 	skillNo_ = ATK_ACT::SKILL1;
 
-	dodgeCdt_ = DODGE_CDT_MAX;
+	//dodgeCdt_ = DODGE_CDT_MAX;
+	dodge_->Init();
 	moveSpeed_ = 0.0f;
 	ChangeControll(SceneManager::CNTL::KEYBOARD);
 
@@ -494,36 +507,36 @@ void PlayerBase::ChangeSkillControll(ATK_ACT _skill)
 
 
 
-void PlayerBase::Dodge(void)
-{
-	//ドッジフラグがtrueになったら
-	if (IsDodge() && !IsCoolDodge())
-	{
-		CntUp(dodgeCnt_);
-		//スキル中に回避が出た時にスキルのカウントをリセット
-		atk_.ResetCnt();
-		if (dodgeCnt_ < FRAME_DODGE_MAX)
-		{
-			VECTOR dir = trans_.GetForward();
-			//移動方向
-			VECTOR movePow = VScale(dir, SPEED_DODGE);
-			//移動処理
-			trans_.pos = VAdd(trans_.pos, movePow);
-		}
-		else
-		{
-			dodgeCdt_ = 0.0f;
-		}
-	}
-	else
-	{
-		CntUp(dodgeCdt_);
-		ResetDodgeFrame();
-#ifdef DEBUG_ON
-		color_Col_ = 0xffffff;
-#endif // DEBUG_ON
-	}
-}
+//void PlayerBase::Dodge(void)
+//{
+//	//ドッジフラグがtrueになったら
+//	if (IsDodge() && !IsCoolDodge())
+//	{
+//		CntUp(dodgeCnt_);
+//		//スキル中に回避が出た時にスキルのカウントをリセット
+//		atk_.ResetCnt();
+//		if (dodgeCnt_ < FRAME_DODGE_MAX)
+//		{
+//			VECTOR dir = trans_.GetForward();
+//			//移動方向
+//			VECTOR movePow = VScale(dir, SPEED_DODGE);
+//			//移動処理
+//			trans_.pos = VAdd(trans_.pos, movePow);
+//		}
+//		else
+//		{
+//			dodgeCdt_ = 0.0f;
+//		}
+//	}
+//	else
+//	{
+//		CntUp(dodgeCdt_);
+//		ResetDodgeFrame();
+//#ifdef DEBUG_ON
+//		color_Col_ = 0xffffff;
+//#endif // DEBUG_ON
+//	}
+//}
 void PlayerBase::Damage(void)
 {
 	//とりあえず1ダメージ減らす
@@ -609,8 +622,10 @@ void PlayerBase::ProcessAct(void)
 	//回避
 	if (ins.CheckAct(ACT_CNTL::DODGE) && IsSkillable())
 	{
+		float dodgeCnt = dodge_->GetDodgeCnt();
 		ResetAnim(ANIM::DODGE, SPEED_ANIM_DODGE);
-		CntUp(dodgeCnt_);
+		CntUp(dodgeCnt);
+		dodge_->SetDodgeCnt(dodgeCnt);
 	}
 
 }

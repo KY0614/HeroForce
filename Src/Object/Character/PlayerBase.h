@@ -12,6 +12,7 @@
 #define DEBUG_ON
 //#define INPUT_DEBUG_ON
 #define DEBUG_COOL
+class PlayerDodge;
 class PlayerBase :
     public UnitBase
 {
@@ -396,6 +397,9 @@ private:
 
     //std::map<ACT_CNTL, std::function<void(void)>>changeActCntl_;        //アクションごとに返すボタンを変更
     //std::function<bool(void)>actCntlUpdate_;
+
+    //回避機能
+    PlayerDodge* dodge_;
 
 #ifdef DEBUG_INPUT
 //************************************************************************

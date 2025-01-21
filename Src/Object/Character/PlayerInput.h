@@ -63,7 +63,6 @@ private:
     //ƒVƒ“ƒOƒ‹ƒgƒ“‰»‚·‚é‚½‚ß‚É
 	PlayerInput(void);
 	~PlayerInput(void)=default;
-    PlayerBase* player_;
 
     float leftStickX_;
     float leftStickY_;
