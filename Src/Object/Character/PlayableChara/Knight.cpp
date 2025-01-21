@@ -1,16 +1,9 @@
 #include "Knight.h"
 
-Knight::Knight(const SceneManager::CNTL _cntl) :PlayerBase(_cntl)
+Knight::Knight(void)
 {
-	cntl_ = _cntl;
+	
 }
-
-Knight::Knight(const InputManager::JOYPAD_NO _padNum) : PlayerBase(_padNum)
-{
-	padNum_ = _padNum;
-}
-
-
 void Knight::SetParam(void)
 {
 	trans_.SetModel(
@@ -24,6 +17,8 @@ void Knight::SetParam(void)
 		0.0f, AsoUtility::Deg2RadF(180.0f),
 		0.0f
 	);
+
+	hp_ = MAX_HP;
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 }
 

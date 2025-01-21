@@ -4,13 +4,9 @@
 
 #include "Archer.h"
 
-Archer::Archer(const SceneManager::CNTL _cntl) :PlayerBase(_cntl)
+Archer::Archer(void)
 {
-	cntl_ = _cntl;
-}
-Archer::Archer(const InputManager::JOYPAD_NO _padNum) : PlayerBase(_padNum)
-{
-	padNum_ = _padNum;
+	
 }
 
 void Archer::SetParam(void)

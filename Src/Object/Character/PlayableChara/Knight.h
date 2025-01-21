@@ -93,8 +93,7 @@ public:
     static constexpr int SKILL_ONE_NUM = 2;
     static constexpr int SKILL_TWO_NUM = 18;
     static constexpr int BLOCKING_NUM = 21;
-    Knight(const SceneManager::CNTL _cntl);
-    Knight(const InputManager::JOYPAD_NO _padNum);
+    Knight(void);
     ~Knight(void) = default;
     void SetParam(void)override;
 

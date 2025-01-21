@@ -88,8 +88,9 @@ public:
         , MAX
     };
 
-    PlayerBase(const InputManager::JOYPAD_NO _padNum) :padNum_(_padNum) {}
-    PlayerBase(const SceneManager::CNTL _cntl) :cntl_(_cntl) {}
+    //PlayerBase(const InputManager::JOYPAD_NO _padNum) :padNum_(_padNum) {}
+    //PlayerBase(const SceneManager::CNTL _cntl) :cntl_(_cntl) {}
+    PlayerBase(void);
     ~PlayerBase(void) = default;
     void Destroy(void)override;
     virtual void SetParam(void) = 0;

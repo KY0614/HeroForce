@@ -1,13 +1,8 @@
 #include "AxeMan.h"
 
-AxeMan::AxeMan(const SceneManager::CNTL _cntl) : PlayerBase(_cntl)
+AxeMan::AxeMan(void)
 {
-	cntl_ = _cntl;
-}
-
-AxeMan::AxeMan(const InputManager::JOYPAD_NO _padNum) : PlayerBase(_padNum)
-{
-	padNum_ = _padNum;
+	
 }
 
 void AxeMan::SetParam(void)

@@ -79,8 +79,7 @@ public:
     static constexpr float MULTIHIT_INTERVAL = 0.5f;
     static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//UŒ‚ŠJn”»’è‚Ì‘å‚«‚³
 
-    AxeMan(const SceneManager::CNTL _cntl);
-    AxeMan(const InputManager::JOYPAD_NO _padNum);
+    AxeMan(void);
     ~AxeMan(void) = default;
     void SetParam(void)override;
 protected:

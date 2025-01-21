@@ -67,8 +67,7 @@ public:
     static constexpr float ARROW_SPEED = 10.0f;	//–î‚ÌƒŠƒ[ƒhŠÔ
 
 
-    Archer(const SceneManager::CNTL _cntl);
-    Archer(const InputManager::JOYPAD_NO _padNum);
+    Archer(void);
     ~Archer(void) = default;
     void SetParam(void)override;
 

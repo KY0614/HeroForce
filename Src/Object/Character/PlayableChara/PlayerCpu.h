@@ -25,8 +25,7 @@ public:
     };
 
     //コンストラクタ＆デストラクタ
-    PlayerCpu(const SceneManager::CNTL _cntl);
-    PlayerCpu(const InputManager::JOYPAD_NO _padNum);
+    PlayerCpu(void);
     ~PlayerCpu(void)=default;
 
     void SetParam(void)override;
@@ -42,7 +41,7 @@ public:
     //ゲッタ
    //-----------------------------------------------
    //攻撃開始判定
-    const float GetAtkStartRange(void) { return atkStartRange_; }
+    const int GetAtkStartRange(void) { return atkStartRange_; }
 
     //索敵判定
     const float GetSearchRange(void) { return searchRange_; }

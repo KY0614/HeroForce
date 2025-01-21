@@ -1,16 +1,10 @@
 //#include"../Manager/Collision.h"
 #include "PlayerCpu.h"
 
-PlayerCpu::PlayerCpu(const SceneManager::CNTL _cntl) :PlayerBase(_cntl)
+PlayerCpu::PlayerCpu(void)
 {
-	cntl_ = _cntl;
+	
 }
-
-PlayerCpu::PlayerCpu(const InputManager::JOYPAD_NO _padNum) :PlayerBase(_padNum)
-{
-	padNum_ = _padNum;
-}
-
 void PlayerCpu::SetParam(void)
 {
 	cpuStateChanges_.emplace(CPU_STATE::NORMAL, std::bind(&PlayerCpu::CpuChangeNml, this));

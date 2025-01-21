@@ -5,6 +5,33 @@
 #include"../../../Manager/Generic/ResourceManager.h"
 #include "PlayerBase.h"
 
+PlayerBase::PlayerBase(void)
+{
+	skillNo_ = ATK_ACT::SKILL1;
+
+	//dodgeCdt_ = DODGE_CDT_MAX;
+	dodge_ = new PlayerDodge();
+	dodge_->Init();
+
+	moveSpeed_ = 0.0f;
+
+	userOnePos_ = { -400.0f,0.0f,0.0f };
+
+
+	atk_.isHit_ = false;
+
+	multiHitInterval_ = 0.0f;
+
+	atkStartCnt_ = 0.0f;
+
+	isPush_ = false;
+
+	for (int i = 0; i < static_cast<int>(ATK_ACT::MAX); i++)
+	{
+		coolTime_[i] = coolTimeMax_[i];
+	}
+}
+
 void PlayerBase::Destroy(void)
 {
 
@@ -50,7 +77,7 @@ void PlayerBase::Init(void)
 	ChangeAct(ATK_ACT::ATK);
 
 
-	ChangeControll(SceneManager::CNTL::PAD);
+	ChangeControll(SceneManager::CNTL::KEYBOARD);
 
 	ChangeSkillControll(ATK_ACT::SKILL1);
 
