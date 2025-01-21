@@ -54,7 +54,7 @@ public:
 	//****************************************************************
 
 	//コンストラクタ
-	Enemy() = default;
+	Enemy(const VECTOR& _spawnPos);
 	//デストラクタ
 	~Enemy() = default;
 

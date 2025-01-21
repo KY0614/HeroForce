@@ -1,6 +1,11 @@
 #include"Enemy.h"
 #include "EneMage.h"
 
+EneMage::EneMage(const VECTOR& _spawnPos) : Enemy(_spawnPos)
+{
+	trans_.pos = _spawnPos;
+}
+
 void EneMage::SetParam(void)
 {
 	//UŒ‚Œx

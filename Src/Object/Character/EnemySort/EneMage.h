@@ -78,6 +78,9 @@ public:
 		,SKILL_ONE_BACKLASH
 		,0.0f };
 
+	//コンストラクタ
+	EneMage(const VECTOR& _spawnPos);
+
 private:
 
 	//****************************************************************

@@ -1,6 +1,11 @@
 #include"Enemy.h"
 #include "EneBrig.h"
 
+EneBrig::EneBrig(const VECTOR& _spawnPos) : Enemy(_spawnPos)
+{
+	trans_.pos = _spawnPos;
+}
+
 void EneBrig::SetParam(void)
 {
 	//çUåÇåxçê

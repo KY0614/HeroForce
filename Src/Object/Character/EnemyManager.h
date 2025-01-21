@@ -22,6 +22,12 @@ public:
 		MAX,
 	};
 
+	//コンストラクタ
+	EnemyManager(std::vector<VECTOR> _pos) : createPos_(_pos) {};
+
+	//デストラクタ
+	~EnemyManager() = default;
+
 	void Init(void);
 	void Update(VECTOR _target);
 	void Draw(void);
@@ -38,7 +44,7 @@ public:
 	const int GetActiveNum(void) { return activeNum_; }
 
 	//倒された敵の後処理 _num=倒された敵の配列番号
-	void DethEnemy(int _num);
+	void DeathEnemy(int _num);
 private:
 
 	//更新等をかける動きのある敵
@@ -46,6 +52,9 @@ private:
 
 	//アクティブな敵の総数
 	int activeNum_;
+
+	//生成座標
+	std::vector<VECTOR> createPos_;
 
 	
 	//引数の敵をアクティブ状態に

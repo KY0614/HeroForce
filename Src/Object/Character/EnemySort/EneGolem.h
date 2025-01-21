@@ -134,6 +134,9 @@ public:
 	//攻撃回数
 	static constexpr int SKILL_THREE_MAX_CNT = 5;				//スキル３の攻撃回数
 
+	//コンストラクタ
+	EneGolem(const VECTOR& _spawnPos);
+
 private:	
 	//****************************************************************
 	//変数

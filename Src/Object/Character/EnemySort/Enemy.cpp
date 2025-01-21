@@ -4,6 +4,11 @@
 #include"../../../Utility/AsoUtility.h"
 #include "Enemy.h"
 
+Enemy::Enemy(const VECTOR& _spawnPos)
+{
+	trans_.pos = _spawnPos;
+}
+
 void Enemy::Destroy(void)
 {
 	animNum_.clear();
@@ -27,7 +32,6 @@ void Enemy::Init(void)
 	InitAnim();
 
 	//‹¤’Ê‚Ì•Ï”‚Ì‰Šú‰»
-	trans_.pos = AsoUtility::VECTOR_ZERO;
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::AngleAxis(AsoUtility::Deg2RadF(180.0f), AsoUtility::AXIS_Y);
 	ChangeState(STATE::NORMAL);

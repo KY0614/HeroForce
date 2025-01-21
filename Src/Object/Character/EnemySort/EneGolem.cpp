@@ -1,6 +1,11 @@
 #include"Enemy.h"
 #include "EneGolem.h"
 
+EneGolem::EneGolem(const VECTOR& _spawnPos) : Enemy(_spawnPos)
+{
+	trans_.pos = _spawnPos;
+}
+
 void EneGolem::SetParam(void)
 {
 	//çUåÇåxçê

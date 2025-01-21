@@ -59,6 +59,9 @@ public:
 		,SKILL_ONE_DURATION
 		,SKILL_ONE_BACKLASH
 		,0.0f };	
+
+	//コンストラクタ
+	EneAxe(const VECTOR& _spawnPos);
 	
 private:
 	//****************************************************************

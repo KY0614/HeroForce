@@ -60,6 +60,9 @@ public:
 		,SKILL_ONE_BACKLASH
 		,0.0f };
 
+	//コンストラクタ
+	EneBrig(const VECTOR& _spawnPos);
+
 private:
 	//****************************************************************
 	//関数

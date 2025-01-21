@@ -68,6 +68,9 @@ public:
 		,SKILL_ONE_BACKLASH
 		,0.0f };
 
+	//コンストラクタ
+	EneArcher(const VECTOR& _spawnPos);
+
 private:
 	//****************************************************************
 	//変数

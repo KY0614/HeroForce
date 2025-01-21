@@ -2,6 +2,11 @@
 #include"Enemy.h"
 #include "EneArcher.h"
 
+EneArcher::EneArcher(const VECTOR& _spawnPos) : Enemy(_spawnPos)
+{
+	trans_.pos = _spawnPos;
+}
+
 void EneArcher::Destroy(void)
 {
 	Enemy::Destroy();

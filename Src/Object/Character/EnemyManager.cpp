@@ -53,20 +53,21 @@ void EnemyManager::CreateEnemy(void)
 	switch (type)
 	{
 	case EnemyManager::TYPE::ARCHER:
-		enm = new EneArcher();
+		enm = new EneArcher(createPos_[GetRand(createPos_.size() - 1)]);
 		break;
 	case EnemyManager::TYPE::AXE:
-		enm = new EneAxe();
+		enm = new EneAxe(createPos_[GetRand(createPos_.size() - 1)]);
 		break;
 	case EnemyManager::TYPE::BRIG:
-		enm = new EneBrig();
+		enm = new EneBrig(createPos_[GetRand(createPos_.size() - 1)]);
 		break;
 	case EnemyManager::TYPE::GOLEM:
 		//ƒS[ƒŒƒ€‚Íƒ{ƒXƒLƒƒƒ‰‚È‚Ì‚Å‚±‚±‚Å‚Í¶¬‚µ‚È‚¢
+		//enm = new EneGolem();
 		return;
 		break;
 	case EnemyManager::TYPE::MAGE:
-		enm = new EneMage();
+		enm = new EneMage(createPos_[GetRand(createPos_.size() - 1)]);
 		break;
 	default:
 		return;
@@ -86,7 +87,7 @@ void EnemyManager::CreateEnemy(void)
 	activeNum_++;
 }
 
-void EnemyManager::DethEnemy(int _num)
+void EnemyManager::DeathEnemy(int _num)
 {
 	//“|‚³‚ê‚½“G‚ÌÁ‹Ž
 	activeEnemys_[_num]->Destroy();
