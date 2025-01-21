@@ -1,7 +1,7 @@
 #pragma once
 #include <functional>
 #include <vector>
-#include "../Character/PlayerBase.h"
+#include "../Character/PlayableChara/PlayerBase.h"
 #include "../../Common/Fader.h"
 
 class LevelupNotice;

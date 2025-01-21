@@ -58,8 +58,6 @@ void GameScene::Init(void)
 	level_ = std::make_unique<LevelScreenManager>();
 	level_->Init();
 
-	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU));
-	chicken_->Init();
 
 	//プレイヤー設定
 	playerMng_ = std::make_unique<PlayerManager>();
@@ -68,6 +66,13 @@ void GameScene::Init(void)
 	//敵マネージャの生成
 	enmMng_ = std::make_unique<EnemyManager>();
 	enmMng_->Init();
+
+	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU),
+		stage_->GetTtans(),
+		playerMng_->GetPlayer(0)->GetTransform());
+	chicken_->Init();
+
+
 
 	//カメラの設定
 	auto cameras = SceneManager::GetInstance().GetCameras();
@@ -430,7 +435,7 @@ void GameScene::LevelUpReflection()
 	{
 		if (level_->GetPreType(i) != LevelScreenManager::TYPE::MAX)
 		{
-			level_->EffectSyne(*players_[i], i);
+			level_->EffectSyne(*playerMng_->GetPlayer(i), i);
 		}
 	}
 	
@@ -443,7 +448,7 @@ void GameScene::LevelUpReflection()
 
 	for (int i = 0; i < plNum; i++)
 	{
-		level_->Reflection(*players_[i], i);
+		level_->Reflection(*playerMng_->GetPlayer(i), i);
 	}
 }
 
