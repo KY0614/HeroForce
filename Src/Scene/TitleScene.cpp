@@ -6,7 +6,7 @@
 #include "../Manager/Generic/SceneManager.h"
 #include "../Manager/Generic/InputManager.h"
 #include "../Manager/Generic/Camera.h"
-#include "../Manager/GameSystem/DataBank.h"
+#include "../Shader/PixelShader.h"
 #include "TitleScene.h"
 
 TitleScene::TitleScene(void)
@@ -37,6 +37,9 @@ void TitleScene::Update(void)
 	InputManager& ins = InputManager::GetInstance();
 	SceneManager& mng = SceneManager::GetInstance();
 
+	//カウント更新
+	step_ += mng.GetDeltaTime();
+
 	//スカイドーム更新
 	sky_->Update();
 
@@ -61,7 +64,15 @@ void TitleScene::Draw(void)
 		true,
 		false);
 
+	auto& ps = PixelShader::GetInstance();
+
 	//メッセージ描画
+	/*COLOR_F buf = COLOR_F{ step_ };
+	ps.DrawTimeGraphToShader(
+		{ MES_POS_X ,MES_POS_Y },
+		imgMes_,
+		PixelShader::PS_TYPE::YELLOW_BLINK,
+		buf);*/
 	DrawRotaGraph(
 		MES_POS_X,MES_POS_Y,
 		1.0f,
@@ -74,28 +85,4 @@ void TitleScene::Draw(void)
 void TitleScene::Release(void)
 {
 	sky_->Release();
-}
-
-void TitleScene::DrawLogo(void)
-{
-
-	int cx = Application::SCREEN_SIZE_X / 2;
-	int cy = Application::SCREEN_SIZE_Y / 2;
-
-	// タイトルロゴ
-	DrawRotaGraph(
-		cx, cy - 200,
-		1.0f, 0.0f, imgLogo_, true);
-
-	DrawString(cx, cy - 200, "HeroForce", 0xff0000, true);
-
-	// Pushメッセージ
-	std::string msg = "Push 「Space」 or 「Bボタン」";
-	SetFontSize(28);
-	int len = (int)strlen(msg.c_str());
-	int width = GetDrawStringWidth(msg.c_str(), len);
-	DrawFormatString(cx - (width / 2), 400, 0x87cefa, msg.c_str());
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	SetFontSize(16);
-
 }

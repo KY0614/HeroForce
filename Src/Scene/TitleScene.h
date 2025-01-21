@@ -20,7 +20,9 @@ public:
 	static constexpr int LOGO_POS_Y = Application::SCREEN_SIZE_Y / 2 -30;
 
 	//メッセージ位置
+	//static constexpr int MES_POS_X = Application::SCREEN_SIZE_X / 2 - 300 / 2;
 	static constexpr int MES_POS_X = Application::SCREEN_SIZE_X / 2;
+	//static constexpr int MES_POS_Y = Application::SCREEN_SIZE_Y - 100 - 44 / 2;
 	static constexpr int MES_POS_Y = Application::SCREEN_SIZE_Y - 100;
 
 	// コンストラクタ
@@ -34,14 +36,14 @@ public:
 
 private:
 
+	//更新用ステップ
+	float step_;
+
 	// タイトルロゴ
 	int imgLogo_;
 	int imgMes_;
 
 	//スカイドーム
 	std::unique_ptr<SkyDome> sky_;
-
-	// ロゴ描画
-	void DrawLogo(void);
 
 };

@@ -251,5 +251,6 @@
     <FxCompile Include="Src\Shader\HLSL\ColorTex.hlsl" />
     <FxCompile Include="Src\Shader\HLSL\Fade.hlsl" />
     <FxCompile Include="Src\Shader\HLSL\FadeTextrure.hlsl" />
+    <FxCompile Include="Src\Shader\HLSL\YellowBlink.hlsl" />
   </ItemGroup>
 </Project>
