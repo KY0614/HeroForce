@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\PlayerDodge.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerInput.cpp" />
     <ClCompile Include="Src\Object\JobManagerBase.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Knight.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Mage.cpp" />
@@ -130,6 +132,8 @@
     <ClInclude Include="Src\Object\Character\PlayerAnim.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\PlayerBase.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\PlayerCpu.h" />
+    <ClInclude Include="Src\Object\Character\PlayerDodge.h" />
+    <ClInclude Include="Src\Object\Character\PlayerInput.h" />
     <ClInclude Include="Src\Object\Character\PlayerManager.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.h" />
     <ClInclude Include="Src\Object\Common\Transform.h" />

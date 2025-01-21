@@ -1,6 +1,6 @@
 #pragma once
 #include<DxLib.h>
-#include"../../Manager/InputManager.h"
+#include"../../Manager/Generic/InputManager.h"
 class PlayerBase;
 class PlayerInput
 {

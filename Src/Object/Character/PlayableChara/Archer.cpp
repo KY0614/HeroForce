@@ -1,4 +1,5 @@
 #include"../Manager/Generic/ResourceManager.h"
+#include"../Manager/Generic/SceneManager.h"
 #include"../../Arrow.h"
 
 #include "Archer.h"

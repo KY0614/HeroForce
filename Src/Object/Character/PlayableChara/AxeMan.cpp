@@ -86,12 +86,12 @@ void AxeMan::InitCharaAnim(void)
 	animNum_.emplace(ANIM::SKILL_2, SKILL_TWO_NUM);
 }
 
-//void PlAxe::ChargeAct(void)
+//void AxeMan::ChargeAct(void)
 //{
 //
 //}
 
-void PlAxe::SkillOneInit(void)
+void AxeMan::SkillOneInit(void)
 {
 	//if (!IsAtkAction() && !isCool_[static_cast<int>(skillNo_)])
 	//{
