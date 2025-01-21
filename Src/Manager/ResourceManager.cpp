@@ -45,6 +45,11 @@ void ResourceManager::InitSelect(void)
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Left_point.png", 1, 1, 52, 52);
 	resourcesMap_.emplace(SRC::LEFT_POINT, res);
 
+	//èÄîı
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "test.png", 1, 1, 500, 200);
+	resourcesMap_.emplace(SRC::READY, res);
+
+
 	ResourcePlayer();
 	ResourceStage();
 }

@@ -66,6 +66,7 @@ public:
 		PLAYER_NUM,		//l”‘I‘ð
 		RIGHT_POINT,	//‰E–îˆó
 		LEFT_POINT,		//¶–îˆó
+		READY,			//€”õ
 
 
 	};
