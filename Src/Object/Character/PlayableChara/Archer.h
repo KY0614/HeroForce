@@ -67,8 +67,7 @@ public:
     static constexpr float ARROW_SPEED = 10.0f;	//矢のリロード時間
 
 
-    Archer(const SceneManager::CNTL _cntl);
-    Archer(const InputManager::JOYPAD_NO _padNum);
+    Archer(void);
     ~Archer(void) = default;
     void SetParam(void)override;
 
@@ -101,7 +100,7 @@ protected:
     void SkillTwoInit(void)override;
 
     //弓連射用
-    void NmlActCommon(void)override;
+    //void NmlActCommon (void)override;
 
     //弓矢一つのatk初期化
     void InitArrowAtk(ATK & arrowAtk);

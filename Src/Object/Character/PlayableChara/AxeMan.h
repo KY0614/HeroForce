@@ -79,8 +79,7 @@ public:
     static constexpr float MULTIHIT_INTERVAL = 0.5f;
     static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//攻撃開始判定の大きさ
 
-    AxeMan(const SceneManager::CNTL _cntl);
-    AxeMan(const InputManager::JOYPAD_NO _padNum);
+    AxeMan(void);
     ~AxeMan(void) = default;
     void SetParam(void)override;
 protected:
@@ -94,7 +93,7 @@ protected:
     //固有アニメーション番号の初期化
     void InitCharaAnim(void)override;
 
-    void ChargeAct(void)override;
+    //void ChargeAct(void)override;
 
     void SkillOneInit(void)override;
     void SkillTwoInit(void)override;

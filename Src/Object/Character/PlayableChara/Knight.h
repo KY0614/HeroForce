@@ -8,7 +8,7 @@ public:
     //スキル使用開始時にクールタイムを増やす時間
     static constexpr float SKILL_TWO_START_COOLTIME = 3.0f;
 
-    //ガード可能になる残りクールタイム(ガード時間1秒確保したいから)
+    //ガード可能になる残りクールタイム(ガード時間最低1秒確保したいから)
     static constexpr float GUARD_STARTABLE_COOL = 4.0f;
 #ifdef DEBUG_COOL
     //クールタイム
@@ -93,8 +93,7 @@ public:
     static constexpr int SKILL_ONE_NUM = 2;
     static constexpr int SKILL_TWO_NUM = 18;
     static constexpr int BLOCKING_NUM = 21;
-    Knight(const SceneManager::CNTL _cntl);
-    Knight(const InputManager::JOYPAD_NO _padNum);
+    Knight(void);
     ~Knight(void) = default;
     void SetParam(void)override;
 
@@ -117,8 +116,8 @@ protected:
     //固有アニメーション番号の初期化
     void InitCharaAnim(void)override;
 
-    //長押しスキル
-    void ChargeAct(void)override;
+    ////長押しスキル
+    //void ChargeAct(void)override;
 
 private:
     float guardCnt_;        //ガード時間

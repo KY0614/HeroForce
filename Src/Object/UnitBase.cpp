@@ -125,11 +125,11 @@ void UnitBase::Anim(void)
 	// 再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
 
-	for (auto& tran : transArray_)
-	{
-		// 再生するアニメーション時間の設定
-		MV1SetAttachAnimTime(tran.modelId, atcAnim_, stepAnim_);
-	}
+	//for (auto& tran : transArray_)
+	//{
+	//	// 再生するアニメーション時間の設定
+	//	MV1SetAttachAnimTime(tran.modelId, atcAnim_, stepAnim_);
+	//}
 }
 
 
@@ -161,20 +161,20 @@ void UnitBase::ResetAnim(const ANIM _anim, const float _speed)
 	// 再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
 
-	for (auto& tran : transArray_)
-	{
-		//デタッチ
-		//実質atcAnimの初期化
-		MV1DetachAnim(tran.modelId, atcAnim_);
-		//アタッチ
-		//実質atcAnimの代入
-		atcAnim_ = MV1AttachAnim(tran.modelId, animNum_[anim_]);
+	//for (auto& tran : transArray_)
+	//{
+	//	//デタッチ
+	//	//実質atcAnimの初期化
+	//	MV1DetachAnim(tran.modelId, atcAnim_);
+	//	//アタッチ
+	//	//実質atcAnimの代入
+	//	atcAnim_ = MV1AttachAnim(tran.modelId, animNum_[anim_]);
 
-		animTotalTime_ = MV1GetAttachAnimTotalTime(tran.modelId, atcAnim_);
+	//	animTotalTime_ = MV1GetAttachAnimTotalTime(tran.modelId, atcAnim_);
 
-		// 再生するアニメーション時間の設定
-		MV1SetAttachAnimTime(tran.modelId, atcAnim_, stepAnim_);
-	}
+	//	// 再生するアニメーション時間の設定
+	//	MV1SetAttachAnimTime(tran.modelId, atcAnim_, stepAnim_);
+	//}
 }
 
 void UnitBase::SetIsHit(const bool _flag)

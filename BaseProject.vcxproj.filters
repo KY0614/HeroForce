@@ -60,7 +60,6 @@
     <ClCompile Include="Src\Scene\FazeResult.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\Timer.cpp" />
     <ClCompile Include="Src\Object\Character\EnemyManager.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayerAnim.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\PlayerCpu.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuAxe.cpp" />
@@ -80,6 +79,8 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Src\Shader\PixelShader.cpp" />
     <ClCompile Include="Src\Common\ShaderFade.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerDodge.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerInput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\Character\PlayableChara\PlayerBase.h" />
@@ -149,7 +150,6 @@
     <ClInclude Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.h" />
     <ClInclude Include="Src\Object\Character\PlayerManager.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\PlayerCpu.h" />
-    <ClInclude Include="Src\Object\Character\PlayerBase.h" />
     <ClInclude Include="Src\Object\Character\PlayerAnim.h" />
     <ClInclude Include="Src\Object\Character\EnemyManager.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\Enemy.h" />
@@ -195,6 +195,8 @@
     <ClInclude Include="Src\Common\IntVector3.h" />
     <ClInclude Include="Src\Common\Quaternion.h" />
     <ClInclude Include="Src\Common\Vector2.h" />
+    <ClInclude Include="Src\Object\Character\PlayerDodge.h" />
+    <ClInclude Include="Src\Object\Character\PlayerInput.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">

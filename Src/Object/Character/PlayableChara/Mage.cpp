@@ -1,13 +1,8 @@
 #include "Mage.h"
 
-Mage::Mage(const SceneManager::CNTL _cntl) :PlayerBase(_cntl)
+Mage::Mage(void)
 {
-	cntl_ = _cntl;
-}
-
-Mage::Mage(const InputManager::JOYPAD_NO _padNum) : PlayerBase(_padNum)
-{
-	padNum_ = _padNum;
+	hp_ = MAX_HP;
 }
 
 void Mage::SetParam(void)
