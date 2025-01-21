@@ -23,9 +23,6 @@ public:
     static constexpr float SKILL_ONE_START = 10.0f;
     static constexpr float SKILL_TWO_START = 0.2f;
 
-    //ƒXƒLƒ‹‚P‚Ì’·‰Ÿ‚µ‚µ‚Ä‚¢‚È‚©‚Á‚½‚ÌUŒ‚”­¶
-    static constexpr float SKILL_ONE_START_NOCHARGE = 3.5f;
-
     //ŠeUŒ‚‚Ì‘±ŠÔ
     static constexpr float FRAME_ATK_DURATION = 0.5f - ATK_START;
     static constexpr float FRAME_SKILL1_DURATION = 0.7f;

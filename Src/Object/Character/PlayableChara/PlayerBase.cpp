@@ -17,7 +17,6 @@ PlayerBase::PlayerBase(void)
 
 	userOnePos_ = { -400.0f,0.0f,0.0f };
 
-
 	atk_.isHit_ = false;
 
 	multiHitInterval_ = 0.0f;
@@ -25,6 +24,10 @@ PlayerBase::PlayerBase(void)
 	atkStartCnt_ = 0.0f;
 
 	isPush_ = false;
+
+	dodge_ = nullptr;
+
+	moveAble_ = true;
 
 	for (int i = 0; i < static_cast<int>(ATK_ACT::MAX); i++)
 	{
@@ -231,7 +234,10 @@ void PlayerBase::UserUpdate(void)
 	cntlUpdate_();
 
 	//それぞれの入力処理
-	PlayerInput::GetInstance().Update(this,padNum_);
+	PlayerInput::GetInstance().Update(this,padNum_,cntl_);
+
+
+
 	//ProcessInput();
 
 	//停止アニメーションになる条件
