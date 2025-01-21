@@ -29,8 +29,8 @@ public:
 	static constexpr float VERTEX_UNDER_Y = 70.0f;	//画像下のY座標
 	static constexpr float VERTEX_TOP_Y = 170.0f;	//画像上のY座標
 
-	static constexpr float VERTEX_Z = -350.0f;		//頂点Z座標
-	static constexpr float VERTEX_UNDER_Z = -338.0f;		//頂点Z座標
+	static constexpr float VERTEX_Z = -350.0f;		//頂点上部Z座標
+	static constexpr float VERTEX_UNDER_Z = -338.0f;//頂点下部のZ座標
 
 	static constexpr float ROLE_LEFT_X = -90.0f;
 	static constexpr float ROLE_RIGHT_X = 0.0f;
@@ -39,6 +39,14 @@ public:
 	static constexpr float ROLE_TOP_Y = 190.0f;
 
 	static constexpr float ROLE_VERTEX_Z = -338.0f;		//頂点Z座標
+
+	//左矢印
+	static constexpr float POINTL_LEFT_X = -110.0f;
+	static constexpr float POINTL_RIGHT_X = -58.0f;
+	static constexpr float POINTL_TOP_Y = 146.0f;
+	static constexpr float POINTL_UNDER_X = 94.0f;
+
+	static constexpr int BLEND_PARAM = 128;			//ブレンドモードの強さ
 
 	//キー入力関連
 	static constexpr float SELECT_TIME = 1.0f;		//キー押下経過時間
@@ -51,7 +59,6 @@ public:
 		VERTEX3D vertex_[VERTEX_NUM];		//頂点情報
 
 		Mesh() : vertex_(){}
-		Mesh(int img) : vertex_(){}
 
 		void DrawTwoMesh(int handle);
 	};
@@ -114,10 +121,13 @@ public:
 	/// <param name="i">vertex配列の指定</param>
 	/// <returns>指定したvertexの頂点情報</returns>
 	VERTEX3D GetMeshVertex(int i);
+	VERTEX3D GetPointLMeshVertex(int i);
+	VERTEX3D GetPointRMeshVertex(int i);
 
 	bool GetReady(void) { return isReady_; };
 
 	VECTOR GetVerPos(void) { return mesh_.vertex_[0].pos; }
+
 	// セッター　--------------------------------------------------
 
 	/// <summary>
@@ -126,8 +136,8 @@ public:
 	/// <param name="pos">設定する座標</param>
 	/// <param name="i">設定するvertex配列の指定</param>
 	void RotMeshPos(VECTOR pos, int i) { mesh_.vertex_[i].pos = pos; }
-
-	void SetPrevPos(VECTOR pos, int i) { prevPos_[i] = pos; }
+	void RotPointLMeshPos(VECTOR pos, int i) { pointL_.mesh_.vertex_[i].pos = pos; }
+	void RotPointRMeshPos(VECTOR pos, int i) { pointR_.mesh_.vertex_[i].pos = pos; }
 
 private:
 
@@ -145,14 +155,13 @@ private:
 	//画像ハンドル
 	int* imgPlayerNum_;		//人数選択画像
 	int* imgLeftPoint_;		//左向きの矢印画像
-	int* imgRightPoint_;		//右向きの矢印画像
+	int* imgRightPoint_;	//右向きの矢印画像
 
 	//メッシュの頂点座標用（4つの頂点）
 	VECTOR leftTop_;		//左上
 	VECTOR leftBottom_;		//左下
 	VECTOR rightTop_;		//右上	
 	VECTOR rightBottom_;	//右下
-	VECTOR prevPos_[SceneManager::PLAYER_NUM];
 	float angle_;		
 
 	//矢印の構造体

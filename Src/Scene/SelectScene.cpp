@@ -100,7 +100,7 @@ void SelectScene::Init(void)
 	// カメラモード：定点カメラ
 	auto camera = SceneManager::GetInstance().GetCameras();
 	camera[0]->SetPos(DEFAULT_CAMERA_POS, DEFAULT_TARGET_POS);
-	camera[0]->ChangeMode(Camera::MODE::FREE);
+	camera[0]->ChangeMode(Camera::MODE::FIXED_POINT);
 
 	//人数選択から
 	ChangeSelect(SELECT::NUMBER);
@@ -221,19 +221,31 @@ void SelectScene::RoleUpdate(void)
 	PadProcess();
 
 	VERTEX3D ver[4];
+	VERTEX3D pointL[4];
+	VERTEX3D pointR[4];
 	for (int m = 1; m < 4; m++)
 	{
 		for (int i = 0; i < 4; i++)
 		{
 			ver[i] = images_[m - 1]->GetMeshVertex(i);
+			pointL[i] = images_[m - 1]->GetPointLMeshVertex(i);
+			pointR[i] = images_[m - 1]->GetPointRMeshVertex(i);
+
 			VECTOR prevPos = ver[i].pos;
+			VECTOR pointLPos = pointL[i].pos;
+			VECTOR pointRPos = pointR[i].pos;
 
 			VECTOR pos = AsoUtility::RotXZPos(
 				DEFAULT_CAMERA_POS, prevPos,AsoUtility::Deg2RadF(90.0f));
-		
-			ver[i].pos = pos;
+			images_[m]->RotMeshPos(pos, i);
 
-			images_[m]->RotMeshPos(ver[i].pos, i);
+			pos = AsoUtility::RotXZPos(
+				DEFAULT_CAMERA_POS, pointLPos, AsoUtility::Deg2RadF(90.0f));
+			images_[m]->RotPointLMeshPos(pos, i);
+
+			pos = AsoUtility::RotXZPos(
+				DEFAULT_CAMERA_POS, pointRPos, AsoUtility::Deg2RadF(90.0f));
+			images_[m]->RotPointRMeshPos(pos, i);
 		}
 	}
 

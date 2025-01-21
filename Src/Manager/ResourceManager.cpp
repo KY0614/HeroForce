@@ -38,11 +38,11 @@ void ResourceManager::InitSelect(void)
 	resourcesMap_.emplace(SRC::PLAYER_NUM, res);
 
 	//âEñÓàÛ
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Right_point.png");
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Right_point.png", 1, 1, 52, 52);
 	resourcesMap_.emplace(SRC::RIGHT_POINT, res);
 
 	//ç∂ñÓàÛ
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Left_point.png");
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Left_point.png", 1, 1, 52, 52);
 	resourcesMap_.emplace(SRC::LEFT_POINT, res);
 
 	ResourcePlayer();
