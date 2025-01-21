@@ -8,26 +8,30 @@
 SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> player) : selectScene_(select), player_(player)
 {
 	imgPlayerNum_ = nullptr;
-	imgLeftPoint_ = -1;
-	imgRightPoint_ = -1;
+	imgLeftPoint_ = nullptr;
+	imgRightPoint_ = nullptr;
 
 	state_ = SelectScene::SELECT::NUMBER;
 
 	//座標(四角形を作るために2つの三角形を使う)
-	mesh_.vertex_[0].pos = VGet(VERTEX_LEFT_X, VERTEX_UNDER_Y, VERTEX_Z + 12.0f);	// 左下
-	mesh_.vertex_[1].pos = VGet(VERTEX_RIGHT_X, VERTEX_UNDER_Y, VERTEX_Z + 12.0f);	// 右下
+	mesh_.vertex_[0].pos = VGet(VERTEX_LEFT_X, VERTEX_UNDER_Y, VERTEX_UNDER_Z);	// 左下
+	mesh_.vertex_[1].pos = VGet(VERTEX_RIGHT_X, VERTEX_UNDER_Y, VERTEX_UNDER_Z);	// 右下
 	mesh_.vertex_[2].pos = VGet(VERTEX_LEFT_X, VERTEX_TOP_Y, VERTEX_Z);				// 左上
 	mesh_.vertex_[3].pos = VGet(VERTEX_RIGHT_X, VERTEX_TOP_Y, VERTEX_Z);			// 右上
 
-	////座標(四角形を作るために2つの三角形を使う)
-	//roleMesh_.vertex_[0].pos = VGet(VERTEX_LEFT_X, VERTEX_UNDER_Y, VERTEX_Z + 12.0f);	// 左下
-	//roleMesh_.vertex_[1].pos = VGet(VERTEX_RIGHT_X, VERTEX_UNDER_Y, VERTEX_Z + 12.0f);	// 右下
-	//roleMesh_.vertex_[2].pos = VGet(VERTEX_LEFT_X, VERTEX_TOP_Y, VERTEX_Z);				// 左上
-	//roleMesh_.vertex_[3].pos = VGet(VERTEX_RIGHT_X, VERTEX_TOP_Y, VERTEX_Z);			// 右上
+	pointL_.mesh_.vertex_[0].pos = VGet(-132.0f, 94.0f, VERTEX_Z );		// 左下
+	pointL_.mesh_.vertex_[1].pos = VGet(-80.0f, 94.0f, VERTEX_Z);		// 右下
+	pointL_.mesh_.vertex_[2].pos = VGet(-132.0f, 146.0f, VERTEX_Z);				// 左上
+	pointL_.mesh_.vertex_[3].pos = VGet(-80.0f, 146.0f, VERTEX_Z );				// 右上
+
+	pointR_.mesh_.vertex_[0].pos = VGet(58.0f, 94.0f, VERTEX_Z);		// 左下
+	pointR_.mesh_.vertex_[1].pos = VGet(110.0f, 94.0f, VERTEX_Z);		// 右下
+	pointR_.mesh_.vertex_[2].pos = VGet(58.0f, 146.0f, VERTEX_Z);	// 左上
+	pointR_.mesh_.vertex_[3].pos = VGet(110.0f, 146.0f, VERTEX_Z);	// 右上
 
 	//roleMesh_.testVertex_[0].pos = VGet(-90.0f, 50.0f, VERTEX_Z + 12.0f);	// 左下
-	//roleMesh_.testVertex_[1].pos = VGet(0.0f, 50.0f, VERTEX_Z + 12.0f);		// 右下
-	//roleMesh_.testVertex_[2].pos = VGet(-90.0f, 190.0f, VERTEX_Z);			// 左上
+	//roleMesh_.testVertex_[1].pos = VGet(0.0f, 50.0f, VERTEX_Z + 12.0f);	// 右下
+	//roleMesh_.testVertex_[2].pos = VGet(-90.0f, 190.0f, VERTEX_Z);		// 左上
 	//roleMesh_.testVertex_[3].pos = VGet(0.0f, 190.0f, VERTEX_Z);			// 右上
 
 	//UV座標（テクスチャ座標）
@@ -36,25 +40,35 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	mesh_.vertex_[2].u = 0.0f / 4.0f;	mesh_.vertex_[2].v = 0.0f;	// 左上
 	mesh_.vertex_[3].u = 1.0f / 4.0f;	mesh_.vertex_[3].v = 0.0f;	// 右上
 
+	pointL_.mesh_.vertex_[0].u = 0.0f;	pointL_.mesh_.vertex_[0].v = 1.0f;	// 左下
+	pointL_.mesh_.vertex_[1].u = 1.0f;	pointL_.mesh_.vertex_[1].v = 1.0f;	// 右下
+	pointL_.mesh_.vertex_[2].u = 0.0f;	pointL_.mesh_.vertex_[2].v = 0.0f;	// 左上
+	pointL_.mesh_.vertex_[3].u = 1.0f;	pointL_.mesh_.vertex_[3].v = 0.0f;	// 右上
+
+	pointR_.mesh_.vertex_[0].u = 0.0f;	pointR_.mesh_.vertex_[0].v = 1.0f;	// 左下
+	pointR_.mesh_.vertex_[1].u = 1.0f;	pointR_.mesh_.vertex_[1].v = 1.0f;	// 右下
+	pointR_.mesh_.vertex_[2].u = 0.0f;	pointR_.mesh_.vertex_[2].v = 0.0f;	// 左上
+	pointR_.mesh_.vertex_[3].u = 1.0f;	pointR_.mesh_.vertex_[3].v = 0.0f;	// 右上
+
 	// 法線の設定（今回は省略、適当な値を設定）
 	for (int i = 0; i < VERTEX_NUM; i++) {
 		mesh_.vertex_[i].norm = VGet(0.0f, 0.0f, 1.0f);  // 法線は-Z軸方向
-		//roleMesh_.vertex_[i].norm = VGet(0.0f, 0.0f, 1.0f);
-		//roleMesh_.testVertex_[i].norm = VGet(0.0f, 0.0f, 1.0f);
+		pointL_.mesh_.vertex_[i].norm = VGet(0.0f, 0.0f, 1.0f);
+		pointR_.mesh_.vertex_[i].norm = VGet(0.0f, 0.0f, 1.0f);
 	}
 
 	// 色の設定（ディフューズカラー）
 	for (int i = 0; i < VERTEX_NUM; i++) {
 		mesh_.vertex_[i].dif = GetColorU8(255, 255, 255, 255);  // 白色
-		//roleMesh_.vertex_[i].dif = GetColorU8(255, 255, 255, 255);
-		//roleMesh_.testVertex_[i].dif = GetColorU8(255, 255, 255, 255);
+		pointL_.mesh_.vertex_[i].dif = GetColorU8(255, 255, 255, 255); 
+		pointR_.mesh_.vertex_[i].dif = GetColorU8(255, 255, 255, 255); 
 	}
 
 	// 色の設定（ディフューズカラー）
 	for (int i = 0; i < VERTEX_NUM; i++) {
 		mesh_.vertex_[i].spc = GetColorU8(0, 0, 0, 0);  // 白色
-		//roleMesh_.vertex_[i].spc = GetColorU8(0, 0, 0, 0);  // 白色
-		//roleMesh_.testVertex_[i].spc = GetColorU8(0, 0, 0, 0);  // 白色
+		pointL_.mesh_.vertex_[i].spc = GetColorU8(0, 0, 0, 0);
+		pointR_.mesh_.vertex_[i].spc = GetColorU8(0, 0, 0, 0);
 	}
 
 	leftTop_ = AsoUtility::VECTOR_ZERO;
@@ -99,9 +113,9 @@ void SelectImage::Init(void)
 	InitVertex();
 
 	//矢印画像の初期値
-	pointL_ = { LEFT_POS_X,POINT_POS_Y,POINT_SCALE,POINT_SCALE,false,imgLeftPoint_ };
-	
-	pointR_ = { RIGHT_POS_X,POINT_POS_Y,POINT_SCALE,POINT_SCALE,false,imgRightPoint_ };
+	//pointL_ = { LEFT_POS_X,POINT_POS_Y,POINT_SCALE,POINT_SCALE,false,imgLeftPoint_,pointL_.mesh_.vertex_};
+	//
+	//pointR_ = { RIGHT_POS_X,POINT_POS_Y,POINT_SCALE,POINT_SCALE,false,imgRightPoint_ ,pointL_.mesh_.vertex_};
 
 	target_[0] = SelectScene::DEFAULT_TARGET_POS;
 
@@ -141,19 +155,24 @@ void SelectImage::Draw(void)
 	DrawFormatString(Application::SCREEN_SIZE_X - 100,20, 0x000000, "R : %d", pointR_.isToggle_);
 	DrawFormatString(Application::SCREEN_SIZE_X - 100,40, 0x000000, "num : %d", playerNum_);
 	DrawFormatString(Application::SCREEN_SIZE_X - 100,80, 0x000000, "pad : %d", isPad_);
-
+	for (int i = 0; i < 4; i++) 
+	{
+		DrawFormatString(Application::SCREEN_SIZE_X - 250, 100 + (20 * i), 0x000000,
+			"L_mesh : %0.2f,%0.2f,%0.2f", pointL_.mesh_.vertex_[i].pos.x,
+			pointL_.mesh_.vertex_[i].pos.y, pointL_.mesh_.vertex_[i].pos.z);
+	}
 	//auto camera = SceneManager::GetInstance().GetCameras();
 	//DrawFormatString(Application::SCREEN_SIZE_X - 100, 120, 0x000000, "camera : %d", camera.size());
 	
 	//球
 	//左下
-	DrawSphere3D(mesh_.vertex_[0].pos, 10.0f, 10, 0xFF0000, 0xFF0000, false);
+	DrawSphere3D(pointL_.mesh_.vertex_[0].pos, 5.0f, 10, 0xFF0000, 0xFF0000, false);
 	//右下
-	DrawSphere3D(mesh_.vertex_[1].pos, 10.0f, 10, 0x00FF00, 0x00FF00, false);
+	DrawSphere3D(pointL_.mesh_.vertex_[1].pos, 5.0f, 10, 0x00FF00, 0x00FF00, false);
 	//左上
-	DrawSphere3D(mesh_.vertex_[2].pos, 10.0f, 10, 0x0000FF, 0x0000FF, false);
+	DrawSphere3D(pointL_.mesh_.vertex_[2].pos, 5.0f, 10, 0x0000FF, 0x0000FF, false);
 	//右上
-	DrawSphere3D(mesh_.vertex_[3].pos, 10.0f, 10, 0x000000, 0x000000, false);
+	DrawSphere3D(pointL_.mesh_.vertex_[3].pos, 5.0f, 10, 0x000000, 0x000000, false);
 	
 }
 
@@ -199,17 +218,10 @@ void SelectImage::Load(void)
 	//画像
 	imgPlayerNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_NUM).handleIds_;
 
-	imgRightPoint_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::RIGHT_POINT).handleId_;
-	if (imgRightPoint_ == -1)
-	{
-		return;
-	}
+	imgRightPoint_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::RIGHT_POINT).handleIds_;
 
-	imgLeftPoint_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::LEFT_POINT).handleId_;
-	if (imgLeftPoint_ == -1)
-	{
-		return;
-	}
+	imgLeftPoint_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::LEFT_POINT).handleIds_;
+
 }
 
 void SelectImage::NumberUpdate(void)
@@ -290,13 +302,20 @@ void SelectImage::NumberUpdate(void)
 	{
 		//プレイヤー人数の設定
 		data.Input(SceneManager::PLAY_MODE::USER, playerNum_);
+		
+		for (int i = 1; i <= playerNum_; i++)
+		{
+			//ディスプレイの設定
+			data.Input(DataBank::INFO::DHISPLAY_NUM, i);
+			data.Input(DataBank::INFO::USER_NUM, i);
+		}
 
-		//ディスプレイの設定
-		data.Input(DataBank::INFO::DHISPLAY_NUM, playerNum_);
-		data.Input(DataBank::INFO::USER_NUM, playerNum_);
-
-		//CPU人数の設定(CPUは１人から３人)
-		data.Input(SceneManager::PLAY_MODE::CPU, (SceneManager::PLAYER_NUM - playerNum_));
+		for (int i = playerNum_ + 1; i <= SceneManager::PLAYER_NUM; i++)
+		{
+			//CPU人数の設定(CPUは１人から３人)
+			data.Input(SceneManager::PLAY_MODE::CPU, i);
+			data.Input(SceneManager::ROLE::KNIGHT, i);
+		}
 
 		//ウィンドウ複製の準備
 		SceneManager::GetInstance().RedySubWindow();
@@ -347,6 +366,11 @@ void SelectImage::NumberUpdate(void)
 	mesh_.vertex_[1].u = (float)(playerNum_) / 4.0f;			mesh_.vertex_[1].v = 1.0f;	// 右下
 	mesh_.vertex_[2].u = ((float)(playerNum_)-1.0f) / 4.0f;		mesh_.vertex_[2].v = 0.0f;	// 左上
 	mesh_.vertex_[3].u = (float)(playerNum_) / 4.0f;			mesh_.vertex_[3].v = 0.0f;	// 右上
+
+	pointL_.mesh_.vertex_[0].u = 0.0f;	pointL_.mesh_.vertex_[0].v = 1.0f;	// 左下
+	pointL_.mesh_.vertex_[1].u = 1.0f;	pointL_.mesh_.vertex_[1].v = 1.0f;	// 右下
+	pointL_.mesh_.vertex_[2].u = 0.0f;	pointL_.mesh_.vertex_[2].v = 0.0f;	// 左上
+	pointL_.mesh_.vertex_[3].u = 1.0f;	pointL_.mesh_.vertex_[3].v = 0.0f;	// 右上
 }
 
 void SelectImage::OperationUpdate(void)
@@ -493,7 +517,7 @@ void SelectImage::RoleDraw(void)
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);	//ブレンドモードを戻す
 	}
 
-	//PointsDraw();
+	PointsDraw();
 }
 
 void SelectImage::PointsDraw(void)
@@ -501,38 +525,38 @@ void SelectImage::PointsDraw(void)
 	//左の矢印の描画(右の矢印は暗めにする)
 	if (pointL_.isToggle_)
 	{
-		//右の矢印画像を描画し、同じ画像を減算ブレンドする
-		pointR_.PointDraw();
+		////右の矢印画像を描画し、同じ画像を減算ブレンドする
+		pointR_.mesh_.DrawTwoMesh(*imgRightPoint_);
 		SetDrawBlendMode(DX_BLENDMODE_SUB, 128);
-		pointR_.PointDraw();
+		pointR_.mesh_.DrawTwoMesh(*imgRightPoint_);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);	//ブレンドモードを戻す
 
 		//普通に描画
-		pointL_.PointDraw();
+		pointL_.mesh_.DrawTwoMesh(*imgLeftPoint_);
 	}
 	//右の矢印の描画(左の矢印は暗めにする)
 	if (pointR_.isToggle_)
 	{
 		//左の矢印画像を描画し、同じ画像を減算ブレンドする
-		pointL_.PointDraw();
+		pointL_.mesh_.DrawTwoMesh(*imgLeftPoint_);
 		SetDrawBlendMode(DX_BLENDMODE_SUB, 128);
-		pointL_.PointDraw();
+		pointL_.mesh_.DrawTwoMesh(*imgLeftPoint_);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);	//ブレンドモードを戻す
 
 		//普通に描画
-		pointR_.PointDraw();
+		pointR_.mesh_.DrawTwoMesh(*imgRightPoint_);
 	}
 
 	//どちらの矢印も選んでいないときの描画
 	if (!pointL_.isToggle_ && !pointR_.isToggle_)
 	{
 		//普通に描画
-		pointL_.PointDraw();
-		pointR_.PointDraw();
+		pointL_.mesh_.DrawTwoMesh(*imgLeftPoint_);
+		pointR_.mesh_.DrawTwoMesh(*imgRightPoint_);
 		//↑の上の画像に減算ブレンドする
 		SetDrawBlendMode(DX_BLENDMODE_SUB, 128);
-		pointL_.PointDraw();
-		pointR_.PointDraw();
+		pointL_.mesh_.DrawTwoMesh(*imgLeftPoint_);
+		pointR_.mesh_.DrawTwoMesh(*imgRightPoint_);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 }
@@ -613,8 +637,6 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 		//役職の設定
 		data.Input(static_cast<SceneManager::ROLE>(role_ + 1), i + 1);
 
-		//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
-
 		isReady_ = true;
 	}
 
@@ -655,18 +677,40 @@ VERTEX3D SelectImage::GetMeshVertex(int i)
 	return mesh_.vertex_[i];
 }
 
+VERTEX3D SelectImage::GetPointLMeshVertex(int i)
+{
+	return pointL_.mesh_.vertex_[i];
+}
+
+VERTEX3D SelectImage::GetPointRMeshVertex(int i)
+{
+	return pointR_.mesh_.vertex_[i];
+
+}
+
 void SelectImage::InitVertex(void)
 {
 	leftTop_ = { VERTEX_LEFT_X, VERTEX_TOP_Y, VERTEX_Z };
-	leftBottom_ = { VERTEX_LEFT_X, VERTEX_UNDER_Y, VERTEX_Z /*+ 12.0f*/ };
+	leftBottom_ = { VERTEX_LEFT_X, VERTEX_UNDER_Y, VERTEX_UNDER_Z };
 	rightTop_ = { VERTEX_RIGHT_X, VERTEX_TOP_Y, VERTEX_Z };
-	rightBottom_ = { VERTEX_RIGHT_X, VERTEX_UNDER_Y, VERTEX_Z /*+ 12.0f */ };
+	rightBottom_ = { VERTEX_RIGHT_X, VERTEX_UNDER_Y, VERTEX_UNDER_Z };
 
 	//座標(四角形を作るために2つの三角形を使う)
 	mesh_.vertex_[0].pos = leftBottom_;		// 左下
 	mesh_.vertex_[1].pos = rightBottom_;		// 右下
 	mesh_.vertex_[2].pos = leftTop_;			// 左上
 	mesh_.vertex_[3].pos = rightTop_;		// 右上
+
+	pointL_.mesh_.vertex_[0].pos = VGet(POINTL_LEFT_X, 94.0f, VERTEX_Z);		// 左下
+	pointL_.mesh_.vertex_[1].pos = VGet(-58.0f, 94.0f, VERTEX_Z);		// 右下
+	pointL_.mesh_.vertex_[2].pos = VGet(POINTL_LEFT_X, 146.0f, VERTEX_Z - 6.0f);	// 左上
+	pointL_.mesh_.vertex_[3].pos = VGet(-58.0f, 146.0f, VERTEX_Z - 6.0f);	// 右上
+
+	pointR_.mesh_.vertex_[0].pos = VGet(58.0f, 94.0f, VERTEX_Z);		// 左下
+	pointR_.mesh_.vertex_[1].pos = VGet(110.0f, 94.0f, VERTEX_Z);		// 右下
+	pointR_.mesh_.vertex_[2].pos = VGet(58.0f, 146.0f, VERTEX_Z - 6.0f);	// 左上
+	pointR_.mesh_.vertex_[3].pos = VGet(110.0f, 146.0f, VERTEX_Z - 6.0f);	// 右上
+
 }
 
 VECTOR SelectImage::RotateVertex(VECTOR pos, VECTOR center, float angle)
@@ -717,10 +761,10 @@ void SelectImage::ChangeStateRole(void)
 
 void SelectImage::Point::PointDraw(void)
 {
-	DrawRotaGraph(pos.x, pos.y,
-		POINT_SCALE_RATE, 0.0f,
-		imgHandle_,
-		true, false);
+	//DrawRotaGraph(pos.x, pos.y,
+	//	POINT_SCALE_RATE, 0.0f,
+	//	imgHandle_,
+	//	true, false);
 }
 
 void SelectImage::Mesh::DrawTwoMesh(int handle)
@@ -732,6 +776,6 @@ void SelectImage::Mesh::DrawTwoMesh(int handle)
 	VERTEX3D triangle2[3] = { vertex_[1], vertex_[2], vertex_[3] };
 
 	// 三角形を描画
-	DrawPolygon3D(triangle1, 2, handle, true);  // 1つ目の三角形
-	DrawPolygon3D(triangle2, 2, handle, true);  // 2つ目の三角形
+	DrawPolygon3D(triangle1, 1, handle, true);  // 1つ目の三角形
+	DrawPolygon3D(triangle2, 1, handle, true);  // 2つ目の三角形
 }

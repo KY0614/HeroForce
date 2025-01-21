@@ -103,11 +103,13 @@ public:
 	//キー入力とコントローラ入力を共通化
 	void KeyConfigSetting(void);
 
+	//キーボード操作
 	void KeyBoardProcess(void);
+	//パッド操作
 	void PadProcess(void);
 
 	//入力デバイス変更(もうちょっといい実装方法がありそう)
-	void ChangeDevice(SceneManager::CNTL cntl);
+	void Change1PDevice(SceneManager::CNTL cntl);
 
 	//キー入力とパッド入力の制御
 	void ControllDevice(void);
@@ -116,12 +118,16 @@ public:
 
 	SceneManager::CNTL Get1PDevice(void) { return input_[0].cntl_; };		//1Pの入力デバイスを取得する
 
-	KEY_CONFIG GetConfig(void);				//入力キーを取得
+	KEY_CONFIG GetConfig(void);					//入力キーを取得
 
 	SELECT GetSelect(void) { return select_; }	//現在の選択フェーズを取得
 
 	//セッター -----------------------------------------------------------
 
+	/// <summary>
+	/// 1Pの入力デバイスを設定する
+	/// </summary>
+	/// <param name="cntl">デバイスの種類</param>
 	void Set1PDevice(SceneManager::CNTL cntl){ input_[0].cntl_ = cntl; };
 
 	//デバッグ関連--------------------------------------------------------

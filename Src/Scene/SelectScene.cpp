@@ -108,7 +108,7 @@ void SelectScene::Init(void)
 	ChangeSelect(SELECT::NUMBER);
 
 	key_ = KEY_CONFIG::NONE;
-	ChangeDevice(SceneManager::CNTL::NONE);
+	Change1PDevice(SceneManager::CNTL::NONE);
 
 	Set1PDevice(SceneManager::CNTL::NONE);
 }
@@ -223,19 +223,31 @@ void SelectScene::RoleUpdate(void)
 	PadProcess();
 
 	VERTEX3D ver[4];
+	VERTEX3D pointL[4];
+	VERTEX3D pointR[4];
 	for (int m = 1; m < 4; m++)
 	{
 		for (int i = 0; i < 4; i++)
 		{
 			ver[i] = images_[m - 1]->GetMeshVertex(i);
+			pointL[i] = images_[m - 1]->GetPointLMeshVertex(i);
+			pointR[i] = images_[m - 1]->GetPointRMeshVertex(i);
+
 			VECTOR prevPos = ver[i].pos;
+			VECTOR pointLPos = pointL[i].pos;
+			VECTOR pointRPos = pointR[i].pos;
 
 			VECTOR pos = AsoUtility::RotXZPos(
 				DEFAULT_CAMERA_POS, prevPos,AsoUtility::Deg2RadF(90.0f));
-		
-			ver[i].pos = pos;
+			images_[m]->RotMeshPos(pos, i);
 
-			images_[m]->RotMeshPos(ver[i].pos, i);
+			pos = AsoUtility::RotXZPos(
+				DEFAULT_CAMERA_POS, pointLPos, AsoUtility::Deg2RadF(90.0f));
+			images_[m]->RotPointLMeshPos(pos, i);
+
+			pos = AsoUtility::RotXZPos(
+				DEFAULT_CAMERA_POS, pointRPos, AsoUtility::Deg2RadF(90.0f));
+			images_[m]->RotPointRMeshPos(pos, i);
 		}
 	}
 
@@ -354,7 +366,7 @@ void SelectScene::DrawDebug(void)
 		//DrawFormatString(0, 120 + (20 * i), 0x00CC00, "input_[%d]: %d", i, input_[i].cntl_);
 		//DrawFormatString(500, 40 + (20 * i), 0x00CC00, "pos: %2.f,%2.f,%2.f", images_[i]->GetMeshVertex(i).pos.x, images_[i]->GetMeshVertex(i).pos.y, images_[i]->GetMeshVertex(i).pos.z);
 		DrawFormatString(500, 40 + (20 * i), 0x00CC00, "isOk: %d", isOk_[i]);
-		DrawFormatString(Application::SCREEN_SIZE_X - 100, 100 + (i*20), 0xFF3333, "ready : %d", images_[i]->GetReady());
+		//DrawFormatString(Application::SCREEN_SIZE_X - 100, 100 + (i*20), 0xFF3333, "ready : %d", images_[i]->GetReady());
 		if (isOk_[i]) {
 			DrawCircle(Application::SCREEN_SIZE_X / 2 + (70 * i), Application::SCREEN_SIZE_Y / 2, 50, 0x00FF00, true);
 		}
@@ -475,7 +487,7 @@ void SelectScene::PadProcess(void)
 	}
 }
 
-void SelectScene::ChangeDevice(SceneManager::CNTL cntl)
+void SelectScene::Change1PDevice(SceneManager::CNTL cntl)
 {
 	input_[0].cntl_ = cntl;
 }
@@ -494,13 +506,13 @@ void SelectScene::ControllDevice(void)
 	if (key != 0	&&
 		padState == 0)
 	{
-		ChangeDevice(SceneManager::CNTL::KEYBOARD);
+		Change1PDevice(SceneManager::CNTL::KEYBOARD);
 	}//パッド操作の時キー操作をできないように
 	else if (key <= 0 &&
 		padNum > 0 &&
 		padState != 0)
 	{
-		ChangeDevice(SceneManager::CNTL::PAD);
+		Change1PDevice(SceneManager::CNTL::PAD);
 	}
 }
 
