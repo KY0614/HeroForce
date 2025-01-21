@@ -5,6 +5,9 @@
 
 void EneBrig::SetParam(void)
 {
+	//UŒ‚Œx
+	alertSkills_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneBrig::AlertSkill_One, this));
+
 	//UŒ‚‚Ì‘JˆÚ
 	changeSkill_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneBrig::Skill_One, this));
 
@@ -18,6 +21,7 @@ void EneBrig::SetParam(void)
 	hp_ = HP_MAX;
 	atkPow_ = ATK_POW;
 	def_ = DEF;
+	exp_ = EXP;
 	walkSpeed_ = WALK_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
 	stunDefMax_ = STUN_DEF_MAX;
@@ -59,6 +63,10 @@ void EneBrig::InitSkill(void)
 
 	//‰ŠúƒXƒLƒ‹‚ğİ’è‚µ‚Ä‚¨‚­
 	RandSkill();
+}
+
+void EneBrig::AlertSkill_One(void)
+{
 }
 
 void EneBrig::Skill_One(void)

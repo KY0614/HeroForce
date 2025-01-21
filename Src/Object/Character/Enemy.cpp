@@ -164,6 +164,12 @@ void Enemy::InitAnim()
 	changeSpeedAnim_.emplace(ANIM::ENTRY, SPEED_ANIM);
 }
 
+void Enemy::Alert(void)
+{
+	//警告
+	alertNowSkill_();
+}
+
 void Enemy::Attack(void)
 {
 	//対応スキル発動
@@ -222,6 +228,9 @@ void Enemy::UpdateAlert(void)
 	//**********************************************************
 	//動作処理
 	//**********************************************************
+
+	//警告
+	Alert();
 
 	//クールダウンカウンタ
 	CntUp(alertCnt_);
@@ -394,9 +403,6 @@ Enemy::ATK& Enemy::CreateSkill(ATK_ACT _atkAct)
 			//スキル上書き
 			nowSkill = skills_[_atkAct];
 			
-			//スキルに対応したアニメーションの記録
-			nowSkillAnim_ = skillAnims_[static_cast<int>(_atkAct)];
-
 			//カウンタの初期化
 			nowSkill.ResetCnt();
 
@@ -414,9 +420,6 @@ Enemy::ATK& Enemy::CreateSkill(ATK_ACT _atkAct)
 
 	//ランダムでとってきた攻撃の種類を今から発動するスキルに設定
 	nowSkill_.emplace_back(skills_[_atkAct]);
-
-	//スキルに対応したアニメーションの記録
-	nowSkillAnim_ = skillAnims_[static_cast<int>(_atkAct)];
 
 	//カウンタの初期化
 	nowSkill_.back().ResetCnt();
@@ -464,7 +467,7 @@ void Enemy::RandSkill(void)
 	int rand = GetRand(size - 1);
 
 	//スキル
-	atkAct_ = ATK_ACT::SKILL_THREE/*static_cast<ATK_ACT>(rand)*/;
+	atkAct_ = ATK_ACT::SKILL_ONE /*static_cast<ATK_ACT>(rand)*/;
 
 	//スキル生成準備
 	SetUpSkill(atkAct_);
@@ -472,11 +475,18 @@ void Enemy::RandSkill(void)
 	//スキルに対応した予備動作アニメーションの記録
 	nowSkillPreAnim_ = skillPreAnims_[static_cast<int>(atkAct_)];
 
+	//スキルに対応したアニメーションの記録
+	nowSkillAnim_ = skillAnims_[static_cast<int>(atkAct_)];
+
 	//スキル生成
 	createSkill_ = std::bind(&Enemy::CreateSkill, this, atkAct_);
 }
 
 void Enemy::SetUpSkill(ATK_ACT _atkAct)
 {
+	//警告情報をセット
+	alertNowSkill_ = alertSkills_[_atkAct];
+
+	//攻撃情報をセット
 	processSkill_ = changeSkill_[_atkAct];
 }

@@ -5,6 +5,9 @@
 
 void EneAxe::SetParam(void)
 {
+	//UŒ‚Œx
+	alertSkills_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneAxe::AlertSkill_One, this));
+
 	//UŒ‚‚Ì‘JˆÚ
 	changeSkill_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneAxe::Skill_One, this));
 
@@ -18,6 +21,7 @@ void EneAxe::SetParam(void)
 	hp_ = HP_MAX;
 	atkPow_ = ATK_POW;
 	def_ = DEF;
+	exp_ = EXP;
 	walkSpeed_ = WALK_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
 	stunDefMax_ = STUN_DEF_MAX;
@@ -60,6 +64,10 @@ void EneAxe::InitSkill(void)
 
 	//‰ŠúƒXƒLƒ‹‚ğİ’è‚µ‚Ä‚¨‚­
 	RandSkill();
+}
+
+void EneAxe::AlertSkill_One(void)
+{
 }
 
 void EneAxe::Skill_One(void)

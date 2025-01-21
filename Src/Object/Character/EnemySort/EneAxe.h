@@ -30,6 +30,7 @@ public:
 	static constexpr float ATK_POW = 145.0f;	//“G‚ÌUŒ‚
 	static constexpr float DEF = 120.0f;		//“G‚Ì–hŒä
 	static constexpr int STUN_DEF_MAX = 100;	//“G‚ÌÅ‘åƒXƒ^ƒ“–hŒä’l
+	static constexpr float EXP = 300.0f;		//“G‚ÌŒoŒ±’l
 
 	//‘¬“xŠÖŒW
 	static constexpr float WALK_SPEED = 2.0f;	//•à‚«‚Ì‘¬“x
@@ -77,6 +78,9 @@ private:
 	const bool IsAlertTime(void)const override{ return alertCnt_ < ALERT_TIME; }
 	//‹xŒeŠÔ’†‚©‚Ç‚¤‚©‚ğ•Ô‚·
 	const bool IsBreak(void)const override { return breakCnt_ < BREAK_TIME; }
+
+	//ƒXƒLƒ‹1‚ÌŒx
+	void AlertSkill_One(void)override;
 
 	//ƒXƒLƒ‹1
 	void Skill_One(void)override;

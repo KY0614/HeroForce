@@ -38,6 +38,7 @@ public:
 	static constexpr float ATK_POW = 140.0f;	//敵の攻撃
 	static constexpr float DEF = 120.0f;		//敵の防御
 	static constexpr int STUN_DEF_MAX = 100;	//敵の最大スタン防御値
+	static constexpr float EXP = 300.0f;		//敵の経験値
 
 	//速度関係
 	static constexpr float WALK_SPEED = 2.0f;	//歩きの速度
@@ -101,6 +102,9 @@ private:
 	const bool IsBreak(void)const override { return breakCnt_ < BREAK_TIME; }
 	//リロード中かどうかを返す
 	const bool IsReload(void)const { return arrowCnt_ >= ARROW_SIZE_MAX; }
+
+	//スキル1の警告
+	void AlertSkill_One(void)override;
 
 	//スキル1
 	void Skill_One(void)override;

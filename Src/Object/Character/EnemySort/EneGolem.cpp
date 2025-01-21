@@ -5,6 +5,11 @@
 
 void EneGolem::SetParam(void)
 {
+	//UŒ‚Œx
+	alertSkills_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneGolem::AlertSkill_One, this));
+	alertSkills_.emplace(ATK_ACT::SKILL_TWO, std::bind(&EneGolem::AlertSkill_Two, this));
+	alertSkills_.emplace(ATK_ACT::SKILL_THREE, std::bind(&EneGolem::AlertSkill_Three, this));
+
 	//UŒ‚‚Ì‘JˆÚ
 	changeSkill_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneGolem::Skill_One, this));
 	changeSkill_.emplace(ATK_ACT::SKILL_TWO, std::bind(&EneGolem::Skill_Two, this));
@@ -20,6 +25,7 @@ void EneGolem::SetParam(void)
 	hp_ = HP_MAX;
 	atkPow_ = ATK_POW;
 	def_ = DEF;
+	exp_ = EXP;
 	walkSpeed_ = WALK_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
 	stunDefMax_ = STUN_DEF_MAX;
@@ -87,6 +93,18 @@ void EneGolem::InitSkill(void)
 	RandSkill();
 }
 
+void EneGolem::AlertSkill_One(void)
+{
+}
+
+void EneGolem::AlertSkill_Two(void)
+{
+}
+
+void EneGolem::AlertSkill_Three(void)
+{
+}
+
 void EneGolem::Skill_One(void)
 {
 	//UŒ‚‚ÌÄ¶¬
@@ -127,6 +145,8 @@ void EneGolem::Skill_Two(void)
 
 void EneGolem::Skill_Three(void)
 {
+	//TODO:Å‰‚ðC³
+
 	//UŒ‚I—¹”»’è
 	if (lastAtk_ == nullptr ? false : lastAtk_->IsFinishMotion()
 		&& skillThreeCnt_ >= SKILL_THREE_MAX_CNT)

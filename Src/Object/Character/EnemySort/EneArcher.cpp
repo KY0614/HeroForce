@@ -14,6 +14,9 @@ void EneArcher::Destroy(void)
 
 void EneArcher::SetParam(void)
 {
+	//UŒ‚Œx
+	alertSkills_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneArcher::AlertSkill_One, this));
+
 	//UŒ‚‚Ì‘JˆÚ
 	changeSkill_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneArcher::Skill_One, this));
 
@@ -29,6 +32,7 @@ void EneArcher::SetParam(void)
 	hp_ = HP_MAX;
 	atkPow_ = ATK_POW;
 	def_ = DEF;
+	exp_ = EXP;
 	arrowCnt_ = 0;
 	isShotArrow_ = false;
 	walkSpeed_ = WALK_SPEED;
@@ -74,6 +78,10 @@ void EneArcher::InitSkill(void)
 
 	//‰ŠúƒXƒLƒ‹‚ğİ’è‚µ‚Ä‚¨‚­
 	RandSkill();
+}
+
+void EneArcher::AlertSkill_One(void)
+{
 }
 
 void EneArcher::Skill_One(void)

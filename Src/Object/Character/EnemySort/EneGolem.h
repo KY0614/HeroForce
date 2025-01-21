@@ -67,6 +67,7 @@ public:
 	static constexpr float ATK_POW = 120.0f;	//“G‚ÌUŒ‚
 	static constexpr float DEF = 100.0f;		//“G‚Ì–hŒä
 	static constexpr int STUN_DEF_MAX = 100;	//“G‚ÌÅ‘åƒXƒ^ƒ“–hŒä’l
+	static constexpr float EXP = 300.0f;		//“G‚ÌŒoŒ±’l
 
 	//‘¬“xŠÖŒW
 	static constexpr float WALK_SPEED = 2.0f;	//•à‚«‚Ì‘¬“x
@@ -125,10 +126,10 @@ public:
 		,0.0f };
 
 	//ƒXƒLƒ‹‚R‚ÌŒø‰Ê”ÍˆÍ
-	static constexpr float SKILL_THREE_FALL_RADIUS = 700.0f;	//ƒXƒLƒ‹‚R‚Ìè¦Î‚Ì—‚¿‚é”ÍˆÍ‚Ì”¼Œa
+	static constexpr float SKILL_THREE_FALL_RADIUS = 500.0f;	//ƒXƒLƒ‹‚R‚Ìè¦Î‚Ì—‚¿‚é”ÍˆÍ‚Ì”¼Œa
 
 	//UŒ‚¶¬ŠÔŠu
-	static constexpr float SKILL_THREE_DELAY = 1.0f;			//ƒXƒLƒ‹‚R‚ÌUŒ‚¶¬ŠÔŠu
+	static constexpr float SKILL_THREE_DELAY = 0.8f;			//ƒXƒLƒ‹‚R‚ÌUŒ‚¶¬ŠÔŠu
 
 	//UŒ‚‰ñ”
 	static constexpr int SKILL_THREE_MAX_CNT = 5;				//ƒXƒLƒ‹‚R‚ÌUŒ‚‰ñ”
@@ -158,6 +159,15 @@ private:
 	const bool IsAlertTime(void)const override { return alertCnt_ < ALERT_TIME; }
 	//‹xŒeŠÔ’†‚©‚Ç‚¤‚©‚ğ•Ô‚·
 	const bool IsBreak(void)const override { return breakCnt_ < BREAK_TIME; }
+
+	//ƒXƒLƒ‹1‚ÌŒx
+	void AlertSkill_One(void)override;
+	
+	//ƒXƒLƒ‹2‚ÌŒx
+	void AlertSkill_Two(void);
+	
+	//ƒXƒLƒ‹3‚ÌŒx
+	void AlertSkill_Three(void);
 
 	//ƒXƒLƒ‹1(‰£‚è)
 	void Skill_One(void)override;

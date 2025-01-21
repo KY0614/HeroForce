@@ -78,10 +78,13 @@ public:
 	const std::vector<ATK> GetAtks(void)const { return nowSkill_; }
 
 	//索敵範囲を返す
-	const float GetSearchRange(void) { return searchRange_; }
+	const float GetSearchRange(void)const { return searchRange_; }
 
 	//攻撃開始範囲を返す
-	const float GetAtkStartRange(void) { return atkStartRange_; }
+	const float GetAtkStartRange(void)const { return atkStartRange_; }
+
+	//経験値を返す
+	const float GetExp(void)const { return exp_; }
 
 	/// <summary>
 	/// 移動状態を変更
@@ -132,8 +135,10 @@ protected:
 
 	std::map<ATK_ACT, ATK> skills_;								//スキルの種類
 	std::vector<ATK> nowSkill_;									//現在のスキル
+	std::function<void(void)> alertNowSkill_;					//現在のスキルの警告
 	std::function<ATK&(void)> createSkill_;						//スキルの生成
 	std::function<void(void)> processSkill_;					//スキルの処理
+	std::map<ATK_ACT, std::function<void(void)>> alertSkills_;	//スキルごとの警告
 	std::map<ATK_ACT, std::function<void(void)>> changeSkill_;	//スキルの変更用
 	ATK_ACT atkAct_;											//スキルの種別用
 	ATK* lastAtk_;												//最後に生成されたスキル
@@ -158,6 +163,8 @@ protected:
 	int stunDefMax_;	//気絶防御値の最大値
 	int stunDef_;		//気絶防御値
 
+	float exp_;			//経験値
+
 	//****************************************************************
 	//メンバ関数
 	//****************************************************************
@@ -170,6 +177,12 @@ protected:
 
 	//スキルの初期化
 	virtual void InitSkill(void) = 0;
+
+	//スキルの前処理
+	virtual void Alert(void);
+
+	//スキル1の警告
+	virtual void AlertSkill_One(void) = 0;
 
 	//敵の攻撃処理
 	virtual void Attack(void);

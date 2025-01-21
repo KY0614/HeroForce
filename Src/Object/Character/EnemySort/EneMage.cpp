@@ -5,6 +5,9 @@
 
 void EneMage::SetParam(void)
 {
+	//UŒ‚Œx
+	alertSkills_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneMage::AlertSkill_One, this));
+
 	//UŒ‚‚Ì‘JˆÚ
 	changeSkill_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneMage::Skill_One, this));
 
@@ -18,6 +21,7 @@ void EneMage::SetParam(void)
 	hp_ = HP_MAX;
 	atkPow_ = ATK_POW;
 	def_ = DEF;
+	exp_ = EXP;
 	walkSpeed_ = WALK_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
 	stunDefMax_ = STUN_DEF_MAX;
@@ -63,6 +67,10 @@ void EneMage::InitSkill(void)
 
 	//‰ŠúƒXƒLƒ‹‚ğİ’è‚µ‚Ä‚¨‚­
 	RandSkill();
+}
+
+void EneMage::AlertSkill_One(void)
+{
 }
 
 void EneMage::Attack(void)
