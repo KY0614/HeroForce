@@ -160,7 +160,7 @@ void SelectScene::Draw(void)
 	}
 
 	//デバッグ描画
-	DrawDebug();
+	//DrawDebug();
 }
 
 void SelectScene::Release(void)

@@ -42,7 +42,7 @@ void Timer::Update()
 
 void Timer::Draw()
 {
-	DrawFormatString(0, 50, 0xff0000, "Žc‚è[%d:%d]", minute_, second_);
+	DrawFormatString(0, 0, 0xff0000, "Žc‚è[%d:%d]", minute_, second_);
 }
 
 void Timer::Reset()

@@ -16,9 +16,12 @@ public:
     static constexpr float SKILL_ONE_COOLTIME = 3.0f;
     static constexpr float SKILL_TWO_COOLTIME = 10.0f;
 
-    void DrawDebug(void)override;
+   
 
 #else // DEBUG_COOL
+
+    void DrawDebug(void)override;
+
     //クールタイム
     static constexpr float ATK_COOLTIME = 1.0f;
     static constexpr float SKILL_ONE_COOLTIME = 5.0f;

@@ -193,9 +193,6 @@ void GameScene::Draw(void)
 	{
 		DrawPhase();
 	}
-	DataBank& data = DataBank::GetInstance();
-	DrawFormatString(0, 60, 0xff0000, "p1 role : %d", data.Output(1).role_);
-	DrawFormatString(0, 80, 0xff0000, "p1 role : %d", data.Output(2).role_);
 }
 
 void GameScene::Release(void)

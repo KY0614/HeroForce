@@ -193,7 +193,7 @@ void PlayerBase::Draw(void)
 {
 	MV1DrawModel(trans_.modelId);
 #ifdef DEBUG_ON
-	DrawDebug();
+	//DrawDebug();
 
 #endif // DEBUG_ON
 #ifdef INPUT_DEBUG_ON
