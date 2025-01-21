@@ -177,11 +177,11 @@ void ResourceManager::ResourceStage(void)
 	Resource res;
 
 	//ステージ
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stage.mv1");
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stage1.mv1");
 	resourcesMap_.emplace(SRC::STAGE_01, res);
 
 	//装飾
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Deco.mv1");
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Deco1.mv1");
 	resourcesMap_.emplace(SRC::DECO_01, res);
 
 	//スカイドーム
