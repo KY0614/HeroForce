@@ -118,6 +118,9 @@ void PlayerBase::Update(void)
 #endif // INPUT_DEBUG_ON
 
 
+	//座標のバックアップ
+	prePos_ = trans_.pos;
+
 	//モデルの更新
 	trans_.Update();
 

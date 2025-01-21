@@ -60,6 +60,15 @@ std::string TextManager::TextLoad(TEXTS text)
     return ret;
 }
 
+int TextManager::GetTextSize(std::string txt,int num) const
+{
+    int ret = -1;
+    size_t bufferSize = std::snprintf(nullptr, 0, txt.c_str(), num) + 1; // +1は終端のヌル文字用
+    char* buffer = new char[bufferSize];
+
+    return ret;
+}
+
 void TextManager::Destroy()
 {
     Release();
@@ -73,12 +82,20 @@ void TextManager::InitFont()
     fontPath_[static_cast<int>(FONT_TYPE::DOT)] = "FontDot.otf";
     fontPath_[static_cast<int>(FONT_TYPE::LOGO)] = "Corporate-Logo-Bold-ver3.otf";
     fontPath_[static_cast<int>(FONT_TYPE::BOKUTACHI)] = "bokutachi.otf";
+    fontPath_[static_cast<int>(FONT_TYPE::HANAZOME)] = "PENGS.ttf";
+    fontPath_[static_cast<int>(FONT_TYPE::BANANA)] = "YDWbananaslipplus.otf";
+    fontPath_[static_cast<int>(FONT_TYPE::PENGS)] = "PENGS.ttf";
+    fontPath_[static_cast<int>(FONT_TYPE::KAKUMEI)] = "NikkyouSans-mLKax.ttf";
 
     //フォント名前設定
     fontName_[static_cast<int>(FONT_TYPE::NORMAR)] = "ＭＳ ゴシック";
     fontName_[static_cast<int>(FONT_TYPE::DOT)] = "ベストテンDOT";
     fontName_[static_cast<int>(FONT_TYPE::LOGO)] = "コーポレート・ロゴ ver3 Bold";
     fontName_[static_cast<int>(FONT_TYPE::BOKUTACHI)] = "ぼくたちのゴシック";
+    fontName_[static_cast<int>(FONT_TYPE::HANAZOME)] = "はなぞめフォント";
+    fontName_[static_cast<int>(FONT_TYPE::BANANA)] = "ＹＤＷ バナナスリップ plus plus";
+    fontName_[static_cast<int>(FONT_TYPE::PENGS)] = "PENGS";
+    fontName_[static_cast<int>(FONT_TYPE::KAKUMEI)] = "Nikkyou Sans";
 
     // フォントをシステムに登録
     for (int i = 0; i < static_cast<int>(FONT_TYPE::MAX); i++)

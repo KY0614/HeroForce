@@ -52,6 +52,9 @@
     <ClCompile Include="Src\Object\Character\EnemySort\EneBrig.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneGolem.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneMage.cpp" />
+    <ClCompile Include="Src\Object\System\GameUi\GamaUIBase.cpp" />
+    <ClCompile Include="Src\Object\System\GameUi\CpuHpBar.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
     <ClCompile Include="Src\Manager\Decoration\SoundManager.cpp" />
     <ClCompile Include="Src\Scene\GameOverScene.cpp" />
     <ClCompile Include="Src\Scene\FazeResult.cpp" />
@@ -74,6 +77,9 @@
     <ClCompile Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.cpp" />
     <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
     <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Src\Shader\PixelShader.cpp" />
+    <ClCompile Include="Src\Common\ShaderFade.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\Character\PlayableChara\PlayerBase.h" />
@@ -233,5 +239,11 @@
     <ClInclude Include="Src\Object\Arrow.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Src\Shader\HLSL\Texture.hlsl" />
+    <FxCompile Include="Src\Shader\HLSL\ColorTex.hlsl" />
+    <FxCompile Include="Src\Shader\HLSL\Fade.hlsl" />
+    <FxCompile Include="Src\Shader\HLSL\FadeTextrure.hlsl" />
   </ItemGroup>
 </Project>

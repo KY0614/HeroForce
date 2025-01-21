@@ -13,6 +13,7 @@
 #include"../Manager/GameSystem/DataBank.h"
 #include"../Manager/Decoration/EffectManager.h"
 #include"../Manager/Decoration/SoundManager.h"
+#include"../Shader/PixelShader.h"
 #include "SceneManager.h"
 
 SceneManager* SceneManager::instance_ = nullptr;
@@ -38,6 +39,7 @@ void SceneManager::Init(void)
 	DataBank::CreateInstance();
 	EffectManager::CreateInstance();
 	SoundManager::CreateInstance();
+	PixelShader::CreateInstance();
 
 	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;
@@ -85,10 +87,18 @@ void SceneManager::Init3D(void)
 	SetUseBackCulling(true);
 
 	// ライトの設定
-	SetUseLighting(false);
+	SetUseLighting(true);
 
 	// 正面から斜め下に向かったライト
 	ChangeLightTypeDir({ 0.00f, -1.00f, 1.00f });
+
+	// ライトの設定
+	//ChangeLightTypeDir({ 0.3f, -0.7f, 0.8f });
+
+	// フォグ設定
+	SetFogEnable(true);
+	SetFogColor(5, 5, 5);
+	SetFogStartEnd(10000.0f, 20000.0f);
 
 }
 
@@ -179,6 +189,7 @@ void SceneManager::Destroy(void)
 	DataBank::GetInstance().Destroy();
 	EffectManager::GetInstance().Release();
 	SoundManager::GetInstance().Release();
+	PixelShader::GetInstance().Destroy();
 
 	delete instance_;
 }

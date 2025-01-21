@@ -1,4 +1,5 @@
 #include "../Manager/Generic/SceneManager.h"
+#include "../Manager/Decoration/EffectManager.h"
 #include "../Manager/Generic/Camera.h"
 #include "../Manager/GameSystem/Collision.h"
 #include"../Manager/GameSystem/Timer.h"
@@ -6,6 +7,7 @@
 #include"../Object/Character/EnemySort/Enemy.h"
 #include"../Object/Character/EnemyManager.h"
 #include"../Object/Character/PlayerManager.h"
+#include "../Manager/GameSystem/DataBank.h"
 #include"../Object/Character/Chiken/ChickenManager.h"
 #include"../Object/Character/EnemySort/EneAxe.h"
 #include"../Object/Character/EnemySort/EneGolem.h"
@@ -137,8 +139,6 @@ void GameScene::Update(void)
 	//強化要素の反映
 	LevelUpReflection();
 
-
-
 	//いずれ消す
 	auto& ins = InputManager::GetInstance();
 	auto& mng = SceneManager::GetInstance();
@@ -148,10 +148,10 @@ void GameScene::Update(void)
 		mng.ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
 
-	if (ins.IsTrgDown(KEY_INPUT_RETURN))
+	/*if (ins.IsTrgDown(KEY_INPUT_RETURN))
 	{
 		ChangePhase();
-	}
+	}*/
 }
 
 void GameScene::Draw(void)
@@ -192,7 +192,6 @@ void GameScene::Draw(void)
 void GameScene::Release(void)
 {
 	level_->Release();
-	stage_->Release();
 
 	SceneManager::GetInstance().ResetCameras();
 	SceneManager::GetInstance().ReturnSolo();
@@ -352,6 +351,19 @@ void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
 	//}
 }
 
+//void GameScene::CollisionStageUnit()
+//{
+//	auto& col = Collision::GetInstance();
+//	stage_->GetTtans();
+//	for (auto& p : players_)
+//	{
+//		if (col.IsHitUnitStageObject(stage_->GetTtans().modelId, p->GetPos(), 20.0f))
+//		{
+//			p->SetPos(p->GetPrePos());
+//		}
+//	}
+//}
+
 void GameScene::Fade(void)
 {
 
@@ -412,29 +424,26 @@ void GameScene::DrawPhase(void)
 }
 void GameScene::LevelUpReflection()
 {
-	//ステート確認
-	if (level_->GetState() == LevelScreenManager::STATE::FIN)
+	//プレイヤーごとに強化反映
+	int plNum = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
+	for (int i = 0; i < plNum; i++)
 	{
+		if (level_->GetPreType(i) != LevelScreenManager::TYPE::MAX)
+		{
+			level_->EffectSyne(*players_[i], i);
+		}
+	}
+	
+	//ステート確認
+	if (level_->GetState() != LevelScreenManager::STATE::NONE)
+	{
+		//通常時以外は処理しない
 		return;
 	}
 
-	//ここでプレイヤーの強化を反映
-	switch (level_->GetType())
+	for (int i = 0; i < plNum; i++)
 	{
-	case LevelScreenManager::TYPE::ATTACK:
-		break;
-
-	case LevelScreenManager::TYPE::DEFENSE:
-		break;
-
-	case LevelScreenManager::TYPE::LIFE:
-		break;
-
-	case LevelScreenManager::TYPE::SPEED:
-		break;
-
-	default:
-		break;
+		level_->Reflection(*players_[i], i);
 	}
 }
 

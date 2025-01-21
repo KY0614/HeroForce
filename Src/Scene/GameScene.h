@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneBase.h"
 #include"../Common/Fader.h"
+#include"../Object/Stage/StageManager.h"
 #include<vector>
 #include<memory>
 
@@ -47,10 +48,10 @@ private:
 
 	//フェーダー
 	std::unique_ptr<Fader>fader_;
+
 	//ゲームシーンのフェーズ遷移中判定
 	bool isPhaseChanging_;
 	int phaseCnt_;
-
 
 	//フェーズリザルト
 	std::unique_ptr<FazeResult>fazeResult_;
@@ -77,6 +78,7 @@ private:
 	void CollisionEnemy(void);	//敵関連の当たり判定
 	void CollisionPlayer(void);	//プレイヤー関連の当たり判定
 	void CollisionPlayerCPU(PlayerBase& _player,const VECTOR& _pPos);	//プレイヤー(CPU)関連の当たり判定
+	//void CollisionStageUnit();
 
 	//フェード
 	void Fade(void);
