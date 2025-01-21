@@ -122,6 +122,12 @@ protected:
 	float stepAnim_;						//アニメーションの再生時間
 	float speedAnim_;						//アニメーション速度
 
+	//配列用アニメ関係
+	int animArray_;								//アタッチするアニメを格納
+	int animArrayTotalTime_;				//アニメーションの総再生時間
+	float stepAnimArray_;						//アニメーションの再生時間
+	float speedAnimArray_;						//アニメーション速度
+
 	//アニメーション終了時の動き
 	virtual void FinishAnim(void);
 	//カウンタ増加

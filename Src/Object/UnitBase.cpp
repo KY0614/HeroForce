@@ -21,6 +21,12 @@ UnitBase::UnitBase(void)
 	animTotalTime_ = -1;
 	stepAnim_ = -1.0f;
 	speedAnim_ = 1.0f;
+
+	animArray_ = -1;
+	animArrayTotalTime_ = -1;
+	stepAnimArray_ = -1.0f;
+	speedAnimArray_ = -1.0f;
+
 }
 
 UnitBase::~UnitBase(void)
@@ -112,7 +118,7 @@ void UnitBase::Anim(void)
 	for (auto& tran : transArray_)
 	{
 		// 再生するアニメーション時間の設定
-		MV1SetAttachAnimTime(tran.modelId, atcAnim_, stepAnim_);
+		MV1SetAttachAnimTime(tran.modelId, animArray_, stepAnimArray_);
 	}
 }
 
@@ -149,15 +155,16 @@ void UnitBase::ResetAnim(const ANIM _anim, const float _speed)
 	{
 		//デタッチ
 		//実質atcAnimの初期化
-		MV1DetachAnim(tran.modelId, atcAnim_);
+		MV1DetachAnim(tran.modelId, animArray_);
 		//アタッチ
 		//実質atcAnimの代入
-		atcAnim_ = MV1AttachAnim(tran.modelId, animNum_[anim_]);
+		animArray_ = MV1AttachAnim(tran.modelId, animNum_[anim_]);
 
-		animTotalTime_ = MV1GetAttachAnimTotalTime(tran.modelId, atcAnim_);
+		animArrayTotalTime_ = MV1GetAttachAnimTotalTime(tran.modelId, animArray_);
+		stepAnimArray_ = 0.0f;
 
 		// 再生するアニメーション時間の設定
-		MV1SetAttachAnimTime(tran.modelId, atcAnim_, stepAnim_);
+		MV1SetAttachAnimTime(tran.modelId, animArray_, stepAnimArray_);
 	}
 }
 
@@ -171,6 +178,7 @@ void UnitBase::FinishAnim(void)
 {
 	//ループ再生
 	stepAnim_ = 0.0f;
+	stepAnimArray_ = 0.0f;
 }
 
 void UnitBase::CntUp(float& _count)

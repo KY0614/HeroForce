@@ -121,11 +121,6 @@ void SelectImage::Init(void)
 
 	InitVertex();
 
-	//ñÓàÛâÊëúÇÃèâä˙íl
-	//pointL_ = { LEFT_POS_X,POINT_POS_Y,POINT_SCALE,POINT_SCALE,false,imgLeftPoint_,pointL_.mesh_.vertex_};
-	//
-	//pointR_ = { RIGHT_POS_X,POINT_POS_Y,POINT_SCALE,POINT_SCALE,false,imgRightPoint_ ,pointL_.mesh_.vertex_};
-
 	target_[0] = SelectScene::DEFAULT_TARGET_POS;
 
 	lerpTime_ = 1.0f;
@@ -759,14 +754,6 @@ void SelectImage::ChangeStateRole(void)
 {
 	MoveVertexPos();
 	stateUpdate_ = std::bind(&SelectImage::RoleUpdate, this);
-}
-
-void SelectImage::Point::PointDraw(void)
-{
-	//DrawRotaGraph(pos.x, pos.y,
-	//	POINT_SCALE_RATE, 0.0f,
-	//	imgHandle_,
-	//	true, false);
 }
 
 void SelectImage::Mesh::DrawTwoMesh(int handle)

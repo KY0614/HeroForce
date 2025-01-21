@@ -84,8 +84,6 @@ public:
 		Point() :  w(0), h(0), isToggle_(false),mesh_() {}
 		Point(int inw, int inh, bool isT,Mesh& mesh) :
 			 w(inw), h(inh), isToggle_(isT) , mesh_(mesh)  {}
-
-		void PointDraw(void);//–îˆó‚ð•`‰æ‚·‚é
 	};
 
 	//------------------------------------------------------------------------------
