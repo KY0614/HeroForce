@@ -14,7 +14,7 @@
 #include "../Object/Stage/SkyDome.h"
 #include "../Object/System/LevelScreenManager.h"
 #include "../Object/System/UnitPositionLoad.h"
-#include "../Manager/DataBank.h"
+#include "../Manager/GameSystem/DataBank.h"
 #include"FazeResult.h"
 #include "GameScene.h"
 
