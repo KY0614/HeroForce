@@ -1,11 +1,8 @@
-#include"../Manager/Generic/InputManager.h"
-#include"../Manager/Generic/SceneManager.h"
-#include"../Manager//Generic/ResourceManager.h"
 #include"../PlayerInput.h"
 #include"../PlayerDodge.h"
-#include"../Manager/Generic/InputManager.h"
-#include"../Manager/Generic/SceneManager.h"
-#include"../Manager/Generic/ResourceManager.h"
+#include"../../../Manager/Generic/InputManager.h"
+#include"../../../Manager/Generic/SceneManager.h"
+#include"../../../Manager/Generic/ResourceManager.h"
 #include "PlayerBase.h"
 
 void PlayerBase::Destroy(void)

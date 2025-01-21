@@ -1,5 +1,5 @@
 #include "PlayerInput.h"
-#include"../Character/PlayableChara/PlayerBase.h"
+#include"PlayableChara/PlayerBase.h"
 #include"../../Utility/AsoUtility.h"
 
 PlayerInput* playerInput_ = nullptr;

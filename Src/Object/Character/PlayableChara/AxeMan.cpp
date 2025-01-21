@@ -86,7 +86,7 @@ void AxeMan::InitCharaAnim(void)
 	animNum_.emplace(ANIM::SKILL_2, SKILL_TWO_NUM);
 }
 
-//void PlAxe::ChargeAct(void)
+//void AxeMan::ChargeAct(void)
 //{
 //
 //}
