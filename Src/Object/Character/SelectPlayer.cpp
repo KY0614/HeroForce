@@ -18,13 +18,13 @@ void SelectPlayer::Init(void)
 
 	animNum_.emplace(ANIM::IDLE, IDLE_ANIM);
 
-	ResetAnim(ANIM::IDLE, ANIM_SPEED);
+	ResetAnimArray(ANIM::IDLE, ANIM_SPEED);
 
 }
 
 void SelectPlayer::Update(void)
 {
-	Anim();
+	AnimArray();
 
 	for (auto& tran_ : transArray_) 
 	{
@@ -81,7 +81,7 @@ void SelectPlayer::Init3DModel(void)
 	for (auto& tran_ : transArray_) 
 	{
 		tran_.scl = { scale, scale, scale };
-		tran_.pos = { 60.0f, 60.0f, -300.0f };
+		tran_.pos = { 80.0f, 60.0f, -300.0f };
 		tran_.quaRot = Quaternion();
 		tran_.quaRotLocal = Quaternion::Euler(
 			0.0f, AsoUtility::Deg2RadF(0.0f),

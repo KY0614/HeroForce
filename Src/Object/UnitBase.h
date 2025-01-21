@@ -100,6 +100,11 @@ public:
 	//アニメーションリセット
 	void ResetAnim(const ANIM _anim, const float _speed);
 
+	//配列用アニメーション関数
+	void AnimArray(void);
+	//アニメーションリセット
+	void ResetAnimArray(const ANIM _anim, const float _speed);
+
 	//攻撃関係
 	//isHit設定用（外部）
 	void SetIsHit(const bool _flag);

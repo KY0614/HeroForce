@@ -192,29 +192,20 @@ void SelectImage::MoveVertexPos(void)
 		//return;
 	}
 
-	// 左下
-	//VECTOR end = { ROLE_LEFT_X, ROLE_UNDER_Y, ROLE_VERTEX_Z };
-	//VECTOR end = { prevPos_[0].x - 40.0f,  prevPos_[0].y - 20.0f, ROLE_VERTEX_Z};
-	//mesh_.vertex_[0].pos = AsoUtility::Lerp(end, mesh_.vertex_[0].pos, lerpTime_);
+	mesh_.vertex_[0].pos = { -70.0f, 60.0f, VERTEX_Z + 12.0f };		//左下
+	mesh_.vertex_[1].pos = { 10.0f, 60.0f, VERTEX_Z + 12.0f };		//右下
+	mesh_.vertex_[2].pos = { -70.0f, 170.0f, VERTEX_Z };			//左上
+	mesh_.vertex_[3].pos = { 10.0f, 170.0f, VERTEX_Z };				//右上
 
-	//// 右下
-	////end = { ROLE_RIGHT_X, ROLE_UNDER_Y, ROLE_VERTEX_Z };
-	//end = { prevPos_[1].x - 50.0f,  prevPos_[1].y - 20.0f, ROLE_VERTEX_Z };
-	//mesh_.vertex_[1].pos = AsoUtility::Lerp(end, mesh_.vertex_[1].pos, lerpTime_);
+	pointL_.mesh_.vertex_[0].pos = { POINT_LEFT_X - 40.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 左下
+	pointL_.mesh_.vertex_[1].pos = { POINT_RIGHT_X - 40.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 右下
+	pointL_.mesh_.vertex_[2].pos = { POINT_LEFT_X - 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 左上
+	pointL_.mesh_.vertex_[3].pos = { POINT_RIGHT_X - 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 右上
 
-	//// 左上
-	////end = { ROLE_LEFT_X, ROLE_TOP_Y, ROLE_VERTEX_Z };
-	//end = { prevPos_[2].x - 40.0f,  prevPos_[2].y + 20.0f, ROLE_VERTEX_Z };
-	//mesh_.vertex_[2].pos = AsoUtility::Lerp(end, mesh_.vertex_[2].pos, lerpTime_);
-
-	//// 右上
-	//end = { prevPos_[3].x - 50.0f, prevPos_[3].y + 20.0f, ROLE_VERTEX_Z };
-	//mesh_.vertex_[3].pos = AsoUtility::Lerp(end, mesh_.vertex_[3].pos, lerpTime_);
-
-	mesh_.vertex_[0].pos = VGet(-90.0f, 50.0f, VERTEX_Z + 12.0f);	// 左下
-	mesh_.vertex_[1].pos = VGet(0.0f, 50.0f, VERTEX_Z + 12.0f);		// 右下
-	mesh_.vertex_[2].pos = VGet(-90.0f, 190.0f, VERTEX_Z);			// 左上
-	mesh_.vertex_[3].pos = VGet(0.0f, 190.0f, VERTEX_Z);			// 右上
+	pointR_.mesh_.vertex_[0].pos = { -POINT_RIGHT_X + 40.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 左下
+	pointR_.mesh_.vertex_[1].pos = { -POINT_LEFT_X + 40.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 右下
+	pointR_.mesh_.vertex_[2].pos = { -POINT_RIGHT_X + 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 左上
+	pointR_.mesh_.vertex_[3].pos = { -POINT_LEFT_X + 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 右上
 
 }
 
@@ -511,7 +502,8 @@ void SelectImage::RoleDraw(void)
 	}
 	else
 	{
-		SetDrawBlendMode(DX_BLENDMODE_SUB, 128);
+		mesh_.DrawTwoMesh(*imgPlayerNum_);
+		SetDrawBlendMode(DX_BLENDMODE_SUB, BLEND_PARAM);
 		mesh_.DrawTwoMesh(*imgPlayerNum_);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);	//ブレンドモードを戻す
 
@@ -528,7 +520,7 @@ void SelectImage::PointsDraw(void)
 	{
 		////右の矢印画像を描画し、同じ画像を減算ブレンドする
 		pointR_.mesh_.DrawTwoMesh(*imgRightPoint_);
-		SetDrawBlendMode(DX_BLENDMODE_SUB, 128);
+		SetDrawBlendMode(DX_BLENDMODE_SUB, BLEND_PARAM);
 		pointR_.mesh_.DrawTwoMesh(*imgRightPoint_);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);	//ブレンドモードを戻す
 
@@ -540,7 +532,7 @@ void SelectImage::PointsDraw(void)
 	{
 		//左の矢印画像を描画し、同じ画像を減算ブレンドする
 		pointL_.mesh_.DrawTwoMesh(*imgLeftPoint_);
-		SetDrawBlendMode(DX_BLENDMODE_SUB, 128);
+		SetDrawBlendMode(DX_BLENDMODE_SUB, BLEND_PARAM);
 		pointL_.mesh_.DrawTwoMesh(*imgLeftPoint_);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);	//ブレンドモードを戻す
 
@@ -555,7 +547,7 @@ void SelectImage::PointsDraw(void)
 		pointL_.mesh_.DrawTwoMesh(*imgLeftPoint_);
 		pointR_.mesh_.DrawTwoMesh(*imgRightPoint_);
 		//↑の上の画像に減算ブレンドする
-		SetDrawBlendMode(DX_BLENDMODE_SUB, 128);
+		SetDrawBlendMode(DX_BLENDMODE_SUB, BLEND_PARAM);
 		pointL_.mesh_.DrawTwoMesh(*imgLeftPoint_);
 		pointR_.mesh_.DrawTwoMesh(*imgRightPoint_);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
@@ -698,13 +690,13 @@ void SelectImage::InitVertex(void)
 	readyMesh_.vertex_[2].pos = { -80.0f, 150.0f, VERTEX_Z };		// 左上
 	readyMesh_.vertex_[3].pos = { 80.0f, 150.0f, VERTEX_Z };		// 右上
 
-	pointL_.mesh_.vertex_[0].pos = { POINT_LEFT_X, POINT_UNDER_X, POINT_TOP_Z };	// 左下
-	pointL_.mesh_.vertex_[1].pos = { POINT_RIGHT_X, POINT_UNDER_X, POINT_TOP_Z };	// 右下
+	pointL_.mesh_.vertex_[0].pos = { POINT_LEFT_X, POINT_UNDER_Y, POINT_TOP_Z };	// 左下
+	pointL_.mesh_.vertex_[1].pos = { POINT_RIGHT_X, POINT_UNDER_Y, POINT_TOP_Z };	// 右下
 	pointL_.mesh_.vertex_[2].pos = { POINT_LEFT_X, POINT_TOP_Y, POINT_UNDER_Z };	// 左上
 	pointL_.mesh_.vertex_[3].pos = { POINT_RIGHT_X, POINT_TOP_Y, POINT_UNDER_Z };	// 右上
 
-	pointR_.mesh_.vertex_[0].pos = { -POINT_RIGHT_X, POINT_UNDER_X, POINT_TOP_Z };	// 左下
-	pointR_.mesh_.vertex_[1].pos = { -POINT_LEFT_X, POINT_UNDER_X, POINT_TOP_Z };	// 右下
+	pointR_.mesh_.vertex_[0].pos = { -POINT_RIGHT_X, POINT_UNDER_Y, POINT_TOP_Z };	// 左下
+	pointR_.mesh_.vertex_[1].pos = { -POINT_LEFT_X, POINT_UNDER_Y, POINT_TOP_Z };	// 右下
 	pointR_.mesh_.vertex_[2].pos = { -POINT_RIGHT_X, POINT_TOP_Y, POINT_UNDER_Z };	// 左上
 	pointR_.mesh_.vertex_[3].pos = { -POINT_LEFT_X, POINT_TOP_Y, POINT_UNDER_Z };	// 右上
 

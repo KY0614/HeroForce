@@ -16,10 +16,8 @@ public:
 
 	//画像関連
 	static constexpr float POINT_SCALE_RATE = 2.0f;	//拡大率
-	static constexpr int POINT_SCALE = 52;			//矢印画像の大きさ(正方形)
-	static constexpr int LEFT_POS_X = Application::SCREEN_SIZE_X / 2 - (POINT_SCALE * 5);
-	static constexpr int RIGHT_POS_X = Application::SCREEN_SIZE_X / 2 + (POINT_SCALE * 5);
-	static constexpr int POINT_POS_Y = Application::SCREEN_SIZE_Y / 2 ;
+	static constexpr float POINT_SCALE = 52.0f;			//矢印画像の大きさ(正方形)
+	static constexpr float IMAGE_SCALE = 50.0f;			//矢印画像の大きさ(正方形)
 
 	//頂点関連（４点)--------------------------------------------------------------
 
@@ -27,31 +25,23 @@ public:
 	static constexpr int VERTEX_NUM = 4;			//頂点数
 	static constexpr float VERTEX_ROTSPEED = 1.0f;	//頂点を回転させる速度
 
-	static constexpr float VERTEX_LEFT_X = -50.0f;	//画像(頂点)左のX座標
-	static constexpr float VERTEX_RIGHT_X = 50.0f;	//画像(頂点)右のX座標
+	static constexpr float VERTEX_LEFT_X = -25.0f;	//画像(頂点)左のX座標	memo:元50
+	static constexpr float VERTEX_RIGHT_X = 25.0f;	//画像(頂点)右のX座標
+	
+	static constexpr float VERTEX_TOP_Y = 150.0f;	//画像上のY座標	memo:元170
+	static constexpr float VERTEX_UNDER_Y = 90.0f;	//画像下のY座標 70
 
-	static constexpr float VERTEX_UNDER_Y = 70.0f;	//画像下のY座標
-	static constexpr float VERTEX_TOP_Y = 170.0f;	//画像上のY座標
-
-	static constexpr float VERTEX_Z = -350.0f;		//画像上のZ座標
-	static constexpr float VERTEX_UNDER_Z = -338.0f;//画像下のZ座標
-
-	static constexpr float ROLE_LEFT_X = -90.0f;
-	static constexpr float ROLE_RIGHT_X = 0.0f;
-
-	static constexpr float ROLE_UNDER_Y = 50.0f;
-	static constexpr float ROLE_TOP_Y = 190.0f;
-
-	static constexpr float ROLE_VERTEX_Z = -338.0f;		//頂点Z座標
+	static constexpr float VERTEX_Z = -400.0f;		//画像上のZ座標
+	static constexpr float VERTEX_UNDER_Z = -392.0f;//画像下のZ座標
 
 	//矢印(左のほうはそのままで右の場合はLEFTとRIGHTを入れ替えてマイナス値をかける)
-	static constexpr float POINT_LEFT_X = -110.0f;	//画像(頂点)左のX座標
-	static constexpr float POINT_RIGHT_X = -58.0f;	//画像(頂点)右のX座標
-	static constexpr float POINT_TOP_Y = 146.0f;	//画像(頂点)下のY座標
-	static constexpr float POINT_UNDER_X = 94.0f;	//画像(頂点)上のY座標
+	static constexpr float POINT_LEFT_X = -50.0f;	//画像(頂点)左のX座標 memo:元-110
+	static constexpr float POINT_RIGHT_X = -28.0f;	//画像(頂点)右のX座標 memo:元-58
+	static constexpr float POINT_TOP_Y = 130.0f;	//画像(頂点)下のY座標
+	static constexpr float POINT_UNDER_Y = 110.0f;	//画像(頂点)上のY座標
 													
 	static constexpr float POINT_TOP_Z = VERTEX_Z;	//画像上のY座標
-	static constexpr float POINT_UNDER_Z = -356.0f;	//画像下のY座標
+	static constexpr float POINT_UNDER_Z = -402.0f;	//画像下のY座標
 
 	static constexpr int BLEND_PARAM = 128;			//ブレンドモードの強さ
 

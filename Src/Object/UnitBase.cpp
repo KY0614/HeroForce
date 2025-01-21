@@ -107,19 +107,13 @@ void UnitBase::Anim(void)
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	// アニメーション時間の進行
 	stepAnim_ += (speedAnim_ * deltaTime);
-	if (stepAnim_ > animTotalTime_)
+	if (stepAnim_ > animTotalTime_ )
 	{
 		//アニメーション終了時処理（継承先で行動を決めておく）
 		FinishAnim();
 	}
 	// 再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
-
-	for (auto& tran : transArray_)
-	{
-		// 再生するアニメーション時間の設定
-		MV1SetAttachAnimTime(tran.modelId, animArray_, stepAnimArray_);
-	}
 }
 
 
@@ -144,18 +138,46 @@ void UnitBase::ResetAnim(const ANIM _anim, const float _speed)
 	//実質atcAnimの代入
 	atcAnim_ = MV1AttachAnim(trans_.modelId, animNum_[anim_]);
 
-
 	animTotalTime_ = MV1GetAttachAnimTotalTime(trans_.modelId, atcAnim_);
 	stepAnim_ = 0.0f;
 
 	// 再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
+}
+
+void UnitBase::AnimArray(void)
+{
+	// アニメーション再生
+	// 経過時間の取得
+	float deltaTime = 1.0f / Application::DEFAULT_FPS;
+	stepAnimArray_ += (speedAnimArray_ * deltaTime);
+	if (stepAnimArray_ > animArrayTotalTime_)
+	{
+		//アニメーション終了時処理（継承先で行動を決めておく）
+		FinishAnim();
+	}
+
+	for (auto& tran : transArray_)
+	{
+		// 再生するアニメーション時間の設定
+		MV1SetAttachAnimTime(tran.modelId, animArray_, stepAnimArray_);
+	}
+}
+
+void UnitBase::ResetAnimArray(const ANIM _anim, const float _speed)
+{
+	if (anim_ == _anim)return;
+
+	speedAnimArray_ = _speed;
 
 	for (auto& tran : transArray_)
 	{
 		//デタッチ
 		//実質atcAnimの初期化
 		MV1DetachAnim(tran.modelId, animArray_);
+
+		anim_ = _anim;
+
 		//アタッチ
 		//実質atcAnimの代入
 		animArray_ = MV1AttachAnim(tran.modelId, animNum_[anim_]);
