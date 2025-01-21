@@ -1,7 +1,7 @@
 #include<DxLib.h>
 #include<cmath>
-#include"../../Application.h"
-#include"../../Utility/AsoUtility.h"
+#include"../../../Application.h"
+#include"../../../Utility/AsoUtility.h"
 #include "Enemy.h"
 
 void Enemy::Destroy(void)

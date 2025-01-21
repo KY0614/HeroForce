@@ -1,8 +1,8 @@
 #pragma once
 #include<vector>
 #include <functional>
-#include"../../Utility/AsoUtility.h"
-#include "../UnitBase.h"
+#include"../../../Utility/AsoUtility.h"
+#include "../../UnitBase.h"
 
 class Enemy : public UnitBase
 {

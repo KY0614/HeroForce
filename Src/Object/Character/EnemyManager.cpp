@@ -1,6 +1,6 @@
 #include<cassert>
 
-#include"Enemy.h"
+#include"EnemySort/Enemy.h"
 #include"EnemySort/EneArcher.h"
 #include"EnemySort/EneAxe.h"
 #include"EnemySort/EneBrig.h"

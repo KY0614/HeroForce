@@ -1,4 +1,4 @@
-#include"../Enemy.h"
+#include"Enemy.h"
 #include "EneMage.h"
 
 void EneMage::SetParam(void)

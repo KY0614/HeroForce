@@ -1,4 +1,5 @@
 #include "PlAxeMan.h"
+#include"../AxeMan.h"
 
 void PlAxe::Init(void)
 {

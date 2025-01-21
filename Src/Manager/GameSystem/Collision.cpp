@@ -1,7 +1,7 @@
 #include"../Utility/AsoUtility.h"
 #include"../Object/UnitBase.h"
-#include"../Object/Character/PlayerBase.h"
-#include"../Object/Character/Enemy.h"
+#include"../Object/Character/PlayableChara/PlayerBase.h"
+#include"../Object/Character/EnemySort/Enemy.h"
 #include "Collision.h"
 
 Collision* Collision::instance_ = nullptr;

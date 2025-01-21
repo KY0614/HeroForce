@@ -1,4 +1,4 @@
-#include"../Enemy.h"
+#include"Enemy.h"
 #include "EneBrig.h"
 
 void EneBrig::SetParam(void)

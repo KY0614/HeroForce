@@ -27,7 +27,7 @@ void DataBank::Init(void)
 /// <param name="_playerNum">プレイヤー番号（何Pか)</param>
 void DataBank::Input(const SceneManager::CNTL _cntl, const int _playerNum)
 {
-	playerInfo_[_playerNum].cntrol_ = _cntl;
+	playerInfo_[_playerNum - 1].cntrol_ = _cntl;
 }
 
 /// <summary>
@@ -37,7 +37,7 @@ void DataBank::Input(const SceneManager::CNTL _cntl, const int _playerNum)
 /// <param name="_playerNum">プレイヤー番号</param>
 void DataBank::Input(const SceneManager::PLAY_MODE _mode, const int _playerNum)
 {
-	playerInfo_[_playerNum].mode_ = _mode;
+	playerInfo_[_playerNum - 1].mode_ = _mode;
 }
 
 /// <summary>
@@ -47,7 +47,7 @@ void DataBank::Input(const SceneManager::PLAY_MODE _mode, const int _playerNum)
 /// <param name="_playerNum">プレイヤー番号</param>
 void DataBank::Input(const SceneManager::ROLE _role, const int _playerNum)
 {
-	playerInfo_[_playerNum].role_ = _role;
+	playerInfo_[_playerNum - 1].role_ = _role;
 }
 
 /// <summary>
@@ -81,7 +81,7 @@ void DataBank::Input(const INFO _info, const int _num)
 /// <returns></returns>
 const DataBank::PLAYER_INFO DataBank::Output(const int _playerNum)
 {
-	return playerInfo_[_playerNum];
+	return playerInfo_[_playerNum - 1];
 }
 
 /// <summary>

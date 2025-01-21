@@ -1,8 +1,15 @@
 #pragma once
-#include "../../PlayerCpu.h"
+#include "../../../JobManagerBase.h"
 class CpuAxe :
-    public PlayerCpu
+    public JobManagerBase
 {
+public:
 
+	void Init(void)override;
+	void Update(void)override;
+	void Draw(void)override;
+	void Release(void)override;
+
+private:
 };
 

@@ -4,7 +4,7 @@
 #include <DxLib.h>
 #include "../../Common/Transform.h"
 #include "../../../Utility/AsoUtility.h"
-#include "../PlayerBase.h"
+#include "../PlayableChara/PlayerBase.h"
 #include "ChickenBase.h"
 
 

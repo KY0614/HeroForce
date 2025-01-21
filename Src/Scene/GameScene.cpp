@@ -3,7 +3,7 @@
 #include "../Manager/GameSystem/Collision.h"
 #include"../Manager/GameSystem/Timer.h"
 
-#include"../Object/Character/Enemy.h"
+#include"../Object/Character/EnemySort/Enemy.h"
 #include"../Object/Character/EnemyManager.h"
 #include"../Object/Character/PlayerManager.h"
 #include"../Object/Character/Chiken/ChickenManager.h"

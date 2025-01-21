@@ -11,8 +11,8 @@
     <ClCompile Include="Src\Manager\GameSystem\DataBank.cpp" />
     <ClCompile Include="Src\Common\ImageFader.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\Collision.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayerBase.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\Enemy.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\PlayerBase.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
     <ClCompile Include="Src\Object\System\Carsor.cpp" />
     <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
@@ -58,7 +58,7 @@
     <ClCompile Include="Src\Manager\GameSystem\Timer.cpp" />
     <ClCompile Include="Src\Object\Character\EnemyManager.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerAnim.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayerCpu.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\PlayerCpu.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuAxe.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuArcher.cpp" />
@@ -71,12 +71,12 @@
     <ClCompile Include="Src\Object\JobManagerBase.cpp" />
     <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
     <ClCompile Include="Src\Object\SelectImage.cpp" />
-    <ClCompile Include="Src\Object\Character\SelectPlayer.cpp" />
-    <ClCompile Include="Src\Manager\Decoratio\EffectManager.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
     <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\Object\Character\PlayerBase.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\PlayerBase.h" />
     <ClCompile Include="Src\Application.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -140,13 +140,13 @@
     <ClInclude Include="Src\Object\Stage\StageManager.h" />
     <ClInclude Include="Src\Object\Stage\SkyDome.h" />
     <ClInclude Include="Src\Object\Common\Transform.h" />
-    <ClInclude Include="Src\Object\Character\SelectPlayer.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.h" />
     <ClInclude Include="Src\Object\Character\PlayerManager.h" />
-    <ClInclude Include="Src\Object\Character\PlayerCpu.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\PlayerCpu.h" />
     <ClInclude Include="Src\Object\Character\PlayerBase.h" />
     <ClInclude Include="Src\Object\Character\PlayerAnim.h" />
     <ClInclude Include="Src\Object\Character\EnemyManager.h" />
-    <ClInclude Include="Src\Object\Character\Enemy.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\Enemy.h" />
     <ClInclude Include="Src\main.h" />
     <ClInclude Include="Src\Object\System\Carsor.h" />
     <ClInclude Include="Src\Object\System\LevelScreenManager.h" />

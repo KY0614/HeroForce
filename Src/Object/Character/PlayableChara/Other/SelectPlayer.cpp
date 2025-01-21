@@ -1,6 +1,6 @@
 #include <assert.h>
-#include "../Manager/Generic/ResourceManager.h"
-#include "../Object/Character/PlayerBase.h"
+#include "../../../../Manager/Generic/ResourceManager.h"
+#include "../PlayerBase.h"
 #include "SelectPlayer.h"
 
 SelectPlayer::SelectPlayer(void)

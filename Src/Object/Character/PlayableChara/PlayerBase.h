@@ -4,7 +4,7 @@
 #include<variant>
 #include"../Utility/AsoUtility.h"
 #include"../Manager/Generic/SceneManager.h"
-#include "../UnitBase.h"
+#include "../../UnitBase.h"
 
 //デバッグ
 #define DEBUG_ON

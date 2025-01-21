@@ -10,9 +10,9 @@
 #include "../Object/Stage/StageManager.h"
 #include "../Object/Stage/StageObject.h"
 #include "../Object/Stage/SkyDome.h"
-#include "../Object/Character/SelectPlayer.h"
+#include "../Object/Character/PlayableChara/Other/SelectPlayer.h"
 #include "../Object/SelectImage.h"
-#include "../Object/Character/PlayerBase.h"
+#include "../Object/Character/PlayableChara/PlayerBase.h"
 #include "../Object/Character/PlayableChara/USER/PlAxeMan.h"
 #include "SelectScene.h"
 

@@ -2,7 +2,7 @@
 #include "../Manager/Generic/InputManager.h"
 #include "../Manager/GameSystem/DataBank.h"
 #include "../Scene/SelectScene.h"
-#include "../Object/Character/SelectPlayer.h"
+#include "../Object/Character/PlayableChara/Other/SelectPlayer.h"
 #include "SelectImage.h"
 
 SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> player) : selectScene_(select), player_(player)
@@ -611,7 +611,7 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 	if (input.config_ == SelectScene::KEY_CONFIG::DECIDE)
 	{
 		//ñêEÇÃê›íË
-		data.Input(static_cast<SceneManager::ROLE>(role_), i + 1);
+		data.Input(static_cast<SceneManager::ROLE>(role_ + 1), i + 1);
 
 		//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 

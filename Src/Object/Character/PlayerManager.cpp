@@ -1,8 +1,8 @@
 #include<cassert>
 #include"../../Manager/Generic/InputManager.h"
 
-#include "PlayerBase.h"
-#include"PlayerCpu.h"
+#include "PlayableChara/PlayerBase.h"
+#include"PlayableChara/PlayerCpu.h"
 #include "PlayableChara/USER/PlAxeMan.h"
 #include "PlayableChara/USER/PlKnight.h"
 #include "PlayableChara/USER/PlArcher.h"
@@ -18,7 +18,7 @@ void PlayerManager::Init(void)
 
 	for (int i = 0; i < PLAYER_NUM; i++) {
 		//î•ñ‚ðŽæ“¾
-		players_[i].info = data.Output(i);
+		players_[i].info = data.Output(i + 1);
 		//¶¬
 		if (players_[i].info.mode_ == SceneManager::PLAY_MODE::USER){
 			//ƒ†[ƒU[
