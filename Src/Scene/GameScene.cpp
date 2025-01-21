@@ -120,12 +120,16 @@ void GameScene::Update(void)
 		return;
 	}
 
-	Timer::GetInstance().Update();
-	//タイマーが終了したら
-	if (Timer::GetInstance().IsEnd())ChangePhase();
+	
 
 	level_->Update();
 
+	if (level_->IsLevelUp())return;
+
+
+	Timer::GetInstance().Update();
+	//タイマーが終了したら
+	if (Timer::GetInstance().IsEnd())ChangePhase();
 
 	//プレイヤーの更新
 	playerMng_->Update();
