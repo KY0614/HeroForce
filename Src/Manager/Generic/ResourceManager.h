@@ -82,6 +82,10 @@ public:
 		RIGHT_POINT,	//右矢印
 		LEFT_POINT,		//左矢印
 
+		//タイトル画面
+		TITLE_LOGO,
+		PLEASE_KEY,
+
 
 	};
 

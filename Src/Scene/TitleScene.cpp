@@ -11,45 +11,69 @@
 
 TitleScene::TitleScene(void)
 {
-	imgTitleLogo_ = -1;
-}
-
-TitleScene::~TitleScene(void)
-{
+	imgLogo_ = -1;
+	imgMes_ = -1;
+	sky_ = nullptr;
 }
 
 void TitleScene::Init(void)
 {
-	//windowNum_ = 1;
-	// カメラモード：定点カメラ
-	SceneManager::GetInstance().GetCameras()[0]->ChangeMode(Camera::MODE::FIXED_POINT);
+	//スカイドーム
+	sky_ = std::make_unique<SkyDome>();
+	sky_->Init();
+
+	//画像読み込み
+	imgLogo_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::TITLE_LOGO).handleId_;
+	imgMes_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLEASE_KEY).handleId_;
+
+	//カメラ設定
+	auto camera = SceneManager::GetInstance().GetCameras();
+	camera[0]->SetPos(DEFAULT_CAMERA_POS, DEFAULT_TARGET_POS);
+	camera[0]->ChangeMode(Camera::MODE::FIXED_POINT);
 }
 
 void TitleScene::Update(void)
 {
-
-	// シーン遷移
 	InputManager& ins = InputManager::GetInstance();
 	SceneManager& mng = SceneManager::GetInstance();
-	DataBank& data = DataBank::GetInstance();
 
+	//スカイドーム更新
+	sky_->Update();
+
+	// シーン遷移
 	if (ins.IsTrgDown(KEY_INPUT_SPACE)|| ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
 	{
-		//data.Input(DataBank::INFO::USER_NUM, windowNum_);	//ゲームシーン移行時にやるもの
 		mng.ChangeScene(SceneManager::SCENE_ID::SELECT);
 	}
 }
 
 void TitleScene::Draw(void)
 {
+	//スカイドーム描画
+	sky_->Draw();
 
-	// ロゴ描画
-	DrawLogo();
-	//DrawFormatString(400, 400, 0xffffff, "%d", windowNum_);
+	//ロゴの描画
+	DrawRotaGraph(
+		LOGO_POS_X,LOGO_POS_Y,
+		1.0f,
+		0.0f,
+		imgLogo_,
+		true,
+		false);
+
+	//メッセージ描画
+	DrawRotaGraph(
+		MES_POS_X,MES_POS_Y,
+		1.0f,
+		0.0f,
+		imgMes_,
+		true,
+		false);
 }
 
 void TitleScene::Release(void)
 {
+	sky_->Release();
 }
 
 void TitleScene::DrawLogo(void)
@@ -61,7 +85,7 @@ void TitleScene::DrawLogo(void)
 	// タイトルロゴ
 	DrawRotaGraph(
 		cx, cy - 200,
-		1.0f, 0.0f, imgTitleLogo_, true);
+		1.0f, 0.0f, imgLogo_, true);
 
 	DrawString(cx, cy - 200, "HeroForce", 0xff0000, true);
 

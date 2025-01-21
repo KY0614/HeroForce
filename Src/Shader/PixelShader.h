@@ -1,5 +1,6 @@
 #pragma once
 #include <DxLib.h>
+#include <string>
 #include<unordered_map>
 #include "../Common/Vector2.h"
 
