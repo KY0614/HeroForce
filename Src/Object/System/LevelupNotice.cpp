@@ -1,8 +1,8 @@
 #include <DxLib.h>
 #include "../Application.h"
-#include "../../Manager/ResourceManager.h"
-#include "../../Manager/SceneManager.h"
-#include "../../Manager/TextManager.h"
+#include "../../Manager/Generic/ResourceManager.h"
+#include "../../Manager/Generic/SceneManager.h"
+#include "../../Manager/GameSystem/TextManager.h"
 #include "../Common/Vector2.h"
 #include "../Common/ImageFader.h"
 #include "LevelupNotice.h"

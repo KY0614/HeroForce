@@ -2,7 +2,7 @@
 #include <memory>
 #include <fstream>
 #include "../Utility/AsoUtility.h"
-#include "../Manager/ResourceManager.h"
+#include "../Manager/Generic/ResourceManager.h"
 
 #include "StageObject.h"
 

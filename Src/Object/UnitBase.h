@@ -1,7 +1,9 @@
 ﻿#pragma once
 #include"Common/Transform.h"
 #include<unordered_map>
-
+#include"../Manager/Generic/ResourceManager.h"
+#include"../Manager/Generic/InputManager.h"
+#include"../Manager/GameSystem/Collision.h"
 
 //test
 
@@ -108,6 +110,7 @@ protected:
 
 	int hp_;			//体力
 	Transform trans_;	//位置情報関係
+	Transform transArray_[4];	//位置情報関係
 	float radius_;		//自身の当たり判定の半径
 	float def_;			//防御力
 	float atkPow_;		//攻撃力
