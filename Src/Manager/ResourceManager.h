@@ -67,7 +67,8 @@ public:
 		RIGHT_POINT,	//右矢印
 		LEFT_POINT,		//左矢印
 		READY,			//準備
-
+		ROLE,			//役職
+		DEVICE			//デバイス
 
 	};
 

@@ -49,6 +49,13 @@ void ResourceManager::InitSelect(void)
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "test.png", 1, 1, 500, 200);
 	resourcesMap_.emplace(SRC::READY, res);
 
+	//役職
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "RoleNum.png", 1, 1, 300, 300);
+	resourcesMap_.emplace(SRC::ROLE, res);
+
+	//デバイス
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Device.png", 1, 1, 300, 300);
+	resourcesMap_.emplace(SRC::DEVICE, res);
 
 	ResourcePlayer();
 	ResourceStage();

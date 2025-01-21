@@ -11,6 +11,7 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	imgLeftPoint_ = nullptr;
 	imgRightPoint_ = nullptr;
 	imgReady_ = nullptr;
+	imgRoleNum_ = nullptr;
 
 	state_ = SelectScene::SELECT::NUMBER;
 
@@ -194,9 +195,9 @@ void SelectImage::MoveVertexPos(void)
 	}
 
 	mesh_.vertex_[0].pos = { -70.0f, 60.0f, VERTEX_Z + 12.0f };		//左下
-	mesh_.vertex_[1].pos = { 10.0f, 60.0f, VERTEX_Z + 12.0f };		//右下
+	mesh_.vertex_[1].pos = { 0.0f, 60.0f, VERTEX_Z + 12.0f };		//右下
 	mesh_.vertex_[2].pos = { -70.0f, 170.0f, VERTEX_Z };			//左上
-	mesh_.vertex_[3].pos = { 10.0f, 170.0f, VERTEX_Z };				//右上
+	mesh_.vertex_[3].pos = { 0.0f, 170.0f, VERTEX_Z };				//右上
 
 	pointL_.mesh_.vertex_[0].pos = { POINT_LEFT_X - 40.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 左下
 	pointL_.mesh_.vertex_[1].pos = { POINT_RIGHT_X - 40.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 右下
@@ -220,6 +221,10 @@ void SelectImage::Load(void)
 	imgLeftPoint_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::LEFT_POINT).handleIds_;
 
 	imgReady_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::READY).handleIds_;
+
+	imgRoleNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::ROLE).handleIds_;
+
+	imgDeviceNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::DEVICE).handleIds_;
 }
 
 void SelectImage::NumberUpdate(void)
@@ -340,7 +345,7 @@ void SelectImage::NumberUpdate(void)
 		//	}
 		//}
 
-		//selectScene_.ChangeSelect(SelectScene::SELECT::OPERATION);
+		selectScene_.ChangeSelect(SelectScene::SELECT::OPERATION);
 		ChangeSelect(SelectScene::SELECT::OPERATION);
 	}
 
@@ -490,7 +495,7 @@ void SelectImage::NumberDraw(void)
 
 void SelectImage::OperationDraw(void)
 {
-	mesh_.DrawTwoMesh(*imgPlayerNum_);
+	mesh_.DrawTwoMesh(*imgDeviceNum_);
 
 	PointsDraw();
 }
@@ -499,13 +504,13 @@ void SelectImage::RoleDraw(void)
 {
 	if (GetReady() != true)
 	{
-		mesh_.DrawTwoMesh(*imgPlayerNum_);
+		mesh_.DrawTwoMesh(*imgRoleNum_);
 	}
 	else
 	{
-		mesh_.DrawTwoMesh(*imgPlayerNum_);
+		mesh_.DrawTwoMesh(*imgRoleNum_);
 		SetDrawBlendMode(DX_BLENDMODE_SUB, BLEND_PARAM);
-		mesh_.DrawTwoMesh(*imgPlayerNum_);
+		mesh_.DrawTwoMesh(*imgRoleNum_);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);	//ブレンドモードを戻す
 
 		readyMesh_.DrawTwoMesh(*imgReady_);

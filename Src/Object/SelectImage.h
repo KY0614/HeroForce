@@ -157,7 +157,9 @@ private:
 	int* imgPlayerNum_;		//人数選択画像
 	int* imgLeftPoint_;		//左向きの矢印画像
 	int* imgRightPoint_;	//右向きの矢印画像
-	int* imgReady_;	//右向きの矢印画像
+	int* imgReady_;			//右向きの矢印画像
+	int* imgRoleNum_;		//役職の画像
+	int* imgDeviceNum_;		//役職の画像
 
 	//メッシュの頂点座標用（4つの頂点）
 	VECTOR leftTop_;		//左上

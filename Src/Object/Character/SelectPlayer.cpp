@@ -62,7 +62,7 @@ void SelectPlayer::Update(void)
 void SelectPlayer::Draw(void)
 {
 	MV1DrawModel(transArray_[role_].modelId);
-	DrawFormatString(0, 0, 0xFF0000, "time : %2.f", animChangeTime_);
+	//DrawFormatString(0, 0, 0xFF0000, "time : %2.f", animChangeTime_);
 
 	for (auto& tran_ : transArray_) {
 
@@ -105,7 +105,7 @@ void SelectPlayer::Init3DModel(void)
 	for (auto& tran_ : transArray_) 
 	{
 		tran_.scl = { scale, scale, scale };
-		tran_.pos = { 80.0f, 60.0f, -300.0f };
+		tran_.pos = { 70.0f, 60.0f, -300.0f };
 		tran_.quaRot = Quaternion();
 		tran_.quaRotLocal = Quaternion::Euler(
 			0.0f, AsoUtility::Deg2RadF(0.0f),

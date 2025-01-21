@@ -300,10 +300,6 @@ void SelectScene::NumberDraw(void)
 
 void SelectScene::OperationDraw(void)
 {
-	//for (auto& i : images_)
-	//{
-	//	i->Draw();
-	//}
 	images_[0]->Draw();
 }
 
