@@ -15,6 +15,15 @@ UnitBase::UnitBase(void)
 	stepAnim_ = -1.0f;
 	speedAnim_ = 1.0f;
 	prePos_ = AsoUtility::VECTOR_ZERO;
+
+	defAtk_ = -1.0f;
+	defDef_ = -1.0f;
+	defSpeed_ = -1.0f;
+	defHp_ = -1;
+
+	atkUpPercent_ = -1.0f;
+	defUpPercent_= -1.0f;
+	speedUpPercent_ = -1.0f;
 }
 
 UnitBase::~UnitBase(void)
@@ -168,6 +177,33 @@ void UnitBase::SubHp()
 void UnitBase::SetPos(const VECTOR pos)
 {
 	trans_.pos = pos;
+}
+
+//UŒ‚—Í‚Ì‹­‰»
+void UnitBase::SetAttack(const float percent)
+{
+	atkUpPercent_ += percent;			//‹­‰»“ã¸
+	atkPow_ = defAtk_ * atkUpPercent_;	//UŒ‚—Í‚ğã¸
+}
+ 
+//–hŒä—Í‚Ì‹­‰»
+void UnitBase::SetDefense(const float percent)
+{
+	defUpPercent_ += percent;
+	def_ = defDef_ * defUpPercent_;
+}
+
+//ˆÚ“®‘¬“x
+void UnitBase::SetSpeed(const float percent)
+{
+	speedUpPercent_ += percent;
+	//speed_ = defSpeed_ * speedUpPercent_
+}
+
+//‘Ì—Í‹­‰»
+void UnitBase::SetHpMax(const float hp)
+{
+	hpMax_ += hp;
 }
 
 void UnitBase::CollisionStage(const Transform &stageTrans)

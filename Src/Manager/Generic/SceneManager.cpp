@@ -188,6 +188,7 @@ void SceneManager::Destroy(void)
 	DataBank::GetInstance().Destroy();
 	EffectManager::GetInstance().Release();
 	SoundManager::GetInstance().Release();
+	PixelShader::GetInstance().Destroy();
 
 	delete instance_;
 }

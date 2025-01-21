@@ -58,6 +58,8 @@ public:
 	static constexpr float SPEED_ANIM = 20.0f;
 	//キャラクター大きさ設定
 	static constexpr float CHARACTER_SCALE = 0.3f;
+	//初期強化パーセント
+	static constexpr float DEFAULT_PERCENT = 100.0f;
 
 
 	//コンストラクタ
@@ -117,12 +119,30 @@ public:
 	//位置の設定
 	void SetPos(const VECTOR pos);
 
+	//強化反映
+	void SetAttack(const float percent);
+	void SetDefense(const float percent);
+	void SetSpeed(const float percent);
+	void SetHpMax(const float hp);
+
 	//衝突判定
 	void CollisionStage(const Transform& stageTrans);
 
 protected:
 
+	//各キャラクターのデフォルトのパラメーター
+	float defAtk_;
+	float defDef_;
+	float defSpeed_;
+	int defHp_;
+
+	//各パラメータごとの強化％
+	float atkUpPercent_;
+	float defUpPercent_;
+	float speedUpPercent_;
+
 	int hp_;			//体力
+	int hpMax_;			//体力最大値
 	int damage_;		//ダメージ
 	Transform trans_;	//位置情報関係
 	float radius_;		//自身の当たり判定の半径

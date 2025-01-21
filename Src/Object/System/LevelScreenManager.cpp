@@ -310,7 +310,7 @@ void LevelScreenManager::Reflection(PlayerBase& player, const int playerNum)
 	switch (type)
 	{
 	case TYPE::ATTACK:
-		//player.SetAtack(float 3.0f);
+		//player.SetAttack(float 3.0f);
 		//引数の値は上昇%の値
 		//現在のステータスを%で上昇させる
 		EffectManager::GetInstance().Play(
