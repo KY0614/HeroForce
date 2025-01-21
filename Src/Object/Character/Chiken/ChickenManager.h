@@ -41,6 +41,9 @@ public:
 	//プレイヤー位置を取得(1Pので良い)
 	void SetTargetPos(const VECTOR pos);
 
+	//衝突判定
+	void CollisionStage(const Transform& stageTrans, std::shared_ptr<ChickenBase> cheken);
+
 private:
 
 	//リスポーン位置用座標配列

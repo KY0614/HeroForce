@@ -226,6 +226,9 @@ void GameScene::CollisionEnemy(void)
 	//敵の総数取得
 	int maxCnt = enmMng_->GetActiveNum();
 
+	//ステージとの判定
+	enmMng_->CollisionStage(stage_->GetTtans());
+
 	//あたり判定(主に索敵)
 	for (int i = 0; i < maxCnt; i++)
 	{
@@ -283,6 +286,9 @@ void GameScene::CollisionPlayer(void)
 	auto& col = Collision::GetInstance();
 	//敵の総数取得
 	int maxCnt = enmMng_->GetActiveNum();
+
+	//ステージとの判定
+	playerMng_->CollisionStage(stage_->GetTtans());
 
 	for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
 	{

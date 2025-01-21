@@ -46,7 +46,7 @@ void ChickenManager::Update()
 		(*it)->Update();
 
 		//Õ“Ë”»’è
-		(*it)->CollisionStage(stageTrans_);
+		CollisionStage(stageTrans_,  *it);
 
 		// ƒ`ƒLƒ“‚Ìíœ
 		if ((*it)->GetState() == ChickenBase::STATE::END) {
@@ -79,4 +79,14 @@ void ChickenManager::ShufflePos()
 void ChickenManager::SetTargetPos(const VECTOR pos)
 {
 	targetPos_ = pos;
+}
+
+void ChickenManager::CollisionStage(const Transform& stageTrans, std::shared_ptr<ChickenBase> cheken)
+{
+
+	auto& col = Collision::GetInstance();
+	if (col.IsHitUnitStageObject(stageTrans.modelId, cheken->GetTransform().pos, cheken->GetRadius()))
+	{
+		cheken->SetPrePos();
+	}
 }

@@ -1,6 +1,7 @@
 #pragma once
-
-class PlayerBase;
+#include"Common/Transform.h"
+#include"UnitBase.h"
+#include"Character/PlayableChara/PlayerBase.h"
 
 class JobManagerBase
 {
@@ -15,6 +16,23 @@ public:
 	virtual void Release(void) = 0;
 
 	PlayerBase* GetPlayer(void) { return obj_; }
+
+	//Transform‚¢‚½‚¾‚«
+	const Transform& GetTransform(void)const { return obj_->GetTransform(); }
+
+	//‚ ‚½‚è”»’è
+	const float GetRadius(void)const { return obj_->GetRadius(); }
+
+	//ˆÊ’u
+	const VECTOR GetPos(void)const { return obj_->GetPos(); }
+
+	//–hŒä—Í
+	const float GetDef(void)const { return obj_->GetDef(); }
+	//UŒ‚ŠÖŒW
+	const UnitBase::ATK GetAtk(void)const { return obj_->GetAtk(); }
+
+	//‘O‚ÌƒtƒŒ[ƒ€ˆÊ’u‚É’u‚­
+	void SetPrePos(void) { obj_->SetPrePos(); }
 
 protected:
 

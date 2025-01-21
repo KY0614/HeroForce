@@ -208,6 +208,11 @@ void UnitBase::SetPos(const VECTOR pos)
 	trans_.pos = pos;
 }
 
+void UnitBase::SetPrePos(void)
+{
+	trans_.pos = prePos_;
+}
+
 //UŒ‚—Í‚Ì‹­‰»
 void UnitBase::SetAttack(const float percent)
 {
@@ -226,22 +231,13 @@ void UnitBase::SetDefense(const float percent)
 void UnitBase::SetSpeed(const float percent)
 {
 	speedUpPercent_ += percent;
-	//speed_ = defSpeed_ * speedUpPercent_
+	moveSpeed_ = defSpeed_ * speedUpPercent_;
 }
 
 //‘Ì—Í‹­‰»
 void UnitBase::SetHpMax(const float hp)
 {
 	hpMax_ += hp;
-}
-
-void UnitBase::CollisionStage(const Transform &stageTrans)
-{
-	auto& col = Collision::GetInstance();
-	if (col.IsHitUnitStageObject(stageTrans.modelId, trans_.pos, radius_))
-	{
-		SetPos(prePos_);
-	}
 }
 
 //ƒAƒjƒI—¹‚Ì“®‚«

@@ -118,15 +118,13 @@ public:
 
 	//位置の設定
 	void SetPos(const VECTOR pos);
+	void SetPrePos(void);
 
 	//強化反映
 	void SetAttack(const float percent);
 	void SetDefense(const float percent);
 	void SetSpeed(const float percent);
 	void SetHpMax(const float hp);
-
-	//衝突判定
-	void CollisionStage(const Transform& stageTrans);
 
 protected:
 
@@ -151,6 +149,7 @@ protected:
 	float atkPow_;		//攻撃力
 	ATK atk_;			//現在のスキル
 	VECTOR prePos_;		//移動前の座標位置
+	float moveSpeed_;   //移動スピード
 
 	//アニメ関係
 	ANIM anim_;								//アニメステート

@@ -85,6 +85,8 @@ void PlayerBase::Init(void)
 	//ChangeChargeActControll();
 	//ChangeNmlActControll();
 
+	radius_ = MY_COL_RADIUS;
+
 	skillNo_ = ATK_ACT::SKILL1;
 
 	//dodgeCdt_ = DODGE_CDT_MAX;

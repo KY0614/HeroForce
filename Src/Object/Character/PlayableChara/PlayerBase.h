@@ -161,7 +161,6 @@ protected:
     std::map < ATK_ACT, std::function<void(void)>>changeAct_;   //攻撃の変更
     std::function<void(void)>actUpdate_;                        //攻撃ごとの更新処理
     float atkStartCnt_;                                         //攻撃が発生するまでのカウント
-    float moveSpeed_;                                           //移動スピード
     float coolTime_[static_cast<int>(ATK_ACT::MAX)];            //それぞれのクールタイムカウント
     bool isCool_[static_cast<int>(ATK_ACT::MAX)];               //それぞれの攻撃使い終わりを格納する
     float multiHitInterval_;                                    //多段ヒットのダメージ間隔
