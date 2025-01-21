@@ -1,8 +1,8 @@
 #include <DxLib.h>
 #include<EffekseerForDXLib.h>
-#include "Manager/ResourceManager.h"
-#include "Manager/InputManager.h"
-#include "Manager/SceneManager.h"
+#include "Manager/Generic/ResourceManager.h"
+#include "Manager/Generic/InputManager.h"
+#include "Manager/Generic/SceneManager.h"
 #include "Application.h"
 
 Application* Application::instance_ = nullptr;

@@ -1,5 +1,5 @@
 #include <DxLib.h>
-#include "../Manager/InputManager.h"
+#include "../Manager/Generic/InputManager.h"
 #include "Carsor.h"
 
 Carsor::Carsor()

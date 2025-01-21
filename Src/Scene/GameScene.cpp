@@ -1,12 +1,11 @@
-#include "../Manager/SceneManager.h"
-#include "../Manager/Camera.h"
-#include "../Manager/Collision.h"
-#include "../Object/Grid.h"
-#include "../Object/Character/PlayerBase.h"
-#include "../Object/Character/PlayableChara/PlAxeMan.h"
-#include "../Object/Character/PlayableChara/PlKnight.h"
-#include "../Object/Character/PlayableChara/PlArcher.h"
-#include"../Object/Character/Enemy.h"
+#include "../Manager/Generic/SceneManager.h"
+#include "../Manager/Generic/Camera.h"
+#include "../Manager/GameSystem/Collision.h"
+#include"../Manager/GameSystem/Timer.h"
+
+#include"../Object/Character/EnemySort/Enemy.h"
+#include"../Object/Character/EnemyManager.h"
+#include"../Object/Character/PlayerManager.h"
 #include"../Object/Character/Chiken/ChickenManager.h"
 #include"../Object/Character/EnemySort/EneAxe.h"
 #include"../Object/Character/EnemySort/EneGolem.h"
@@ -15,9 +14,11 @@
 #include "../Object/Stage/SkyDome.h"
 #include "../Object/System/LevelScreenManager.h"
 #include "../Object/System/UnitPositionLoad.h"
+#include "../Manager/GameSystem/DataBank.h"
+#include"FazeResult.h"
 #include "GameScene.h"
 
-#include "../Manager/InputManager.h"
+#include "../Manager/Generic/InputManager.h"
 
 
 
@@ -25,7 +26,12 @@ GameScene::GameScene(void)
 {
 	stage_ = nullptr;
 	sky_ = nullptr;
+	fader_ = nullptr;
 	level_ = nullptr;
+	chicken_ = nullptr;
+	unitLoad_ = nullptr;
+	fazeResult_ = nullptr;
+
 	isPhaseChanging_ = false;
 }
 
@@ -35,6 +41,9 @@ GameScene::~GameScene(void)
 
 void GameScene::Init(void)
 {
+	//タイマーの生成
+	Timer::CreateInstance();
+
 	unitLoad_ = std::make_unique<UnitPositionLoad>();
 	unitLoad_->Init();
 
@@ -47,48 +56,54 @@ void GameScene::Init(void)
 	level_ = std::make_unique<LevelScreenManager>();
 	level_->Init();
 
-
-#ifdef _DEBUG_COL
-	playerTest_ = new PlAxe(SceneManager::PLAY_MODE::USER);
-	playerTest_->Init();
-	playerTest_->ChangeControll(SceneManager::CNTL::KEYBOARD);
-	enemyTest_ = new EneAxe();
-	enemyTest_->Init();
-#endif
-
 	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU));
 	chicken_->Init();
 
 	//プレイヤー設定
-	for (int i = 0; i < PLAYER_NUM; i++)
-	{
-		players_[i] = std::make_unique<PlArcher>(InputManager::JOYPAD_NO::PAD1);
-		players_[i]->Init();
-	}
+	playerMng_ = std::make_unique<PlayerManager>();
+	playerMng_->Init();
 
-	//敵の生成(とりあえず一体だけ)
-	std::unique_ptr<Enemy> e=std::make_unique<EneAxe>();
-	e->Init();
-	enemys_.push_back(std::move(e));
-
-	std::unique_ptr<Enemy> g = std::make_unique<EneGolem>();
-	g->Init();
-	enemys_.push_back(std::move(g));
+	//敵マネージャの生成
+	enmMng_ = std::make_unique<EnemyManager>();
+	enmMng_->Init();
 
 	//カメラの設定
 	auto cameras = SceneManager::GetInstance().GetCameras();
 	for (int i = 0; i < cameras.size(); i++)
 	{
-		cameras[i]->SetFollow(&players_[i]->GetTransform());
+		cameras[i]->SetFollow(&playerMng_->GetPlayer(i)->GetTransform());
 		cameras[i]->ChangeMode(Camera::MODE::FOLLOW_SPRING);
 	}
 
 	//フェーダーの作成
 	fader_ = std::make_unique<Fader>();
+	fader_->Init();
+	//フェーズリザルトの作成
+	fazeResult_ = std::make_unique<FazeResult>();
+	fazeResult_->Init();
 }
 
 void GameScene::Update(void)
 {
+	//ゲームオーバー判定
+	if(IsGameOver())SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+
+	//フェーズリザルト
+	if (isFazeRezult_)
+	{
+		fazeResult_->Update();
+
+		if (fazeResult_->IsEnd())
+		{
+			//フェーズリザルトが終了したので明転
+			fader_->SetFade(Fader::STATE::FADE_IN);
+			Timer::GetInstance().Reset();
+			fazeResult_->Reset();
+			isFazeRezult_ = false;
+		}
+		return;
+	}
+
 	//フェーズ遷移中
 	if (isPhaseChanging_)
 	{
@@ -98,25 +113,22 @@ void GameScene::Update(void)
 		return;
 	}
 
-	//grid_->Update();
+	Timer::GetInstance().Update();
+	//タイマーが終了したら
+	if (Timer::GetInstance().IsEnd())ChangePhase();
+
 	level_->Update();
 
-	//プレイヤー①だけを動かしています
-	players_[0]->Update();
 
-	for (auto& e : enemys_)
-	{
-		e->SetTargetPos(players_[0]->GetPos());
-		e->Update();
-	}
+	//プレイヤーの更新
+	playerMng_->Update();
+
+
+	//敵の更新
+	enmMng_->Update(playerMng_->GetPlayer(0)->GetPos());
 	
 
-#ifdef _DEBUG_COL
-	playerTest_->Update();
-	enemyTest_->SetTargetPos(playerTest_->GetPos());
-	enemyTest_->Update();
-#endif
-	chicken_->SetTargetPos(players_[0]->GetPos());
+	chicken_->SetTargetPos(playerMng_->GetPlayer(0)->GetPos());
 	chicken_->Update();
 
 	//あたり判定
@@ -144,36 +156,37 @@ void GameScene::Update(void)
 
 void GameScene::Draw(void)
 {
-	sky_->Draw();
-#ifdef _DEBUG_COL
-	playerTest_->Draw();
-	enemyTest_->Draw();
-#endif
-
-	
-		
-	for (auto& e : enemys_)
+	if (isFazeRezult_)
 	{
-		e->Draw();
+		fazeResult_->Draw();
+		return;
 	}
+	//スカイドーム
+	sky_->Draw();
 
+	//プレイヤー
+	playerMng_->Draw();
+
+	//敵
+	enmMng_->Draw();
+	//ステージ
 	stage_->Draw();
+	//チキン
 	chicken_->Draw();
+	//レベル
 	level_->Draw();
+	//制限時間
+	Timer::GetInstance().Draw();
 
 	fader_->Draw();
-
-	for (auto& p : players_)
-	{
-		p->Draw();
-		p->DrawDebug();
-	}
-
 
 	if (fader_->GetState() == Fader::STATE::FADE_KEEP)
 	{
 		DrawPhase();
 	}
+	DataBank& data = DataBank::GetInstance();
+	DrawFormatString(0, 60, 0xff0000, "p1 role : %d", data.Output(1).role_);
+	DrawFormatString(0, 80, 0xff0000, "p1 role : %d", data.Output(2).role_);
 }
 
 void GameScene::Release(void)
@@ -184,22 +197,9 @@ void GameScene::Release(void)
 	SceneManager::GetInstance().ResetCameras();
 	SceneManager::GetInstance().ReturnSolo();
 
-	for (auto& p : players_)
-	{
-		p->Destroy();
-	}
+	playerMng_->Release();
 
-	for (auto& e : enemys_)
-	{
-		e->Destroy();
-	}
-
-#ifdef _DEBUG_COL
-	playerTest_->Destroy();
-	delete playerTest_;
-	enemyTest_->Destroy();
-	delete enemyTest_;
-#endif
+	enmMng_->Release();
 }
 
 
@@ -212,112 +212,36 @@ void GameScene::Collision(void)
 	CollisionEnemy();
 	CollisionPlayer();
 
-#ifdef _DEBUG_COL
-
-	auto ePos = enemyTest_->GetPos();
-	auto eAtk = enemyTest_->GetAtk();
-	auto pPos = playerTest_->GetPos();
-	auto pAtk = playerTest_->GetAtk();
-
-	//敵側索敵
-	if (col.Search(ePos, pPos, enemyTest_->GetSearchRange()))
-	{
-		//移動を開始
-		enemyTest_->SetIsMove(true);
-	}
-	else
-	{
-		//移動を停止
-		enemyTest_->SetIsMove(false);
-	}
-
-
-	if (col.Search(ePos, pPos, enemyTest_->GetAtkStartRange())&&enemyTest_->GetState()==Enemy::STATE::NORMAL)
-	{
-		//状態を変更
-		enemyTest_->ChangeState(Enemy::STATE::ALERT);
-	}
-
-		//プレイヤー攻撃判定
-		//攻撃中でありその攻撃が一度も当たっていないか
-		if (pAtk.IsAttack() && !pAtk.isHit_)
-		{
-			//当たり判定
-			if (col.IsHitAtk(playerTest_, enemyTest_))
-			{
-				//被弾
-				enemyTest_->Damage(0, 4);
-				//攻撃判定の終了
-				playerTest_->SetIsHit(true);
-			}
-		}
-
-		//プレイヤーがCPUの時だけサーチしたい
-		if (playerTest_->GetPlayMode() == SceneManager::PLAY_MODE::CPU)
-		{
-			//プレイヤー側索敵
-			if (col.Search(pPos, ePos, playerTest_->GetSearchRange())
-				&& enemyTest_->IsAlive() && !playerTest_->GetIsCalledPlayer())
-			{
-				//敵をサーチしたかを返す
-				playerTest_->SetisEnemySerch(true);
-				playerTest_->SetTargetPos(ePos);
-			}
-			else if (!enemyTest_->IsAlive())
-			{
-				//敵をサーチしたかを返す
-				playerTest_->SetisEnemySerch(false);
-			}
-
-			if (col.Search(playerTest_->GetPos(), enemyTest_->GetPos(), playerTest_->GetAtkStartRange())
-				&& playerTest_->GetState() == PlayerBase::CPU_STATE::NORMAL
-				&& enemyTest_->IsAlive()
-				&& !playerTest_->GetIsCalledPlayer())
-			{
-				//状態を変更
-				playerTest_->ChangeState(PlayerBase::CPU_STATE::ATTACK);
-			}
-
-		}
-	
-	//敵の攻撃判定
-	//アタック中であり攻撃判定が終了していないとき
-	if (eAtk.IsAttack() && !eAtk.isHit_)
-	{
-		//攻撃が当たる範囲であり、プレイヤーが回避していないとき
-		if (col.IsHitAtk(enemyTest_, playerTest_) && !playerTest_->IsDodge())
-		{
-			//ダメージ
-			playerTest_->Damage();
-			//使用した攻撃を判定終了に
-			enemyTest_->SetIsHit(true);
-		}
-	}
-
-#endif
 }
 
 //敵関係の当たり判定
 void GameScene::CollisionEnemy(void)
 {
+	//衝突判定マネージャ取得
 	auto& col = Collision::GetInstance();
+	//敵の総数取得
+	int maxCnt = enmMng_->GetActiveNum();
 
 	//あたり判定(主に索敵)
-	for (auto& e : enemys_)
+	for (int i = 0; i < maxCnt; i++)
 	{
+		//敵の取得
+		Enemy* e = enmMng_->GetActiveEnemy(i);
+
 		//敵個人の位置と攻撃を取得
 		VECTOR ePos = e->GetPos();
 		UnitBase::ATK eAtk = e->GetAtk();
 
 		//動ける分だけ(のちに全員分に変える)
-		VECTOR pPos = players_[0]->GetPos();
+		VECTOR pPos = playerMng_->GetPlayer(0)->GetPos();
 
 		//索敵
 		//範囲内に入っているとき
 		if (col.Search(ePos, pPos, e->GetSearchRange())) {
 			//移動を開始
 			e->SetIsMove(true);
-		}else {
+		}
+		else {
 			//移動を停止
 			e->SetIsMove(false);
 		}
@@ -333,10 +257,11 @@ void GameScene::CollisionEnemy(void)
 		if (eAtk.IsAttack() && !eAtk.isHit_)
 		{
 			//各プレイヤーと当たり判定を取る
-			for (auto& p : players_)
+			for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
 			{
+				PlayerBase* p = playerMng_->GetPlayer(i);
 				//攻撃が当たる範囲 && プレイヤーが回避していないとき
-				if (col.IsHitAtk(*e, *p) && !playerTest_->IsDodge())
+				if (col.IsHitAtk(*e, *p) && !p->IsDodge())
 				{
 					//ダメージ
 					p->Damage();
@@ -350,10 +275,15 @@ void GameScene::CollisionEnemy(void)
 
 void GameScene::CollisionPlayer(void)
 {
+	//衝突判定マネージャ取得
 	auto& col = Collision::GetInstance();
+	//敵の総数取得
+	int maxCnt = enmMng_->GetActiveNum();
 
-	for (auto& p : players_)
+	for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
 	{
+		PlayerBase* p = playerMng_->GetPlayer(i);
+
 		auto pPos = p->GetPos();
 		auto pAtk = p->GetAtk();
 
@@ -364,8 +294,10 @@ void GameScene::CollisionPlayer(void)
 		//攻撃していない || 攻撃がすでに当たっている
 		if (!pAtk.IsAttack() || pAtk.isHit_)continue;
 
-		for (auto& e : enemys_)
+		for (int i = 0; i < maxCnt; i++)
 		{
+			//敵の取得
+			Enemy* e = enmMng_->GetActiveEnemy(i);
 			//当たり判定
 			if (col.IsHitAtk(*p, *e)) {
 				//被弾
@@ -380,14 +312,21 @@ void GameScene::CollisionPlayer(void)
 
 void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
 {
+	////衝突判定マネージャ取得
 	//auto& col = Collision::GetInstance();
+	////敵の総数取得
+	//int maxCnt = enmMng_->GetActiveNum();
 
 	////敵をサーチ初期化
 	//_player.SetisEnemySerch(false);
 
+
 	////敵の個体分行う
-	//for (auto& e : enemys_)
+	//for (int i = 0; i < maxCnt; i++)
 	//{
+	//	//敵の取得
+	//	Enemy* e = enmMng_->GetActiveEnemy(i);
+
 	//	//敵が死亡していたら処理しない
 	//	if (!e->IsAlive())continue;
 
@@ -395,7 +334,7 @@ void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
 	//	VECTOR ePos = e->GetPos();
 
 	//	//プレイヤー側索敵
-	//	if (col.Search(_pPos, ePos, playerTest_->GetSearchRange())
+	//	if (col.Search(_pPos, ePos, _player.GetSearchRange())
 	//		&& !_player.GetIsCalledPlayer())
 	//	{
 	//		//敵をサーチしたかを返す
@@ -403,7 +342,7 @@ void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
 	//		_player.SetTargetPos(ePos);
 	//	}
 
-	//	if (col.Search(_player.GetPos(), enemyTest_->GetPos(), _player.GetAtkStartRange())
+	//	if (col.Search(_player.GetPos(), ePos, _player.GetAtkStartRange())
 	//		&& _player.GetState() == PlayerBase::CPU_STATE::NORMAL
 	//		&& !_player.GetIsCalledPlayer())
 	//	{
@@ -434,7 +373,11 @@ void GameScene::Fade(void)
 		{
 			//ここの処理をフェーズ遷移がわかりやすいようなやつ始動に変える。
 			// 暗転から明転へ
+			//ある程度完全暗転の時間を用意
 			fader_->SetFade(Fader::STATE::FADE_KEEP);
+
+			//フェーズリザルトの状態に
+			isFazeRezult_ = true;
 		}
 		break;
 	case Fader::STATE::FADE_KEEP:
@@ -455,12 +398,12 @@ void GameScene::ChangePhase(void)
 
 void GameScene::UpdatePhase(void)
 {
-	phaseCnt_++;
+	/*phaseCnt_++;
 	if (phaseCnt_ > PHASE_TIME)
 	{
 		fader_->SetFade(Fader::STATE::FADE_IN);
 		phaseCnt_ = 0;
-	}
+	}*/
 }
 
 void GameScene::DrawPhase(void)
@@ -493,4 +436,14 @@ void GameScene::LevelUpReflection()
 	default:
 		break;
 	}
+}
+
+bool GameScene::IsGameOver(void)
+{
+	for (int i = 0; i < PlayerManager::PLAYER_NUM; i++) {
+		PlayerBase* p = playerMng_->GetPlayer(i);
+
+		if (p->IsAlive())return false;
+	}
+	return true;
 }
