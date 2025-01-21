@@ -7,6 +7,7 @@
 #include "../Scene/SelectScene.h"
 #include "../Scene/GameScene.h"
 #include "../Scene/GameOverScene.h"
+#include "../Scene/GameClearScene.h"
 #include "ResourceManager.h"
 #include "Camera.h"
 #include"../Manager/GameSystem/Collision.h"
@@ -64,7 +65,7 @@ void SceneManager::Init(void)
 	Init3D();
 
 	// 初期シーンの設定
-	DoChangeScene(SCENE_ID::TITLE);
+	DoChangeScene(SCENE_ID::GAMECLEAR);
 
 	//メインウィンドウを追加
 	subWindowH_.push_back(NULL);
@@ -372,6 +373,11 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	case SCENE_ID::GAMEOVER:
 		scene_ = new GameOverScene();
 		resM.InitGameOver();
+		break;
+
+	case SCENE_ID::GAMECLEAR:
+		scene_ = new GameClearScene();
+		resM.InitGameClear();
 		break;
 	}
 

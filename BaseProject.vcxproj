@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\Chiken\ClearChicken.cpp" />
+    <ClCompile Include="Src\Scene\GameClearScene.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerDodge.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerInput.cpp" />
     <ClCompile Include="Src\Object\JobManagerBase.cpp" />
@@ -92,6 +94,8 @@
     <ClCompile Include="Src\Manager\GameSystem\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\Chiken\ClearChicken.h" />
+    <ClInclude Include="Src\Scene\GameClearScene.h" />
     <ClInclude Include="Src\Manager\GameSystem\CharacterParamData.h" />
     <ClInclude Include="Src\Common\ShaderFade.h" />
     <ClInclude Include="Src\Object\System\GameUi\CpuHpBar.h" />

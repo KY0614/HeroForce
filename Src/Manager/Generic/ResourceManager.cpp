@@ -57,6 +57,10 @@ void ResourceManager::InitSelect(void)
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Left_point.png", 1, 1, 52, 52);
 	resourcesMap_.emplace(SRC::LEFT_POINT, res);
 
+	//キャラクターパラメータリスト
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Left_point.png", CHARA_PARAM_NUM_X, CHARA_PARAM_NUM_Y, CHARA_PARAM_SIZE_X, CHARA_PARAM_SIZE_Y);
+	resourcesMap_.emplace(SRC::CHARA_PARAMS, res);
+
 	ResourcePlayer();
 	ResourceStage();
 }
@@ -135,16 +139,52 @@ void ResourceManager::InitGame(void)
 	//ヘルプ画像
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Help!.png");
 	resourcesMap_.emplace(SRC::HELP, res);
+
+	//ランクリスト
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Ranks.png", RANKS_NUM_X, RANKS_NUM_Y, RANK_SIZE, RANK_SIZE);
+	resourcesMap_.emplace(SRC::RANKS, res);
+
+	//リザルト背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "FazeRezaltBack.jpg");
+	resourcesMap_.emplace(SRC::REZALT_BACK, res);
 }
 
 void ResourceManager::InitResult(void)
 {
 	Resource res;
+	//ランクリスト
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Ranks.png", RANKS_NUM_X, RANKS_NUM_Y, RANK_SIZE, RANK_SIZE);
+	resourcesMap_.emplace(SRC::RANKS, res);
+
+	//リザルト背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "FazeRezaltBack.jpg");
+	resourcesMap_.emplace(SRC::REZALT_BACK, res);
 }
 
 void ResourceManager::InitGameOver(void)
 {
 	Resource res;
+}
+
+void ResourceManager::InitGameClear(void)
+{
+	Resource res;
+
+	//cong
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Congratulations.png");
+	resourcesMap_.emplace(SRC::CONGRATULATIONS, res);
+
+	//花火
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Fireworks.efkefc");
+	resourcesMap_.emplace(SRC::FIREWORK, res);
+
+	ResourcePlayer();
+	ResourceEnemy();
+	ResourceStage();
+
+	//チキン
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Chicken/Chicken.mv1");
+	resourcesMap_.emplace(SRC::CHICKEN, res);
 }
 
 //プレイヤー

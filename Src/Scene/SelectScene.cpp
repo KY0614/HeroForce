@@ -139,7 +139,7 @@ void SelectScene::Draw(void)
 
 	skyDome_->Draw();
 	stage_->Draw();
-
+	SetUseLightAngleAttenuation(false);
 	//選択中の種類ごとの更新処理
 	switch (select_)
 	{
@@ -158,7 +158,7 @@ void SelectScene::Draw(void)
 	default:
 		break;
 	}
-
+	SetUseLightAngleAttenuation(true);
 	//デバッグ描画
 	//DrawDebug();
 }
