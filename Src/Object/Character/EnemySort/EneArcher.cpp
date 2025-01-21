@@ -1,7 +1,5 @@
-#include"../../../Manager/Resource.h"
-#include"../../../Manager/ResourceManager.h"
 #include"../../Arrow.h"
-#include"../Enemy.h"
+#include"Enemy.h"
 #include "EneArcher.h"
 
 void EneArcher::Destroy(void)

@@ -1,10 +1,11 @@
 #include "ChickenManager.h"
 
-ChickenManager::ChickenManager(std::vector<VECTOR> pos)
+ChickenManager::ChickenManager(
+	std::vector<VECTOR> pos,
+	const Transform& stageTrans,
+	const Transform& playerTrans)
+	: pos_(pos),stageTrans_(stageTrans),playerTrans_(playerTrans)
 {
-	//情報の受け取り
-	pos_ = pos;
-
 	//初期化
 	targetPos_ = AsoUtility::VECTOR_ZERO;
 }
@@ -37,13 +38,23 @@ void ChickenManager::Init()
 
 void ChickenManager::Update()
 {
-	for (auto c : chickens_)
-	{
-		//ターゲット位置取得
-		c->SetTarget(targetPos_);
+	for (auto it = chickens_.begin(); it != chickens_.end(); ) {
+		// ターゲット位置取得
+		(*it)->SetTarget(playerTrans_.pos);
 
-		//更新処理
-		c->Update();
+		// 更新処理
+		(*it)->Update();
+
+		//衝突判定
+		(*it)->CollisionStage(stageTrans_);
+
+		// チキンの削除
+		if ((*it)->GetState() == ChickenBase::STATE::END) {
+			it = chickens_.erase(it); // 削除し、次の要素に進む
+		}
+		else {
+			++it; // 削除しない場合は次の要素に進む
+		}
 	}
 }
 

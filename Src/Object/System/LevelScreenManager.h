@@ -1,8 +1,12 @@
 #pragma once
+#include <functional>
+#include <vector>
+#include "../Character/PlayableChara/PlayerBase.h"
+#include "../../Common/Fader.h"
 
-class Fader;
 class LevelupNotice;
 class LevelupSelect;
+class Fader;
 
 class LevelScreenManager
 {
@@ -14,7 +18,7 @@ public:
 		NONE,		//なし
 		NOTICE,		//通知
 		SELECT,		//選択
-		FIN
+		END			//終了
 	};	
 
 	//強化要素の種類
@@ -30,9 +34,18 @@ public:
 		TRAP_POW_UP_C,*/
 		MAX
 	};
+
+	//初期レベル
+	static constexpr int DEFAULT_LEVEL = 1;
 	
 	//ゲージ最大値
-	static constexpr float CONSTANT_GAGE = 100.0f;
+	static constexpr float CONSTANT_GAGE = 120.0f;
+
+	//ゲージUI拡大率
+	static constexpr float GAGE_SCALE_RATE = Application::SCREEN_SIZE_X * 1.8f / Application::DEFA_SCREEN_SIZE_X;
+
+	//ゲージ画像サイズ
+	static constexpr int GAGE_IMG_SIZE = 128 * GAGE_SCALE_RATE;
 
 	//アルファ値最大
 	static constexpr float ALPHA_MAX = 150.0f;
@@ -43,28 +56,20 @@ public:
 	//種類最大
 	static constexpr int TYPE_MAX = static_cast<int>(TYPE::MAX);
 
-	//コンストラクタ
-	LevelScreenManager(void);
+	//エフェクトサイズ
+	static constexpr float EFFECT_SCALE = 20.0f;
 
-	//デストラクタ
+	//ゲージ座標
+	static constexpr int GAGE_POS_X = 20;
+	static constexpr int GAGE_POS_Y = 20;
+
+	LevelScreenManager(void);
 	~LevelScreenManager(void);
 
-
-
-	//基本処理の４つは仮想関数化するのでしっかりオーバーライドするように
-	//初期化
-	virtual void Init(void);
-
-	//更新
-	virtual void Update(void);
-	void NoticeUpdate(void);	//通知用の更新処理
-	void PowerUpdate(void);		//強化選択の更新処理
-
-	//描画
-	virtual void Draw(void);
-
-	//解放	
-	virtual void Release(void);
+	void Init(void);
+	void Update(void);
+	void Draw(void);
+	void Release(void);
 
 	//読み込み
 	void Load(void);
@@ -72,42 +77,51 @@ public:
 	//初期化処理
 	void Reset();
 
-	//経験値の設定
-	void SetExp(const float value);
+	//経験値の増加
+	void AddExp(const float value);
 
 	//ゲージの設定
 	void SetGage(const int level);
 
+	//効果反映
+	void Reflection(PlayerBase &player,const int playerNum);
+
 	//ステートの設定
-	void SetState(const STATE state);
+	void ChangeState(const STATE state);
 	
 	//経験値の状態確認
 	void CheckExp();
 
-	//暗転
-	void FaderDraw();
+	void EffectSyne(PlayerBase& player, const int playerNum);
 
 	//ゲッター
 	inline float GetExp(void)const { return exp_; };
-	inline TYPE GetType(void)const { return type_; };
 	inline STATE GetState(void)const { return state_; };
+	inline TYPE GetType(const int playerNum)const;
+	TYPE GetPreType(const int playerNum)const;
 
-	//デバッグ機能
-	void Debag();
+private:
 
-protected:
+	//画像
+	int imgGage_;
+	int imgGageExp_;
+	int *imgNumbers_;
+
+	//プレイヤー人数
+	int playerNum_;
 
 	//状態
 	STATE state_;
 
 	//種類
-	TYPE type_;
+	std::vector<TYPE> selectTypes_;
 
 	//現在のレベル
 	int nowLevel_;
 
 	//経験値
 	float exp_;
+	float restExp_;
 
 	//ゲージ(次のレベルまでの経験値量)
 	float gauge_;
@@ -115,9 +129,52 @@ protected:
 	//アルファ値
 	float alpha_;
 
-	//インスタンス
-	Fader* fader_;
-	LevelupNotice* notice_;
-	LevelupSelect* select_;
+	//フェード処理
+	bool isFader_;
 
+	//前状態
+	std::vector<TYPE> preTypeData_;
+
+	// 状態管理(状態遷移時初期処理)
+	std::map<STATE, std::function<void(void)>> stateChanges_;
+
+	// 状態管理
+	std::function<void(void)> stateUpdate_;	//更新
+	std::function<void(void)> stateDraw_;	//描画
+
+	//インスタンス
+	std::unique_ptr<LevelupNotice> notice_;
+	std::unique_ptr<LevelupSelect> select_;
+	std::unique_ptr<Fader> fader_;
+
+	//状態変更
+	void ChangeStateNone();
+	void ChangeStateNotice();
+	void ChangeStateSelect();
+	void ChangeStateEnd();
+
+	//各種更新処理
+	void UpdateNone(void);
+	void UpdateNotice(void);		//通知
+	void UpdateSelect(void);		//強化選択
+	void UpdateEnd(void);			//終了
+
+	//各種描画処理
+	void DrawNone();
+	void DrawNotice();
+	void DrawSelect();
+	void DrawEnd();
+						
+	//UI描画
+	void DrawLevelUI();
+
+	//暗転
+	void FaderDraw();
+
+	//フェードの切り替え処理
+	void Fade();
+
+	//デバッグ機能
+	void DebagUpdate();
+	void DebagDraw();
 };

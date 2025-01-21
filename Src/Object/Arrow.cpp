@@ -1,5 +1,5 @@
 #include"../Application.h"
-#include"../Manager/SceneManager.h"
+#include"../Manager/Generic/SceneManager.h"
 #include"../Utility/AsoUtility.h"
 #include "Arrow.h"
 

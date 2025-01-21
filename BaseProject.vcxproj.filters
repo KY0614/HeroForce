@@ -1,18 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Src\Manager\InputController.cpp" />
+    <ClCompile Include="Src\Manager\Generic\InputController.cpp" />
     <ClCompile Include="Src\Scene\SelectScene.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneAxe.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlArcher.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlKnight.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlMage.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlAxeMan.cpp" />
-    <ClCompile Include="Src\Manager\DataBank.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlArcher.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlKnight.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlMage.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlAxeMan.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\DataBank.cpp" />
     <ClCompile Include="Src\Common\ImageFader.cpp" />
-    <ClCompile Include="Src\Manager\Collision.cpp" />
-    <ClCompile Include="Src\Object\Character\Enemy.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayerBase.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\Collision.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\Enemy.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\PlayerBase.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
     <ClCompile Include="Src\Object\System\Carsor.cpp" />
     <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
@@ -27,16 +27,14 @@
     <ClCompile Include="Src\Common\Quaternion.cpp" />
     <ClCompile Include="Src\Common\Vector2.cpp" />
     <ClCompile Include="Src\main.cpp" />
-    <ClCompile Include="Src\Manager\Camera.cpp" />
-    <ClCompile Include="Src\Manager\InputManager.cpp" />
-    <ClCompile Include="Src\Manager\Resource.cpp" />
-    <ClCompile Include="Src\Manager\ResourceManager.cpp" />
-    <ClCompile Include="Src\Manager\SceneManager.cpp" />
-    <ClCompile Include="Src\Object\Grid.cpp" />
+    <ClCompile Include="Src\Manager\Generic\Camera.cpp" />
+    <ClCompile Include="Src\Manager\Generic\InputManager.cpp" />
+    <ClCompile Include="Src\Manager\Generic\Resource.cpp" />
+    <ClCompile Include="Src\Manager\Generic\ResourceManager.cpp" />
+    <ClCompile Include="Src\Manager\Generic\SceneManager.cpp" />
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Scene\TitleScene.cpp" />
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
-    <ClCompile Include="Src\Manager\Collision.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
     <ClCompile Include="Src\Object\System\LevelScreenManager.cpp" />
     <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
@@ -45,13 +43,8 @@
     <ClCompile Include="Src\Object\System\LevelupNotice.cpp" />
     <ClCompile Include="Src\Object\System\LevelupSelect.cpp" />
     <ClCompile Include="Src\Common\ImageFader.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlAxeMan.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlMage.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlKnight.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlArcher.cpp" />
-    <ClCompile Include="Src\Manager\DataBank.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneAxe.cpp" />
-    <ClCompile Include="Src\Manager\TextManager.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\TextManager.cpp" />
     <ClCompile Include="Src\Object\System\UnitPositionLoad.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenBase.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenManager.cpp" />
@@ -59,45 +52,37 @@
     <ClCompile Include="Src\Object\Character\EnemySort\EneBrig.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneGolem.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneMage.cpp" />
+    <ClCompile Include="Src\Object\System\GameUi\GamaUIBase.cpp" />
+    <ClCompile Include="Src\Object\System\GameUi\CpuHpBar.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\SoundManager.cpp" />
+    <ClCompile Include="Src\Scene\GameOverScene.cpp" />
+    <ClCompile Include="Src\Scene\FazeResult.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\Timer.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemyManager.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerAnim.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\PlayerCpu.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerManager.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuAxe.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuArcher.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuKnight.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuMage.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\AxeMan.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Archer.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Knight.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Mage.cpp" />
+    <ClCompile Include="Src\Object\JobManagerBase.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
+    <ClCompile Include="Src\Object\SelectImage.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Src\Shader\PixelShader.cpp" />
+    <ClCompile Include="Src\Common\ShaderFade.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\Manager\InputController.h" />
-    <ClInclude Include="Src\Scene\SelectScene.h" />
-    <ClInclude Include="Src\Manager\DataBank.h" />
-    <ClInclude Include="Src\Common\ImageFader.h" />
-    <ClInclude Include="Src\Manager\Collision.h" />
-    <ClInclude Include="Src\Object\Character\Enemy.h" />
-    <ClInclude Include="Src\Object\Arrow.h" />
-    <ClInclude Include="Src\Object\Character\EnemySort\EneAxe.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlArcher.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlAxeMan.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlKnight.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlMage.h" />
-    <ClInclude Include="Src\Object\Character\PlayerBase.h" />
-    <ClInclude Include="Src\Object\Stage\SkyDome.h" />
-    <ClInclude Include="Src\Object\Stage\StageObject.h" />
-    <ClInclude Include="Src\Object\System\Carsor.h" />
-    <ClInclude Include="Src\Object\System\LevelupNotice.h" />
-    <ClInclude Include="Src\Object\UnitBase.h" />
-    <ClInclude Include="Src\Scene\GameScene.h" />
-    <ClInclude Include="Src\Common\IntVector3.h" />
-    <ClInclude Include="Src\Object\Common\Transform.h" />
-    <ClInclude Include="Src\Application.h" />
-    <ClInclude Include="Src\Common\Fader.h" />
-    <ClInclude Include="Src\Common\Quaternion.h" />
-    <ClInclude Include="Src\Common\Vector2.h" />
-    <ClInclude Include="Src\main.h" />
-    <ClInclude Include="Src\Manager\Camera.h" />
-    <ClInclude Include="Src\Manager\InputManager.h" />
-    <ClInclude Include="Src\Manager\Resource.h" />
-    <ClInclude Include="Src\Manager\ResourceManager.h" />
-    <ClInclude Include="Src\Manager\SceneManager.h" />
-    <ClInclude Include="Src\Object\Grid.h" />
-    <ClInclude Include="Src\Scene\SceneBase.h" />
-    <ClInclude Include="Src\Scene\TitleScene.h" />
-    <ClInclude Include="Src\Utility\AsoUtility.h" />
-    <ClInclude Include="Src\Object\Character\PlayerBase.h" />
-    <ClInclude Include="Src\Manager\Collision.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\PlayerBase.h" />
     <ClCompile Include="Src\Application.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -106,9 +91,6 @@
     </ClCompile>
     <ClCompile Include="Src\Common\Fader.cpp">
       <Filter>ソース ファイル\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Manager\SceneManager.cpp">
-      <Filter>ソース ファイル\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Src\Scene\SceneBase.cpp">
       <Filter>ソース ファイル\Scene</Filter>
@@ -119,26 +101,11 @@
     <ClCompile Include="Src\Utility\AsoUtility.cpp">
       <Filter>ソース ファイル\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Manager\InputManager.cpp">
-      <Filter>ソース ファイル\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Common\Vector2.cpp">
       <Filter>ソース ファイル\Common</Filter>
     </ClCompile>
     <ClCompile Include="Src\Common\Quaternion.cpp">
       <Filter>ソース ファイル\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Manager\Camera.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Manager\Resource.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Manager\ResourceManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Object\Grid.cpp">
-      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Common\Transform.cpp">
       <Filter>ソース ファイル</Filter>
@@ -155,28 +122,79 @@
     <ClCompile Include="Src\Object\Arrow.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClInclude Include="Src\Object\Stage\StageManager.h" />
-    <ClInclude Include="Src\Object\System\LevelScreenManager.h" />
     <ClInclude Include="Src\Object\Stage\StageObject.h" />
     <ClInclude Include="Src\Object\Stage\SkyDome.h" />
     <ClInclude Include="Src\Object\System\Carsor.h" />
     <ClInclude Include="Src\Object\System\LevelupNotice.h" />
-    <ClInclude Include="Src\Object\System\LevelupSelect.h" />
     <ClInclude Include="Src\Common\ImageFader.h" />
-    <ClInclude Include="Src\Manager\DataBank.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlArcher.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlAxeMan.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlKnight.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlMage.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneAxe.h" />
-    <ClInclude Include="Src\Manager\TextManager.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Knight.h" />
+    <ClInclude Include="Src\Manager\Decoration\EffectManager.h" />
+    <ClInclude Include="Src\Application.h" />
+    <ClInclude Include="Src\Utility\AsoUtility.h" />
+    <ClInclude Include="Src\Scene\TitleScene.h" />
+    <ClInclude Include="Src\Scene\SelectScene.h" />
+    <ClInclude Include="Src\Scene\SceneBase.h" />
+    <ClInclude Include="Src\Scene\GameScene.h" />
+    <ClInclude Include="Src\Scene\GameOverScene.h" />
+    <ClInclude Include="Src\Scene\FazeResult.h" />
+    <ClInclude Include="Src\Object\UnitBase.h" />
+    <ClInclude Include="Src\Object\SelectImage.h" />
+    <ClInclude Include="Src\Object\JobManagerBase.h" />
+    <ClInclude Include="Src\Object\Arrow.h" />
+    <ClInclude Include="Src\Object\Stage\StageObject.h" />
+    <ClInclude Include="Src\Object\Stage\StageManager.h" />
+    <ClInclude Include="Src\Object\Stage\SkyDome.h" />
+    <ClInclude Include="Src\Object\Common\Transform.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.h" />
+    <ClInclude Include="Src\Object\Character\PlayerManager.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\PlayerCpu.h" />
+    <ClInclude Include="Src\Object\Character\PlayerBase.h" />
+    <ClInclude Include="Src\Object\Character\PlayerAnim.h" />
+    <ClInclude Include="Src\Object\Character\EnemyManager.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\Enemy.h" />
+    <ClInclude Include="Src\main.h" />
+    <ClInclude Include="Src\Object\System\Carsor.h" />
+    <ClInclude Include="Src\Object\System\LevelScreenManager.h" />
+    <ClInclude Include="Src\Object\System\LevelupNotice.h" />
+    <ClInclude Include="Src\Object\System\LevelupSelect.h" />
     <ClInclude Include="Src\Object\System\UnitPositionLoad.h" />
-    <ClInclude Include="Src\Object\Character\Chiken\ChickenBase.h" />
-    <ClInclude Include="Src\Object\Character\Chiken\ChickenManager.h" />
-    <ClInclude Include="Src\Object\Character\EnemySort\EneArcher.h" />
-    <ClInclude Include="Src\Object\Character\EnemySort\EneBrig.h" />
-    <ClInclude Include="Src\Object\Character\EnemySort\EneGolem.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Mage.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Knight.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\AxeMan.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Archer.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\USER\PlMage.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\USER\PlKnight.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\USER\PlAxeMan.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\USER\PlArcher.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\CPU\CpuMage.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\CPU\CpuKnight.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\CPU\CpuAxe.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\CPU\CpuArcher.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneMage.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\EneGolem.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\EneBrig.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\EneAxe.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\EneArcher.h" />
+    <ClInclude Include="Src\Object\Character\Chiken\ChickenManager.h" />
+    <ClInclude Include="Src\Object\Character\Chiken\ChickenBase.h" />
+    <ClInclude Include="Src\Manager\Generic\SceneManager.h" />
+    <ClInclude Include="Src\Manager\Generic\ResourceManager.h" />
+    <ClInclude Include="Src\Manager\Generic\Resource.h" />
+    <ClInclude Include="Src\Manager\Generic\InputManager.h" />
+    <ClInclude Include="Src\Manager\Generic\InputController.h" />
+    <ClInclude Include="Src\Manager\Generic\Camera.h" />
+    <ClInclude Include="Src\Manager\GameSystem\Timer.h" />
+    <ClInclude Include="Src\Manager\GameSystem\TextManager.h" />
+    <ClInclude Include="Src\Manager\GameSystem\DataBank.h" />
+    <ClInclude Include="Src\Manager\GameSystem\Collision.h" />
+    <ClInclude Include="Src\Manager\Decoration\SoundManager.h" />
+    <ClInclude Include="Src\Manager\Decoration\EffectManager.h" />
+    <ClInclude Include="Src\Common\Fader.h" />
+    <ClInclude Include="Src\Common\ImageFader.h" />
+    <ClInclude Include="Src\Common\IntVector3.h" />
+    <ClInclude Include="Src\Common\Quaternion.h" />
+    <ClInclude Include="Src\Common\Vector2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">
@@ -184,9 +202,6 @@
     </ClInclude>
     <ClInclude Include="Src\Common\Quaternion.h">
       <Filter>ヘッダー ファイル\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Manager\SceneManager.h">
-      <Filter>ヘッダー ファイル\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Src\Scene\SceneBase.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
@@ -197,9 +212,6 @@
     <ClInclude Include="Src\Utility\AsoUtility.h">
       <Filter>ヘッダー ファイル\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Manager\InputManager.h">
-      <Filter>ヘッダー ファイル\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Common\Vector2.h">
       <Filter>ヘッダー ファイル\Common</Filter>
     </ClInclude>
@@ -207,18 +219,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\main.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Manager\Camera.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Manager\Resource.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Manager\ResourceManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Object\Grid.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Common\Transform.h">
@@ -239,5 +239,11 @@
     <ClInclude Include="Src\Object\Arrow.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Src\Shader\HLSL\Texture.hlsl" />
+    <FxCompile Include="Src\Shader\HLSL\ColorTex.hlsl" />
+    <FxCompile Include="Src\Shader\HLSL\Fade.hlsl" />
+    <FxCompile Include="Src\Shader\HLSL\FadeTextrure.hlsl" />
   </ItemGroup>
 </Project>
