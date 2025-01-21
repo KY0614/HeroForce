@@ -14,6 +14,12 @@ public:
 		SceneManager::ROLE role_;
 	};
 
+	struct SCREEN_SIZE
+	{
+		int x_;
+		int y_;
+	};
+
 	enum class INFO
 	{
 		NONE,
@@ -22,6 +28,13 @@ public:
 		ROLE,
 		USER_NUM,
 		DHISPLAY_NUM,
+		SCREEN_SIZE,
+	};
+
+	enum class GET_SIZE {
+		NONE,
+		X,
+		Y
 	};
 
 	// インスタンスの生成
@@ -37,10 +50,12 @@ public:
 	void Input(const SceneManager::PLAY_MODE _mode,const int _playerNum);	//ユーザーかCPU科の入力
 	void Input(const SceneManager::ROLE _role, const int _playerNum);		//役職の入力
 	void Input(const INFO _info, const int _num);							//システムに関する数値入力（画面数・ユーザー数用）
+	void Input(const INFO _info, const int _x, const int _y);				//ウィンドウのサイズ設定
 	
 	//データ出力
 	const PLAYER_INFO Output(const int _playerNum);	//プレイヤーに関する情報を返す
 	const int Output(const INFO _info);				//システムに関する数値出力（画面数・ユーザー数用）
+	const int Output(const INFO _info,const GET_SIZE _pattern);			//スクリーンのサイズ取得(どちらか片方のみ)
 
 	// リソースの破棄
 	void Destroy(void);
@@ -54,6 +69,9 @@ private:
 
 	//ディスプレイの数
 	int displayNum_;
+
+	//スクリーンサイズを保持
+	SCREEN_SIZE size_;
 
 	// 静的インスタンス
 	static DataBank* instance_;

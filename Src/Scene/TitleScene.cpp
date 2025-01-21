@@ -7,6 +7,9 @@
 #include "../Manager/Generic/InputManager.h"
 #include "../Manager/Generic/Camera.h"
 #include "../Manager/GameSystem/DataBank.h"
+#include "../Object/Stage/StageManager.h"
+#include "../Object/Stage/SkyDome.h"
+
 #include "TitleScene.h"
 
 TitleScene::TitleScene(void)
@@ -23,10 +26,24 @@ void TitleScene::Init(void)
 	//windowNum_ = 1;
 	// カメラモード：定点カメラ
 	SceneManager::GetInstance().GetCameras()[0]->ChangeMode(Camera::MODE::FIXED_POINT);
+
+	SceneManager::GetInstance().GetCameras()[0]->SetPos(VECTOR{ 0,100,-800 }, VECTOR{ 0,0,0 });
+
+	//スカイドーム
+	skyDome_ = std::make_unique<SkyDome>();
+	skyDome_->Init();
+
+	//背景用ステージ
+	stage_ = std::make_unique<StageManager>();
+	stage_->Init();
+
+	imgTitleLogo_= ResourceManager::GetInstance().Load(ResourceManager::SRC::TITLE).handleId_;
 }
 
 void TitleScene::Update(void)
 {
+	//空を回転
+	skyDome_->Update();
 
 	// シーン遷移
 	InputManager& ins = InputManager::GetInstance();
@@ -42,7 +59,8 @@ void TitleScene::Update(void)
 
 void TitleScene::Draw(void)
 {
-
+	skyDome_->Draw();
+	stage_->Draw();
 	// ロゴ描画
 	DrawLogo();
 	//DrawFormatString(400, 400, 0xffffff, "%d", windowNum_);
@@ -60,17 +78,17 @@ void TitleScene::DrawLogo(void)
 
 	// タイトルロゴ
 	DrawRotaGraph(
-		cx, cy - 200,
-		1.0f, 0.0f, imgTitleLogo_, true);
+		cx, cy - 100,
+		0.5f, 0.0f, imgTitleLogo_, true);
 
-	DrawString(cx, cy - 200, "HeroForce", 0xff0000, true);
+	//DrawString(cx, cy - 200, "HeroForce", 0xff0000, true);
 
 	// Pushメッセージ
 	std::string msg = "Push 「Space」 or 「Bボタン」";
 	SetFontSize(28);
 	int len = (int)strlen(msg.c_str());
 	int width = GetDrawStringWidth(msg.c_str(), len);
-	DrawFormatString(cx - (width / 2), 400, 0x87cefa, msg.c_str());
+	DrawFormatString(cx - (width / 2), 400, 0xff0000, msg.c_str());
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	SetFontSize(16);
 

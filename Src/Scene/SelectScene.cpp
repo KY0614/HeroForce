@@ -137,6 +137,8 @@ void SelectScene::Draw(void)
 {
 	auto& ins = InputManager::GetInstance();
 
+	SetUseLightAngleAttenuation(FALSE);
+
 	skyDome_->Draw();
 	stage_->Draw();
 
@@ -161,6 +163,8 @@ void SelectScene::Draw(void)
 
 	//デバッグ描画
 	//DrawDebug();
+
+	SetUseLightAngleAttenuation(TRUE);
 }
 
 void SelectScene::Release(void)

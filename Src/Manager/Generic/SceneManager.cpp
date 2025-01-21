@@ -432,6 +432,8 @@ void SceneManager::SetWindowPram(void)
 	if (activeWindowNum_ != 1)sizeX /= 2;
 	if (activeWindowNum_ > 2)sizeY /= 2;
 
+	DataBank::GetInstance().Input(DataBank::INFO::SCREEN_SIZE, sizeX - 15, sizeY - 30);
+
 	for (HWND hwnd : subWindowH_)
 	{
 		//cnt‚Í”z—ñ‚Ì—v‘f”‚ğ•\‚·‚Ì‚ÅactiveWindow–¢–‚ÌŠÔ‚¾‚¯
@@ -441,6 +443,7 @@ void SceneManager::SetWindowPram(void)
 		if (cnt == 1)
 		{
 			SetWindowSize(sizeX - 15, sizeY - 30);
+			//SetWindowSizeExtendRate(0.95, 0.95);
 			SetWindowPosition(posX, posY);
 		}
 		else

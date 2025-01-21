@@ -55,6 +55,10 @@ public:
 		CIRCLE_GAGE,
 		CIRCLE_EXP_GAGE,
 		NUMBERS,
+		STATUS_MAGE,	//魔法使い
+		STATUS_KNIGHT,	//騎士
+		STATUS_ARCHER,	//弓使い
+		STATUS_AXEMAN,	//斧使い
 
 		//レベル通知用
 		LEVEL_UP,
@@ -83,6 +87,11 @@ public:
 		LEFT_POINT,		//左矢印
 
 
+		//リザルト
+		RANK_S,
+		RANK_A,
+		RANK_B,
+		RANK_C,
 	};
 
 	// 明示的にインステンスを生成する

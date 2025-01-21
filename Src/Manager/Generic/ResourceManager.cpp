@@ -27,6 +27,12 @@ void ResourceManager::Init(void)
 void ResourceManager::InitTitle(void)
 {
 	Resource res;
+
+	//タイトルロゴ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "TitleLogo.png");
+	resourcesMap_.emplace(SRC::TITLE, res);
+
+	ResourceStage();
 }
 
 void ResourceManager::InitSelect(void)
@@ -44,6 +50,19 @@ void ResourceManager::InitSelect(void)
 	//左矢印
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Left_point.png", 1, 1, 52, 52);
 	resourcesMap_.emplace(SRC::LEFT_POINT, res);
+
+	//各種ステータスUI
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Status_Mage.png");
+	resourcesMap_.emplace(SRC::STATUS_MAGE, res);
+
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Status_Kight.png");
+	resourcesMap_.emplace(SRC::STATUS_KNIGHT, res);
+
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Status_Archer.png");
+	resourcesMap_.emplace(SRC::STATUS_ARCHER, res);
+
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Status_AxeMan.png");
+	resourcesMap_.emplace(SRC::STATUS_AXEMAN, res);
 
 	ResourcePlayer();
 	ResourceStage();
@@ -128,6 +147,19 @@ void ResourceManager::InitGame(void)
 void ResourceManager::InitResult(void)
 {
 	Resource res;
+
+	//評価値UI
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Rank_S.png");
+	resourcesMap_.emplace(SRC::RANK_S, res);
+
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Rank_A.png");
+	resourcesMap_.emplace(SRC::RANK_A, res);
+
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Rank_B.png");
+	resourcesMap_.emplace(SRC::RANK_B, res);
+
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Rank_C.png");
+	resourcesMap_.emplace(SRC::RANK_C, res);
 }
 
 void ResourceManager::InitGameOver(void)

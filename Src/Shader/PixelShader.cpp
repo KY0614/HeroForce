@@ -1,3 +1,5 @@
+#include<DxLib.h>
+#include<string>
 #include "PixelShader.h"
 
 PixelShader* PixelShader::instance_ = nullptr;

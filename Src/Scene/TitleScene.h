@@ -2,7 +2,8 @@
 #include "SceneBase.h"
 #include "../Object/Common/Transform.h"
 
-class SpaceDome;
+class SkyDome;
+class StageManager;
 
 class TitleScene : public SceneBase
 {
@@ -22,6 +23,12 @@ public:
 
 private:
 
+	//スカイドーム
+	std::unique_ptr<SkyDome> skyDome_;
+
+	//ステージ
+	std::unique_ptr<StageManager> stage_;
+
 	// タイトルロゴ
 	int imgTitleLogo_;
 
@@ -31,8 +38,6 @@ private:
 	// スカイドーム用のダミー
 	Transform spaceDomeTran_;
 
-	// スカイドーム
-	SpaceDome* spaceDome_;
 
 	// ロゴ描画
 	void DrawLogo(void);

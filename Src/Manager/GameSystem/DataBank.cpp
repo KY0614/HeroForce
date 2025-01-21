@@ -74,6 +74,14 @@ void DataBank::Input(const INFO _info, const int _num)
 	}
 }
 
+void DataBank::Input(const INFO _info, const int _x, const int _y)
+{
+	if (_info != INFO::SCREEN_SIZE)return;
+
+	size_.x_ = _x;
+	size_.y_ = _y;
+}
+
 /// <summary>
 /// プレイヤー情報の出力
 /// </summary>
@@ -106,6 +114,14 @@ const int DataBank::Output(const INFO _info)
 		assert("DataBankのInputの使用方法に間違いがあります。");
 		break;
 	}
+}
+
+const int DataBank::Output(const INFO _info, const GET_SIZE _pattern)
+{
+	if (_info != INFO::SCREEN_SIZE || _pattern == GET_SIZE::NONE)return 0;
+
+	if (_pattern == GET_SIZE::X)return size_.x_;
+	return size_.y_;
 }
 
 
