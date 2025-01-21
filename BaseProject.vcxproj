@@ -98,7 +98,6 @@
     <ClInclude Include="Src\Object\System\GameUi\GamaUIBase.h" />
     <ClInclude Include="Src\Scene\FazeResult.h" />
     <ClInclude Include="Src\Scene\GameOverScene.h" />
-    <ClInclude Include="Src\Manager\Decoration\SoundManager.h" />
     <ClInclude Include="Src\Application.h" />
     <ClInclude Include="Src\Common\Fader.h" />
     <ClInclude Include="Src\Common\ImageFader.h" />
@@ -107,7 +106,6 @@
     <ClInclude Include="Src\Common\Vector2.h" />
     <ClInclude Include="Src\main.h" />
     <ClInclude Include="Src\Manager\Decoration\EffectManager.h" />
-    <ClInclude Include="Src\Manager\Decoration\SoundManager.h" />
     <ClInclude Include="Src\Manager\GameSystem\Collision.h" />
     <ClInclude Include="Src\Manager\GameSystem\DataBank.h" />
     <ClInclude Include="Src\Manager\GameSystem\TextManager.h" />
@@ -159,8 +157,6 @@
     <ClInclude Include="Src\Object\System\LevelupSelect.h" />
     <ClInclude Include="Src\Object\System\UnitPositionLoad.h" />
     <ClInclude Include="Src\Object\UnitBase.h" />
-    <ClInclude Include="Src\Scene\FazeResult.h" />
-    <ClInclude Include="Src\Scene\GameOverScene.h" />
     <ClInclude Include="Src\Scene\GameScene.h" />
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Scene\SelectScene.h" />
