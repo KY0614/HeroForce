@@ -6,6 +6,7 @@
 #include "../../Manager/GameSystem/DataBank.h"
 #include "../../Common/Vector2.h"
 #include "../Common/Fader.h"
+#include "../Common/ShaderFade.h"
 #include "LevelupNotice.h"
 #include "LevelupSelect.h"
 
@@ -13,12 +14,14 @@ LevelScreenManager::LevelScreenManager(void)
 {
 	notice_ = nullptr;
 	select_ = nullptr;
+	fader_ = nullptr;
 	exp_ = -1.0f;
 	restExp_ = -1.0f;
 	nowLevel_ = -1;
 	gauge_ = -1.0f;
 	alpha_ = -1.0f;
 	state_ = STATE::NONE;
+	isFader_ = false;
 
 	// 状態管理
 	stateChanges_.emplace(STATE::NONE, std::bind(&LevelScreenManager::ChangeStateNone, this));
@@ -49,7 +52,9 @@ void LevelScreenManager::Init(void)
 
 void LevelScreenManager::Update(void)
 {
-	// 更新ステップ
+	//フェード更新処理
+	fader_->Update();
+
 	stateUpdate_();
 }
 
@@ -97,32 +102,46 @@ void LevelScreenManager::UpdateNone(void)
 
 void LevelScreenManager::UpdateNotice(void)
 {
-	//文字の拡大	
-	notice_->Update();	
+	if (!isFader_) {
+		//文字の拡大
+		notice_->Update();
 
-	//背景画面の透過処理
-	alpha_+= ALPHA_SPEED;
-	if (alpha_ >= ALPHA_MAX)
-	{
-		alpha_ = ALPHA_MAX;
+		//背景画面の透過処理
+		alpha_ += ALPHA_SPEED;
+		if (alpha_ >= ALPHA_MAX)
+		{
+			alpha_ = ALPHA_MAX;
+		}
+
+		//処理の終了確認
+		if (notice_->GetState() == LevelupNotice::STATE::FIN)
+		{
+			isFader_ = true;
+			fader_->SetFade(Fader::STATE::FADE_OUT);
+		}
 	}
-
-	//処理の終了確認
-	if (notice_->GetState() == LevelupNotice::STATE::FIN)
+	else
 	{
-		ChangeState(STATE::SELECT);
+		Fade();
 	}
 }
 
 void LevelScreenManager::UpdateSelect(void)
 {
-	//プレイヤーの強化の選択処理
-	select_->Update();	
-
-	//処理の終了確認
-	if (select_->GetState() == LevelupSelect::STATE::FIN)
+	if (!isFader_)
 	{
-		ChangeState(STATE::END);
+		Fade();
+	}
+	else
+	{
+		//プレイヤーの強化の選択処理
+		select_->Update();
+
+		//処理の終了確認
+		if (select_->GetState() == LevelupSelect::STATE::FIN)
+		{
+			ChangeState(STATE::END);
+		}
 	}
 }
 
@@ -155,6 +174,9 @@ void LevelScreenManager::Draw(void)
 
 	//デバッグ描画
 	DebagDraw();
+
+	//フェーダー描画
+	fader_->Draw();
 }
 
 void LevelScreenManager::DrawNone()
@@ -223,6 +245,9 @@ void LevelScreenManager::Load(void)
 
 	select_ = std::make_unique<LevelupSelect>();
 	select_->Init();
+
+	fader_ = std::make_unique<ShaderFade>();
+	fader_->Init();
 
 	//画像
 	imgGage_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CIRCLE_GAGE).handleId_;
@@ -411,6 +436,34 @@ void LevelScreenManager::FaderDraw()
 		Application::SCREEN_SIZE_Y,
 		0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+}
+
+void LevelScreenManager::Fade(void)
+{
+	Fader::STATE fState = fader_->GetState();
+	switch (fState)
+	{
+	case Fader::STATE::FADE_IN:
+		// 明転中
+		if (fader_->IsEnd())
+		{
+			// 明転が終了したら、フェード処理終了
+			fader_->SetFade(Fader::STATE::NONE);
+			isFader_ = false;
+		}
+		break;
+	case Fader::STATE::FADE_OUT:
+		// 暗転中
+		if (fader_->IsEnd())
+		{
+			// 暗転から明転へ
+			fader_->SetFade(Fader::STATE::FADE_IN);
+
+			//状態変更
+			ChangeState(STATE::SELECT);
+		}
+		break;
+	}
 }
 
 void LevelScreenManager::DebagUpdate()

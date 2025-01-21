@@ -56,8 +56,6 @@
     <ClCompile Include="Src\Object\Character\EnemySort\EneBrig.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneGolem.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneMage.cpp" />
-    <ClCompile Include="Src\Manager\EffectManager.cpp" />
-    <ClCompile Include="Src\Manager\SoundManager.cpp" />
     <ClCompile Include="Src\Object\System\GameUi\GamaUIBase.cpp" />
     <ClCompile Include="Src\Object\System\GameUi\CpuHpBar.cpp" />
     <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
@@ -65,6 +63,8 @@
     <ClCompile Include="Src\Scene\GameOverScene.cpp" />
     <ClCompile Include="Src\Scene\FazeResult.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Src\Shader\PixelShader.cpp" />
+    <ClCompile Include="Src\Common\ShaderFade.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Manager\Generic\InputController.h" />
@@ -161,7 +161,6 @@
     <ClInclude Include="Src\Object\Character\EnemySort\EneArcher.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneBrig.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneGolem.h" />
-  
     <ClInclude Include="Src\Object\System\GameUi\GamaUIBase.h" />
     <ClInclude Include="Src\Object\System\GameUi\CpuHpBar.h" />
     <ClInclude Include="Src\Manager\Decoration\EffectManager.h" />
@@ -170,6 +169,11 @@
     <ClInclude Include="Src\Scene\FazeResult.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Src\Manager\SoundManager.h" />
+    <ClInclude Include="Src\Manager\EffectManager.h" />
+    <ClInclude Include="Src\Manager\InputController.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\EneMage.h" />
+    <ClInclude Include="Src\Shader\PixelShader.h" />
+    <ClInclude Include="Src\Common\ShaderFade.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">
@@ -214,5 +218,11 @@
     <ClInclude Include="Src\Object\Arrow.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Src\Shader\HLSL\Texture.hlsl" />
+    <FxCompile Include="Src\Shader\HLSL\ColorTex.hlsl" />
+    <FxCompile Include="Src\Shader\HLSL\Fade.hlsl" />
+    <FxCompile Include="Src\Shader\HLSL\FadeTextrure.hlsl" />
   </ItemGroup>
 </Project>

@@ -61,6 +61,7 @@ public:
 		SELECT_UI,
 		CARSOLS,
 		LEVEL_SCREEN_EFE,
+		LEVEL_UP_BACK,
 
 		//‹­‰»
 		ATTACK_UP_UI,

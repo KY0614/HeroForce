@@ -12,6 +12,7 @@
 #include"../Manager/GameSystem/DataBank.h"
 #include"../Manager/Decoration/EffectManager.h"
 #include"../Manager/Decoration/SoundManager.h"
+#include"../Shader/PixelShader.h"
 #include "SceneManager.h"
 
 SceneManager* SceneManager::instance_ = nullptr;
@@ -37,6 +38,7 @@ void SceneManager::Init(void)
 	DataBank::CreateInstance();
 	EffectManager::CreateInstance();
 	SoundManager::CreateInstance();
+	PixelShader::CreateInstance();
 
 	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;

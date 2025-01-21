@@ -34,6 +34,12 @@ void Fader::Init(void)
 	alphaMax_ = 0;
 	isPreEnd_ = true;
 	isEnd_ = true;
+
+	tmpScreen_ = MakeScreen(
+		Application::SCREEN_SIZE_X,
+		Application::SCREEN_SIZE_Y,
+		true
+	);
 }
 
 void Fader::Update(void)
@@ -113,14 +119,44 @@ void Fader::Draw(void)
 	case STATE::SET_FADE_OUT:
 	case STATE::FADE_OUT:
 	case STATE::FADE_IN:
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)alpha_);
-		DrawBox(
-			0, 0,
-			Application::SCREEN_SIZE_X,
-			Application::SCREEN_SIZE_Y,
-			0x000000, true);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		CircleMask();
 		break;
 	}
+}
+
+void Fader::CircleMask()
+{
+	// 描画領域をマスク画像領域に切り替える
+	// 元々は、背面スクリーンになっている
+	SetDrawScreen(tmpScreen_);
+
+	//画面全体を黒に塗る
+	DrawBox(
+		0, 0,
+		Application::SCREEN_SIZE_X,
+		Application::SCREEN_SIZE_Y,
+		0x000000,
+		true);
+
+	//白色の円を描画する
+	//alpha値を利用して大きさを制御
+	DrawCircle(
+		Application::SCREEN_SIZE_X / 2,
+		Application::SCREEN_SIZE_Y / 2,
+		(ALPHA_MAX - alpha_) * 4,
+		0xffffff,
+		true);
+
+	//描画領域を元に戻す
+	SetDrawScreen(DX_SCREEN_BACK);
+
+	//描画を色の乗算モードにする
+	SetDrawBlendMode(DX_BLENDMODE_MUL, 0);
+
+	//元々のゲーム画面にマスク画像を描画する
+	DrawGraph(0, 0, tmpScreen_, false);
+
+	//描画モードを元に戻す
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 }

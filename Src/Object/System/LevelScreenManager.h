@@ -2,9 +2,11 @@
 #include <functional>
 #include <vector>
 #include "../Character/PlayerBase.h"
+#include "../../Common/Fader.h"
 
 class LevelupNotice;
 class LevelupSelect;
+class Fader;
 
 class LevelScreenManager
 {
@@ -127,6 +129,9 @@ private:
 	//アルファ値
 	float alpha_;
 
+	//フェード処理
+	bool isFader_;
+
 	//前状態
 	std::vector<TYPE> preTypeData_;
 
@@ -140,6 +145,7 @@ private:
 	//インスタンス
 	std::unique_ptr<LevelupNotice> notice_;
 	std::unique_ptr<LevelupSelect> select_;
+	std::unique_ptr<Fader> fader_;
 
 	//状態変更
 	void ChangeStateNone();
@@ -164,6 +170,9 @@ private:
 
 	//暗転
 	void FaderDraw();
+
+	//フェードの切り替え処理
+	void Fade();
 
 	//デバッグ機能
 	void DebagUpdate();

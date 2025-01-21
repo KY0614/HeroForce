@@ -46,6 +46,7 @@ public:
 	static const std::string PATH_EFFECT;
 	static const std::string PATH_TEXT;
 	static const std::string PATH_FONT;
+	static const std::string PATH_SHADER;
 	//-------------------------------------------
 
 	//ウィンドウモード設定

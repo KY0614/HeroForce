@@ -63,6 +63,10 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "LevelUpEffect.png", LV_EFE_NUM_X, LV_EFE_NUM_Y, LV_EFE_SIZE, LV_EFE_SIZE);
 	resourcesMap_.emplace(SRC::LEVEL_SCREEN_EFE, res);
 
+	//レベルアップ背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "LevelUpBack.png");
+	resourcesMap_.emplace(SRC::LEVEL_UP_BACK, res);
+
 	//強化系エフェクト
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "LifeUp.efkefc");
 	resourcesMap_.emplace(SRC::LIFE_UP_EFE, res);

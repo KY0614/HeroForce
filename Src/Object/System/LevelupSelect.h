@@ -90,6 +90,7 @@ private:
 	int img_;
 	int imgSelects_[LevelScreenManager::TYPE_MAX];
 	int *imgCarsors_;
+	int imgBack_;
 
 	//‹­‰»—v‘f”
 	int element_;

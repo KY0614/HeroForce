@@ -14,6 +14,7 @@ LevelupSelect::LevelupSelect()
 	fontExp_ = -1;
 	plNum_ = -1;
 	img_ = -1;
+	imgBack_ = -1;
 	element_ = -1;
 	state_ = STATE::NONE;
 
@@ -84,6 +85,14 @@ void LevelupSelect::Draw()
 	int color = 0;
 	int length = 0;
 	Vector2 pos = { 0,0 };
+
+	//îwåi
+	DrawExtendGraph(
+		0, 0,
+		Application::SCREEN_SIZE_X,
+		Application::SCREEN_SIZE_Y,
+		imgBack_,
+		false);
 
 	for (auto ele : ele_)
 	{
@@ -167,7 +176,6 @@ void LevelupSelect::Reset()
 	ele_[static_cast<int>(LevelScreenManager::TYPE::LIFE)].type_ = LevelScreenManager::TYPE::LIFE;
 	ele_[static_cast<int>(LevelScreenManager::TYPE::SPEED)].type_ = LevelScreenManager::TYPE::SPEED;
 
-
 	//ã≠âªóvëfä÷åWÇÃèâä˙âª
 	for (int i = 0; i < ele_.size(); i++)
 	{
@@ -208,6 +216,7 @@ void LevelupSelect::Load()
 	imgSelects_[static_cast<int>(LevelScreenManager::TYPE::LIFE)] = res.Load(ResourceManager::SRC::LIFE_UP_UI).handleId_;
 	imgSelects_[static_cast<int>(LevelScreenManager::TYPE::SPEED)] = res.Load(ResourceManager::SRC::SPEED_UP_UI).handleId_;
 	imgCarsors_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CARSOLS).handleIds_;
+	imgBack_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::LEVEL_UP_BACK).handleId_;
 	
 	//ÉeÉLÉXÉgä÷åW
 	auto& text_m = TextManager::GetInstance();

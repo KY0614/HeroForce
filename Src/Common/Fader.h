@@ -42,7 +42,6 @@ public:
 	// どれくらい暗くするかのアルファ値を決める
 	void SetAlpha(float alpha);
 
-
 	virtual void Init(void);
 	virtual void Update(void);
 	virtual void Draw(void);
@@ -67,5 +66,13 @@ protected:
 
 	// フェード処理の終了判定
 	bool isEnd_;
+
+private:
+	
+	//マスク画像領域
+	int tmpScreen_;
+
+	//円が他のくりぬき処理
+	void CircleMask();
 
 };
