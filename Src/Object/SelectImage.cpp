@@ -154,6 +154,7 @@ void SelectImage::Draw(void)
 	default:
 		break;
 	}
+
 #ifdef DRAW_DEBUG
 	//DrawFormatString(Application::SCREEN_SIZE_X - 100, 0, 0x000000, "L : %d", pointL_.isToggle_);
 	//DrawFormatString(Application::SCREEN_SIZE_X - 100, 20, 0x000000, "R : %d", pointR_.isToggle_);

@@ -44,6 +44,7 @@ private:
 
 	Transform trans_[SceneManager::PLAYER_NUM];
 	int role_;
+	float animChangeTime_;
 
 	void Init3DModel(void);
 };

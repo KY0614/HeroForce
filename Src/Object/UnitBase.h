@@ -104,6 +104,7 @@ public:
 	void AnimArray(void);
 	//アニメーションリセット
 	void ResetAnimArray(const ANIM _anim, const float _speed);
+	float GetAnimArrayTime(void);
 
 	//攻撃関係
 	//isHit設定用（外部）

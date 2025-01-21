@@ -6,6 +6,7 @@
 SelectPlayer::SelectPlayer(void)
 {
 	role_ = 0;
+	animChangeTime_ = 0.0f;
 }
 
 void SelectPlayer::Destroy(void)
@@ -19,12 +20,34 @@ void SelectPlayer::Init(void)
 	animNum_.emplace(ANIM::IDLE, IDLE_ANIM);
 
 	ResetAnimArray(ANIM::IDLE, ANIM_SPEED);
-
 }
 
 void SelectPlayer::Update(void)
 {
 	AnimArray();
+
+	int randNum = 0;
+	//if (animChangeTime_ > 50.0f)
+	//{
+	//	randNum = GetRand(2);
+	//	
+	//}
+	float deltaTime = 1.0f / Application::DEFAULT_FPS;
+	animChangeTime_ += ANIM_SPEED * deltaTime;
+	
+	if (animChangeTime_ > GetAnimArrayTime())
+	{
+		if (anim_ == ANIM::IDLE)
+		{
+			ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED);
+			animChangeTime_ = 0.0f;
+		}
+		else
+		{
+			ResetAnimArray(ANIM::IDLE, ANIM_SPEED);
+			animChangeTime_ = 0.0f;
+		}
+	}
 
 	for (auto& tran_ : transArray_) 
 	{
@@ -39,6 +62,7 @@ void SelectPlayer::Update(void)
 void SelectPlayer::Draw(void)
 {
 	MV1DrawModel(transArray_[role_].modelId);
+	DrawFormatString(0, 0, 0xFF0000, "time : %2.f", animChangeTime_);
 
 	for (auto& tran_ : transArray_) {
 

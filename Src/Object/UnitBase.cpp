@@ -190,6 +190,15 @@ void UnitBase::ResetAnimArray(const ANIM _anim, const float _speed)
 	}
 }
 
+float UnitBase::GetAnimArrayTime(void)
+{
+	for (auto& tran : transArray_)
+	{
+		float ret = MV1GetAttachAnimTime(tran.modelId, animArray_);
+		return ret;
+	}
+}
+
 void UnitBase::SetIsHit(const bool _flag)
 {
 	atk_.isHit_ = _flag;
