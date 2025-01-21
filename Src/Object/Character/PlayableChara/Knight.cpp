@@ -1,16 +1,9 @@
 #include "Knight.h"
 
-Knight::Knight(const SceneManager::CNTL _cntl) :PlayerBase(_cntl)
+Knight::Knight(void)
 {
-	cntl_ = _cntl;
+	
 }
-
-Knight::Knight(const InputManager::JOYPAD_NO _padNum) : PlayerBase(_padNum)
-{
-	padNum_ = _padNum;
-}
-
-
 void Knight::SetParam(void)
 {
 	trans_.SetModel(
@@ -24,6 +17,8 @@ void Knight::SetParam(void)
 		0.0f, AsoUtility::Deg2RadF(180.0f),
 		0.0f
 	);
+
+	hp_ = MAX_HP;
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 }
 
@@ -56,17 +51,14 @@ void Knight::InitAct(void)
 
 }
 
-void Knight::ChargeAct(void)
-{
-	//chargeActUpdate_();
-}
 
 void Knight::AtkFunc(void)
 {
 	if (isSkill_)return;
-	auto& ins = InputManager::GetInstance();
+	auto& ins = PlayerInput::GetInstance();
+	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	//近接攻撃用
-	if (ins.IsTrgDown(ATK_KEY) && !isAtk_)
+	if (ins.CheckAct(ACT_CNTL::NMLATK) && !isAtk_)
 	{
 		if (isCool_[static_cast<int>(ATK_ACT::ATK)])return;
 		ChangeAct(ATK_ACT::ATK);
@@ -101,19 +93,6 @@ void Knight::AtkFunc(void)
 	}
 }
 
-//void PlKnight::ResetGuardCnt(void)
-//{
-//	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > GUARD_STARTABLE_COOL&&!IsAtkStart())
-//	{
-//		isCool_[static_cast<int>(SKILL_NUM::TWO)] = false;
-//		ChangeAct(static_cast<ATK_ACT>(skillNo_));
-//		ResetParam(atk_);
-//		coolTime_[static_cast<int>(SKILL_NUM::TWO)] -= SKILL_TWO_START_COOLTIME;
-//		//atkMax_[ATK_ACT::SKILL2].duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
-//		atk_.duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
-//		CntUp(atkStartCnt_);
-//	}
-//}
 
 void Knight::SkillOneInit(void)
 {
@@ -132,15 +111,16 @@ void Knight::SkillTwoInit(void)
 		ResetParam(atk_);
 		coolTime_[static_cast<int>(SKILL_NUM::TWO)] -= SKILL_TWO_START_COOLTIME;
 		atk_.duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
-		CntUp(atkStartCnt_);
+		//CntUp(atkStartCnt_);
+		isSkill_ = true;
 	}
 }
 
 
 void Knight::InitSkill(ATK_ACT _act)
 {
-	if (isAtk_ || isSkill_)return;
 	//スキルごとにアニメーションを決めて、カウント開始
+	if (isAtk_ || isSkill_ || isCool_[static_cast<int>(_act)])return;
 	ChangeAct(static_cast<ATK_ACT>(_act));
 	ResetParam(atk_);
 	CntUp(atkStartCnt_);
@@ -150,10 +130,12 @@ void Knight::InitSkill(ATK_ACT _act)
 
 void Knight::Skill1Func(void)
 {
+	if (isAtk_)return;
 	//斬撃飛ばす
-	auto& ins = InputManager::GetInstance();
+	auto& ins = PlayerInput::GetInstance();
+	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	//入力
-	if (ins.IsTrgDown(SKILL_KEY))
+	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN))
 	{
 		InitSkill(skillNo_);
 	}
@@ -186,60 +168,61 @@ void Knight::Skill1Func(void)
 
 void Knight::Skill2Func(void)
 {
+	if (isAtk_)return;
 	//入力
-	auto& ins = InputManager::GetInstance();
-	if (ins.IsTrgDown(SKILL_KEY))
+	auto& ins = PlayerInput::GetInstance();
+	using ACT_CNTL = PlayerInput::ACT_CNTL;
+	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN))
 	{
 		//ボタンの押しはじめの時に値初期化
 		SkillTwoInit();
 	}
-
-
 	//スキル(長押しでガード状態維持)
-	if (ins.IsNew(SKILL_KEY))
+	if (ins.CheckAct(ACT_CNTL::SKILL_KEEP)&&isSkill_)
 	{
 		if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > 0.0f)
 		{
 			moveAble_ = false;
 			isCool_[static_cast<int>(SKILL_NUM::TWO)] = false;
-			CntDown(coolTime_[static_cast<int>(SKILL_NUM::TWO)]);
 			if (stepAnim_ >= 10.0f)
 			{
 				stepAnim_ = 10.0f;
 			}
 		}
 	}
-	else if (ins.IsTrgUp(SKILL_KEY))
+	else if (ins.CheckAct(ACT_CNTL::SKILL_UP) && isSkill_)
 	{
 		isPush_ = false;
 		isCool_[static_cast<int>(SKILL_NUM::TWO)] = true;
+		isSkill_ = false;
 		InitAtk();
-		actCntl_ = ACT_CNTL::NONE;
 	}
 
 
+
+	//ボタン長押ししているときにクールタイムが0秒以下になった時
 	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] <= 0.0f)
 	{
 		//スキル切り替え出来ないようにする
+		isSkill_ = false;
+		isCool_[static_cast<int>(SKILL_NUM::TWO)] = true;
+		InitAtk();
 		return;
 	}
 
-	if (IsAtkStart())CntUp(atkStartCnt_);
+	if (isSkill_&&!IsFinishAtkStart())CntUp(atkStartCnt_);
 
-	if (IsFinishAtkStart())
+	else if (isSkill_ && IsFinishAtkStart())
 	{
 		CntUp(atk_.cnt_);
+		CntDown(coolTime_[static_cast<int>(SKILL_NUM::TWO)]);
 	}
-	if (atk_.IsAttack())
-	{
-
-	}
-
 	//ボタンを押していても残りクールタイムが
 	else if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] <= SKILL_TWO_START_COOLTIME)
 	{
 		isCool_[static_cast<int>(SKILL_NUM::TWO)] = true;
 		InitAtk();
+		isSkill_ = false;
 		return;
 	}
 }
@@ -255,8 +238,8 @@ void Knight::InitCharaAnim(void)
 
 void Knight::DrawDebug(void)
 {
-
-	DrawFormatString(0, 32, 0xffffff
+	PlayerBase::DrawDebug();
+	DrawFormatString(0, 200, 0xffffff
 		, "AtkCooltime(%.2f)\nSkill1Cool(%.2f)\nSkill2Cool(%.2f)\natkDulation(%f)\natkCnt(%f)"
 		, coolTime_[static_cast<int>(ATK_ACT::ATK)]
 		, coolTime_[static_cast<int>(ATK_ACT::SKILL1)]

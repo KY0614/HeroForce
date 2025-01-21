@@ -1,15 +1,12 @@
 #include"../Manager/Generic/ResourceManager.h"
+#include"../Manager/Generic/SceneManager.h"
 #include"../../Arrow.h"
 
 #include "Archer.h"
 
-Archer::Archer(const SceneManager::CNTL _cntl) :PlayerBase(_cntl)
+Archer::Archer(void)
 {
-	cntl_ = _cntl;
-}
-Archer::Archer(const InputManager::JOYPAD_NO _padNum) : PlayerBase(_padNum)
-{
-	padNum_ = _padNum;
+	
 }
 
 void Archer::SetParam(void)
@@ -78,12 +75,6 @@ void Archer::InitCharaAnim(void)
 
 void Archer::InitAtk(void)
 {
-	//size_t size = arrowAtk_.size();
-	////攻撃の初期化
-	//for (int a = 0; a < size; a++)
-	//{
-	//	InitArrowAtk(arrowAtk_[a]);
-	//}
 	//スキルが終わったらクールタイムのカウント開始
 	isCool_[static_cast<int>(act_)] = true;
 
@@ -194,27 +185,42 @@ void Archer::Draw(void)
 
 void Archer::AtkFunc(void)
 {
+	//入力
+	auto& ins = PlayerInput::GetInstance();
+	using ACT_CNTL = PlayerInput::ACT_CNTL;
+	//攻撃（攻撃アニメーションのフレームが0以下だったらフレームを設定）
+	if (ins.CheckAct(ACT_CNTL::NMLATK))
+	{
+		NmlAtkInit();
+		isAtk_ = true;
+	}
+
 	//明日からアーチャー作成する！
 	if (IsFinishAtkStart() && !isShotArrow_)
 	{
 		CreateArrow();
 		CreateAtk();
-		//矢を放つ
-		//for (auto& arrow : arrow_)
-		//{
-		//	arrow->ChangeState(Arrow::STATE::SHOT);
-		//}
-		// 
-
-		//範囲for文の意味
-		//for (int i = 0; i < arrow_.size; ++i)
-		//{
-		//	arrow_[i]->ChangeState(Arrow::STATE::SHOT)
-		//}
-		//矢を放った
 		isShotArrow_ = true;
 	}
-	NmlActCommon();
+
+	size_t arrowSize = arrow_.size();
+	//近接攻撃用(atk_変数と遠距離で分ける)
+	if (IsAtkStart())
+	{
+		moveAble_ = false;
+		CntUp(atkStartCnt_);
+	}
+	else if (IsFinishAtkStart())
+	{
+		CntUp(atkAbleCnt_);
+		//クールタイムの初期化
+		coolTime_[static_cast<int>(act_)] = 0.0f;
+		if (atkAbleCnt_ >= ATKABLE_TIME)
+		{
+			InitAtk();
+			isAtk_ = false;
+		}
+	}
 }
 
 void Archer::Skill1Func(void)
@@ -254,26 +260,10 @@ void Archer::SkillTwoInit(void)
 {
 }
 
-void Archer::NmlActCommon(void)
-{
-	size_t arrowSize = arrow_.size();
-	//近接攻撃用(atk_変数と遠距離で分ける)
-	if (IsAtkStart())
-	{
-		moveAble_ = false;
-		CntUp(atkStartCnt_);
-	}
-	else if (IsFinishAtkStart())
-	{
-		CntUp(atkAbleCnt_);
-		//クールタイムの初期化
-		coolTime_[static_cast<int>(act_)] = 0.0f;
-		if (atkAbleCnt_ >= ATKABLE_TIME)
-		{
-			InitAtk();
-		}
-	}
-}
+//void PlArcher::NmlActCommon(void)
+//{
+//
+//}
 
 
 

@@ -1,13 +1,8 @@
 #include "AxeMan.h"
 
-AxeMan::AxeMan(const SceneManager::CNTL _cntl) : PlayerBase(_cntl)
+AxeMan::AxeMan(void)
 {
-	cntl_ = _cntl;
-}
-
-AxeMan::AxeMan(const InputManager::JOYPAD_NO _padNum) : PlayerBase(_padNum)
-{
-	padNum_ = _padNum;
+	
 }
 
 void AxeMan::SetParam(void)
@@ -86,10 +81,10 @@ void AxeMan::InitCharaAnim(void)
 	animNum_.emplace(ANIM::SKILL_2, SKILL_TWO_NUM);
 }
 
-void AxeMan::ChargeAct(void)
-{
-
-}
+//void AxeMan::ChargeAct(void)
+//{
+//
+//}
 
 void AxeMan::SkillOneInit(void)
 {
@@ -119,9 +114,12 @@ void AxeMan::SkillTwoInit(void)
 void AxeMan::AtkFunc(void)
 {
 	if (isSkill_)return;
-	auto& ins = InputManager::GetInstance();
+	auto& ins = PlayerInput::GetInstance();
+	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	//近接攻撃用
-	if (ins.IsTrgDown(ATK_KEY) && !isAtk_)
+	//単押し処理
+	//---------------------------------------------------------
+	if (ins.CheckAct(ACT_CNTL::NMLATK) && !isAtk_)
 	{
 		if (isCool_[static_cast<int>(ATK_ACT::ATK)])return;
 		ChangeAct(ATK_ACT::ATK);
@@ -129,6 +127,8 @@ void AxeMan::AtkFunc(void)
 		CntUp(atkStartCnt_);
 		isAtk_ = true;
 	}
+	//---------------------------------------------------------
+
 	if (!isAtk_)return;
 
 	if (IsAtkStart())
@@ -148,7 +148,7 @@ void AxeMan::AtkFunc(void)
 			//クールタイムの初期化
 			coolTime_[static_cast<int>(act_)] = 0.0f;
 		}
-		else //if(atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
+		if(atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
 		{
 			InitAtk();
 			isAtk_ = false;
@@ -160,21 +160,22 @@ void AxeMan::Skill1Func(void)
 {
 	//入力
 	//--------------------------------------------------------------
-	auto& ins = InputManager::GetInstance();
+	auto& ins = PlayerInput::GetInstance();
+	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	int skillOne = static_cast<int>(ATK_ACT::SKILL1);
 	if (!isCool_[static_cast<int>(ATK_ACT::SKILL1)])
 	{
-		if (ins.IsTrgDown(SKILL_KEY) && !IsAtkStart())
+		if (ins.CheckAct(ACT_CNTL::SKILL_DOWN) && !IsAtkStart())
 		{
 			InitSkill(skillNo_);
 		}
 		//スキル(長押しでガード状態維持)
-		if (ins.IsNew(SKILL_KEY) && IsAtkStart())
+		if (ins.CheckAct(ACT_CNTL::SKILL_KEEP) && IsAtkStart())
 		{
 			//押している反応
 			//CntUp(atkStartCnt_);
 		}
-		else if (ins.IsTrgUp(SKILL_KEY) && IsAtkStart())
+		else if (ins.CheckAct(ACT_CNTL::SKILL_UP) && IsAtkStart())
 		{
 			if (atkStartCnt_ <= SKILL_ONE_START_NOCHARGE)
 			{
@@ -219,12 +220,16 @@ void AxeMan::Skill1Func(void)
 
 void AxeMan::Skill2Func(void)
 {
-	auto& ins = InputManager::GetInstance();
+	if (isAtk_)return;
 	//入力
-	if (ins.IsTrgDown(SKILL_KEY))
+	auto& ins = PlayerInput::GetInstance();
+	using ACT_CNTL = PlayerInput::ACT_CNTL;
+	int skillOne = static_cast<int>(ATK_ACT::SKILL1);
+	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN))
 	{
 		InitSkill(skillNo_);
 	}
+	if (!isSkill_)return;
 	//近接攻撃用(atk_変数と遠距離で分ける)
 	if (IsAtkStart())
 	{

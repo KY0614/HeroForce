@@ -70,20 +70,20 @@ JobManagerBase* PlayerManager::CreateKeybordPlayer(const SceneManager::ROLE _rol
 
 	switch (_role) {
 	case SceneManager::ROLE::AXEMAN:
-		//ret = new PlAxe(SceneManager::CNTL::KEYBOARD);  キャラクタ一人に必要な情報
-		ret = new PlAxe();
+		ret = new PlAxe(SceneManager::CNTL::KEYBOARD);  //キャラクタ一人に必要な情報
+		//ret = new PlAxe();
 		break;
 	case SceneManager::ROLE::ARCHER:
-		//ret = new PlArcher(SceneManager::CNTL::KEYBOARD);
-		ret = new PlArcher();
+		ret = new PlArcher(SceneManager::CNTL::KEYBOARD);
+		//ret = new PlArcher();
 		break;
 	case SceneManager::ROLE::KNIGHT:
-		//ret = new PlKnight(SceneManager::CNTL::KEYBOARD);
-		ret = new PlKnight();
+		ret = new PlKnight(SceneManager::CNTL::KEYBOARD);
+		//ret = new PlKnight();
 		break;
 	case SceneManager::ROLE::MAGE:
-		//ret = new PlMage(SceneManager::CNTL::KEYBOARD);
-		ret = new PlMage();
+		ret = new PlMage(SceneManager::CNTL::KEYBOARD);
+		//ret = new PlMage();
 		break;
 	default:
 		assert("プレイヤーの役職情報が間違っています");
@@ -99,20 +99,20 @@ JobManagerBase* PlayerManager::CreatePadPlayer(const SceneManager::ROLE _role)
 
 	switch (_role) {
 	case SceneManager::ROLE::AXEMAN:
-		//ret = new PlAxe(static_cast<InputManager::JOYPAD_NO>(padNum_));
-		ret = new PlAxe();
+		ret = new PlAxe(static_cast<InputManager::JOYPAD_NO>(padNum_));
+		//ret = new PlAxe();
 		break;
 	case SceneManager::ROLE::ARCHER:
-		//ret = new PlArcher(static_cast<InputManager::JOYPAD_NO>(padNum_));
-		ret = new PlArcher();
+		ret = new PlArcher(static_cast<InputManager::JOYPAD_NO>(padNum_));
+		//ret = new PlArcher();
 		break;
 	case SceneManager::ROLE::KNIGHT:
-		//ret = new PlKnight(static_cast<InputManager::JOYPAD_NO>(padNum_));
-		ret = new PlKnight();
+		ret = new PlKnight(static_cast<InputManager::JOYPAD_NO>(padNum_));
+		//ret = new PlKnight();
 		break;
 	case SceneManager::ROLE::MAGE:
-		//ret = new PlMage(static_cast<InputManager::JOYPAD_NO>(padNum_));
-		ret = new PlMage();
+		ret = new PlMage(static_cast<InputManager::JOYPAD_NO>(padNum_));
+		//ret = new PlMage();
 		break;
 	default:
 		assert("プレイヤーの役職情報が間違っています");
@@ -130,20 +130,20 @@ JobManagerBase* PlayerManager::CreateCpuPlayer(const SceneManager::ROLE _role)
 
 	switch (_role) {
 	case SceneManager::ROLE::AXEMAN:
-		//ret = new PlAxe(SceneManager::CNTL::NONE);
-		ret = new PlAxe();
+		ret = new PlAxe(SceneManager::CNTL::NONE);
+		//ret = new PlAxe();
 		break;
 	case SceneManager::ROLE::ARCHER:
-		//ret = new PlArcher(SceneManager::CNTL::NONE);
-		ret = new PlArcher();
+		ret = new PlArcher(SceneManager::CNTL::NONE);
+		//ret = new PlArcher();
 		break;
 	case SceneManager::ROLE::KNIGHT:
-		//ret = new PlKnight(SceneManager::CNTL::NONE);
-		ret = new PlKnight();
+		ret = new PlKnight(SceneManager::CNTL::NONE);
+		//ret = new PlKnight();
 		break;
 	case SceneManager::ROLE::MAGE:
-		//ret = new PlMage(SceneManager::CNTL::NONE);
-		ret = new PlMage();
+		ret = new PlMage(SceneManager::CNTL::NONE);
+		//ret = new PlMage();
 		break;
 	default:
 		assert("プレイヤーの役職情報が間違っています");

@@ -4,8 +4,7 @@ class Mage :
     public PlayerBase
 {
 public:
-    Mage(const SceneManager::CNTL _cntl);
-    Mage(const InputManager::JOYPAD_NO _padNum);
+    Mage(void);
     ~Mage(void) = default;
     void SetParam(void)override;
 
