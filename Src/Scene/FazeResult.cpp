@@ -1,6 +1,8 @@
 #include<DxLib.h>
 #include<cassert>
 #include"../Manager/Generic/InputManager.h"
+#include"../Manager/Generic/ResourceManager.h"
+#include"../Application.h"
 
 #include "FazeResult.h"
 FazeResult::FazeResult(void)
@@ -15,10 +17,11 @@ FazeResult::~FazeResult(void)
 }
 void FazeResult::Init(void)
 {
-	rankString_[static_cast<int>(RANK::S)] = 'S';
-	rankString_[static_cast<int>(RANK::A)] = 'A';
-	rankString_[static_cast<int>(RANK::B)] = 'B';
-	rankString_[static_cast<int>(RANK::C)] = 'C';
+	rankImg_[static_cast<int>(RANK::S)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::RANK_S).handleId_;
+	rankImg_[static_cast<int>(RANK::A)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::RANK_A).handleId_;
+	rankImg_[static_cast<int>(RANK::B)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::RANK_B).handleId_;
+	rankImg_[static_cast<int>(RANK::C)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::RANK_C).handleId_;
+	backImg_= ResourceManager::GetInstance().Load(ResourceManager::SRC::RESULT).handleId_;
 
 	rank_ = RANK::S;
 	isEnd_ = false;
@@ -34,7 +37,18 @@ void FazeResult::Update(void)
 
 void FazeResult::Draw(void)
 {
-	DrawFormatString(0, 20, 0x000000, "RANK=%c", rankString_[static_cast<int>(rank_)]);
+	int cx = Application::SCREEN_SIZE_X / 2;
+	int cy = Application::SCREEN_SIZE_Y / 2;
+
+	//”wŒi
+	DrawRotaGraph(
+		cx, cy,
+		0.7f, 0.0f, backImg_, true);
+
+	//•]‰¿’lUI  
+	DrawRotaGraph(
+		cx, cy - 100,
+		0.3f, 0.0f, rankImg_[static_cast<int>(rank_)], true);
 	DrawFormatString(0, 40, 0x000000, "GetExp=%d", static_cast<int>(afterExp_));
 }
 

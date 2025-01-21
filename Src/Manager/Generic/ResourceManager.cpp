@@ -31,6 +31,9 @@ void ResourceManager::InitTitle(void)
 	//タイトルロゴ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "TitleLogo.png");
 	resourcesMap_.emplace(SRC::TITLE, res);
+	//スタート
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "start.png");
+	resourcesMap_.emplace(SRC::START, res);
 
 	ResourceStage();
 }
@@ -130,6 +133,10 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "HpBarCpu.jpg");
 	resourcesMap_.emplace(SRC::HP_CPU, res);
 
+	//時間
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "time.png");
+	resourcesMap_.emplace(SRC::TIME, res);
+
 
 	ResourcePlayer();
 	ResourceEnemy();
@@ -142,11 +149,16 @@ void ResourceManager::InitGame(void)
 	//ヘルプ画像
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Help!.png");
 	resourcesMap_.emplace(SRC::HELP, res);
+
+	InitResult();
 }
 
 void ResourceManager::InitResult(void)
 {
 	Resource res;
+	//背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "ResultBack.png");
+	resourcesMap_.emplace(SRC::RESULT, res);
 
 	//評価値UI
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Rank_S.png");
@@ -165,6 +177,9 @@ void ResourceManager::InitResult(void)
 void ResourceManager::InitGameOver(void)
 {
 	Resource res;
+
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "To_Title.png");
+	resourcesMap_.emplace(SRC::TO_TITLE, res);
 }
 
 //プレイヤー

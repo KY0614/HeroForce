@@ -59,6 +59,9 @@ public:
 		STATUS_KNIGHT,	//騎士
 		STATUS_ARCHER,	//弓使い
 		STATUS_AXEMAN,	//斧使い
+		TO_TITLE,
+		START,
+		TIME,
 
 		//レベル通知用
 		LEVEL_UP,
@@ -88,6 +91,7 @@ public:
 
 
 		//リザルト
+		RESULT,
 		RANK_S,
 		RANK_A,
 		RANK_B,

@@ -137,10 +137,11 @@ void SelectScene::Draw(void)
 {
 	auto& ins = InputManager::GetInstance();
 
-	SetUseLightAngleAttenuation(FALSE);
+	
 
 	skyDome_->Draw();
 	stage_->Draw();
+	SetUseLightAngleAttenuation(FALSE);
 
 	//‘I‘ð’†‚ÌŽí—Þ‚²‚Æ‚ÌXVˆ—
 	switch (select_)
@@ -341,6 +342,7 @@ void SelectScene::RoleDraw(void)
 		images_[i]->Draw();
 	}
 
+	SetUseLightAngleAttenuation(TRUE);
 	for (int i = 0; i < camera.size(); i++)
 	{
 		players_[i]->Draw();

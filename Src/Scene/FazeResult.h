@@ -37,8 +37,9 @@ public:
 
 private:
 
-    //‰¼’u‚«
-    char rankString_[RANK_MAX_NUM];
+    //‰æ‘œŠi”[
+    int rankImg_[RANK_MAX_NUM]; //•]‰¿UI
+    int backImg_;   //”wŒi
 
     float exp_; //Šî‘bŒoŒ±’l
     float afterExp_;//ŒvZŒã‚ÌŒoŒ±’l

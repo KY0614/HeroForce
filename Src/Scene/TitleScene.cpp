@@ -38,6 +38,7 @@ void TitleScene::Init(void)
 	stage_->Init();
 
 	imgTitleLogo_= ResourceManager::GetInstance().Load(ResourceManager::SRC::TITLE).handleId_;
+	imgStart_= ResourceManager::GetInstance().Load(ResourceManager::SRC::START).handleId_;
 }
 
 void TitleScene::Update(void)
@@ -81,15 +82,20 @@ void TitleScene::DrawLogo(void)
 		cx, cy - 100,
 		0.5f, 0.0f, imgTitleLogo_, true);
 
+	//スタート
+	DrawRotaGraph(
+		cx, cy + 200,
+		0.5f, 0.0f, imgStart_, true);
+
 	//DrawString(cx, cy - 200, "HeroForce", 0xff0000, true);
 
 	// Pushメッセージ
-	std::string msg = "Push 「Space」 or 「Bボタン」";
-	SetFontSize(28);
-	int len = (int)strlen(msg.c_str());
-	int width = GetDrawStringWidth(msg.c_str(), len);
-	DrawFormatString(cx - (width / 2), 400, 0xff0000, msg.c_str());
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	SetFontSize(16);
+	//std::string msg = "Push 「Space」 or 「Bボタン」";
+	//SetFontSize(28);
+	//int len = (int)strlen(msg.c_str());
+	//int width = GetDrawStringWidth(msg.c_str(), len);
+	//DrawFormatString(cx - (width / 2), 400, 0xff0000, msg.c_str());
+	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	//SetFontSize(16);
 
 }
