@@ -62,7 +62,7 @@ void GameScene::Init(void)
 	//プレイヤー設定
 	for (int i = 0; i < PLAYER_NUM; i++)
 	{
-		players_[i] = std::make_unique<PlAxe>(SceneManager::PLAY_MODE::USER, InputManager::JOYPAD_NO::PAD1);
+		players_[i] = std::make_unique<PlArcher>(InputManager::JOYPAD_NO::PAD1);
 		players_[i]->Init();
 	}
 
@@ -358,7 +358,7 @@ void GameScene::CollisionPlayer(void)
 		auto pAtk = p->GetAtk();
 
 		//プレイヤーがCPUの時だけサーチしたい
-		if (p->GetPlayMode() == SceneManager::PLAY_MODE::CPU)CollisionPlayerCPU(*p, pPos);
+		//if (p->GetPlayMode() == SceneManager::PLAY_MODE::CPU)CollisionPlayerCPU(*p, pPos);
 
 		//プレイヤー攻撃判定
 		//攻撃していない || 攻撃がすでに当たっている
@@ -380,37 +380,37 @@ void GameScene::CollisionPlayer(void)
 
 void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
 {
-	auto& col = Collision::GetInstance();
+	//auto& col = Collision::GetInstance();
 
-	//敵をサーチ初期化
-	_player.SetisEnemySerch(false);
+	////敵をサーチ初期化
+	//_player.SetisEnemySerch(false);
 
-	//敵の個体分行う
-	for (auto& e : enemys_)
-	{
-		//敵が死亡していたら処理しない
-		if (!e->IsAlive())continue;
+	////敵の個体分行う
+	//for (auto& e : enemys_)
+	//{
+	//	//敵が死亡していたら処理しない
+	//	if (!e->IsAlive())continue;
 
-		//敵個人の位置と攻撃を取得
-		VECTOR ePos = e->GetPos();
+	//	//敵個人の位置と攻撃を取得
+	//	VECTOR ePos = e->GetPos();
 
-		//プレイヤー側索敵
-		if (col.Search(_pPos, ePos, _player.GetSearchRange())
-			&& !_player.GetIsCalledPlayer())
-		{
-			//敵をサーチしたかを返す
-			_player.SetisEnemySerch(true);
-			_player.SetTargetPos(ePos);
-		}
+	//	//プレイヤー側索敵
+	//	if (col.Search(_pPos, ePos, playerTest_->GetSearchRange())
+	//		&& !_player.GetIsCalledPlayer())
+	//	{
+	//		//敵をサーチしたかを返す
+	//		_player.SetisEnemySerch(true);
+	//		_player.SetTargetPos(ePos);
+	//	}
 
-		if (col.Search(_player.GetPos(), enemyTest_->GetPos(), _player.GetAtkStartRange())
-			&& _player.GetState() == PlayerBase::CPU_STATE::NORMAL
-			&& !_player.GetIsCalledPlayer())
-		{
-			//状態を変更
-			_player.ChangeState(PlayerBase::CPU_STATE::ATTACK);
-		}
-	}
+	//	if (col.Search(_player.GetPos(), enemyTest_->GetPos(), _player.GetAtkStartRange())
+	//		&& _player.GetState() == PlayerBase::CPU_STATE::NORMAL
+	//		&& !_player.GetIsCalledPlayer())
+	//	{
+	//		//状態を変更
+	//		_player.ChangeState(PlayerBase::CPU_STATE::ATTACK);
+	//	}
+	//}
 }
 
 void GameScene::Fade(void)

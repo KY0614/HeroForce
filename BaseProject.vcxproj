@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\PlayerInput.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerDodge.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerSearch.cpp" />
     <ClCompile Include="Src\Manager\SoundManager.cpp" />
     <ClCompile Include="Src\Manager\EffectManager.cpp" />
     <ClCompile Include="Src\Manager\InputController.cpp" />
@@ -26,6 +29,7 @@
     <ClCompile Include="Src\Object\Character\EnemySort\EneBrig.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneGolem.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneMage.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerAnim.cpp" />
     <ClCompile Include="Src\Scene\SelectScene.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneAxe.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\PlArcher.cpp" />
@@ -69,6 +73,9 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\PlayerInput.h" />
+    <ClInclude Include="Src\Object\Character\PlayerDodge.h" />
+    <ClInclude Include="Src\Object\Character\PlayerSearch.h" />
     <ClInclude Include="Src\Manager\SoundManager.h" />
     <ClInclude Include="Src\Manager\EffectManager.h" />
     <ClInclude Include="Src\Manager\InputController.h" />
@@ -76,6 +83,7 @@
     <ClInclude Include="Src\Object\Character\EnemySort\EneBrig.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneGolem.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneMage.h" />
+    <ClInclude Include="Src\Object\Character\PlayerAnim.h" />
     <ClInclude Include="Src\Scene\SelectScene.h" />
     <ClInclude Include="Src\Manager\DataBank.h" />
     <ClInclude Include="Src\Object\Character\Chiken\ChickenManager.h" />

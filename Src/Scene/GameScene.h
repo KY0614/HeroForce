@@ -21,7 +21,7 @@ public:
 
 	//’è”
 	//ƒvƒŒƒCƒ„[‚Ì”
-	static constexpr int PLAYER_NUM = 4;
+	static constexpr int PLAYER_NUM = 1;
 
 	static constexpr int PHASE_TIME = 180;
 
