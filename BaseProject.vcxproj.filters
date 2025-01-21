@@ -65,6 +65,7 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Src\Shader\PixelShader.cpp" />
     <ClCompile Include="Src\Common\ShaderFade.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\CharacterParamData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Manager\Generic\InputController.h" />
@@ -174,6 +175,7 @@
     <ClInclude Include="Src\Object\Character\EnemySort\EneMage.h" />
     <ClInclude Include="Src\Shader\PixelShader.h" />
     <ClInclude Include="Src\Common\ShaderFade.h" />
+    <ClInclude Include="Src\Manager\GameSystem\CharacterParamData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">

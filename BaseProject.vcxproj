@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Manager\GameSystem\CharacterParamData.cpp" />
     <ClCompile Include="Src\Common\ShaderFade.cpp" />
     <ClCompile Include="Src\Object\System\GameUi\CpuHpBar.cpp" />
     <ClCompile Include="Src\Object\System\GameUi\GamaUIBase.cpp" />
@@ -75,6 +76,7 @@
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Manager\GameSystem\CharacterParamData.h" />
     <ClInclude Include="Src\Common\ShaderFade.h" />
     <ClInclude Include="Src\Object\System\GameUi\CpuHpBar.h" />
     <ClInclude Include="Src\Object\System\GameUi\GamaUIBase.h" />

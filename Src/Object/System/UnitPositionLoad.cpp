@@ -1,3 +1,4 @@
+#include "../../Application.h"
 #include "../../Lib/nlohmann/json.hpp"
 #include "UnitPositionLoad.h"
 
@@ -24,7 +25,7 @@ void UnitPositionLoad::Init()
 void UnitPositionLoad::SetJsonFile()
 {
 	//JSONファイルネーム
-	jsonFile_ = "Data/Json/CharacterPosData.json";
+	jsonFile_ = Application::PATH_JSON + "CharacterPosData.json";
 }
 
 void UnitPositionLoad::JsonLoad()
