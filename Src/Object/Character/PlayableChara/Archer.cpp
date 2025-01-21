@@ -185,16 +185,6 @@ void Archer::Draw(void)
 
 void Archer::AtkFunc(void)
 {
-	//入力
-	auto& ins = PlayerInput::GetInstance();
-	using ACT_CNTL = PlayerInput::ACT_CNTL;
-	//攻撃（攻撃アニメーションのフレームが0以下だったらフレームを設定）
-	if (ins.CheckAct(ACT_CNTL::NMLATK))
-	{
-		NmlAtkInit();
-		isAtk_ = true;
-	}
-
 	//明日からアーチャー作成する！
 	if (IsFinishAtkStart() && !isShotArrow_)
 	{

@@ -122,6 +122,24 @@ public:
     bool GetIsAtk(void){ return isAtk_; }
     bool GetIsSkill(void){ return isSkill_; }
 
+    //セッター
+
+    void SetAtk(const ATK _atk) { atk_ = _atk; }
+ 
+    void SetAtkStartCnt(const float _atkStartCnt) { atkStartCnt_ = _atkStartCnt; }
+
+    void SetIsAtk(const bool _isAtk) { isAtk_ = _isAtk; }
+    void SetIsSkill(const bool _isSkill) { isSkill_ = _isSkill; }
+
+    //攻撃変更用(主に入力されたら変えるようにする)
+    void ChangeAct(const ATK_ACT _act);
+
+    //攻撃の最大値の初期化(弓矢とかの違うatk使う用)
+    void ResetParam(ATK& _atk);
+
+    void ResetParam(void);
+
+
 
 protected:
     //*************************************************
@@ -227,8 +245,6 @@ protected:
     //ほぼガード用
     virtual void ResetGuardCnt(void);
 
-    //攻撃変更用
-    void ChangeAct(const ATK_ACT _act);
 
     void ChangeNmlAtk(void);
     void ChangeSkillOne(void);
@@ -236,8 +252,7 @@ protected:
 
 
 
-    //攻撃の最大値の初期化(各役割)
-    void ResetParam(ATK& _atk);
+ 
 
     //USER関係
     //------------------------------------------------
@@ -287,35 +302,7 @@ protected:
     void ChangeNmlActKeyBoard(void);
     void ChangeNmlActPad(void);
 
-    ////短押し攻撃共通処理(攻撃カウントとか後隙とか)
-    //virtual void NmlActCommon(void);
 
-    ////短押し用atk更新
-    //void NmlAtkUpdate(void);
-
-
-    ////チャージ攻撃
-    //virtual void ChargeAct(void);
-    ////チャージ攻撃(キーボード)
-    //void ChargeActKeyBoard(void);
-    ////チャージ攻撃(パッド)
-    //void ChargeActPad(void);
-
-    ////Change関数
-    ////チャージ攻撃(キーボード)
-    //void ChangeChargeActKeyBoard(void);
-    ////チャージ攻撃(パッド)
-    //void ChangeChargeActPad(void);
-
-    ////変更点
-    //void ChangeChargeActControll(void);
-
-    //void ChangeAtkType(ATK_ACT _act);
-
-
-    ////攻撃タイプ変更
-    //void ChangeChargeAct(void);
-    //void ChangeNmlAct(void);
 
     //攻撃発生中フラグ
     const bool IsAtkStart(void)const { return 0.0f < atkStartCnt_ && atkStartCnt_ <= atkStartTime_[static_cast<int>(act_)]; }
@@ -404,43 +391,9 @@ private:
     PlayerDodge* dodge_;
 
 #ifdef DEBUG_INPUT
-//************************************************************************
-//キーボードとパッドの共通各アクションボタン設定(テスト用で使ったので一応残しておきます)
-//************************************************************************
-//コントローラーのボタン番号(あくまでテスト用なのでprivateに置いておきます)
-    static constexpr int RIGHT_BTN = PAD_INPUT_B;
-    static constexpr int TOP_BTN = PAD_INPUT_X;
-    static constexpr int R_BUTTON = PAD_INPUT_R;
-    static constexpr int LEFT_BTN = PAD_INPUT_Y;
-    //ボタン入力するための情報
-    struct InputMapInfo
-    {
-        SceneManager::CNTL type;     //コントローラータイプ
 
-        //ボタン番号
-        //std::variant<int, InputManager::JOYPAD_IN_STATE> buttonId_;
-        int buttonId_;
-    };
-
-    //パッドとキーボードの共通ボタンに名前を付ける
-    using InputActionMap_t = std::map<std::string, std::vector<InputMapInfo>>;
-    using InputType = SceneManager::CNTL;
-    std::map<std::string, bool>currentInput_;                           //今押されてるボタンを返す
-    std::map<std::string, bool>lastInput_;                              //前に押されたボタン
-    InputActionMap_t inputActionMap_;                                   //アクションボタンをまとめて扱うための変数
-    /// <summary>
-    /// 入力チェック
-    /// </summary>
-    /// <param name="action">調べたいアクションの名前</param>
-    /// <returns>true　押されてる　/　false　押されてない</returns>
-    bool IsPressed(const std::string& action)const;
-
-    //入力情報の更新
-    void InputUpdate(void);
     //******************************************************************************************
 #endif // DEBUG_ON
-    //操作一元化
-    void ProcessInput(void);
     
     //アクションの発動条件
     void ProcessAct(void);

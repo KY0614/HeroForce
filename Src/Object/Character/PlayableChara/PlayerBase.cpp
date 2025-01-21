@@ -317,6 +317,11 @@ void PlayerBase::ResetParam(ATK& _atk)
 	_atk = atkMax_[act_];
 }
 
+void PlayerBase::ResetParam(void)
+{
+	atk_ = atkMax_[act_];
+}
+
 void PlayerBase::KeyBoardControl(void)
 {
 	auto& ins = InputManager::GetInstance();
@@ -528,42 +533,6 @@ void PlayerBase::ChangeSkillControll(ATK_ACT _skill)
 	//変更点
 	//ChangeAtkType(static_cast<ATK_ACT>(_skill));
 }
-
-
-
-
-
-
-//void PlayerBase::Dodge(void)
-//{
-//	//ドッジフラグがtrueになったら
-//	if (IsDodge() && !IsCoolDodge())
-//	{
-//		CntUp(dodgeCnt_);
-//		//スキル中に回避が出た時にスキルのカウントをリセット
-//		atk_.ResetCnt();
-//		if (dodgeCnt_ < FRAME_DODGE_MAX)
-//		{
-//			VECTOR dir = trans_.GetForward();
-//			//移動方向
-//			VECTOR movePow = VScale(dir, SPEED_DODGE);
-//			//移動処理
-//			trans_.pos = VAdd(trans_.pos, movePow);
-//		}
-//		else
-//		{
-//			dodgeCdt_ = 0.0f;
-//		}
-//	}
-//	else
-//	{
-//		CntUp(dodgeCdt_);
-//		ResetDodgeFrame();
-//#ifdef DEBUG_ON
-//		color_Col_ = 0xffffff;
-//#endif // DEBUG_ON
-//	}
-//}
 void PlayerBase::Damage(void)
 {
 	//とりあえず1ダメージ減らす
@@ -678,47 +647,4 @@ void PlayerBase::SkillTwoInit(void)
 {
 }
 
-
-
-
-#ifdef INPUT_DEBUG_ON
-void PlayerBase::InputUpdate(void)
-{
-	auto& ins = InputManager::GetInstance();
-	char keyState[256] = {};
-	int padState = {};
-	GetHitKeyStateAll(keyState);
-	padState = GetJoypadInputState(static_cast<int>(padNum_));
-
-	//それぞれのアクション名に割り当たっているすべての入力をチェック
-	for (const auto& mapInfo : inputActionMap_)
-	{
-		bool isPressed = false;
-		for (const auto& inputInfo : mapInfo.second)
-		{
-			isPressed = (inputInfo.type == InputType::KEYBOARD && keyState[inputInfo.buttonId_]) ||
-				(inputInfo.type == InputType::PAD && padState & inputInfo.buttonId_);
-			if (isPressed)
-			{
-				break;
-			}
-		}
-		//押されたら押されたアクションボタンがtrueになる？
-		currentInput_[mapInfo.first] = isPressed;
-	}
-}
-
-bool PlayerBase::IsPressed(const std::string& action)const
-{
-	auto it = currentInput_.find(action);
-	if (it == currentInput_.end())//未定義のボタン名が来たら無条件でfalseを返す
-	{
-		return false;
-	}
-	else
-	{
-		return it->second;
-	}
-}
-#endif // INPUT_DEBUG_ON
 
