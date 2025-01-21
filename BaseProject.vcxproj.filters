@@ -60,7 +60,6 @@
     <ClCompile Include="Src\Scene\FazeResult.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\Timer.cpp" />
     <ClCompile Include="Src\Object\Character\EnemyManager.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayerAnim.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\PlayerCpu.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuAxe.cpp" />

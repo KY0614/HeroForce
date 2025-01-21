@@ -32,7 +32,6 @@
     <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuAxe.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\Character\EnemyManager.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayerAnim.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\PlayerCpu.cpp" />
     <ClCompile Include="Src\Common\ShaderFade.cpp" />
     <ClCompile Include="Src\Object\System\GameUi\CpuHpBar.cpp" />
