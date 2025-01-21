@@ -91,7 +91,7 @@ void AxeMan::InitCharaAnim(void)
 //
 //}
 
-void PlAxe::SkillOneInit(void)
+void AxeMan::SkillOneInit(void)
 {
 	//if (!IsAtkAction() && !isCool_[static_cast<int>(skillNo_)])
 	//{
