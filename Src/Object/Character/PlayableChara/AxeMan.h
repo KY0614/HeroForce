@@ -1,7 +1,6 @@
 #pragma once
-#include "../PlayerBase.h"
-
-class PlAxe :
+#include "PlayerBase.h"
+class AxeMan :
     public PlayerBase
 {
 public:
@@ -14,15 +13,18 @@ public:
 #else // DEBUG_COOL
     //クールタイム
     static constexpr float ATK_COOLTIME = 2.0f;
-    static constexpr float SKILL_ONE_COOLTIME = 6.0f;
+    static constexpr float SKILL_ONE_COOLTIME = 10.0f;
     static constexpr float SKILL_TWO_COOLTIME = 5.0f;
 #endif // DEBUG_COOL
 
 
     //攻撃発生の時間
     static constexpr float ATK_START = 0.2f;
-    static constexpr float SKILL_ONE_START = 1.0f;
+    static constexpr float SKILL_ONE_START = 10.0f;
     static constexpr float SKILL_TWO_START = 0.2f;
+
+    //スキル１の長押ししていなかった時の攻撃発生
+    static constexpr float SKILL_ONE_START_NOCHARGE = 3.5f;
 
     //各攻撃の持続時間
     static constexpr float FRAME_ATK_DURATION = 0.5f - ATK_START;
@@ -50,6 +52,11 @@ public:
     static constexpr float SKILL_ONE_POW = 50.0f;
     static constexpr float SKILL_TWO_POW = 5.0f;
 
+    //溜めモーション
+    static constexpr float SKILL_CHARGE_STEPANIM = 16.9f;
+
+
+
     //通常攻撃の最大値
     static constexpr ATK ATK_MAX{ ATK_COL_LOCAL_POS,COL_ATK,ATK_POW,FRAME_ATK_DURATION,FRAME_ATK_BACKRASH,0.0f,false };
 
@@ -72,8 +79,8 @@ public:
     static constexpr float MULTIHIT_INTERVAL = 0.5f;
     static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//攻撃開始判定の大きさ
 
-    PlAxe(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum);
-    ~PlAxe(void) = default;
+    AxeMan(void);
+    ~AxeMan(void) = default;
     void SetParam(void)override;
 protected:
 
@@ -81,9 +88,15 @@ protected:
     void Skill1Func(void)override;
     void Skill2Func(void)override;
     void InitAct(void)override;
+    void InitSkill(ATK_ACT _act);
 
     //固有アニメーション番号の初期化
     void InitCharaAnim(void)override;
 
+    //void ChargeAct(void)override;
+
+    void SkillOneInit(void)override;
+    void SkillTwoInit(void)override;
     //void ResetParam(ATK_ACT _act)override;
 };
+

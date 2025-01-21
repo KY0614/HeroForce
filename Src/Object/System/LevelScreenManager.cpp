@@ -173,7 +173,7 @@ void LevelScreenManager::Draw(void)
 	stateDraw_();
 
 	//デバッグ描画
-	DebagDraw();
+	//DebagDraw();
 
 	//フェーダー描画
 	fader_->Draw();

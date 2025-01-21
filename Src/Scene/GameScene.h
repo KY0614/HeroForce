@@ -6,8 +6,10 @@
 #include<memory>
 
 class Grid;
+class PlayerManager;
 class PlayerBase;
 class Enemy;
+class EnemyManager;
 class StageManager;
 class SkyDome;
 class LevelScreenManager;
@@ -22,10 +24,7 @@ public:
 	//#define _DEBUG_COL	//テスト用の敵とプレイヤーを一体ずつ生成（この行をコメントアウトすると消える）
 
 	//定数
-	//プレイヤーの数
-	static constexpr int PLAYER_NUM = 4;
-
-	static constexpr int PHASE_TIME = 180;
+	static constexpr int PHASE_TIME = 180;	//フェーズ切り替えの時間（仮）
 
 
 	// コンストラクタ
@@ -60,11 +59,11 @@ private:
 	bool isFazeRezult_;
 
 	//プレイヤー
-	std::unique_ptr<PlayerBase>players_[PLAYER_NUM];
-	PlayerBase* playerTest_;
+	std::unique_ptr<PlayerManager>playerMng_;
+
+
 	//敵
-	std::vector<std::unique_ptr<Enemy>> enemys_;
-	Enemy* enemyTest_;
+	std::unique_ptr<EnemyManager>enmMng_;
 
 	//チキン
 	std::unique_ptr<ChickenManager> chicken_;
@@ -93,5 +92,8 @@ private:
 
 	//強化要素反映
 	void LevelUpReflection();
+
+	//ゲームオーバー判定
+	bool IsGameOver(void);
 };
 

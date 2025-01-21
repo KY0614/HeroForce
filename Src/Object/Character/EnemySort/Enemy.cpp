@@ -1,7 +1,7 @@
 #include<DxLib.h>
 #include<cmath>
-#include"../../Application.h"
-#include"../../Utility/AsoUtility.h"
+#include"../../../Application.h"
+#include"../../../Utility/AsoUtility.h"
 #include "Enemy.h"
 
 void Enemy::Destroy(void)
@@ -43,6 +43,9 @@ void Enemy::Update(void)
 {
 	//アニメーション
 	Anim();
+
+	//座標バックアップ
+	prePos_ = trans_.pos;
 
 #ifdef DEBUG_ENEMY
 	//入力用

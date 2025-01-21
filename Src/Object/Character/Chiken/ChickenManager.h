@@ -6,7 +6,7 @@
 #include "../../../Utility/AsoUtility.h"
 #include "../../../Manager/GameSystem/Collision.h"
 #include "../../Stage/StageManager.h"
-#include "../PlayerBase.h"
+#include "../PlayableChara/PlayerBase.h"
 #include "ChickenBase.h"
 
 
@@ -40,6 +40,9 @@ public:
 
 	//プレイヤー位置を取得(1Pので良い)
 	void SetTargetPos(const VECTOR pos);
+
+	//衝突判定
+	void CollisionStage(const Transform& stageTrans, std::shared_ptr<ChickenBase> cheken);
 
 private:
 

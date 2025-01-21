@@ -1,11 +1,11 @@
 #pragma once
-#include "../PlayerBase.h"
-class PlMage :
+#include "PlayerBase.h"
+class Mage :
     public PlayerBase
 {
 public:
-    PlMage(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum);
-    ~PlMage(void) = default;
+    Mage(void);
+    ~Mage(void) = default;
     void SetParam(void)override;
 
 protected:
@@ -13,3 +13,4 @@ protected:
     void Skill1Func(void)override;
     void Skill2Func(void)override;
 };
+

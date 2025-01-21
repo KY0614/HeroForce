@@ -33,23 +33,11 @@ void TitleScene::Update(void)
 	SceneManager& mng = SceneManager::GetInstance();
 	DataBank& data = DataBank::GetInstance();
 
-	if (ins.IsTrgDown(KEY_INPUT_SPACE))
+	if (ins.IsTrgDown(KEY_INPUT_SPACE)|| ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT))
 	{
 		//data.Input(DataBank::INFO::USER_NUM, windowNum_);	//ゲームシーン移行時にやるもの
 		mng.ChangeScene(SceneManager::SCENE_ID::SELECT);
 	}
-
-	/*if (ins.IsTrgDown(KEY_INPUT_RIGHT))
-	{
-		windowNum_++;
-		if (windowNum_ > SceneManager::PLAYER_NUM)windowNum_ = SceneManager::PLAYER_NUM;
-	}
-
-	if (ins.IsTrgDown(KEY_INPUT_LEFT))
-	{
-		windowNum_--;
-		if (windowNum_ < 1)windowNum_ = 1;
-	}*/
 }
 
 void TitleScene::Draw(void)
@@ -75,12 +63,14 @@ void TitleScene::DrawLogo(void)
 		cx, cy - 200,
 		1.0f, 0.0f, imgTitleLogo_, true);
 
+	DrawString(cx, cy - 200, "HeroForce", 0xff0000, true);
+
 	// Pushメッセージ
-	std::string msg = "Push Space";
+	std::string msg = "Push 「Space」 or 「Bボタン」";
 	SetFontSize(28);
 	int len = (int)strlen(msg.c_str());
 	int width = GetDrawStringWidth(msg.c_str(), len);
-	DrawFormatString(cx - (width / 2), 200, 0x87cefa, msg.c_str());
+	DrawFormatString(cx - (width / 2), 400, 0x87cefa, msg.c_str());
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	SetFontSize(16);
 

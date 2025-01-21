@@ -1,6 +1,6 @@
 #pragma once
-#include "../PlayerBase.h"
-class PlKnight :
+#include "PlayerBase.h"
+class Knight :
     public PlayerBase
 {
 public:
@@ -8,15 +8,20 @@ public:
     //スキル使用開始時にクールタイムを増やす時間
     static constexpr float SKILL_TWO_START_COOLTIME = 3.0f;
 
-    //ガード可能になる残りクールタイム(ガード時間1秒確保したいから)
+    //ガード可能になる残りクールタイム(ガード時間最低1秒確保したいから)
     static constexpr float GUARD_STARTABLE_COOL = 4.0f;
 #ifdef DEBUG_COOL
-//クールタイム
+    //クールタイム
     static constexpr float ATK_COOLTIME = 1.0f;
     static constexpr float SKILL_ONE_COOLTIME = 3.0f;
     static constexpr float SKILL_TWO_COOLTIME = 10.0f;
 
+   
+
 #else // DEBUG_COOL
+
+    void DrawDebug(void)override;
+
     //クールタイム
     static constexpr float ATK_COOLTIME = 1.0f;
     static constexpr float SKILL_ONE_COOLTIME = 5.0f;
@@ -72,18 +77,18 @@ public:
 
     //スキル１
     static constexpr ATK SKILL_ONE_MAX{ SKILL1_COL_LOCAL_POS
-        ,COL_SKILL1 
+        ,COL_SKILL1
         ,SKILL_ONE_POW
-        ,FRAME_SKILL1_DURATION 
-        ,FRAME_SKILL1_BACKRASH 
+        ,FRAME_SKILL1_DURATION
+        ,FRAME_SKILL1_BACKRASH
         ,0.0f,false };
 
     //スキル２
-    static constexpr ATK SKILL_TWO_MAX{ SKILL2_COL_LOCAL_POS 
-        ,COL_SKILL2 
+    static constexpr ATK SKILL_TWO_MAX{ SKILL2_COL_LOCAL_POS
+        ,COL_SKILL2
         ,SKILL_TWO_POW
-        ,FRAME_SKILL2_DURATION 
-        ,FRAME_SKILL2_BACKRASH 
+        ,FRAME_SKILL2_DURATION
+        ,FRAME_SKILL2_BACKRASH
         ,0.0f,false };
 
     //固有アニメーション
@@ -91,8 +96,8 @@ public:
     static constexpr int SKILL_ONE_NUM = 2;
     static constexpr int SKILL_TWO_NUM = 18;
     static constexpr int BLOCKING_NUM = 21;
-    PlKnight(SceneManager::PLAY_MODE _mode, InputManager::JOYPAD_NO _padNum);
-    ~PlKnight(void) = default;
+    Knight(void);
+    ~Knight(void) = default;
     void SetParam(void)override;
 
 protected:
@@ -100,15 +105,24 @@ protected:
     void InitAct(void)override;
     void AtkFunc(void)override;
 
-    void ResetGuardCnt(void)override;
+    //void ResetGuardCnt(void)override;
+
+    void SkillOneInit(void)override;
+    void SkillTwoInit(void)override;
+
 
     //各スキルの処理
+    void InitSkill(ATK_ACT _act);
     void Skill1Func(void)override;
     void Skill2Func(void)override;
 
     //固有アニメーション番号の初期化
     void InitCharaAnim(void)override;
 
+    ////長押しスキル
+    //void ChargeAct(void)override;
+
 private:
     float guardCnt_;        //ガード時間
 };
+

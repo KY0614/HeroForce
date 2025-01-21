@@ -21,6 +21,10 @@ public:
         MAX
     };
 
+    FazeResult(void);
+    ~FazeResult(void);
+
+
     void Init(void) override;
     void Update(void) override;
     void Draw(void) override;

@@ -9,7 +9,15 @@ UnitBase::UnitBase(void)
 	hp_ = -1;
 	trans_.pos = { 0.0f,0.0f,0.0f };
 	trans_.scl = { 0.0f,0.0f,0.0f };
-	trans_.rot = { 0.0f,0.0f,0.0f };
+	trans_.rot = { 0.0f,0.0f,0.0f };	
+
+	for (auto& tran_ : transArray_)
+	{
+		tran_.pos = { 0.0f,0.0f,0.0f };
+		tran_.scl = { 0.0f,0.0f,0.0f };
+		tran_.rot = { 0.0f,0.0f,0.0f };
+	}
+
 	anim_ = ANIM::NONE;
 	atcAnim_ = -1;
 	atkPow_ = -1.0f;
@@ -122,6 +130,12 @@ void UnitBase::Anim(void)
 	}
 	// 再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
+
+	//for (auto& tran : transArray_)
+	//{
+	//	// 再生するアニメーション時間の設定
+	//	MV1SetAttachAnimTime(tran.modelId, atcAnim_, stepAnim_);
+	//}
 }
 
 
@@ -152,6 +166,21 @@ void UnitBase::ResetAnim(const ANIM _anim, const float _speed)
 
 	// 再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
+
+	//for (auto& tran : transArray_)
+	//{
+	//	//デタッチ
+	//	//実質atcAnimの初期化
+	//	MV1DetachAnim(tran.modelId, atcAnim_);
+	//	//アタッチ
+	//	//実質atcAnimの代入
+	//	atcAnim_ = MV1AttachAnim(tran.modelId, animNum_[anim_]);
+
+	//	animTotalTime_ = MV1GetAttachAnimTotalTime(tran.modelId, atcAnim_);
+
+	//	// 再生するアニメーション時間の設定
+	//	MV1SetAttachAnimTime(tran.modelId, atcAnim_, stepAnim_);
+	//}
 }
 
 void UnitBase::SetIsHit(const bool _flag)
@@ -185,6 +214,11 @@ void UnitBase::SetPos(const VECTOR pos)
 	trans_.pos = pos;
 }
 
+void UnitBase::SetPrePos(void)
+{
+	trans_.pos = prePos_;
+}
+
 //攻撃力の強化
 void UnitBase::SetAttack(const float percent)
 {
@@ -203,7 +237,7 @@ void UnitBase::SetDefense(const float percent)
 void UnitBase::SetSpeed(const float percent)
 {
 	speedUpPercent_ += percent;
-	//speed_ = defSpeed_ * speedUpPercent_
+	moveSpeed_ = defSpeed_ * speedUpPercent_;
 }
 
 //体力強化
@@ -212,14 +246,6 @@ void UnitBase::SetHpMax(const float hp)
 	hpMax_ += hp;
 }
 
-void UnitBase::CollisionStage(const Transform &stageTrans)
-{
-	auto& col = Collision::GetInstance();
-	if (col.IsHitUnitStageObject(stageTrans.modelId, trans_.pos, radius_))
-	{
-		SetPos(prePos_);
-	}
-}
 
 void UnitBase::ParamLoad()
 {

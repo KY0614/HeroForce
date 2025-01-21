@@ -1,5 +1,5 @@
 #include"../../Arrow.h"
-#include"../Enemy.h"
+#include"Enemy.h"
 #include "EneArcher.h"
 
 void EneArcher::SetParam(void)

@@ -1,14 +1,14 @@
 #pragma once
 #include<vector>
 #include <functional>
-#include"../../Utility/AsoUtility.h"
-#include "../UnitBase.h"
+#include"../../../Utility/AsoUtility.h"
+#include "../../UnitBase.h"
 
 class Enemy : public UnitBase
 {
 public:
 
-#define DEBUG_ENEMY
+//#define DEBUG_ENEMY
 
 	//移行テストしております
 

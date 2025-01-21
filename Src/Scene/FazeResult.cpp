@@ -3,6 +3,16 @@
 #include"../Manager/Generic/InputManager.h"
 
 #include "FazeResult.h"
+FazeResult::FazeResult(void)
+{
+	exp_ = 0.0f;
+	afterExp_ = 0.0f;
+	rank_ = RANK::MAX;
+	isEnd_ = false;
+}
+FazeResult::~FazeResult(void)
+{
+}
 void FazeResult::Init(void)
 {
 	rankString_[static_cast<int>(RANK::S)] = 'S';

@@ -6,6 +6,7 @@
 #include "../Scene/TitleScene.h"
 #include "../Scene/SelectScene.h"
 #include "../Scene/GameScene.h"
+#include "../Scene/GameOverScene.h"
 #include "ResourceManager.h"
 #include "Camera.h"
 #include"../Manager/GameSystem/Collision.h"
@@ -366,6 +367,11 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 		RedySubWindow();
 		scene_ = new GameScene();
 		resM.InitGame();
+		break;
+
+	case SCENE_ID::GAMEOVER:
+		scene_ = new GameOverScene();
+		resM.InitGameOver();
 		break;
 	}
 

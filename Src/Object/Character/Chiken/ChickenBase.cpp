@@ -84,7 +84,7 @@ void ChickenBase::Draw(void)
 	stateDraw_();
 
 	//デバッグ描画
-	DebagDraw();
+	//DebagDraw();
 
 	//ビルボード描画
 	DrawHelp();
