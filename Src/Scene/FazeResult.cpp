@@ -110,7 +110,6 @@ void FazeResult::Draw(void)
 		true,
 		false);
 
-	DrawFormatString(0, 20, 0x000000, "RANK=%c", rankString_[static_cast<int>(rank_)]);
 	DrawFormatString(0, 40, 0x000000, "GetExp=%d", static_cast<int>(afterExp_));
 }
 

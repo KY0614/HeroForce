@@ -161,7 +161,6 @@ void SelectScene::Draw(void)
 	default:
 		break;
 	}
-	SetUseLightAngleAttenuation(true);
 	//デバッグ描画
 	//DrawDebug();
 
