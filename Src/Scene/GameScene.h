@@ -68,6 +68,7 @@ private:
 
 	//“G
 	std::unique_ptr<EnemyManager>enmMng_;
+	int dunkEnmCnt_;
 
 	//ƒ`ƒLƒ“
 	std::unique_ptr<ChickenManager> chicken_;

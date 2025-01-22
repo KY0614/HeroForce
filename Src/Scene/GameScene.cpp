@@ -237,6 +237,8 @@ void GameScene::CollisionEnemy(void)
 		//動ける分だけ(のちに全員分に変える)
 		VECTOR pPos = playerMng_->GetPlayer(0)->GetPos();
 
+		
+
 		//索敵
 		//範囲内に入っているとき
 		if (col.Search(ePos, pPos, e->GetSearchRange())) {
@@ -395,7 +397,7 @@ void GameScene::ChangePhase(void)
 	//リザルトに関係するデータを入力
 	DataBank& data = DataBank::GetInstance();
 
-	data.Input(DataBank::INFO::FAZE_DUNK_ENEMY, DunkEnmCnt_);	//倒した敵数
+	data.Input(DataBank::INFO::FAZE_DUNK_ENEMY, dunkEnmCnt_);	//倒した敵数
 	data.Input(DataBank::INFO::ALIVE_CHICKEN, chicken_->GetAliveNum());		//ニワトリ生存数
 
 	//リザルトで取得
