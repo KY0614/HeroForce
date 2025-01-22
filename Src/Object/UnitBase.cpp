@@ -25,6 +25,12 @@ UnitBase::UnitBase(void)
 	animTotalTime_ = -1;
 	stepAnim_ = -1.0f;
 	speedAnim_ = 1.0f;
+
+	animArray_ = -1;
+	animArrayTotalTime_ = -1;
+	stepAnimArray_ = -1.0f;
+	speedAnimArray_ = -1.0f;
+
 	prePos_ = AsoUtility::VECTOR_ZERO;
 	def_ = -1.0f;
 	radius_ = -1.0f;
@@ -123,19 +129,13 @@ void UnitBase::Anim(void)
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	// アニメーション時間の進行
 	stepAnim_ += (speedAnim_ * deltaTime);
-	if (stepAnim_ > animTotalTime_)
+	if (stepAnim_ > animTotalTime_ )
 	{
 		//アニメーション終了時処理（継承先で行動を決めておく）
 		FinishAnim();
 	}
 	// 再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
-
-	//for (auto& tran : transArray_)
-	//{
-	//	// 再生するアニメーション時間の設定
-	//	MV1SetAttachAnimTime(tran.modelId, atcAnim_, stepAnim_);
-	//}
 }
 
 
@@ -160,27 +160,30 @@ void UnitBase::ResetAnim(const ANIM _anim, const float _speed)
 	//実質atcAnimの代入
 	atcAnim_ = MV1AttachAnim(trans_.modelId, animNum_[anim_]);
 
-
 	animTotalTime_ = MV1GetAttachAnimTotalTime(trans_.modelId, atcAnim_);
 	stepAnim_ = 0.0f;
 
 	// 再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
+}
 
-	//for (auto& tran : transArray_)
-	//{
-	//	//デタッチ
-	//	//実質atcAnimの初期化
-	//	MV1DetachAnim(tran.modelId, atcAnim_);
-	//	//アタッチ
-	//	//実質atcAnimの代入
-	//	atcAnim_ = MV1AttachAnim(tran.modelId, animNum_[anim_]);
+void UnitBase::AnimArray(void)
+{
+	// アニメーション再生
+	// 経過時間の取得
+	float deltaTime = 1.0f / Application::DEFAULT_FPS;
+	stepAnimArray_ += (speedAnimArray_ * deltaTime);
+	if (stepAnimArray_ > animArrayTotalTime_)
+	{
+		//アニメーション終了時処理（継承先で行動を決めておく）
+		FinishAnim();
+	}
 
-	//	animTotalTime_ = MV1GetAttachAnimTotalTime(tran.modelId, atcAnim_);
-
-	//	// 再生するアニメーション時間の設定
-	//	MV1SetAttachAnimTime(tran.modelId, atcAnim_, stepAnim_);
-	//}
+	for (auto& tran : transArray_)
+	{
+		// 再生するアニメーション時間の設定
+		MV1SetAttachAnimTime(tran.modelId, animArray_, stepAnimArray_);
+	}
 }
 
 void UnitBase::SetIsHit(const bool _flag)
@@ -199,15 +202,48 @@ void UnitBase::SubHp()
 	//ダメージが0より大きいか調べる
 	if(0 < damage_)
 	{
-		//残りダメージを減らす;
 		damage_--;
-		//Hpを減らす
+
 		hp_--;
-		//HP下限
+
 		if (hp_ < 0) { hp_ = 0; }
 	}
 }
 
+void UnitBase::ResetAnimArray(const ANIM _anim, const float _speed)
+{
+	if (anim_ == _anim)return;
+
+	speedAnimArray_ = _speed;
+
+	for (auto& tran : transArray_)
+	{
+		//デタッチ
+		//実質atcAnimの初期化
+		MV1DetachAnim(tran.modelId, animArray_);
+
+		anim_ = _anim;
+
+		//アタッチ
+		//実質atcAnimの代入
+		animArray_ = MV1AttachAnim(tran.modelId, animNum_[anim_]);
+
+		animArrayTotalTime_ = MV1GetAttachAnimTotalTime(tran.modelId, animArray_);
+		stepAnimArray_ = 0.0f;
+
+		// 再生するアニメーション時間の設定
+		MV1SetAttachAnimTime(tran.modelId, animArray_, stepAnimArray_);
+	}
+}
+
+float UnitBase::GetAnimArrayTime(void)
+{
+	for (auto& tran : transArray_)
+	{
+		float ret = MV1GetAttachAnimTime(tran.modelId, animArray_);
+		return ret;
+	}
+}
 //座標の設定
 void UnitBase::SetPos(const VECTOR pos)
 {
@@ -258,6 +294,7 @@ void UnitBase::FinishAnim(void)
 {
 	//ループ再生
 	stepAnim_ = 0.0f;
+	stepAnimArray_ = 0.0f;
 }
 
 void UnitBase::CntUp(float& _count)

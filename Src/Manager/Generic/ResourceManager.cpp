@@ -57,8 +57,20 @@ void ResourceManager::InitSelect(void)
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Left_point.png", 1, 1, 52, 52);
 	resourcesMap_.emplace(SRC::LEFT_POINT, res);
 
+	//準備
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "test.png", 1, 1, 500, 200);
+	resourcesMap_.emplace(SRC::READY, res);
+
+	//役職
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "RoleNum.png", 1, 1, 300, 300);
+	resourcesMap_.emplace(SRC::ROLE, res);
+
+	//デバイス
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Device.png", 1, 1, 300, 300);
+	resourcesMap_.emplace(SRC::DEVICE, res);
+
 	//キャラクターパラメータリスト
-	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Left_point.png", CHARA_PARAM_NUM_X, CHARA_PARAM_NUM_Y, CHARA_PARAM_SIZE_X, CHARA_PARAM_SIZE_Y);
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "CharaParams.png", CHARA_PARAM_NUM_X, CHARA_PARAM_NUM_Y, CHARA_PARAM_SIZE_X, CHARA_PARAM_SIZE_Y);
 	resourcesMap_.emplace(SRC::CHARA_PARAMS, res);
 
 	ResourcePlayer();
