@@ -1,6 +1,4 @@
-#include"../../../Manager/Resource.h"
-#include"../../../Manager/ResourceManager.h"
-#include"../Enemy.h"
+#include"Enemy.h"
 #include "EneAxe.h"
 
 void EneAxe::SetParam(void)

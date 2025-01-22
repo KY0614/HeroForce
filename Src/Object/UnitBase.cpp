@@ -1,4 +1,5 @@
 #include"../Application.h"
+#include"../Utility/AsoUtility.h"
 #include "UnitBase.h"
 
 UnitBase::UnitBase(void)
@@ -27,6 +28,16 @@ UnitBase::UnitBase(void)
 	stepAnimArray_ = -1.0f;
 	speedAnimArray_ = -1.0f;
 
+	prePos_ = AsoUtility::VECTOR_ZERO;
+
+	defAtk_ = -1.0f;
+	defDef_ = -1.0f;
+	defSpeed_ = -1.0f;
+	defHp_ = -1;
+
+	atkUpPercent_ = -1.0f;
+	defUpPercent_= -1.0f;
+	speedUpPercent_ = -1.0f;
 }
 
 UnitBase::~UnitBase(void)
@@ -94,6 +105,11 @@ const UnitBase::ATK UnitBase::GetAtk(void) const
 const float UnitBase::GetRadius(void) const
 {
 	return radius_;
+}
+
+const VECTOR UnitBase::GetPrePos() const
+{
+	return prePos_;
 }
 
 /// <summary>
@@ -164,6 +180,30 @@ void UnitBase::AnimArray(void)
 	}
 }
 
+void UnitBase::SetIsHit(const bool _flag)
+{
+	atk_.isHit_ = _flag;
+}
+
+void UnitBase::SetDamage(const int damage)
+{
+	//与えるダメージを増やす
+	damage_ += damage;
+}
+
+void UnitBase::SubHp()
+{
+	//ダメージが0より大きいか調べる
+	if(0 < damage_)
+	{
+		damage_--;
+
+		hp_--;
+
+		if (hp_ < 0) { hp_ = 0; }
+	}
+}
+
 void UnitBase::ResetAnimArray(const ANIM _anim, const float _speed)
 {
 	if (anim_ == _anim)return;
@@ -198,10 +238,42 @@ float UnitBase::GetAnimArrayTime(void)
 		return ret;
 	}
 }
-
-void UnitBase::SetIsHit(const bool _flag)
+//座標の設定
+void UnitBase::SetPos(const VECTOR pos)
 {
-	atk_.isHit_ = _flag;
+	trans_.pos = pos;
+}
+
+void UnitBase::SetPrePos(void)
+{
+	trans_.pos = prePos_;
+}
+
+//攻撃力の強化
+void UnitBase::SetAttack(const float percent)
+{
+	atkUpPercent_ += percent;			//強化％上昇
+	atkPow_ = defAtk_ * atkUpPercent_;	//攻撃力を上昇
+}
+ 
+//防御力の強化
+void UnitBase::SetDefense(const float percent)
+{
+	defUpPercent_ += percent;
+	def_ = defDef_ * defUpPercent_;
+}
+
+//移動速度
+void UnitBase::SetSpeed(const float percent)
+{
+	speedUpPercent_ += percent;
+	moveSpeed_ = defSpeed_ * speedUpPercent_;
+}
+
+//体力強化
+void UnitBase::SetHpMax(const float hp)
+{
+	hpMax_ += hp;
 }
 
 //アニメ終了時の動き
@@ -225,6 +297,3 @@ void UnitBase::CntDown(float& _count)
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	_count -= deltaTime;
 }
-
-
-

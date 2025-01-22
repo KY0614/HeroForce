@@ -1,17 +1,21 @@
 #pragma once
 #include "SceneBase.h"
 #include"../Common/Fader.h"
+#include"../Object/Stage/StageManager.h"
 #include<vector>
 #include<memory>
 
 class Grid;
+class PlayerManager;
 class PlayerBase;
 class Enemy;
+class EnemyManager;
 class StageManager;
 class SkyDome;
 class LevelScreenManager;
 class UnitPositionLoad;
 class ChickenManager;
+class FazeResult;
 
 class GameScene : public SceneBase
 {
@@ -20,10 +24,7 @@ public:
 	//#define _DEBUG_COL	//テスト用の敵とプレイヤーを一体ずつ生成（この行をコメントアウトすると消える）
 
 	//定数
-	//プレイヤーの数
-	static constexpr int PLAYER_NUM = 4;
-
-	static constexpr int PHASE_TIME = 180;
+	static constexpr int PHASE_TIME = 180;	//フェーズ切り替えの時間（仮）
 
 
 	// コンストラクタ
@@ -48,12 +49,21 @@ private:
 	//フェーダー
 	std::unique_ptr<Fader>fader_;
 
+	//ゲームシーンのフェーズ遷移中判定
+	bool isPhaseChanging_;
+	int phaseCnt_;
+
+	//フェーズリザルト
+	std::unique_ptr<FazeResult>fazeResult_;
+	//リザルト中か
+	bool isFazeRezult_;
+
 	//プレイヤー
-	std::unique_ptr<PlayerBase>players_[PLAYER_NUM];
-	PlayerBase* playerTest_;
+	std::unique_ptr<PlayerManager>playerMng_;
+
+
 	//敵
-	std::vector<std::unique_ptr<Enemy>> enemys_;
-	Enemy* enemyTest_;
+	std::unique_ptr<EnemyManager>enmMng_;
 
 	//チキン
 	std::unique_ptr<ChickenManager> chicken_;
@@ -62,27 +72,28 @@ private:
 
 	std::unique_ptr<UnitPositionLoad> unitLoad_;
 
-	//ゲームシーンのフェーズ遷移中判定
-	bool isPhaseChanging_;
-	int phaseCnt_;
 
 	//当たり判定（他項目に干渉するもののみ）
 	void Collision(void);
 	void CollisionEnemy(void);	//敵関連の当たり判定
 	void CollisionPlayer(void);	//プレイヤー関連の当たり判定
 	void CollisionPlayerCPU(PlayerBase& _player,const VECTOR& _pPos);	//プレイヤー(CPU)関連の当たり判定
+	//void CollisionStageUnit();
 
 	//フェード
 	void Fade(void);
 
 	//フェーズ遷移
 	void ChangePhase(void);
-	//フェーズ更新
+	//フェーズ更新(完全暗転中)
 	void UpdatePhase(void);
 	//フェーズ描画
 	void DrawPhase(void);
 
 	//強化要素反映
 	void LevelUpReflection();
+
+	//ゲームオーバー判定
+	bool IsGameOver(void);
 };
 

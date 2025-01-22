@@ -1,7 +1,9 @@
 ﻿#pragma once
 #include"Common/Transform.h"
 #include<unordered_map>
-
+#include"../Manager/Generic/ResourceManager.h"
+#include"../Manager/Generic/InputManager.h"
+#include"../Manager/GameSystem/Collision.h"
 
 //test
 
@@ -56,6 +58,8 @@ public:
 	static constexpr float SPEED_ANIM = 20.0f;
 	//キャラクター大きさ設定
 	static constexpr float CHARACTER_SCALE = 0.3f;
+	//初期強化パーセント
+	static constexpr float DEFAULT_PERCENT = 100.0f;
 
 
 	//コンストラクタ
@@ -94,6 +98,8 @@ public:
 	const ATK GetAtk(void)const;
 	//あたり判定
 	const float GetRadius(void)const;
+	//移動前の座標位置
+	const VECTOR GetPrePos()const;
 
 	//アニメーション関数
 	void Anim(void);
@@ -110,15 +116,46 @@ public:
 	//isHit設定用（外部）
 	void SetIsHit(const bool _flag);
 
+	//ダメージの設定
+	void SetDamage(const int damage);
+
+	//残量HPの処理(少しずつHpを減らす)
+	void SubHp();
+
+	//位置の設定
+	void SetPos(const VECTOR pos);
+	void SetPrePos(void);
+
+	//強化反映
+	void SetAttack(const float percent);
+	void SetDefense(const float percent);
+	void SetSpeed(const float percent);
+	void SetHpMax(const float hp);
+
 protected:
 
+	//各キャラクターのデフォルトのパラメーター
+	float defAtk_;
+	float defDef_;
+	float defSpeed_;
+	int defHp_;
+
+	//各パラメータごとの強化％
+	float atkUpPercent_;
+	float defUpPercent_;
+	float speedUpPercent_;
+
 	int hp_;			//体力
+	int hpMax_;			//体力最大値
+	int damage_;		//ダメージ
 	Transform trans_;	//位置情報関係
 	Transform transArray_[4];	//位置情報関係
 	float radius_;		//自身の当たり判定の半径
 	float def_;			//防御力
 	float atkPow_;		//攻撃力
 	ATK atk_;			//現在のスキル
+	VECTOR prePos_;		//移動前の座標位置
+	float moveSpeed_;   //移動スピード
 
 	//アニメ関係
 	ANIM anim_;								//アニメステート

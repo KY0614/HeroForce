@@ -2,16 +2,18 @@
 #include <math.h>
 #include<algorithm>
 #include "../Application.h"
-#include "../Manager/InputManager.h"
-#include "../Manager/ResourceManager.h"
-#include "../Manager/Camera.h"
-#include "../Manager/DataBank.h"
+#include "../Manager/Generic/InputManager.h"
+#include "../Manager/Generic/ResourceManager.h"
+#include "../Manager/Generic/Camera.h"
+#include "../Manager/GameSystem/DataBank.h"
 #include "../Utility/AsoUtility.h"
 #include "../Object/Stage/StageManager.h"
 #include "../Object/Stage/StageObject.h"
 #include "../Object/Stage/SkyDome.h"
-#include "../Object/Character/SelectPlayer.h"
+#include "../Object/Character/PlayableChara/Other/SelectPlayer.h"
 #include "../Object/SelectImage.h"
+#include "../Object/Character/PlayableChara/PlayerBase.h"
+#include "../Object/Character/PlayableChara/USER/PlAxeMan.h"
 #include "SelectScene.h"
 
 SelectScene::SelectScene(void)
@@ -135,8 +137,11 @@ void SelectScene::Draw(void)
 {
 	auto& ins = InputManager::GetInstance();
 
+	
+
 	skyDome_->Draw();
 	stage_->Draw();
+	SetUseLightAngleAttenuation(FALSE);
 
 	//選択中の種類ごとの更新処理
 	switch (select_)
@@ -159,6 +164,8 @@ void SelectScene::Draw(void)
 
 	//デバッグ描画
 	//DrawDebug();
+
+	SetUseLightAngleAttenuation(TRUE);
 }
 
 void SelectScene::Release(void)
@@ -312,6 +319,7 @@ void SelectScene::RoleDraw(void)
 		images_[i]->Draw();
 	}
 
+	SetUseLightAngleAttenuation(TRUE);
 	for (int i = 0; i < camera.size(); i++)
 	{
 		players_[i]->Draw();

@@ -1,8 +1,8 @@
-#include "../Manager/ResourceManager.h"
-#include "../Manager/InputManager.h"
-#include "../Manager/DataBank.h"
+#include "../Manager/Generic/ResourceManager.h"
+#include "../Manager/Generic/InputManager.h"
+#include "../Manager/GameSystem/DataBank.h"
 #include "../Scene/SelectScene.h"
-#include "../Object/Character/SelectPlayer.h"
+#include "../Object/Character/PlayableChara/Other/SelectPlayer.h"
 #include "SelectImage.h"
 
 SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> player) : selectScene_(select), player_(player)
