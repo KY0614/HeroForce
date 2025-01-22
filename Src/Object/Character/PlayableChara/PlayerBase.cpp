@@ -9,10 +9,6 @@ PlayerBase::PlayerBase(void)
 {
 	skillNo_ = ATK_ACT::SKILL1;
 
-	//dodgeCdt_ = DODGE_CDT_MAX;
-	dodge_ = new PlayerDodge();
-	dodge_->Init();
-
 	moveSpeed_ = 0.0f;
 
 	userOnePos_ = { -400.0f,0.0f,0.0f };
@@ -73,13 +69,7 @@ void PlayerBase::Init(void)
 
 #endif // DEBUG_INPUT
 
-	//攻撃の初期化(とりあえず通常攻撃で初期化しておく)
-	ChangeAct(ATK_ACT::ATK);
 
-
-	ChangeControll(SceneManager::CNTL::KEYBOARD);
-
-	ChangeSkillControll(ATK_ACT::SKILL1);
 
 
 	//ChangeChargeActControll();
@@ -92,6 +82,13 @@ void PlayerBase::Init(void)
 	//dodgeCdt_ = DODGE_CDT_MAX;
 	dodge_ = new PlayerDodge();
 	dodge_->Init();
+
+	//攻撃の初期化(とりあえず通常攻撃で初期化しておく)
+	ChangeAct(ATK_ACT::ATK);
+
+	ChangeControll(SceneManager::CNTL::KEYBOARD);
+
+	ChangeSkillControll(ATK_ACT::SKILL1);
 
 	moveSpeed_ = 0.0f;
 
@@ -146,15 +143,6 @@ void PlayerBase::Update(void)
 #endif // DEBUG_ON
 	//スキルが終わったらクールタイムのカウント開始
 	CoolTimeCnt();
-
-	////それぞれの更新(プレイヤーとCPU)
-	//modeUpdate_();
-
-	//各アクション(ATKやスキルの更新)
-	Action();
-
-
-
 
 #ifdef DEBUG_ON
 	{
@@ -407,49 +395,6 @@ void PlayerBase::Turn(float _deg, VECTOR _axis)
 }
 
 
-void PlayerBase::Action(void)
-{
-	//攻撃ごとの処理
-	//actUpdate_();
-}
-
-void PlayerBase::NmlAct(void)
-{
-	//短押しの更新
-	//nmlActUpdate_();
-}
-
-void PlayerBase::NmlActKeyBoard(void)
-{
-	////ボタンを押したらスキル状態を返す
-	//auto& ins = InputManager::GetInstance();
-	//if (ins.IsTrgDown(SKILL_KEY)) { actCntl_ = ACT_CNTL::NMLSKILL; }
-}
-
-void PlayerBase::NmlActPad(void)
-{
-	//auto& ins = InputManager::GetInstance();
-	////ボタンを押したらスキル状態を返す
-	//if (ins.IsPadBtnTrgDown(padNum_, SKILL_BTN)) { actCntl_ = ACT_CNTL::NMLSKILL; }
-}
-
-void PlayerBase::ChangeNmlActControll(void)
-{
-	changeNmlActControll_[cntl_]();
-}
-
-void PlayerBase::ChangeNmlActKeyBoard(void)
-{
-	nmlActUpdate_ = std::bind(&PlayerBase::NmlActKeyBoard, this);
-}
-
-void PlayerBase::ChangeNmlActPad(void)
-{
-	nmlActUpdate_ = std::bind(&PlayerBase::NmlActPad, this);
-}
-
-
-
 
 void PlayerBase::InitAtk(void)
 {
@@ -528,6 +473,14 @@ void PlayerBase::ChangeSkillControll(ATK_ACT _skill)
 	//変更点
 	//ChangeAtkType(static_cast<ATK_ACT>(_skill));
 }
+const bool PlayerBase::IsAtkable(void) const
+{
+	 return!IsAtkAction() && !dodge_->IsDodge();
+}
+const bool PlayerBase::IsDodgeable(void) const
+{
+	 return !dodge_->IsDodge() && !IsAtkAction() && !dodge_->IsCoolDodge(); 
+}
 void PlayerBase::Damage(void)
 {
 	//とりあえず1ダメージ減らす
@@ -555,14 +508,6 @@ void PlayerBase::InitDebug(void)
 }
 #endif // DEBUG_ON
 
-
-
-
-//CPU
-//------------------------------------------------
-void PlayerBase::RandAct(void)
-{
-}
 
 void PlayerBase::CoolTimeCnt(void)
 {
@@ -601,6 +546,11 @@ void PlayerBase::ProcessAct(void)
 		break;
 	}
 
+}
+
+bool PlayerBase::IsSkillable(void)
+{
+	{ return !IsAtkAction() && !dodge_->IsDodge(); }
 }
 
 void PlayerBase::SkillChange(void)

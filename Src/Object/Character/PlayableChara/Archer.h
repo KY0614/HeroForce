@@ -1,7 +1,7 @@
 #pragma once
 
-class Arrow;
 #include "PlayerBase.h"
+class Arrow;
 class Archer :
     public PlayerBase
 {

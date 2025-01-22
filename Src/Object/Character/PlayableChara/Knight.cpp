@@ -1,3 +1,4 @@
+#include"../../Arrow.h"
 #include "Knight.h"
 
 Knight::Knight(void)
@@ -24,6 +25,29 @@ void Knight::SetParam(void)
 	def_ = MAX_DEF;
 
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
+}
+
+void Knight::Update(void)
+{
+	PlayerBase::Update();
+
+	size_t arrowSize = arrow_.size();
+	//矢と矢に対応した攻撃の更新
+	for (int a = 0; a < arrowSize; a++)
+	{
+		if (arrow_[a].get()->GetIsAlive())
+		{
+			CntUp(slashArrow_[a].cnt_);
+		}
+		//攻撃状態が終わったら矢を破壊
+		if (!slashArrow_[a].IsAttack())
+		{
+			arrow_[a].get()->Destroy();
+			InitSlashAtk(slashArrow_[a]);
+		}
+		//更新
+		arrow_[a].get()->Update(slashArrow_[a]);
+	}
 }
 
 void Knight::InitAct(void)
@@ -63,6 +87,17 @@ void Knight::AtkFunc(void)
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 
 	if (!isAtk_)return;
+
+	//明日からアーチャー作成する！
+	if (IsFinishAtkStart() && !isShotArrow_)
+	{
+		//CreateArrow();
+		//CreateAtk();
+		isShotArrow_ = true;
+	}
+
+
+
 
 	if (IsAtkStart())
 	{
@@ -186,6 +221,10 @@ void Knight::InitCharaAnim(void)
 	animNum_.emplace(ANIM::UNIQUE_2, BLOCKING_NUM);
 	animNum_.emplace(ANIM::SKILL_1, SKILL_ONE_NUM);
 	animNum_.emplace(ANIM::SKILL_2, SKILL_TWO_NUM);
+}
+
+void Knight::InitSlashAtk(ATK& arrowAtk)
+{
 }
 
 

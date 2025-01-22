@@ -106,9 +106,9 @@ public:
     //コントローラー変更用関数
     void ChangeControll(SceneManager::CNTL _cntl);
 
-    //回避関連
-   //---------------------------------------
-    const bool IsDodge(void)const { return 0.0f < dodgeCnt_ && dodgeCnt_ < FRAME_DODGE_MAX; }
+   // //回避関連
+   ////---------------------------------------
+   // const bool IsDodge(void)const { return 0.0f < dodgeCnt_ && dodgeCnt_ < FRAME_DODGE_MAX; }
 
     //-------------------------------------------------------------
     //ダメージ関数
@@ -129,7 +129,7 @@ public:
     bool IsMove(void) { return moveSpeed_ > 0.0f; }
 
     //スキル使用可能かどうか
-    bool IsSkillable(void) { return !IsAtkAction() && !IsDodge(); }
+    bool IsSkillable(void);
     //スキル変更処理
     void SkillChange(void);
 
@@ -225,6 +225,10 @@ public:
 
 
 protected:
+    //ポインタ
+      //回避機能
+    PlayerDodge* dodge_;
+
     //*************************************************
     // 列挙型
     //*************************************************
@@ -289,29 +293,11 @@ protected:
     int leftStickY_;            //パッドのスティックのY角度
     float stickDeg_;            //パッドのスティックの角度
 
-   //回避系
-    float dodgeCnt_;            //ドッジカウント
-    float dodgeCdt_;            //ドッジの後隙
-
  
     //*************************************************
     //メンバ関数
     //*************************************************
     VECTOR GetTargetVec(VECTOR _targetPos);
-
-
-    ////プレイヤーがCPUかUSERか判別
-    //SceneManager::PLAY_MODE mode_;
-    ////モード変更しないけどデバッグしやすいようにする
-    //std::map < SceneManager::PLAY_MODE, std::function<void(void)>>changeMode_;
-    //std::function<void(void)>modeUpdate_;       //モードごとの処理
-
-    std::map<SceneManager::CNTL, std::function<void(void)>>changeNmlActControll_;       //通常スキル
-    std::function<void(void)>nmlActUpdate_;                                             //通常スキル更新
-     //チャージ攻撃
-    std::map<SceneManager::CNTL, std::function<void(void)>>changeChargeActCntl_;       //コントローラーごとのスキル変更
-    std::function<void(void)>chargeActUpdate_;
-
 
 
 
@@ -332,19 +318,10 @@ protected:
     void ChangeSkillOne(void);
     void ChangeSkillTwo(void);
 
-
-
- 
-
     //USER関係
     //------------------------------------------------
     //ユーザーがいるときの更新
     void UserUpdate(void);
-
-    ////デバッグしやすいようにチェンジ作る
-    //void ChangeMode(SceneManager::PLAY_MODE _mode);
-    //void ChangeUser(void);
-    //void ChangeCpu(void);
 
     //操作系（キーボード)
     void KeyBoardControl(void);
@@ -368,22 +345,6 @@ protected:
     virtual void Skill1Func(void) = 0;
     //スキル2
     virtual void Skill2Func(void) = 0;
-
-    //各アクションの共通処理
-    void Action(void);
-
-    //チャージなしの攻撃
-    void NmlAct(void);
-    //チャージなし攻撃(キーボード)
-    void NmlActKeyBoard(void);
-    //チャージなし攻撃(パッド)
-    void NmlActPad(void);
-
-    //変更(キーボードとゲームパッド)
-    void ChangeNmlActControll(void);
-    void ChangeNmlActKeyBoard(void);
-    void ChangeNmlActPad(void);
-
 
 
   
@@ -411,7 +372,7 @@ protected:
     const bool IsAtkAction(void)const { return IsAtkStart() || atk_.IsAttack() || atk_.IsBacklash(); }
 
     //攻撃可能かどうか(true:可能)
-    const bool IsAtkable(void)const { return!IsAtkAction() && !IsDodge(); }
+    const bool IsAtkable(void)const;
 
 
     //回避関連
@@ -419,12 +380,12 @@ protected:
     //回避可能か
     //回避中かどうか
 
-    const bool IsDodgeable(void)const { return !IsDodge() && !IsAtkAction() && !IsCoolDodge(); }
+    const bool IsDodgeable(void)const;
     //クールタイム中かどうか
-    const bool IsCoolDodge(void)const { return dodgeCdt_ < DODGE_CDT_MAX; }
+    //const bool IsCoolDodge(void)const { return dodgeCdt_ < DODGE_CDT_MAX; }
 
     //ドッジカウント初期化
-    void ResetDodgeFrame(void) { dodgeCnt_ = 0.0f; }
+    //void ResetDodgeFrame(void) { dodgeCnt_ = 0.0f; }
 
 
     //スキル
@@ -439,11 +400,6 @@ protected:
             || atk_.IsBacklash();
     }
 
-
-
-    //とりあえずランダムに攻撃を決める
-    void RandAct(void);
-
     //クールタイムのカウント
     void CoolTimeCnt(void);
 
@@ -454,9 +410,7 @@ private:
     //std::map<ACT_CNTL, std::function<void(void)>>changeActCntl_;        //アクションごとに返すボタンを変更
     //std::function<bool(void)>actCntlUpdate_;
 
-    //回避機能
-    PlayerDodge* dodge_;
-
+  
 #ifdef DEBUG_INPUT
 
     //******************************************************************************************
