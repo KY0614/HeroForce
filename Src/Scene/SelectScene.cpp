@@ -284,6 +284,9 @@ void SelectScene::RoleUpdate(void)
 	{
 		players_[i]->SetPos(AsoUtility::RotXZPos(DEFAULT_CAMERA_POS, players_[i - 1]->GetPos(), AsoUtility::Deg2RadF(90.0f)));
 		players_[i]->SetRot(Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-90.0f * i), 0.0f));
+
+		players_[i]->SetChickenPos(AsoUtility::RotXZPos(DEFAULT_CAMERA_POS, players_[i - 1]->GetChickenPos(), AsoUtility::Deg2RadF(90.0f)));
+		players_[i]->SetRotChicken(Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-90.0f * i), 0.0f));
 	}
 
 	//全員準備完了状態で1Pが決定ボタン押下でゲーム画面へ

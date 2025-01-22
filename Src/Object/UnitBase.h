@@ -61,6 +61,7 @@ public:
 	//初期強化パーセント
 	static constexpr float DEFAULT_PERCENT = 100.0f;
 
+	static constexpr int ARRAY_NUM = 4;
 
 	//コンストラクタ
 	UnitBase(void);
@@ -109,8 +110,8 @@ public:
 	//配列用アニメーション関数
 	void AnimArray(void);
 	//アニメーションリセット
-	void ResetAnimArray(const ANIM _anim, const float _speed);
-	float GetAnimArrayTime(void);
+	void ResetAnimArray(const ANIM _anim, const float _speed,int i);
+	float GetAnimArrayTime(int i);
 
 	//攻撃関係
 	//isHit設定用（外部）
@@ -156,7 +157,7 @@ protected:
 	int hpMax_;			//体力最大値
 	int damage_;		//ダメージ
 	Transform trans_;	//位置情報関係
-	Transform transArray_[4];	//位置情報関係
+	Transform transArray_[ARRAY_NUM];	//位置情報関係
 	float radius_;		//自身の当たり判定の半径
 	float def_;			//防御力
 	float atkPow_;		//攻撃力
@@ -179,7 +180,9 @@ protected:
 	float speedAnimArray_;						//アニメーション速度
 
 	//アニメーション終了時の動き
-	virtual void FinishAnim(void);
+	virtual void FinishAnim(void);	
+	//アニメーション配列用終了時の動き
+	virtual void FinishAnimArray(void);
 	//カウンタ増加
 	void CntUp(float& _count);
 	//カウンタ減少
