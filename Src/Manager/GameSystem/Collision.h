@@ -36,6 +36,15 @@ public:
 	/// <returns></returns>
 	const bool Search(const VECTOR _myPos, const VECTOR _targetPos, const float _rangeRadius)const;
 
+	/// <summary>
+	/// ステージモデルとキャラクターの衝突判定
+	/// </summary>
+	/// <param name="_modelId"></param>ステージモデル
+	/// <param name="_pos"></param>キャラクターの座標
+	/// <param name="_radius"></param>キャラクターの半径
+	/// <returns></returns>
+	const bool IsHitUnitStageObject(const int& _modelId, const VECTOR& _pos, const float& _radius)const;
+
 private:
 	//コンストラクタ＆デストラクタ
 	Collision(void) = default;

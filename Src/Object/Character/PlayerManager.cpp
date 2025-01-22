@@ -64,6 +64,19 @@ PlayerBase* PlayerManager::GetPlayer(const int _num)
 	return players_[_num].ins->GetPlayer();
 }
 
+void PlayerManager::CollisionStage(const Transform& stageTrans)
+{
+	auto& col = Collision::GetInstance();
+
+	for (int i = 0; i < PLAYER_NUM; i++)
+	{
+		if (col.IsHitUnitStageObject(stageTrans.modelId, players_[i].ins->GetPos(), players_[i].ins->GetRadius()))
+		{
+			players_[i].ins->SetPrePos();
+		}
+	}
+}
+
 JobManagerBase* PlayerManager::CreateKeybordPlayer(const SceneManager::ROLE _role) const
 {
 	JobManagerBase* ret = nullptr;

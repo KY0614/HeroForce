@@ -304,7 +304,7 @@ void GameScene::CollisionPlayer(void)
 				//”í’e
 				e->SetDamage(p->GetCharaPow(), pAtk.pow_);
 				//“|‚µ‚½“G‚Ì‘‰Á
-				if (!e->IsAlive())DunkEnmCnt_++;
+				if (!e->IsAlive())dunkEnmCnt_++;
 				//UŒ‚”»’è‚ÌI—¹
 				p->SetIsHit(true);
 			}

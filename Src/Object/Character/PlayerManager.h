@@ -30,6 +30,9 @@ public:
 	/// <returns>î•ñ</returns>
 	PlayerBase* GetPlayer(const int _num);
 
+	//Õ“Ë”»’è
+	void CollisionStage(const Transform& stageTrans);
+
 private:
 	//ƒvƒŒƒCƒ„[‚ÌŠÇ—
 	PLAYER players_[PLAYER_NUM];

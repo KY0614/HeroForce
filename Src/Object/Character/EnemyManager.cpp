@@ -190,6 +190,19 @@ bool EnemyManager::IsOverlap(VECTOR& _tPos, float _minDist)
 	return false; // d‚È‚Á‚Ä‚¢‚È‚¢ê‡
 }
 
+void EnemyManager::CollisionStage(const Transform& stageTrans)
+{
+	auto& col = Collision::GetInstance();
+
+	for (int i = 0; i < activeNum_; i++)
+	{
+		if (col.IsHitUnitStageObject(stageTrans.modelId, activeEnemys_[i]->GetTransform().pos, activeEnemys_[i]->GetRadius()))
+		{
+			activeEnemys_[i]->SetPrePos();
+		}
+	}
+}
+
 void EnemyManager::DeathEnemy(int _num)
 {
 	//“|‚³‚ê‚½“G‚ÌÁ‹
