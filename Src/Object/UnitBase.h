@@ -106,6 +106,12 @@ public:
 	//アニメーションリセット
 	void ResetAnim(const ANIM _anim, const float _speed);
 
+	//配列用アニメーション関数
+	void AnimArray(void);
+	//アニメーションリセット
+	void ResetAnimArray(const ANIM _anim, const float _speed);
+	float GetAnimArrayTime(void);
+
 	//攻撃関係
 	//isHit設定用（外部）
 	void SetIsHit(const bool _flag);
@@ -165,6 +171,12 @@ protected:
 	int animTotalTime_;						//アニメーションの総再生時間
 	float stepAnim_;						//アニメーションの再生時間
 	float speedAnim_;						//アニメーション速度
+
+	//配列用アニメ関係
+	int animArray_;								//アタッチするアニメを格納
+	int animArrayTotalTime_;				//アニメーションの総再生時間
+	float stepAnimArray_;						//アニメーションの再生時間
+	float speedAnimArray_;						//アニメーション速度
 
 	//アニメーション終了時の動き
 	virtual void FinishAnim(void);
