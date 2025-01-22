@@ -18,20 +18,13 @@ void GameClearScene::Init(void)
 	stage_->Init();
 
 	//チキン
-	for (int i = 0; i < CHICKEN_CREATES; i++) {
+	VECTOR pos[CHICKEN_CREATES] = { CHICKEN_POS_1,CHICKEN_POS_2,CHICKEN_POS_3,CHICKEN_POS_4 };
+	for (int i = 0; i < CHICKEN_CREATES; i++)
+	{
 		chickens_[i] = std::make_unique<ClearChicken>();
+		chickens_[i]->Create(pos[i]);
+		chickens_[i]->SetTarget(DEFAULT_CAMERA_POS);
 	}
-
-	VECTOR pos = CHICKEN_POS_1;
-	chickens_[0]->Create(pos);
-	pos = CHICKEN_POS_2;
-	chickens_[1]->Create(pos);
-	pos = CHICKEN_POS_3;
-	chickens_[2]->Create(pos);
-	pos = CHICKEN_POS_4;
-	chickens_[3]->Create(pos);
-
-	chickens_[0]->SetTarget(DEFAULT_CAMERA_POS);
 
 	//画像
 	imgMes_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CONGRATULATIONS).handleId_;
@@ -52,25 +45,34 @@ void GameClearScene::Init(void)
 		Quaternion(),
 		EFFECT_SIZE,
 		SoundManager::SOUND::NONE);
-
-	pos = AsoUtility::VECTOR_ZERO;
 }
 
 void GameClearScene::Update(void)
-{
+{	
+	auto& efe = EffectManager::GetInstance();
+
+	//各種オブジェクト処理
 	sky_->Update();
 	stage_->Update();
 	for (auto& c : chickens_) { c->Update(); }
 
-	DebagPlay();
+	//エフェクトが非再生中の場合
+	if (efe.IsPlayEffect(EffectManager::EFFECT::FIREWORK))
+	{
+		//エフェクトを再生
+		efe.Play(
+			EffectManager::EFFECT::FIREWORK,
+			EFFECT_POS,
+			Quaternion(),
+			EFFECT_SIZE,
+			SoundManager::SOUND::NONE);
+	}
 
-	/*auto& efe = EffectManager::GetInstance();
-	efe.Play(
-		EffectManager::EFFECT::FIREWORK,
-		EFFECT_POS,
-		Quaternion(),
-		EFFECT_SIZE,
-		SoundManager::SOUND::NONE);*/
+	//シーン遷移
+	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_SPACE))
+	{
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+	}
 }
 
 void GameClearScene::Draw(void)
@@ -87,8 +89,6 @@ void GameClearScene::Draw(void)
 		imgMes_,
 		true,
 		false);
-
-	DrawSphere3D(pos, 20, 20, 0xff0000, 0xff0000, true);
 }
 
 void GameClearScene::Release(void)
@@ -99,7 +99,7 @@ void GameClearScene::Release(void)
 
 void GameClearScene::DebagPlay()
 {
-	auto& ins = InputManager::GetInstance();
+	/*auto& ins = InputManager::GetInstance();
 	if (ins.IsNew(KEY_INPUT_RIGHT))
 	{
 		pos.x++;
@@ -115,5 +115,5 @@ void GameClearScene::DebagPlay()
 	if (ins.IsNew(KEY_INPUT_DOWN))
 	{
 		pos.z--;
-	}
+	}*/
 }

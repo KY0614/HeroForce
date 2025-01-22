@@ -1,6 +1,4 @@
 #include <DxLib.h>
-#include <locale>
-#include <codecvt>
 #include "../Application.h"
 #include "../../Manager/Generic/ResourceManager.h"
 #include "../../Manager/GameSystem/TextManager.h"
