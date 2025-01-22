@@ -1,4 +1,5 @@
 #include"../Application.h"
+#include "../Lib/nlohmann/json.hpp"
 #include"../Utility/AsoUtility.h"
 #include "UnitBase.h"
 
@@ -19,10 +20,15 @@ UnitBase::UnitBase(void)
 
 	anim_ = ANIM::NONE;
 	atcAnim_ = -1;
+	atkPow_ = -1.0f;
+	damage_ = -1;
 	animTotalTime_ = -1;
 	stepAnim_ = -1.0f;
 	speedAnim_ = 1.0f;
 	prePos_ = AsoUtility::VECTOR_ZERO;
+	def_ = -1.0f;
+	radius_ = -1.0f;
+	hpMax_ = -1;
 
 	defAtk_ = -1.0f;
 	defDef_ = -1.0f;
@@ -182,10 +188,10 @@ void UnitBase::SetIsHit(const bool _flag)
 	atk_.isHit_ = _flag;
 }
 
-void UnitBase::SetDamage(const int damage)
+void UnitBase::SetDamage(const int attackerPower, const int skillPower)
 {
 	//与えるダメージを増やす
-	damage_ += damage;
+	damage_ += attackerPower * skillPower / defDef_;
 }
 
 void UnitBase::SubHp()
@@ -238,6 +244,13 @@ void UnitBase::SetSpeed(const float percent)
 void UnitBase::SetHpMax(const float hp)
 {
 	hpMax_ += hp;
+}
+
+
+void UnitBase::ParamLoad()
+{
+	//各キャラクターのパラメータのJSON読み込み
+
 }
 
 //アニメ終了時の動き

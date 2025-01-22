@@ -78,8 +78,8 @@ public:
 	ChickenBase();
 	~ChickenBase();
 
-	void Create(VECTOR& pos);	//生成位置とターゲットのトランスフォームをもらう
-	void Update(void)override;
+	virtual void Create(VECTOR& pos);	//生成位置とターゲットのトランスフォームをもらう
+	virtual void Update(void)override;
 	void Draw(void)override;
 	
 	//画像表示の設定
@@ -94,7 +94,7 @@ public:
 	//状態を返す
 	STATE GetState() const;
 
-private:
+protected:
 
 	//画像
 	int imgHelp_;

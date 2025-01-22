@@ -154,13 +154,13 @@ void GameScene::Update(void)
 	//スペース推したらタイトルに戻る
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
-		mng.ChangeScene(SceneManager::SCENE_ID::TITLE);
+		mng.ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
 	}
 
-	/*if (ins.IsTrgDown(KEY_INPUT_RETURN))
-	{
-		ChangePhase();
-	}*/
+	//if (ins.IsTrgDown(KEY_INPUT_RETURN))
+	//{
+	//	ChangePhase();
+	//}
 }
 
 void GameScene::Draw(void)

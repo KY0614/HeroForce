@@ -76,11 +76,11 @@
     <ClCompile Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.cpp" />
     <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
     <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
-    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Src\Shader\PixelShader.cpp" />
     <ClCompile Include="Src\Common\ShaderFade.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerDodge.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerInput.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\CharacterParamData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\Character\PlayableChara\PlayerBase.h" />
@@ -138,7 +138,6 @@
     <ClInclude Include="Src\Scene\SceneBase.h" />
     <ClInclude Include="Src\Scene\GameScene.h" />
     <ClInclude Include="Src\Scene\GameOverScene.h" />
-    <ClInclude Include="Src\Scene\FazeResult.h" />
     <ClInclude Include="Src\Object\UnitBase.h" />
     <ClInclude Include="Src\Object\SelectImage.h" />
     <ClInclude Include="Src\Object\JobManagerBase.h" />
@@ -188,7 +187,6 @@
     <ClInclude Include="Src\Manager\GameSystem\TextManager.h" />
     <ClInclude Include="Src\Manager\GameSystem\DataBank.h" />
     <ClInclude Include="Src\Manager\GameSystem\Collision.h" />
-    <ClInclude Include="Src\Manager\Decoration\SoundManager.h" />
     <ClInclude Include="Src\Manager\Decoration\EffectManager.h" />
     <ClInclude Include="Src\Common\Fader.h" />
     <ClInclude Include="Src\Common\ImageFader.h" />
@@ -197,6 +195,12 @@
     <ClInclude Include="Src\Common\Vector2.h" />
     <ClInclude Include="Src\Object\Character\PlayerDodge.h" />
     <ClInclude Include="Src\Object\Character\PlayerInput.h" />
+    <ClInclude Include="Src\Shader\PixelShader.h" />
+    <ClInclude Include="Src\Common\ShaderFade.h" />
+    <ClInclude Include="Src\Manager\GameSystem\CharacterParamData.h" />
+    <ClInclude Include="Src\Object\System\GameUi\CpuHpBar.h" />
+    <ClInclude Include="Src\Object\System\GameUi\GamaUIBase.h" />
+    <ClInclude Include="Src\Scene\FazeResult.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">
@@ -247,5 +251,6 @@
     <FxCompile Include="Src\Shader\HLSL\ColorTex.hlsl" />
     <FxCompile Include="Src\Shader\HLSL\Fade.hlsl" />
     <FxCompile Include="Src\Shader\HLSL\FadeTextrure.hlsl" />
+    <FxCompile Include="Src\Shader\HLSL\YellowBlink.hlsl" />
   </ItemGroup>
 </Project>

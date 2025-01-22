@@ -28,14 +28,17 @@ void ResourceManager::InitTitle(void)
 {
 	Resource res;
 
+	//スカイドーム
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_SKYDOME + "SkyDome.mv1");
+	resourcesMap_.emplace(SRC::SKY_DOME, res);
+
 	//タイトルロゴ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "TitleLogo.png");
-	resourcesMap_.emplace(SRC::TITLE, res);
-	//スタート
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "start.png");
-	resourcesMap_.emplace(SRC::START, res);
+	resourcesMap_.emplace(SRC::TITLE_LOGO , res);
 
-	ResourceStage();
+	//キー指示メッセージ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "PleaseKey.png");
+	resourcesMap_.emplace(SRC::PLEASE_KEY, res);
 }
 
 void ResourceManager::InitSelect(void)
@@ -54,18 +57,9 @@ void ResourceManager::InitSelect(void)
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Left_point.png", 1, 1, 52, 52);
 	resourcesMap_.emplace(SRC::LEFT_POINT, res);
 
-	//各種ステータスUI
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Status_Mage.png");
-	resourcesMap_.emplace(SRC::STATUS_MAGE, res);
-
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Status_Kight.png");
-	resourcesMap_.emplace(SRC::STATUS_KNIGHT, res);
-
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Status_Archer.png");
-	resourcesMap_.emplace(SRC::STATUS_ARCHER, res);
-
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Status_AxeMan.png");
-	resourcesMap_.emplace(SRC::STATUS_AXEMAN, res);
+	//キャラクターパラメータリスト
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Left_point.png", CHARA_PARAM_NUM_X, CHARA_PARAM_NUM_Y, CHARA_PARAM_SIZE_X, CHARA_PARAM_SIZE_Y);
+	resourcesMap_.emplace(SRC::CHARA_PARAMS, res);
 
 	ResourcePlayer();
 	ResourceStage();
@@ -150,33 +144,51 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Help!.png");
 	resourcesMap_.emplace(SRC::HELP, res);
 
-	InitResult();
+	//ランクリスト
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Ranks.png", RANKS_NUM_X, RANKS_NUM_Y, RANK_SIZE, RANK_SIZE);
+	resourcesMap_.emplace(SRC::RANKS, res);
+
+	//リザルト背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "FazeRezaltBack.jpg");
+	resourcesMap_.emplace(SRC::REZALT_BACK, res);
 }
 
 void ResourceManager::InitResult(void)
 {
 	Resource res;
-	//背景
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "ResultBack.png");
-	resourcesMap_.emplace(SRC::RESULT, res);
+	//ランクリスト
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Ranks.png", RANKS_NUM_X, RANKS_NUM_Y, RANK_SIZE, RANK_SIZE);
+	resourcesMap_.emplace(SRC::RANKS, res);
 
-	//評価値UI
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Rank_S.png");
-	resourcesMap_.emplace(SRC::RANK_S, res);
-
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Rank_A.png");
-	resourcesMap_.emplace(SRC::RANK_A, res);
-
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Rank_B.png");
-	resourcesMap_.emplace(SRC::RANK_B, res);
-
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Rank_C.png");
-	resourcesMap_.emplace(SRC::RANK_C, res);
+	//リザルト背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "FazeRezaltBack.jpg");
+	resourcesMap_.emplace(SRC::REZALT_BACK, res);
 }
 
 void ResourceManager::InitGameOver(void)
 {
 	Resource res;
+}
+
+void ResourceManager::InitGameClear(void)
+{
+	Resource res;
+
+	//cong
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Congratulations.png");
+	resourcesMap_.emplace(SRC::CONGRATULATIONS, res);
+
+	//花火
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Fireworks.efkefc");
+	resourcesMap_.emplace(SRC::FIREWORK, res);
+
+	ResourcePlayer();
+	ResourceEnemy();
+	ResourceStage();
+
+	//チキン
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Chicken/Chicken.mv1");
+	resourcesMap_.emplace(SRC::CHICKEN, res);
 
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "To_Title.png");
 	resourcesMap_.emplace(SRC::TO_TITLE, res);
