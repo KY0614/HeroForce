@@ -73,9 +73,6 @@ void PlayerBase::Init(void)
 
 #endif // DEBUG_INPUT
 
-
-
-
 	//UŒ‚‚Ì‰Šú‰»(‚Æ‚è‚ ‚¦‚¸’ÊíUŒ‚‚Å‰Šú‰»‚µ‚Ä‚¨‚­)
 	ChangeAct(ATK_ACT::ATK);
 

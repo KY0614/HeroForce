@@ -9,6 +9,7 @@ void PlayerInput::CreateInstance(void)
 	{
 		playerInput_ = new PlayerInput();
 	}
+	//actCntl_ = SceneManager::CNTL::NONE;
 }
 
 PlayerInput& PlayerInput::GetInstance(void)
