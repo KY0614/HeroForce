@@ -2,17 +2,21 @@
 
 ChickenBase::ChickenBase()
 {
+	imgHelp_ = -1;
 	moveSpeed_ = -1.0f;
 	fadeStep_ = -1.0f;
 	state_ = STATE::NONE;
 	aliveState_ = ALIVE_MOVE::MAX;
 	targetPos_ = AsoUtility::VECTOR_ZERO;
+	isHelp_ = false;
+	isHelpCnt_ = -1;
 
 	// 状態管理
 	stateChanges_.emplace(STATE::NONE, std::bind(&ChickenBase::ChangeStateNone, this));
 	stateChanges_.emplace(STATE::ALIVE , std::bind(&ChickenBase::ChangeStateAlive, this));
 	stateChanges_.emplace(STATE::DAMAGE , std::bind(&ChickenBase::ChangeStateDamage, this));
 	stateChanges_.emplace(STATE::DEATH , std::bind(&ChickenBase::ChangeStateDeath, this));
+	stateChanges_.emplace(STATE::END , std::bind(&ChickenBase::ChangeStateEnd, this));
 
 	// 生存状態管理
 	aliveChanges_.emplace(ALIVE_MOVE::IDLE, std::bind(&ChickenBase::ChangeAliveIdle, this));
@@ -32,15 +36,24 @@ void ChickenBase::Create(VECTOR &pos)
 	//モデル設定
 	ModelSet();
 
+	//画像読み込み
+	LoadImages();
+
 	//アニメーション管理番号の初期化
 	InitAnimNum();
 
 	//パラメーター設定
 	SetParam();
+
+	hpUi_ = std::make_unique<CpuHpBar>();
+	hpUi_->Init();
 }
 
 void ChickenBase::Update(void)
 {
+	//バックアップ
+	prePos_ = trans_.pos;	
+
 	//デバッグ処理
 	DebagUpdate();
 
@@ -49,6 +62,18 @@ void ChickenBase::Update(void)
 
 	// 更新ステップ
  	stateUpdate_();
+
+	//残量HPの処理
+	SubHp();
+
+	//HPが0以下の場合
+	if (hp_ <= 0 && state_ != STATE::END) { ChangeState(STATE::DEATH); }
+
+	//画像表示確認
+	CheckIsHelp();
+
+	//UI設定
+	SetUiParam();
 
 	//トランスフォーム更新
 	trans_.Update();
@@ -59,7 +84,19 @@ void ChickenBase::Draw(void)
 	stateDraw_();
 
 	//デバッグ描画
-	DebagDraw();
+	//DebagDraw();
+
+	//ビルボード描画
+	DrawHelp();
+}
+
+void ChickenBase::SetIsHelp()
+{
+	//表示
+	isHelp_ = true;
+
+	//表示時間の設定
+	isHelpCnt_ = IS_HELP_CNT;
 }
 
 void ChickenBase::ModelSet()
@@ -78,16 +115,38 @@ void ChickenBase::ModelSet()
 	trans_.Update();
 }
 
+void ChickenBase::LoadImages()
+{
+	//ヘルプ画像
+	imgHelp_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::HELP).handleId_;
+}
+
 void ChickenBase::SetParam()
 {
-	//移動スピード
-	moveSpeed_ = DEFAULT_SPEED;
+	//ステータス設定
+	defAtk_ = DEFAULT_ATK;
+	defDef_ = DEFAULT_DEF;
+	defSpeed_ = DEFAULT_SPEED;
+	hpMax_ = DEFAULT_LIFE;
+
+	atkPow_ = defAtk_;
+	def_ = defDef_;
+	moveSpeed_ = defSpeed_;
+	hp_ = hpMax_;
+
+	atkUpPercent_ = DEFAULT_PERCENT;
+	defUpPercent_ = DEFAULT_PERCENT;
+	speedUpPercent_ = DEFAULT_PERCENT;
 
 	//衝突判定用半径
 	radius_ = RADIUS;
 
 	// フェード時間
 	fadeStep_ = TIME_FADE;
+
+	//画像表示
+	isHelp_ = false; 
+	isHelpCnt_ = 0;
 	
 	//生存時の行動をランダムで決める
 	aliveState_ = static_cast<ALIVE_MOVE>(GetRand(ALIVE_MOVE_MAX - 1));
@@ -108,6 +167,16 @@ void ChickenBase::InitAnimNum(void)
 	animNum_.emplace(ANIM::UNIQUE_1, ANIM_CALL);
 }
 
+void ChickenBase::SetUiParam()
+{
+	//座標設定
+	VECTOR pos = VAdd(trans_.pos, LOCAL_HP_POS);
+	hpUi_->SetPos(pos);
+
+	//HP設定
+	hpUi_->SetHP(hp_);
+}
+
 void ChickenBase::SetTarget(const VECTOR pos)
 {
 	targetPos_ = pos;
@@ -116,6 +185,11 @@ void ChickenBase::SetTarget(const VECTOR pos)
 void ChickenBase::SetDamage(const int damage)
 {
 	hp_ -= damage;
+}
+
+ChickenBase::STATE ChickenBase::GetState() const
+{
+	return state_;
 }
 
 void ChickenBase::ChangeState(STATE state)
@@ -146,12 +220,21 @@ void ChickenBase::ChangeStateDamage()
 {
 	stateUpdate_ = std::bind(&ChickenBase::UpdateDamage, this);
 	stateDraw_ = std::bind(&ChickenBase::DrawDamage, this);
+
+	//画像表示
+	SetIsHelp();
 }
 
 void ChickenBase::ChangeStateDeath()
 {
 	stateUpdate_ = std::bind(&ChickenBase::UpdateDeath, this);
 	stateDraw_ = std::bind(&ChickenBase::DrawDeath, this);
+}
+
+void ChickenBase::ChangeStateEnd()
+{
+	stateUpdate_ = std::bind(&ChickenBase::UpdateEnd, this);
+	stateDraw_ = std::bind(&ChickenBase::DrawEnd, this);
 }
 
 void ChickenBase::ChangeAliveState(ALIVE_MOVE state)
@@ -192,6 +275,7 @@ void ChickenBase::UpdateDamage()
 {
 	//アニメーションを変更
 	ResetAnim(ANIM::DAMAGE, DEFAULT_SPEED_ANIM);
+
 }
 
 void ChickenBase::UpdateDeath()
@@ -206,6 +290,11 @@ void ChickenBase::UpdateDeath()
 	ResetAnim(ANIM::DEATH, DEFAULT_SPEED_ANIM);
 }
 
+void ChickenBase::UpdateEnd()
+{
+
+}
+
 void ChickenBase::DrawNone()
 {
 
@@ -214,11 +303,17 @@ void ChickenBase::DrawNone()
 void ChickenBase::DrawAlive()
 {
 	MV1DrawModel(trans_.modelId);
+
+	//HPUI表示
+	hpUi_->Draw();
 }
 
 void ChickenBase::DrawDamage()
 {
 	MV1DrawModel(trans_.modelId);
+
+	//HPUI表示
+	hpUi_->Draw();
 }
 
 void ChickenBase::DrawDeath()
@@ -235,6 +330,14 @@ void ChickenBase::DrawDeath()
 	}
 	// モデルの描画
 	MV1DrawModel(trans_.modelId);
+
+	//HPUI表示
+	hpUi_->Draw();
+}
+
+void ChickenBase::DrawEnd()
+{
+
 }
 
 void ChickenBase::AliveIdle()
@@ -320,8 +423,43 @@ void ChickenBase::FinishAnim(void)
 		break;
 
 	case UnitBase::ANIM::DEATH:
-		//1回で終了
+		ChangeState(STATE::END);
 		break;
+	}
+}
+
+void ChickenBase::CheckIsHelp()
+{
+	//画像が非表示の場合処理しない
+	if (!isHelp_) { return; }
+
+	isHelpCnt_ -= SceneManager::GetInstance().GetDeltaTime();
+
+	if (isHelpCnt_ <= 0)
+	{
+		isHelp_ = false;
+	}
+
+}
+
+void ChickenBase::DrawHelp()
+{
+	//3Dから2Dへ座標変換
+	VECTOR pos = VAdd(trans_.pos, LOCAL_HELP_POS);
+	pos = ConvWorldPosToScreenPos(pos);
+
+	//画像表示
+	if (isHelp_ &&
+		(state_ == STATE::ALIVE ||
+			state_ == STATE::DAMAGE)) {
+
+		DrawRotaGraph(
+			pos.x,
+			pos.y,
+			1.0f,
+			0.0f,
+			imgHelp_,
+			true);
 	}
 }
 
@@ -338,6 +476,7 @@ void ChickenBase::DebagUpdate()
 	else if (ins.IsTrgDown(KEY_INPUT_O))
 	{
 		ChangeState(STATE::DAMAGE);
+		SetDamage(30);
 	}
 }
 

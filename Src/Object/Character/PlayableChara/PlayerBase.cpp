@@ -88,6 +88,8 @@ void PlayerBase::Init(void)
 	//ChangeChargeActControll();
 	//ChangeNmlActControll();
 
+	radius_ = MY_COL_RADIUS;
+
 	skillNo_ = ATK_ACT::SKILL1;
 
 	//dodgeCdt_ = DODGE_CDT_MAX;
@@ -127,6 +129,9 @@ void PlayerBase::Update(void)
 	InputUpdate();
 #endif // INPUT_DEBUG_ON
 
+
+	//座標のバックアップ
+	prePos_ = trans_.pos;
 
 	//モデルの更新
 	trans_.Update();
@@ -191,7 +196,7 @@ void PlayerBase::Draw(void)
 {
 	MV1DrawModel(trans_.modelId);
 #ifdef DEBUG_ON
-	DrawDebug();
+	//DrawDebug();
 
 #endif // DEBUG_ON
 #ifdef INPUT_DEBUG_ON

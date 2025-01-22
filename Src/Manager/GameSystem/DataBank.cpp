@@ -67,11 +67,30 @@ void DataBank::Input(const INFO _info, const int _num)
 	case INFO::USER_NUM:
 		userNum_ = _num;
 		break;
+
+	case INFO::FAZE_DUNK_ENEMY:
+		fazeDunk_ = _num;
+		//総数に追加
+		gameDunk_ += _num;
+		break;
+
+	case INFO::ALIVE_CHICKEN:
+		userNum_ = _num;
+		break;
+
 	default:
 		//デバッグ用
 		assert("DataBankのInputの使用方法に間違いがあります。");
 		break;
 	}
+}
+
+void DataBank::Input(const INFO _info, const int _x, const int _y)
+{
+	if (_info != INFO::SCREEN_SIZE)return;
+
+	size_.x_ = _x;
+	size_.y_ = _y;
 }
 
 /// <summary>
@@ -106,6 +125,14 @@ const int DataBank::Output(const INFO _info)
 		assert("DataBankのInputの使用方法に間違いがあります。");
 		break;
 	}
+}
+
+const int DataBank::Output(const INFO _info, const GET_SIZE _pattern)
+{
+	if (_info != INFO::SCREEN_SIZE || _pattern == GET_SIZE::NONE)return 0;
+
+	if (_pattern == GET_SIZE::X)return size_.x_;
+	return size_.y_;
 }
 
 

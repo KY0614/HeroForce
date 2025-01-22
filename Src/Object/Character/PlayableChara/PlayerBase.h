@@ -11,7 +11,7 @@
 //デバッグ
 #define DEBUG_ON
 //#define INPUT_DEBUG_ON
-#define DEBUG_COOL
+//#define DEBUG_COOL
 class PlayerDodge;
 class PlayerBase :
     public UnitBase
@@ -19,8 +19,6 @@ class PlayerBase :
 public:
 #ifdef DEBUG_ON
     void InitDebug(void);
-    //デバッグ用関数
-    virtual void DrawDebug(void);
     unsigned int color_Col_;
     unsigned int color_Atk_;
     unsigned int color_skl1_;
@@ -28,6 +26,10 @@ public:
 
 #endif // DEBUG_ON
     //デバッグ用
+
+
+    //デバッグ用関数
+    virtual void DrawDebug(void);
 
     //各アニメーション番号
     static constexpr int T_POSE_NUM = 64;
