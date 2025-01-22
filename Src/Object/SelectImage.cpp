@@ -333,14 +333,14 @@ void SelectImage::NumberUpdate(void)
 			cameras[i]->ChangeMode(Camera::MODE::FIXED_POINT);
 		}
 
-		//if (playerNum_ > 1)
-		//{
-		//	//プレイヤー2以上の場合、2P以上のコントローラーをPAD操作に設定
-		//	for (int num = 2; num <= playerNum_; num++)
-		//	{
-		//		data.Input(SceneManager::CNTL::PAD, num);
-		//	}
-		//}
+		if (playerNum_ > 1)
+		{
+			//プレイヤー2以上の場合、2P以上のコントローラーをPAD操作に設定
+			for (int num = 2; num <= playerNum_; num++)
+			{
+				data.Input(SceneManager::CNTL::PAD, num);
+			}
+		}
 
 		//selectScene_.ChangeSelect(SelectScene::SELECT::OPERATION);
 		ChangeSelect(SelectScene::SELECT::OPERATION);

@@ -92,7 +92,9 @@ void PlayerInput::InputPad(PlayerBase* _player, InputManager::JOYPAD_NO _padNum)
 	stickDeg_ = static_cast<float>(AsoUtility::DegIn360(AsoUtility::Rad2DegF(stickRad) + 90.0f));
 
 
-	if (leftStickX_ != 0.0f || leftStickY_ != 0.0f) { actCntl_ = ACT_CNTL::MOVE; }
+	if (leftStickX_ != 0.0f || leftStickY_ != 0.0f)
+	{ 
+		actCntl_ = ACT_CNTL::MOVE; }
 
 	//スティックの角度によって移動方向を決める
 	moveDeg_ = stickDeg_;
