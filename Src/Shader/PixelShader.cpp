@@ -68,6 +68,44 @@ void PixelShader::DrawGraph(const Vector2& pos, const int& handle)
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
+void PixelShader::DrawGraphToShader(const Vector2& pos, const int& handle, const PS_TYPE& type, const COLOR_F& buf, const COLOR_F& subBuf)
+{
+	//シェーダーの設定
+	int ps = SearchPS(type);
+	SetUsePixelShader(ps);
+
+	//シェーダーにテクスチャを転送
+	SetUseTextureToShader(0, handle);
+
+	//シェーダー用の定数バッファ
+	auto& cBuf = psConstBuf_;
+
+	//ピクセルシェーダー用の定数バッファのアドレスを取得
+	COLOR_F* cbBuf =
+		(COLOR_F*)GetBufferShaderConstantBuffer(cBuf);
+	*cbBuf = buf;
+	cbBuf++;
+	*cbBuf = subBuf;
+
+	//サイズ
+	int x, y;
+	GetGraphSize(handle, &x, &y);
+
+	//描画座標
+	MakeSquereVertex(pos, { x,y });
+
+	//ピクセルシェーダー用の定数バッファを更新して書き込んだ内容を反映する
+	UpdateShaderConstantBuffer(cBuf);
+
+	//ピクセルシェーダー用の定数バッファを定数バッファレジスタにセット
+	SetShaderConstantBuffer(cBuf, DX_SHADERTYPE_PIXEL, CONSTANT_BUF_SLOT_BEGIN_PS);
+
+	//描画
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 0);
+	DrawPolygonIndexed2DToShader(vertex_, NUM_VERTEX, index_, NUM_POLYGON);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+}
+
 void PixelShader::DrawExtendGraphToShader(const Vector2& pos, const Vector2& size, const int& handle)
 {
 	//シェーダーの設定
@@ -130,6 +168,46 @@ void PixelShader::DrawExtendGraphToShader(const Vector2& pos, const Vector2& siz
 
 	//ネアレストネイバー法
 	SetDrawMode(DX_DRAWMODE_NEAREST);
+}
+
+void PixelShader::DrawTimeGraphToShader(const Vector2& pos, const int& handle, const PS_TYPE& type, const COLOR_F& buf, const COLOR_F& subBuf)
+{
+	//シェーダーの設定
+	int ps = SearchPS(type);
+	SetUsePixelShader(ps);
+
+	//シェーダーにテクスチャを転送
+	SetUseTextureToShader(0, handle);
+
+	//シェーダー用の定数バッファ
+	auto& cBuf = psConstBuf_;
+
+	// ピクセルシェーダー用の定数バッファのアドレスを取得
+	struct ShaderBuffer {
+		float time;       // 点滅用の時間
+		float padding[3]; // 16バイトアライメント
+	};
+
+	ShaderBuffer* cbBuf = (ShaderBuffer*)GetBufferShaderConstantBuffer(cBuf);
+	cbBuf->time = buf.r; // `step_`の値を渡す
+
+	//サイズ
+	int x, y;
+	GetGraphSize(handle, &x, &y);
+
+	//描画座標
+	MakeSquereVertex(pos, { x,y });
+
+	//ピクセルシェーダー用の定数バッファを更新して書き込んだ内容を反映する
+	UpdateShaderConstantBuffer(cBuf);
+
+	//ピクセルシェーダー用の定数バッファを定数バッファレジスタにセット
+	SetShaderConstantBuffer(cBuf, DX_SHADERTYPE_PIXEL, CONSTANT_BUF_SLOT_BEGIN_PS);
+
+	//描画
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 0);
+	DrawPolygonIndexed2DToShader(vertex_, NUM_VERTEX, index_, NUM_POLYGON);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
 void PixelShader::MakeSquereVertex(Vector2 pos, Vector2 size)
@@ -199,6 +277,7 @@ void PixelShader::InitPS()
 	loadPS(PS_TYPE::FADE, "Fade.cso");
 	loadPS(PS_TYPE::FADE_TEXTURE, "FadeTextrure.cso");
 	loadPS(PS_TYPE::COL_TX, "ColorTex.cso");
+	loadPS(PS_TYPE::YELLOW_BLINK, "YellowBlink.cso");
 
 	//fileName = "x64/Debug/ColorTex.cso";
 	psMap_.emplace(std::make_pair(PS_TYPE::COL_TX, LoadPixelShader(fileName.c_str())));

@@ -60,6 +60,7 @@ void ChickenManager::Update()
 
 void ChickenManager::Draw()
 {
+
 	for (auto c : chickens_)
 	{
 		c->Draw();

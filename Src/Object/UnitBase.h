@@ -116,8 +116,12 @@ public:
 	//isHit設定用（外部）
 	void SetIsHit(const bool _flag);
 
-	//ダメージの設定
-	void SetDamage(const int damage);
+	/// <summary>
+	/// ダメージ設定
+	/// </summary>
+	/// <param name="attackerPower"></param>攻撃者の攻撃力
+	/// <param name="skillPower"></param>当てた技の技威力
+	void SetDamage(const int attackerPower, const int skillPower);
 
 	//残量HPの処理(少しずつHpを減らす)
 	void SubHp();
@@ -131,6 +135,9 @@ public:
 	void SetDefense(const float percent);
 	void SetSpeed(const float percent);
 	void SetHpMax(const float hp);
+
+	//パラメータ読み込み
+	void ParamLoad();
 
 protected:
 

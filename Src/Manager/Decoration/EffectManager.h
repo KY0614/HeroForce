@@ -21,6 +21,7 @@ public:
 		ATTACK_UP,
 		DEFENCE_UP,
 		SPEED_UP,
+		FIREWORK,
 		NONE,
 	};
 

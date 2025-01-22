@@ -34,15 +34,13 @@ public:
 
 	void SetPos(VECTOR pos);
 
-	void SetRot(Quaternion quo) { for (auto& tran : trans_) { tran.quaRotLocal = quo; } };
+	void SetRot(Quaternion quo) { for (auto& tran : transArray_) { tran.quaRotLocal = quo; } };
 
-	//VECTOR GetPos(void) { for (auto& tran : trans_) { return tran.pos; } };
 	VECTOR GetPos(void) { for (auto& tran : transArray_) { return tran.pos; } };
 	VECTOR GetPosArray(int i) { return transArray_[i].pos; };
 	
 private:
 
-	Transform trans_[SceneManager::PLAYER_NUM];
 	int role_;
 	float animChangeTime_;
 

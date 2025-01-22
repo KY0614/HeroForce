@@ -15,13 +15,12 @@ public:
 	//#define DRAW_DEBUG
 
 	//画像関連
-	static constexpr float POINT_SCALE_RATE = 2.0f;	//拡大率
-	static constexpr float POINT_SCALE = 52.0f;			//矢印画像の大きさ(正方形)
-	static constexpr float IMAGE_SCALE = 50.0f;			//矢印画像の大きさ(正方形)
+	static constexpr float POINT_SCALE = 52.0f;			//矢印画像の大きさ
+	static constexpr float IMAGE_SCALE = 50.0f;			//画像の大きさ
 
 	//頂点関連（４点)--------------------------------------------------------------
 
-	//人数選択などの表示に着かくメッシュ
+	//人数選択などの表示に使うメッシュ
 	static constexpr int VERTEX_NUM = 4;			//頂点数
 	static constexpr float VERTEX_ROTSPEED = 1.0f;	//頂点を回転させる速度
 

@@ -23,6 +23,17 @@ public:
 	static constexpr int LV_EFE_NUM_Y = 6;
 	static constexpr int LV_EFE_SIZE = 256;
 
+	//キャラクターパラメータ定数
+	static constexpr int CHARA_PARAM_NUM_X = 1;
+	static constexpr int CHARA_PARAM_NUM_Y = 4;
+	static constexpr int CHARA_PARAM_SIZE_X = 640;
+	static constexpr int CHARA_PARAM_SIZE_Y = 360;
+
+	//スコアランク用定数
+	static constexpr int RANKS_NUM_X = 4;
+	static constexpr int RANKS_NUM_Y = 1;
+	static constexpr int RANK_SIZE = 300;
+
 	// リソース名
 	enum class SRC
 	{
@@ -55,10 +66,8 @@ public:
 		CIRCLE_GAGE,
 		CIRCLE_EXP_GAGE,
 		NUMBERS,
-		STATUS_MAGE,	//魔法使い
-		STATUS_KNIGHT,	//騎士
-		STATUS_ARCHER,	//弓使い
-		STATUS_AXEMAN,	//斧使い
+		CHARA_PARAMS,
+		
 		TO_TITLE,
 		START,
 		TIME,
@@ -89,8 +98,20 @@ public:
 		RIGHT_POINT,	//右矢印
 		LEFT_POINT,		//左矢印
 		READY,			//準備
-		ROLE,			//役職
 		DEVICE,			//デバイス
+
+		//タイトル画面
+		TITLE_LOGO,
+		PLEASE_KEY,
+
+		//リザルト
+		RANKS,
+		REZALT_BACK,
+
+		//ゲームクリア
+		CONGRATULATIONS,
+		FIREWORK,
+		ROLE,			//役職
 
 		//リザルト
 		RESULT,
@@ -114,6 +135,7 @@ public:
 	void InitGame(void);
 	void InitResult(void);
 	void InitGameOver(void);
+	void InitGameClear(void);
 
 	void ResourcePlayer(void);
 	void ResourceEnemy(void);

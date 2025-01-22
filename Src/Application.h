@@ -36,6 +36,7 @@ public:
 	static const std::string PATH_TEXT;
 	static const std::string PATH_FONT;
 	static const std::string PATH_SHADER;
+	static const std::string PATH_JSON;
 	//-------------------------------------------
 
 	//ウィンドウモード設定

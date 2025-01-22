@@ -18,6 +18,7 @@ const std::string Application::PATH_OBJECT = "Data/Model/Object/";
 const std::string Application::PATH_EFFECT = "Data/Effect/";
 const std::string Application::PATH_TEXT = "Data/Text/";
 const std::string Application::PATH_FONT = "Data/Font/";
+const std::string Application::PATH_JSON = "Data/Json/";
 
 void Application::CreateInstance(void)
 {
@@ -40,7 +41,7 @@ void Application::Init(void)
 	SetWindowText("Main");
 
 	// ウィンドウサイズ
-	SetGraphMode(DEFA_SCREEN_SIZE_X, DEFA_SCREEN_SIZE_Y, 32);
+	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);
 	ChangeWindowMode(true);
 	// 非アクティブ状態でも動作する
 	SetAlwaysRunFlag(TRUE);					
