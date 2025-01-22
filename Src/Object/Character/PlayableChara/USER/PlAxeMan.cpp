@@ -78,6 +78,7 @@ void PlAxe::AtkInput(void)
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
+	if (obj_->GetIsSkill())return;
 	if (ins.CheckAct(ACT_CNTL::NMLATK) && !obj_->GetIsAtk())
 	{
 		if (obj_->GetIsCool(ATK_ACT::ATK))return;

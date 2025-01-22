@@ -113,8 +113,6 @@ void AxeMan::SkillTwoInit(void)
 
 void AxeMan::AtkFunc(void)
 {
-	if (isSkill_)return;
-
 	if (!isAtk_)return;
 
 	if (IsAtkStart())
