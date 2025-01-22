@@ -467,7 +467,7 @@ void Enemy::RandSkill(void)
 	int rand = GetRand(size - 1);
 
 	//スキル
-	atkAct_ = ATK_ACT::SKILL_ONE /*static_cast<ATK_ACT>(rand)*/;
+	atkAct_ = static_cast<ATK_ACT>(rand);
 
 	//スキル生成準備
 	SetUpSkill(atkAct_);

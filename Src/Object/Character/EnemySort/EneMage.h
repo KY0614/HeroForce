@@ -27,7 +27,7 @@ public:
 
 	//敵ステータス
 	static constexpr int HP_MAX = 140;			//敵の最大体力
-	static constexpr float ATK_POW = 0.0f;		//敵の攻撃
+	static constexpr float ATK_POW = 1.0f;		//敵の攻撃
 	static constexpr float DEF = 150.0f;		//敵の防御
 	static constexpr int STUN_DEF_MAX = 100;	//敵の最大スタン防御値
 	static constexpr float EXP = 300.0f;		//敵の経験値
@@ -47,7 +47,7 @@ public:
 	static constexpr float SKILL_ONE_COL_RADIUS = 30.0f;	//スキル１の当たり判定半径
 
 	//スキルの攻撃力
-	static constexpr float SKILL_ONE_POW = 0.0f;			//スキル１の攻撃力
+	static constexpr float SKILL_ONE_POW = 1.0f;			//スキル１の攻撃力
 
 	//スキルの持続時間
 	static constexpr float SKILL_ONE_DURATION = 3.0f;		//スキル１の持続時間

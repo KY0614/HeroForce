@@ -129,7 +129,7 @@ public:
 	static constexpr float SKILL_THREE_FALL_RADIUS = 500.0f;	//ƒXƒLƒ‹‚R‚Ìè¦Î‚Ì—‚¿‚é”ÍˆÍ‚Ì”¼Œa
 
 	//UŒ‚¶¬ŠÔŠu
-	static constexpr float SKILL_THREE_DELAY = 0.8f;			//ƒXƒLƒ‹‚R‚ÌUŒ‚¶¬ŠÔŠu
+	static constexpr float SKILL_THREE_DELAY = 0.1f;			//ƒXƒLƒ‹‚R‚ÌUŒ‚¶¬ŠÔŠu
 
 	//UŒ‚‰ñ”
 	static constexpr int SKILL_THREE_MAX_CNT = 5;				//ƒXƒLƒ‹‚R‚ÌUŒ‚‰ñ”
@@ -198,8 +198,8 @@ private:
 	/// <summary>
 	/// UŒ‚’B‚ªd‚È‚Á‚Ä‚¢‚È‚¢‚©
 	/// </summary>
-	/// <param name="_tPos">UŒ‚©‘Ì‚ÌÀ•W</param>
+	/// <param name="_thisAtk">”äŠr‚µ‚½‚¢UŒ‚</param>
 	/// <param name="_minDist">UŒ‚”ÍˆÍ‚Ì’¼Œa</param>
 	/// <returns>UŒ‚‚ªd‚È‚Á‚½‚©(true:d‚È‚Á‚½)</returns>
-	bool IsOverlap(VECTOR _tPos, float _minDist);
+	bool IsOverlap(ATK& _thisAtk, float _minDist);
 };

@@ -38,6 +38,14 @@ public:
 		,MAX
 	};
 
+	//敵の探索状態
+	enum class SEARCH_STATE
+	{
+		NONE
+		,CHICKEN_SEARCH
+		,PLAYER_SEARCH
+	};
+
 	//敵のスキル行動
 	enum class ATK_ACT
 	{
@@ -249,6 +257,8 @@ protected:
 	/// <param name="_speed">設定速度(未設定だと、方向ベクトルのみを返す)</param>
 	/// <returns>標的への移動(方向)ベクトル</returns>
 	const VECTOR GetTargetVec(const VECTOR _pos, const float _speed = 1.0f)const;
+
+	//探索処理
 
 	//移動
 	void Move(void);

@@ -1,3 +1,4 @@
+#include<random>
 #include"Enemy.h"
 #include "EneGolem.h"
 
@@ -186,7 +187,7 @@ void EneGolem::Skill_Three(void)
 			//円範囲の中の一点を取る
 			GetRandomPointInCircle(trans_.pos, SKILL_THREE_FALL_RADIUS, thisAtk.pos_);
 
-			if (IsOverlap(thisAtk.pos_, SKILL_THREE_COL_RADIUS * 2))
+			if (!IsOverlap(thisAtk, SKILL_THREE_COL_RADIUS * 2))
 			{
 				//生成完了
 				isGenelateAttack = true;
@@ -222,22 +223,36 @@ void EneGolem::ChangeStateAtk(void)
 
 void EneGolem::GetRandomPointInCircle(const VECTOR _myPos, const int _r, VECTOR& _tPos)
 {
-	// ランダムな角度theta (0 ～ 2π)
-	float theta = static_cast<float>(rand()) / RAND_MAX * 2 * DX_PI_F;
+	// ランダムエンジンを生成
+	std::random_device rd;
+	std::mt19937 gen(rd());
+
+	//ランダム角度の範囲(0 ～ 2π)
+	std::uniform_real_distribution<> dis(0, 2 * DX_PI_F);
+
+	//ランダム半径の範囲(0 ～ r)
+	std::uniform_real_distribution<> randRadius(0, _r);
+
+	// ランダムな角度theta
+	float theta = dis(gen);
 
 	// ランダムな半径r' (0 ～ r) で、均等に分布するように sqrt を使う
-	float radius = sqrt(static_cast<float>(rand()) / RAND_MAX) * _r;
+	float radius = randRadius(gen);
 
 	// 円内の点を計算
 	_tPos.x = static_cast<int>(_myPos.x + radius * cos(theta));
 	_tPos.z = static_cast<int>(_myPos.z + radius * sin(theta));
 }
 
-bool EneGolem::IsOverlap(VECTOR _tPos, float _minDist)
+bool EneGolem::IsOverlap(ATK& _thisAtk, float _minDist)
 {
 	for (const auto& atk : nowSkill_) {
-		int dx = _tPos.x - atk.pos_.x;
-		int dz = _tPos.z - atk.pos_.z;
+		//自分自身とは判定しない
+		if (atk.cnt_ == _thisAtk.cnt_)
+			continue;
+
+		int dx = _thisAtk.pos_.x - atk.pos_.x;
+		int dz = _thisAtk.pos_.z - atk.pos_.z;
 		double distance = std::sqrt(dx * dx + dz * dz);
 		if (distance < _minDist) {
 			return true; // 重なっている場合
