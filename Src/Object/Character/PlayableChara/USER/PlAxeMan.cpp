@@ -10,6 +10,7 @@ PlAxe::PlAxe(const SceneManager::CNTL _cntl)
 
 PlAxe::PlAxe(const InputManager::JOYPAD_NO _padNum)
 {
+	info_.cntrol_ = SceneManager::CNTL::PAD;
 	padNum_ = _padNum;
 }
 
