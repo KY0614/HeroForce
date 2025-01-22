@@ -60,12 +60,6 @@ public:
 	/// <param name="_size">大きさ</param>
 	void SyncEffect(const EFFECT& _efc, const VECTOR& _pos, const Quaternion& _qua, const float& _size);
 
-	/// <summary>
-	/// エフェクトの再生確認
-	/// </summary>
-	/// <param name="_efc">エフェクト名</param>
-	bool IsPlayEffect(const EFFECT& _efc);
-
 	//解放処理
 	void Release(void);
 
