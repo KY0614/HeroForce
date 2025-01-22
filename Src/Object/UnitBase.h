@@ -96,6 +96,8 @@ public:
 	const float GetDef(void)const;
 	//攻撃関係
 	const ATK GetAtk(void)const;
+	const float GetCharaPow(void)const;
+
 	//あたり判定
 	const float GetRadius(void)const;
 	//移動前の座標位置

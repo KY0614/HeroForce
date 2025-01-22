@@ -108,6 +108,11 @@ const UnitBase::ATK UnitBase::GetAtk(void) const
 	return atk_;
 }
 
+const float UnitBase::GetCharaPow(void) const
+{
+	return atkPow_;
+}
+
 const float UnitBase::GetRadius(void) const
 {
 	return radius_;

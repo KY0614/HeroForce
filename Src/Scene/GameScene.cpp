@@ -267,7 +267,7 @@ void GameScene::CollisionEnemy(void)
 			if (col.IsHitAtk(*e, *p) && !p->IsDodge())
 			{
 				//ダメージ
-				p->Damage();
+				p->SetDamage(e->GetCharaPow(), eAtk.pow_);
 				//使用した攻撃を判定終了に
 				e->SetIsHit(true);
 			}
@@ -306,7 +306,8 @@ void GameScene::CollisionPlayer(void)
 			//当たり判定
 			if (col.IsHitAtk(*p, *e)) {
 				//被弾
-				e->Damage(5, 4);
+				e->SetDamage(p->GetCharaPow(), pAtk.pow_);
+				//e->Damage(5, 4);
 				if (!e->IsAlive())DunkEnmCnt_++;
 				//攻撃判定の終了
 				p->SetIsHit(true);
