@@ -53,3 +53,15 @@ void PlMage::Draw(void)
 void PlMage::Release(void)
 {
 }
+
+void PlMage::AtkInput(void)
+{
+}
+
+void PlMage::SkillOneInput(void)
+{
+}
+
+void PlMage::SkillTwoInput(void)
+{
+}

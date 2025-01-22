@@ -57,15 +57,7 @@ void Knight::AtkFunc(void)
 	if (isSkill_)return;
 	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
-	//‹ßÚUŒ‚—p
-	if (ins.CheckAct(ACT_CNTL::NMLATK) && !isAtk_)
-	{
-		if (isCool_[static_cast<int>(ATK_ACT::ATK)])return;
-		ChangeAct(ATK_ACT::ATK);
-		ResetParam(atk_);
-		CntUp(atkStartCnt_);
-		isAtk_ = true;
-	}
+
 	if (!isAtk_)return;
 
 	if (IsAtkStart())
@@ -104,16 +96,7 @@ void Knight::SkillOneInit(void)
 
 void Knight::SkillTwoInit(void)
 {
-	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > GUARD_STARTABLE_COOL && !IsAtkStart())
-	{
-		isCool_[static_cast<int>(SKILL_NUM::TWO)] = false;
-		ChangeAct(static_cast<ATK_ACT>(skillNo_));
-		ResetParam(atk_);
-		coolTime_[static_cast<int>(SKILL_NUM::TWO)] -= SKILL_TWO_START_COOLTIME;
-		atk_.duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
-		//CntUp(atkStartCnt_);
-		isSkill_ = true;
-	}
+
 }
 
 
@@ -134,11 +117,7 @@ void Knight::Skill1Func(void)
 	//aŒ‚”ò‚Î‚·
 	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
-	//“ü—Í
-	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN))
-	{
-		InitSkill(skillNo_);
-	}
+
 	//‹ßÚUŒ‚—p(atk_•Ï”‚Æ‰“‹——£‚Å•ª‚¯‚é)
 	if (IsAtkStart())
 	{

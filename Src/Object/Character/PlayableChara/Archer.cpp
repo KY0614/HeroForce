@@ -1,5 +1,6 @@
 #include"../Manager/Generic/ResourceManager.h"
 #include"../Manager/Generic/SceneManager.h"
+//#include""
 #include"../../Arrow.h"
 
 #include "Archer.h"
@@ -139,7 +140,7 @@ void Archer::CreateAtk(void)
 		if (!atk.IsAttack())
 		{
 			//atk‰Šú‰»
-			atk = atkMax_[act_];
+			ResetParam(atk);
 			return;
 		}
 	}
@@ -227,7 +228,6 @@ void Archer::NmlAtkInit(void)
 {
 	if (isCool_[static_cast<int>(ATK_ACT::ATK)])return;
 	ChangeAct(ATK_ACT::ATK);
-	ResetParam(atk_);
 	CntUp(atkStartCnt_);
 }
 

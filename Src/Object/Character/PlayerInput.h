@@ -1,5 +1,6 @@
 #pragma once
 #include<DxLib.h>
+#include"../../Manager/Generic/SceneManager.h"
 #include"../../Manager/Generic/InputManager.h"
 class PlayerBase;
 class PlayerInput
@@ -47,7 +48,9 @@ public:
     static void CreateInstance(void);
     static PlayerInput& GetInstance(void);
 
-    void Update(PlayerBase* _player,InputManager::JOYPAD_NO _padNum);
+    
+    void Update(PlayerBase* _player,InputManager::JOYPAD_NO _padNum,SceneManager::CNTL _cntl);
+
 
 
 
@@ -64,12 +67,20 @@ private:
 	PlayerInput(void);
 	~PlayerInput(void)=default;
 
-    float leftStickX_;
-    float leftStickY_;
-    float stickDeg_;            //パッドのスティックの角度
+    //メンバ関数
+    void InputKeyBoard(PlayerBase* _player);
+    void InputPad(PlayerBase* _player, InputManager::JOYPAD_NO _padNum);
+
     //メンバ変数
     //-----------------------------------------------------------------------
     //操作管理用
     ACT_CNTL actCntl_;
+
+    float leftStickX_;
+    float leftStickY_;
+    float stickDeg_;            //パッドのスティックの角度
+    //PlayerBase* player_;
+    //InputManager::JOYPAD_NO padNum_;
+    //SceneManager::CNTL cntl_;
 };
 

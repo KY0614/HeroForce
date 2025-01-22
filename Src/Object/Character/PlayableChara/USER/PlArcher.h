@@ -16,4 +16,15 @@ public:
 	void Release(void)override;
 
 private:
+	//攻撃入力
+	void AtkInput(void)override;
+
+	//スキル1入力
+	void SkillOneInput(void)override;
+
+	//スキル2入力
+	void SkillTwoInput(void)override;
+
+	//通常攻撃初期化
+	void AtkInit(void);
 };
