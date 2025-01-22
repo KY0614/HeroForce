@@ -96,7 +96,7 @@ void GameScene::Update(void)
 		{
 			//フェーズカウント増加
 			fazeCnt_++;
-			if(fazeCnt_ >LAST_FAZE)SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
+			if(fazeCnt_ >LAST_FAZE)SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 			//フェーズリザルトが終了したので明転及びリザルトリセット
 			fader_->SetFade(Fader::STATE::FADE_IN);
 			Timer::GetInstance().Reset();
@@ -234,27 +234,28 @@ void GameScene::CollisionEnemy(void)
 		VECTOR ePos = e->GetPos();
 		UnitBase::ATK eAtk = e->GetAtk();
 
-		//動ける分だけ(のちに全員分に変える)
-		VECTOR pPos = playerMng_->GetPlayer(0)->GetPos();
 
-		
+		for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
+		{
+			PlayerBase* p = playerMng_->GetPlayer(i);
+			VECTOR pPos = p->GetPos();
 
-		//索敵
+			//索敵
 		//範囲内に入っているとき
-		if (col.Search(ePos, pPos, e->GetSearchRange())) {
-			//移動を開始
-			e->SetIsMove(true);
-		}
-		else {
-			//移動を停止
-			e->SetIsMove(false);
-		}
+			if (col.Search(ePos, pPos, e->GetSearchRange())) {
+				//移動を開始
+				e->SetIsMove(true);
+			}
+			else {
+				//移動を停止
+				e->SetIsMove(false);
+			}
 
-		//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
-		if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL) {
-			//状態を変更
-			e->ChangeState(Enemy::STATE::ALERT);
-		}
+			//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
+			if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL) {
+				//状態を変更
+				e->ChangeState(Enemy::STATE::ALERT);
+			}
 
 			//攻撃判定
 
@@ -269,7 +270,7 @@ void GameScene::CollisionEnemy(void)
 				//使用した攻撃を判定終了に
 				e->SetIsHit(true);
 			}
-		}
+		}	
 	}
 }
 
