@@ -40,7 +40,7 @@ void Application::Init(void)
 	SetWindowText("Main");
 
 	// ウィンドウサイズ
-	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);
+	SetGraphMode(DEFA_SCREEN_SIZE_X, DEFA_SCREEN_SIZE_Y, 32);
 	ChangeWindowMode(true);
 	// 非アクティブ状態でも動作する
 	SetAlwaysRunFlag(TRUE);					
