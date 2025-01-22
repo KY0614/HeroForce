@@ -50,6 +50,9 @@ void Enemy::Init(void)
 
 void Enemy::Update(void)
 {
+	//移動前座標
+	prePos_ = trans_.pos;
+
 	//アニメーション
 	Anim();
 
@@ -372,6 +375,14 @@ const VECTOR Enemy::GetTargetVec(const VECTOR _pos, const float _speed) const
 	VECTOR ret = VScale(targetVec, _speed);
 
 	return ret;
+}
+
+void Enemy::SearchChicken(void)
+{
+}
+
+void Enemy::SearchPlayer(void)
+{
 }
 
 void Enemy::Move(void)

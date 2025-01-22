@@ -258,7 +258,11 @@ protected:
 	/// <returns>標的への移動(方向)ベクトル</returns>
 	const VECTOR GetTargetVec(const VECTOR _pos, const float _speed = 1.0f)const;
 
-	//探索処理
+	//探索処理(鶏)
+	void SearchChicken(void);
+
+	//探索処理(プレイヤー)
+	void SearchPlayer(void);
 
 	//移動
 	void Move(void);
