@@ -190,6 +190,13 @@ void ResourceManager::InitGameClear(void)
 {
 	Resource res;
 
+	//–î
+
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ARROW + "Arrow.mv1");
+
+	resourcesMap_.emplace(SRC::ARROW, res);
+
+
 	//cong
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Congratulations.png");
 	resourcesMap_.emplace(SRC::CONGRATULATIONS, res);
