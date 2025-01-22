@@ -9,7 +9,7 @@ public:
 
 	//定数
 	static constexpr VECTOR ARROW_LOCAL_POS = { 15.0f,30.0f,50.0f };	//打ち始めに違和感がないように調整
-	static constexpr float GRAVITY = 0.2f;			//重力
+	static constexpr float GRAVITY = 0.5f;			//重力
 	static constexpr float START_UP_ANGLE = 10.0f;	//最初の上アングル
 
 	enum class STATE

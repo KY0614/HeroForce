@@ -29,6 +29,7 @@ public:
 	static const std::string PATH_MODEL;
 	static const std::string PATH_ENEMY;
 	static const std::string PATH_PLAYER;
+	static const std::string PATH_ARROW;
 	static const std::string PATH_STAGE;
 	static const std::string PATH_SKYDOME;
 	static const std::string PATH_OBJECT;

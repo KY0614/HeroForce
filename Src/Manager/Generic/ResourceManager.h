@@ -52,6 +52,7 @@ public:
 		ENEMY_ARCHER,	//弓使い（敵）
 		ENEMY_AXEMAN,	//斧使い（敵）
 		ENEMY_GOLEM,	//ゴーレム(敵)
+		ARROW,			//矢
 
 		//ステージ
 		STAGE_01,

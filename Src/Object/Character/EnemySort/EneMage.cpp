@@ -1,8 +1,16 @@
 #include"Enemy.h"
 #include "EneMage.h"
 
+EneMage::EneMage(const VECTOR& _spawnPos) : Enemy(_spawnPos)
+{
+	trans_.pos = _spawnPos;
+}
+
 void EneMage::SetParam(void)
 {
+	//攻撃警告
+	alertSkills_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneMage::AlertSkill_One, this));
+
 	//攻撃の遷移
 	changeSkill_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneMage::Skill_One, this));
 
@@ -16,11 +24,16 @@ void EneMage::SetParam(void)
 	hp_ = HP_MAX;
 	atkPow_ = ATK_POW;
 	def_ = DEF;
+	exp_ = EXP;
 	walkSpeed_ = WALK_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
 	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
 	atkStartRange_ = ATK_START_RANGE;
+	
+	skillOneShot_ = AsoUtility::VECTOR_ZERO;
+	skillOneDelayCnt_ = 0.0f;
+	skillAllCnt_ = 0.0f;
 }
 
 void EneMage::InitAnim(void)
@@ -46,28 +59,78 @@ void EneMage::InitSkill(void)
 	skills_.emplace(ATK_ACT::SKILL_ONE, SKILL_ONE);
 
 	//ここにスキルの数分アニメーションを格納させる
+	//----------------------------------------------
+
+	//予備動作アニメーション
+	skillPreAnims_.emplace_back(ANIM::UNIQUE_1);
+
+	//動作アニメーション
 	skillAnims_.emplace_back(ANIM::SKILL_1);
+
 
 	//初期スキルを設定しておく
 	RandSkill();
 }
 
+void EneMage::AlertSkill_One(void)
+{
+}
+
 void EneMage::Attack(void)
 {
-	//対応スキル発動
-	processSkill_();
+	//共通処理
+	Enemy::Attack();
+
+	//スキル全体のカウント
+	CntUp(skillAllCnt_);
 }
 
 void EneMage::Skill_One(void)
 {
-	//前方向
-	VECTOR dir = trans_.quaRot.GetForward();
+	//終了判定
+	if (skillAllCnt_ > SKILL_ONE_ALL_TIME)
+	{
+		//攻撃終了
+		isEndAllAtk_ = true;
 
-	for (auto& nowSkill : nowSkill_)
+		//処理終了
+		return;
+	}
+
+	//スキル１の生成上限
+	if (skillOneShotCnt_ < SKILL_ONE_MAX_CNT)
 	{
 		//座標の設定
-		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_ + radius_));
+		skillOneShot_ = VAdd(skillOneShot_, GetTargetVec(skillOneShot_, SKILL_ONE_SPEED));
+
+		//スキル１の発生間隔
+		if (skillOneDelayCnt_ >= SKILL_ONE_SHOT_DELAY)
+		{
+			//攻撃発生
+			//----------------------------
+
+			//スキルの持続時間初期化
+			skillOneDelayCnt_ = 0.0f;
+
+			//攻撃回数増加
+			skillOneShotCnt_++;
+
+			//攻撃作成
+			ATK& thisAtk = createSkill_();
+
+			//生成した攻撃の位置を合わせる
+			thisAtk.pos_ = skillOneShot_;
+		}
 	}
+
+	//カウンタ
+	CntUp(skillOneDelayCnt_);
+}
+
+void EneMage::DrawDebug(void)
+{
+	Enemy::DrawDebug();
+	DrawSphere3D(skillOneShot_, 25.0f, 20, 0xf0f0f0, 0xf0f0f0, true);
 }
 
 void EneMage::FinishAnim(void)
@@ -84,11 +147,29 @@ void EneMage::FinishAnim(void)
 	}
 }
 
-void EneMage::ChangeStateAlert(void)
+void EneMage::ResetAtkJudge(void)
+{
+	//共通
+	Enemy::ResetAtkJudge();
+
+	//スキルの持続時間初期化
+	skillOneDelayCnt_ = 0.0f;
+
+	//攻撃回数初期化
+	skillOneShotCnt_ = 0;
+
+	//スキルのカウンタ初期化
+	skillAllCnt_ = 0.0f;
+}
+
+void EneMage::ChangeStateAtk(void)
 {
 	//更新処理の中身初期化
-	Enemy::ChangeStateAlert();
+	stateUpdate_ = std::bind(&EneMage::UpdateAtk, this);
 
-	//待機アニメーション
-	ResetAnim(ANIM::UNIQUE_1, changeSpeedAnim_[ANIM::UNIQUE_1]);
+	//向きを改めて設定
+	trans_.quaRot = trans_.quaRot.LookRotation(GetTargetVec());
+
+	//座標の初期設定
+	skillOneShot_ = MV1GetFramePosition(trans_.modelId, FRAME_ROD);
 }

@@ -9,8 +9,6 @@
 #include"../Object/Character/PlayerManager.h"
 #include "../Manager/GameSystem/DataBank.h"
 #include"../Object/Character/Chiken/ChickenManager.h"
-#include"../Object/Character/EnemySort/EneAxe.h"
-#include"../Object/Character/EnemySort/EneGolem.h"
 #include "../Object/Common/Transform.h"
 #include "../Object/Stage/StageManager.h"
 #include "../Object/Stage/SkyDome.h"
@@ -65,7 +63,7 @@ void GameScene::Init(void)
 	playerMng_->Init();
 
 	//敵マネージャの生成
-	enmMng_ = std::make_unique<EnemyManager>();
+	enmMng_ = std::make_unique<EnemyManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::ENEMY));
 	enmMng_->Init();
 
 	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU),
