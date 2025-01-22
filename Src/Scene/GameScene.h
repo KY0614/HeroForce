@@ -64,6 +64,7 @@ private:
 
 	//敵
 	std::unique_ptr<EnemyManager>enmMng_;
+	int DunkEnmCnt_;	//倒した敵のカウンタ
 
 	//チキン
 	std::unique_ptr<ChickenManager> chicken_;

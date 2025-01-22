@@ -67,6 +67,17 @@ void DataBank::Input(const INFO _info, const int _num)
 	case INFO::USER_NUM:
 		userNum_ = _num;
 		break;
+
+	case INFO::FAZE_DUNK_ENEMY:
+		fazeDunk_ = _num;
+		//総数に追加
+		gameDunk_ += _num;
+		break;
+
+	case INFO::ALIVE_CHICKEN:
+		userNum_ = _num;
+		break;
+
 	default:
 		//デバッグ用
 		assert("DataBankのInputの使用方法に間違いがあります。");

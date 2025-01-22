@@ -121,12 +121,12 @@ void GameScene::Update(void)
 	}
 
 	
-
+	//レベル更新
 	level_->Update();
-
+	//レベルUP中はキャラクター達を更新しない
 	if (level_->IsLevelUp())return;
 
-
+	//制限時間更新
 	Timer::GetInstance().Update();
 	//タイマーが終了したら
 	if (Timer::GetInstance().IsEnd())ChangePhase();
@@ -138,7 +138,7 @@ void GameScene::Update(void)
 	//敵の更新
 	enmMng_->Update(playerMng_->GetPlayer(0)->GetPos());
 	
-
+	//ニワトリ更新
 	chicken_->SetTargetPos(playerMng_->GetPlayer(0)->GetPos());
 	chicken_->Update();
 
@@ -240,42 +240,36 @@ void GameScene::CollisionEnemy(void)
 		VECTOR ePos = e->GetPos();
 		UnitBase::ATK eAtk = e->GetAtk();
 
-		//動ける分だけ(のちに全員分に変える)
-		VECTOR pPos = playerMng_->GetPlayer(0)->GetPos();
+		//各プレイヤーと当たり判定を取る
+		for (int i = 0; i < PlayerManager::PLAYER_NUM; i++) {
 
-		//索敵
-		//範囲内に入っているとき
-		if (col.Search(ePos, pPos, e->GetSearchRange())) {
-			//移動を開始
-			e->SetIsMove(true);
-		}
-		else {
-			//移動を停止
-			e->SetIsMove(false);
-		}
+			PlayerBase* p = playerMng_->GetPlayer(i);
+			VECTOR pPos = p->GetPos();
 
-		//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
-		if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL) {
-			//状態を変更
-			e->ChangeState(Enemy::STATE::ALERT);
-		}
 
-		//攻撃判定
-		//アタック中 && 攻撃判定が終了していないとき
-		if (eAtk.IsAttack() && !eAtk.isHit_)
-		{
-			//各プレイヤーと当たり判定を取る
-			for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
+			//索敵
+			//範囲内に入っているとき
+			if (col.Search(ePos, pPos, e->GetSearchRange())) e->SetIsMove(true);	//移動を開始}
+			else e->SetIsMove(false);		//移動を停止
+
+				//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
+			if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL) {
+				//状態を変更
+				e->ChangeState(Enemy::STATE::ALERT);
+			}
+
+			//攻撃判定
+
+			//アタック中 && 攻撃判定が終了していないときだけ処理する。それ以外はしないので戻る
+			if (!(eAtk.IsAttack() && !eAtk.isHit_))continue;
+
+			//攻撃が当たる範囲 && プレイヤーが回避していないとき
+			if (col.IsHitAtk(*e, *p) && !p->IsDodge())
 			{
-				PlayerBase* p = playerMng_->GetPlayer(i);
-				//攻撃が当たる範囲 && プレイヤーが回避していないとき
-				if (col.IsHitAtk(*e, *p) && !p->IsDodge())
-				{
-					//ダメージ
-					p->Damage();
-					//使用した攻撃を判定終了に
-					e->SetIsHit(true);
-				}
+				//ダメージ
+				p->Damage();
+				//使用した攻撃を判定終了に
+				e->SetIsHit(true);
 			}
 		}
 	}
@@ -313,6 +307,7 @@ void GameScene::CollisionPlayer(void)
 			if (col.IsHitAtk(*p, *e)) {
 				//被弾
 				e->Damage(5, 4);
+				if (!e->IsAlive())DunkEnmCnt_++;
 				//攻撃判定の終了
 				p->SetIsHit(true);
 			}

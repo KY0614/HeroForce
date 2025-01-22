@@ -29,6 +29,9 @@ public:
 		USER_NUM,
 		DHISPLAY_NUM,
 		SCREEN_SIZE,
+		FAZE_DUNK_ENEMY,
+		GAME_DUNK_ENEMY,
+		ALIVE_CHICKEN
 	};
 
 	enum class GET_SIZE {
@@ -69,6 +72,13 @@ private:
 
 	//ディスプレイの数
 	int displayNum_;
+
+	//ニワトリの生存数
+	int aliveChikenNum_;
+
+	//倒した敵の数(フェーズ・ゲーム総数)
+	int fazeDunk_;
+	int gameDunk_;
 
 	//スクリーンサイズを保持
 	SCREEN_SIZE size_;
