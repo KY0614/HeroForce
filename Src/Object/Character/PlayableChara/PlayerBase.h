@@ -11,7 +11,7 @@
 //デバッグ
 #define DEBUG_ON
 //#define INPUT_DEBUG_ON
-#define DEBUG_COOL
+//#define DEBUG_COOL
 class PlayerDodge;
 class PlayerBase :
     public UnitBase
@@ -19,8 +19,6 @@ class PlayerBase :
 public:
 #ifdef DEBUG_ON
     void InitDebug(void);
-    //デバッグ用関数
-    virtual void DrawDebug(void);
     unsigned int color_Col_;
     unsigned int color_Atk_;
     unsigned int color_skl1_;
@@ -28,6 +26,10 @@ public:
 
 #endif // DEBUG_ON
     //デバッグ用
+
+
+    //デバッグ用関数
+    virtual void DrawDebug(void);
 
     //各アニメーション番号
     static constexpr int T_POSE_NUM = 64;
@@ -58,7 +60,7 @@ public:
     static constexpr float FRAME_DODGE_MAX = 1.0f * CHARACTER_SCALE;
     static constexpr float DODGE_CDT_MAX = 0.5f;
 
-    static constexpr int MAX_HP = 100;
+
 
     //プレイヤー自身の当たり判定
     static constexpr VECTOR PLAYER_COL_LOCAL_POS = { 0.0f,100.0f,0.0f };

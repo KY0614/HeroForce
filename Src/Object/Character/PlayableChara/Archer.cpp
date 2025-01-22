@@ -27,7 +27,12 @@ void Archer::SetParam(void)
 	);
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 
+
+	//ステータス関係
 	hp_ = MAX_HP;
+	atkPow_ = POW_ATK;
+	def_ = MAX_DEF;
+
 
 	moveAble_ = true;
 

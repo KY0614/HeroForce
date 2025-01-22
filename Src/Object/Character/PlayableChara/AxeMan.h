@@ -4,6 +4,10 @@ class AxeMan :
     public PlayerBase
 {
 public:
+    //ステータス
+    static constexpr float POW_ATK = 160.0f;
+    static constexpr int DEF_MAX = 110;
+    static constexpr int HP_MAX = 265;
 
 #ifdef DEBUG_COOL
     //クールタイム

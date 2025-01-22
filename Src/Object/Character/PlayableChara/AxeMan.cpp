@@ -25,7 +25,11 @@ void AxeMan::SetParam(void)
 	);
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 
-	hp_ = MAX_HP;
+	//ステータス関係
+	//------------------------------------------
+	hp_ = HP_MAX;
+	atkPow_ = POW_ATK;
+	def_ = DEF_MAX;
 
 	moveAble_ = true;
 

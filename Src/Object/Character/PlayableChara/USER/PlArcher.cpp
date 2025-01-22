@@ -9,6 +9,7 @@ PlArcher::PlArcher(const SceneManager::CNTL _cntl)
 
 PlArcher::PlArcher(const InputManager::JOYPAD_NO _padNum)
 {
+	info_.cntrol_ = SceneManager::CNTL::PAD;
 	padNum_ = _padNum;
 }
 
@@ -22,9 +23,10 @@ void PlArcher::Update(void)
 {
 	obj_->Update();
 	//“ü—Í
-	//PlayerInput::GetInstance().Update(obj_, padNum_, info_.cntrol_);
-	auto& ins = PlayerInput::GetInstance();
-	using ACT_CNTL = PlayerInput::ACT_CNTL;
+	//ƒL[“ü—Í
+	PlayerDodge* dodge = obj_->GetDodge();
+	PlayerInput::GetInstance().Update(obj_, padNum_, info_.cntrol_);
+	ActionInput(obj_, dodge);
 	
 	//’ÊíUŒ‚
 	AtkInput();

@@ -3,10 +3,13 @@
 
 PlKnight::PlKnight(const SceneManager::CNTL _cntl)
 {
+	info_.cntrol_ = _cntl;
 }
 
 PlKnight::PlKnight(const InputManager::JOYPAD_NO _padNum)
 {
+	info_.cntrol_ = SceneManager::CNTL::PAD;
+	padNum_ = _padNum;
 }
 
 void PlKnight::Init(void)
@@ -18,7 +21,12 @@ void PlKnight::Init(void)
 void PlKnight::Update(void)
 {
 	obj_->Update();
-	////’ÊíUŒ‚
+	//“ü—Í
+		//ƒL[“ü—Í
+	PlayerDodge* dodge = obj_->GetDodge();
+	PlayerInput::GetInstance().Update(obj_, padNum_, info_.cntrol_);
+	ActionInput(obj_, dodge);
+
 	//’ÊíUŒ‚
 	AtkInput();
 
@@ -121,6 +129,7 @@ void PlKnight::SkillOneInit(void)
 }
 void PlKnight::SkillTwoInit(void)
 {
+
 	using ATK_ACT = PlayerBase::ATK_ACT;
 	if (obj_->GetCoolTime(ATK_ACT::SKILL2) > Knight::GUARD_STARTABLE_COOL && !obj_->IsAtkStart())
 	{
