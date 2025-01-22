@@ -134,10 +134,17 @@ public:
     //攻撃変更用(主に入力されたら変えるようにする)
     void ChangeAct(const ATK_ACT _act);
 
-    //攻撃の最大値の初期化(弓矢とかの違うatk使う用)
+    //攻撃の最大値の初期化(弓矢とかの違うatkの配列とか使う用)
     void ResetParam(ATK& _atk);
 
+    //近接攻撃のatk初期化用
     void ResetParam(void);
+
+    //攻撃発生中フラグ
+    const bool IsAtkStart(void)const { return 0.0f < atkStartCnt_ && atkStartCnt_ <= atkStartTime_[static_cast<int>(act_)]; }
+
+    //攻撃発生したのを確認する
+    const bool IsFinishAtkStart(void)const { return atkStartCnt_ > atkStartTime_[static_cast<int>(act_)]; }
 
 
 
@@ -304,11 +311,7 @@ protected:
 
 
 
-    //攻撃発生中フラグ
-    const bool IsAtkStart(void)const { return 0.0f < atkStartCnt_ && atkStartCnt_ <= atkStartTime_[static_cast<int>(act_)]; }
-
-    //攻撃発生したのを確認する
-    const bool IsFinishAtkStart(void)const { return atkStartCnt_ > atkStartTime_[static_cast<int>(act_)]; }
+ 
 
     //コントローラー変更
     void ChangeGamePad(void);
