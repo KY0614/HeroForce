@@ -7,7 +7,10 @@
 SelectPlayer::SelectPlayer(void)
 {
 	role_ = 0;
-	animChangeTime_ = 0.0f;
+	animKnightTime_ = 0.0f;
+	animAxeTime_ = 0.0f;
+	animMageTime_ = 0.0f;
+	animArcherTime_ = 0.0f;
 }
 
 void SelectPlayer::Destroy(void)
@@ -26,15 +29,14 @@ void SelectPlayer::Init(void)
 	animNum_.emplace(ANIM::SKILL_3, MAGE_ANIM);
 	animNum_.emplace(ANIM::SKILL_4, ARCHER_ANIM);
 
+	ResetAnimArray(ANIM::IDLE, ANIM_SPEED, 0);
+	ResetAnimArray(ANIM::IDLE, ANIM_SPEED, 1);
+	ResetAnimArray(ANIM::IDLE, ANIM_SPEED, 2);
+	ResetAnimArray(ANIM::IDLE, ANIM_SPEED, 3);
+
 	//ƒ`ƒLƒ“—p
 	animNum_.emplace(ANIM::UNIQUE_1, SWING_ANIM);
 
-	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
-	{
-		SetIdleAnim(i);
-	}
-
-	ResetAnim(ANIM::UNIQUE_1, ANIM_SPEED);
 }
 
 void SelectPlayer::Update(void)
@@ -42,31 +44,11 @@ void SelectPlayer::Update(void)
 	AnimArray();
 	Anim();
 
-	int randNum = 0;
-	//if (animChangeTime_ > 50.0f)
-	//{
-	//	randNum = GetRand(2);
-	//	
-	//}
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
-	animChangeTime_ += ANIM_SPEED * deltaTime;
+	animKnightTime_ += ANIM_SPEED * deltaTime;
+	animAxeTime_ += ANIM_SPEED * deltaTime;
 	
-	for (int i = 0; i < SceneManager::PLAYER_NUM;i++)
-	{
-		if (animChangeTime_ > GetAnimArrayTime(i))
-		{
-			if (anim_ == ANIM::IDLE)
-			{
-				SetAtkAnim(i);
-				animChangeTime_ = 0.0f;
-			}
-			else
-			{
-				SetIdleAnim(i);
-				animChangeTime_ = 0.0f;
-			}
-		}
-	}
+	CheckAnim();
 
 	for (auto& tran_ : transArray_) 
 	{
@@ -93,34 +75,50 @@ void SelectPlayer::SetPos(VECTOR pos)
 	}
 }
 
+void SelectPlayer::CheckAnim(void)
+{
+	if (animKnightTime_ > GetAnimArrayTime(0))
+	{
+		if (anim_ == ANIM::IDLE)
+		{
+			SetAtkAnim(0);
+			animKnightTime_ = 0.0f;
+		}
+		else
+		{
+			SetIdleAnim(0);
+			animKnightTime_ = 0.0f;
+		}
+	}
+
+	if (animAxeTime_ > GetAnimArrayTime(1))
+	{
+		if (anim_ == ANIM::IDLE)
+		{
+			SetAtkAnim(1);
+			animAxeTime_ = 0.0f;
+		}
+		else
+		{
+			SetIdleAnim(1);
+			animAxeTime_ = 0.0f;
+		}
+	}
+}
+
 void SelectPlayer::SetAtkAnim(int i)
 {
-	switch (i)
-	{
-	case 0 :
-		ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 0);
-		break;
-
-	case 1:
-		ResetAnimArray(ANIM::SKILL_2, ANIM_SPEED, 1);
-		break;
-
-	case 2:
-		ResetAnimArray(ANIM::SKILL_3, ANIM_SPEED, 2);
-		break;
-
-	case 3:
-		ResetAnimArray(ANIM::SKILL_4, ANIM_SPEED, 3);
-		break;
-
-	default:
-		break;
-	}
+	if(i == 0)ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 0);
+	if(i == 1)ResetAnimArray(ANIM::SKILL_2, ANIM_SPEED, 1);
+	if(i == 2)ResetAnimArray(ANIM::SKILL_3, ANIM_SPEED, 2);
+	if(i == 3)ResetAnimArray(ANIM::SKILL_4, ANIM_SPEED, 3);
+	return;
 }
 
 void SelectPlayer::SetIdleAnim(int i)
 {
 	ResetAnimArray(ANIM::IDLE, ANIM_SPEED, i);
+	return;
 }
 
 void SelectPlayer::Init3DModel(void)
