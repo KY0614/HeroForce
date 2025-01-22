@@ -12,12 +12,17 @@ public:
 	static constexpr int ONETYPE_MAX = 5;
 	//“G‚ÌoŒ»Å‘å”
 	static constexpr int ENEMY_MAX = 8;
+	//“G‚Ì‰Šú¶¬”
+	static constexpr int INIT_CREATE_ENEMY = 4;
 
 	//“G‚ÌoŒ»”¼Œa
 	static constexpr float GENELATE_RADIUS = 100.0f;
 
 	//“GŠÔ‚Ì‹——£
 	static constexpr float ENEMY_DISTANCE = 30.0f;
+
+	//“G‚Ì¶¬ŠÔŠu
+	static constexpr float CREATE_INTERVAL = 5.0f;
 
 	enum class TYPE {
 		ARCHER,
@@ -62,6 +67,8 @@ private:
 	//¶¬À•W
 	std::vector<VECTOR> createPos_;
 
+	//¶¬ŠÔŠu
+	float createIntCnt_;
 	
 	//ˆø”‚Ì“G‚ğƒAƒNƒeƒBƒuó‘Ô‚É
 	void CreateEnemy(void);

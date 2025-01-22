@@ -1,5 +1,6 @@
 #include<cassert>
 #include<random>
+#include"../Manager/Generic/SceneManager.h"
 
 #include"EnemySort/Enemy.h"
 #include"EnemySort/EneArcher.h"
@@ -13,14 +14,31 @@
 void EnemyManager::Init(void)
 {
 	activeNum_ = 0;
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < INIT_CREATE_ENEMY; i++)
 	{
+		//“G‚Ì‰Šú¶¬
 		CreateEnemy();
 	}
+
+	createIntCnt_ = 0.0f;
 }
 
 void EnemyManager::Update(VECTOR _target)
 {
+	//ƒJƒEƒ“ƒ^
+	createIntCnt_ = createIntCnt_ + SceneManager::GetInstance().GetDeltaTime();
+
+	//“G‚Ì¶¬ˆ—
+	if (createIntCnt_ >= CREATE_INTERVAL)
+	{
+		//ŠÔŠuƒJƒEƒ“ƒ^‰Šú‰»
+		createIntCnt_ = 0.0f;
+
+		//“G‚Ì¶¬
+		CreateEnemy();
+	}
+
+	//¶‘¶‚µ‚Ä‚¢‚é“G‚Ìˆ—
 	for (int i = 0; i < activeNum_; i++)
 	{
 		activeEnemys_[i]->SetTargetPos(_target);
