@@ -8,8 +8,8 @@ Timer* Timer::instance_ = nullptr;
 
 Timer::Timer(void)
 {
-	minute_ = 1;
-	second_ = 0;
+	minute_ = 0;
+	second_ = 3;
 	cnt_ = 0;
 	isEnd_ = false;
 

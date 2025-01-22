@@ -35,6 +35,7 @@ GameScene::GameScene(void)
 	fazeResult_ = nullptr;
 
 	isPhaseChanging_ = false;
+	fazeCnt_ = 1;
 }
 
 GameScene::~GameScene(void)
@@ -102,7 +103,10 @@ void GameScene::Update(void)
 
 		if (fazeResult_->IsEnd())
 		{
-			//フェーズリザルトが終了したので明転
+			//フェーズカウント増加
+			fazeCnt_++;
+			if(fazeCnt_ >LAST_FAZE)SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
+			//フェーズリザルトが終了したので明転及びリザルトリセット
 			fader_->SetFade(Fader::STATE::FADE_IN);
 			Timer::GetInstance().Reset();
 			fazeResult_->Reset();
@@ -307,7 +311,7 @@ void GameScene::CollisionPlayer(void)
 			if (col.IsHitAtk(*p, *e)) {
 				//被弾
 				e->SetDamage(p->GetCharaPow(), pAtk.pow_);
-				//e->Damage(5, 4);
+				//倒した敵の増加
 				if (!e->IsAlive())DunkEnmCnt_++;
 				//攻撃判定の終了
 				p->SetIsHit(true);
@@ -412,6 +416,16 @@ void GameScene::Fade(void)
 //*********************************************************
 void GameScene::ChangePhase(void)
 {
+	//リザルトに関係するデータを入力
+	DataBank& data = DataBank::GetInstance();
+
+	data.Input(DataBank::INFO::FAZE_DUNK_ENEMY, DunkEnmCnt_);	//倒した敵数
+	data.Input(DataBank::INFO::ALIVE_CHICKEN, chicken_->GetAliveNum());		//ニワトリ生存数
+
+	//リザルトで取得
+	fazeResult_->SetResult();
+	if (fazeCnt_ == LAST_FAZE)fazeResult_->SetLast();
+
 	isPhaseChanging_ = true;
 	fader_->SetFade(Fader::STATE::FADE_OUT);
 }

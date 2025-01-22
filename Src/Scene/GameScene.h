@@ -26,6 +26,8 @@ public:
 	//定数
 	static constexpr int PHASE_TIME = 180;	//フェーズ切り替えの時間（仮）
 
+	static constexpr int LAST_FAZE = 3;
+
 
 	// コンストラクタ
 	GameScene(void);
@@ -39,6 +41,9 @@ public:
 	void Release(void) override;
 
 private:
+
+	//フェーズ数カウント
+	int fazeCnt_;
 
 	//ステージ
 	std::unique_ptr<StageManager> stage_;

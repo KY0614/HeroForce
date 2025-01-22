@@ -94,6 +94,7 @@
     <ClCompile Include="Src\Manager\GameSystem\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Manager\Decoration\SoundManager.h" />
     <ClInclude Include="Src\Object\Character\Chiken\ClearChicken.h" />
     <ClInclude Include="Src\Scene\GameClearScene.h" />
     <ClInclude Include="Src\Manager\GameSystem\CharacterParamData.h" />

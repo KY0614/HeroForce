@@ -75,7 +75,7 @@ void DataBank::Input(const INFO _info, const int _num)
 		break;
 
 	case INFO::ALIVE_CHICKEN:
-		userNum_ = _num;
+		aliveChikenNum_ = _num;
 		break;
 
 	default:
@@ -121,6 +121,18 @@ const int DataBank::Output(const INFO _info)
 		return userNum_;
 		break;
 	default:
+
+	case INFO::FAZE_DUNK_ENEMY:
+		return fazeDunk_;
+		break;
+
+	case INFO::GAME_DUNK_ENEMY:
+		return gameDunk_;
+		break;
+
+	case INFO::ALIVE_CHICKEN:
+		return aliveChikenNum_;
+		break;
 		//デバッグ用
 		assert("DataBankのInputの使用方法に間違いがあります。");
 		break;

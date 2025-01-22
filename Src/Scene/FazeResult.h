@@ -5,6 +5,11 @@ class FazeResult :
 {
 public:
 
+    enum class STATE {
+        NOMAL,
+        LAST,
+    };
+
     //ランクの種類数
     static constexpr int RANK_MAX_NUM = 4;
     //ランクの各種倍率
@@ -29,6 +34,9 @@ public:
 
     static constexpr int MES2_POS_X = 30;
     static constexpr int MES2_POS_Y = 300;
+
+    static constexpr int MES3_POS_X = 30;
+    static constexpr int MES3_POS_Y = 450;
 
     static constexpr int RANK_POS_X = Application::SCREEN_SIZE_X - ResourceManager::RANK_SIZE / 2;
     static constexpr int RANK_POS_Y = Application::SCREEN_SIZE_Y - ResourceManager::RANK_SIZE / 2;
@@ -55,8 +63,16 @@ public:
     const bool IsEnd(void) { return isEnd_; };
     //リセット
     void Reset(void);
+    //最終のリザルト
+    void SetLast(void);
+
+    //リザルト情報セット
+    void SetResult(void);
 
 private:
+
+    //ステート
+    STATE state_;
 
     //画像格納
     int rankImg_[RANK_MAX_NUM]; //評価UI
@@ -72,6 +88,9 @@ private:
 
     //描画カウント
     float step_;
+
+    int dunkEnm_;   //倒した敵の数
+    int aliveChicken_;  //生存ニワトリ
 
     float exp_; //基礎経験値
     float afterExp_;//計算後の経験値

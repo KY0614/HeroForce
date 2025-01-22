@@ -91,3 +91,15 @@ void ChickenManager::CollisionStage(const Transform& stageTrans, std::shared_ptr
 		cheken->SetPrePos();
 	}
 }
+
+const int ChickenManager::GetAliveNum(void) const
+{
+	int ret = 0;
+
+	for (auto& c : chickens_) {
+		//¶‚«‚Ä‚¢‚½‚çƒJƒEƒ“ƒ^‘‰Á
+		if (c->IsAlive())ret++;
+	}
+
+	return ret;
+}
