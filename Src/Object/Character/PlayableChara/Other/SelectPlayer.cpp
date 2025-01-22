@@ -1,12 +1,12 @@
 #include <assert.h>
 #include "../../../../Manager/Generic/ResourceManager.h"
 #include "../PlayerBase.h"
+#include "../../Chiken/ChickenBase.h"
 #include "SelectPlayer.h"
 
 SelectPlayer::SelectPlayer(void)
 {
 	role_ = 0;
-	animChangeTime_ = 0.0f;
 }
 
 void SelectPlayer::Destroy(void)
@@ -17,14 +17,29 @@ void SelectPlayer::Init(void)
 {
 	Init3DModel();
 
+	//キャラクター用
 	animNum_.emplace(ANIM::IDLE, IDLE_ANIM);
+	animNum_.emplace(ANIM::UNIQUE_2, IDLE_ANIM);
+	animNum_.emplace(ANIM::SKILL_1, KNIGHT_ANIM);
+	animNum_.emplace(ANIM::SKILL_2, AXE_ANIM);
+	animNum_.emplace(ANIM::SKILL_3, MAGE_ANIM);
+	animNum_.emplace(ANIM::SKILL_4, ARCHER_ANIM);
 
-	ResetAnimArray(ANIM::IDLE, ANIM_SPEED);
+	//チキン用
+	animNum_.emplace(ANIM::UNIQUE_1, SWING_ANIM);
+
+	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+	{
+		SetIdleAnim(i);
+	}
+
+	ResetAnim(ANIM::UNIQUE_1, ANIM_SPEED);
 }
 
 void SelectPlayer::Update(void)
 {
 	AnimArray();
+	Anim();
 
 	int randNum = 0;
 	//if (animChangeTime_ > 50.0f)
@@ -35,17 +50,20 @@ void SelectPlayer::Update(void)
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	animChangeTime_ += ANIM_SPEED * deltaTime;
 	
-	if (animChangeTime_ > GetAnimArrayTime())
+	for (int i = 0; i < SceneManager::PLAYER_NUM;i++)
 	{
-		if (anim_ == ANIM::IDLE)
+		if (animChangeTime_ > GetAnimArrayTime(i))
 		{
-			ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED);
-			animChangeTime_ = 0.0f;
-		}
-		else
-		{
-			ResetAnimArray(ANIM::IDLE, ANIM_SPEED);
-			animChangeTime_ = 0.0f;
+			if (anim_ == ANIM::IDLE)
+			{
+				SetAtkAnim(i);
+				animChangeTime_ = 0.0f;
+			}
+			else
+			{
+				SetIdleAnim(i);
+				animChangeTime_ = 0.0f;
+			}
 		}
 	}
 
@@ -57,18 +75,13 @@ void SelectPlayer::Update(void)
 		//モデルの初期化
 		tran_.Update();
 	}
+	trans_.Update();
 }
 
 void SelectPlayer::Draw(void)
 {
 	MV1DrawModel(transArray_[role_].modelId);
-	//DrawFormatString(0, 0, 0xFF0000, "time : %2.f", animChangeTime_);
-
-	for (auto& tran_ : transArray_) {
-
-		//モデルの初期化
-		tran_.Update();
-	}
+	MV1DrawModel(trans_.modelId);
 }
 
 void SelectPlayer::SetPos(VECTOR pos)
@@ -77,6 +90,36 @@ void SelectPlayer::SetPos(VECTOR pos)
 	{
 		tran_.pos = pos;
 	}
+}
+
+void SelectPlayer::SetAtkAnim(int i)
+{
+	switch (i)
+	{
+	case 0 :
+		ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 0);
+		break;
+
+	case 1:
+		ResetAnimArray(ANIM::SKILL_2, ANIM_SPEED, 1);
+		break;
+
+	case 2:
+		ResetAnimArray(ANIM::SKILL_3, ANIM_SPEED, 2);
+		break;
+
+	case 3:
+		ResetAnimArray(ANIM::SKILL_4, ANIM_SPEED, 3);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void SelectPlayer::SetIdleAnim(int i)
+{
+	ResetAnimArray(ANIM::IDLE, ANIM_SPEED, i);
 }
 
 void SelectPlayer::Init3DModel(void)
@@ -101,11 +144,16 @@ void SelectPlayer::Init3DModel(void)
 		ResourceManager::GetInstance()
 		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_ARCHER));
 
+	//チキン
+	trans_.SetModel(
+		ResourceManager::GetInstance()
+		.LoadModelDuplicate(ResourceManager::SRC::CHICKEN));
+
 	float scale = 0.4f;
 	for (auto& tran_ : transArray_) 
 	{
 		tran_.scl = { scale, scale, scale };
-		tran_.pos = { 70.0f, 60.0f, -300.0f };
+		tran_.pos = { 60.0f, 60.0f, -300.0f };
 		tran_.quaRot = Quaternion();
 		tran_.quaRotLocal = Quaternion::Euler(
 			0.0f, AsoUtility::Deg2RadF(0.0f),
@@ -113,9 +161,18 @@ void SelectPlayer::Init3DModel(void)
 		);
 	}
 
+	scale = 0.9f;
+	trans_.scl = { scale, scale, scale };
+	trans_.pos = { -40.0f, 50.0f, -300.0f };
+	trans_.quaRot = Quaternion();
+	trans_.quaRotLocal = Quaternion::Euler(
+		0.0f, AsoUtility::Deg2RadF(0.0f),
+		0.0f
+	);
+
 	for (auto& tran_ : transArray_) {
 		//モデルの初期化
 		tran_.Update();
 	}
-
+	trans_.Update();
 }

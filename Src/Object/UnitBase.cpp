@@ -108,11 +108,6 @@ const UnitBase::ATK UnitBase::GetAtk(void) const
 	return atk_;
 }
 
-const float UnitBase::GetCharaPow(void) const
-{
-	return atkPow_;
-}
-
 const float UnitBase::GetRadius(void) const
 {
 	return radius_;
@@ -181,7 +176,7 @@ void UnitBase::AnimArray(void)
 	if (stepAnimArray_ > animArrayTotalTime_)
 	{
 		//アニメーション終了時処理（継承先で行動を決めておく）
-		FinishAnim();
+		FinishAnimArray();
 	}
 
 	for (auto& tran : transArray_)
@@ -215,39 +210,34 @@ void UnitBase::SubHp()
 	}
 }
 
-void UnitBase::ResetAnimArray(const ANIM _anim, const float _speed)
+void UnitBase::ResetAnimArray(const ANIM _anim, const float _speed, int i)
 {
 	if (anim_ == _anim)return;
 
 	speedAnimArray_ = _speed;
 
-	for (auto& tran : transArray_)
-	{
-		//デタッチ
-		//実質atcAnimの初期化
-		MV1DetachAnim(tran.modelId, animArray_);
+	//デタッチ
+	//実質atcAnimの初期化
+	MV1DetachAnim(transArray_[i].modelId, animArray_);
 
-		anim_ = _anim;
+	anim_ = _anim;
 
-		//アタッチ
-		//実質atcAnimの代入
-		animArray_ = MV1AttachAnim(tran.modelId, animNum_[anim_]);
+	//アタッチ
+	//実質atcAnimの代入
+	animArray_ = MV1AttachAnim(transArray_[i].modelId, animNum_[anim_]);
 
-		animArrayTotalTime_ = MV1GetAttachAnimTotalTime(tran.modelId, animArray_);
-		stepAnimArray_ = 0.0f;
+	animArrayTotalTime_ = MV1GetAttachAnimTotalTime(transArray_[i].modelId, animArray_);
+	stepAnimArray_ = 0.0f;
 
-		// 再生するアニメーション時間の設定
-		MV1SetAttachAnimTime(tran.modelId, animArray_, stepAnimArray_);
-	}
+	// 再生するアニメーション時間の設定
+	MV1SetAttachAnimTime(transArray_[i].modelId, animArray_, stepAnimArray_);
 }
 
-float UnitBase::GetAnimArrayTime(void)
+
+float UnitBase::GetAnimArrayTime(int i)
 {
-	for (auto& tran : transArray_)
-	{
-		float ret = MV1GetAttachAnimTime(tran.modelId, animArray_);
-		return ret;
-	}
+	float ret = MV1GetAttachAnimTime(transArray_[i].modelId, animArray_);
+	return ret;
 }
 //座標の設定
 void UnitBase::SetPos(const VECTOR pos)
@@ -299,6 +289,10 @@ void UnitBase::FinishAnim(void)
 {
 	//ループ再生
 	stepAnim_ = 0.0f;
+}
+
+void UnitBase::FinishAnimArray(void)
+{
 	stepAnimArray_ = 0.0f;
 }
 

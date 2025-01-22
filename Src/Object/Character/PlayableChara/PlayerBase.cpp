@@ -17,7 +17,6 @@ PlayerBase::PlayerBase(void)
 
 	userOnePos_ = { -400.0f,0.0f,0.0f };
 
-
 	atk_.isHit_ = false;
 
 	multiHitInterval_ = 0.0f;
@@ -25,6 +24,10 @@ PlayerBase::PlayerBase(void)
 	atkStartCnt_ = 0.0f;
 
 	isPush_ = false;
+
+	dodge_ = nullptr;
+
+	moveAble_ = true;
 
 	for (int i = 0; i < static_cast<int>(ATK_ACT::MAX); i++)
 	{
@@ -232,12 +235,6 @@ void PlayerBase::Move(float _deg, VECTOR _axis)
 
 void PlayerBase::UserUpdate(void)
 {
-	//それぞれの操作更新
-	cntlUpdate_();
-
-	//それぞれの入力処理
-	PlayerInput::GetInstance().Update(this,padNum_);
-	//ProcessInput();
 
 	//停止アニメーションになる条件
 	if (!IsMove() && !dodge_->IsDodge() && 0.0f >= atkStartCnt_ &&!isAtk_&&!isSkill_)
@@ -322,19 +319,20 @@ void PlayerBase::ResetParam(ATK& _atk)
 	_atk = atkMax_[act_];
 }
 
+void PlayerBase::ResetParam(void)
+{
+	atk_ = atkMax_[act_];
+}
+
 void PlayerBase::KeyBoardControl(void)
 {
-	auto& ins = InputManager::GetInstance();
-	if (ins.IsNew(PlayerInput::MOVE_FRONT_KEY)) { moveDeg_ = 0.0f; }
-	else if (ins.IsNew(PlayerInput::MOVE_LEFT_KEY)) { moveDeg_ = 270.0f; }
-	else if (ins.IsNew(PlayerInput::MOVE_BACK_KEY)) { moveDeg_ = 180.0f; }
-	else if (ins.IsNew(PlayerInput::MOVE_RIGHT_KEY)) { moveDeg_ = 90.0f; }
+
 }
 
 void PlayerBase::GamePad(void)
 {
-	auto& ins = PlayerInput::GetInstance();
-	moveDeg_ = ins.GetStickDeg();
+	//auto& ins = PlayerInput::GetInstance();
+	//moveDeg_ = ins.GetStickDeg();
 }
 
 void PlayerBase::ResetGuardCnt(void)
@@ -533,42 +531,6 @@ void PlayerBase::ChangeSkillControll(ATK_ACT _skill)
 	//変更点
 	//ChangeAtkType(static_cast<ATK_ACT>(_skill));
 }
-
-
-
-
-
-
-//void PlayerBase::Dodge(void)
-//{
-//	//ドッジフラグがtrueになったら
-//	if (IsDodge() && !IsCoolDodge())
-//	{
-//		CntUp(dodgeCnt_);
-//		//スキル中に回避が出た時にスキルのカウントをリセット
-//		atk_.ResetCnt();
-//		if (dodgeCnt_ < FRAME_DODGE_MAX)
-//		{
-//			VECTOR dir = trans_.GetForward();
-//			//移動方向
-//			VECTOR movePow = VScale(dir, SPEED_DODGE);
-//			//移動処理
-//			trans_.pos = VAdd(trans_.pos, movePow);
-//		}
-//		else
-//		{
-//			dodgeCdt_ = 0.0f;
-//		}
-//	}
-//	else
-//	{
-//		CntUp(dodgeCdt_);
-//		ResetDodgeFrame();
-//#ifdef DEBUG_ON
-//		color_Col_ = 0xffffff;
-//#endif // DEBUG_ON
-//	}
-//}
 void PlayerBase::Damage(void)
 {
 	//とりあえず1ダメージ減らす
@@ -629,18 +591,7 @@ void PlayerBase::CoolTimeCnt(void)
 
 void PlayerBase::ProcessAct(void)
 {
-	auto& ins = PlayerInput::GetInstance();
-	using ACT_CNTL = PlayerInput::ACT_CNTL;
-	//設定された向きに向かって動く
-	if (ins.CheckAct(ACT_CNTL::MOVE)) { Move(moveDeg_, AsoUtility::AXIS_Y); }
-
-	//動いてないときはスピード0にする
-	else { moveSpeed_ = 0.0f; }
-
-	if (ins.CheckAct(ACT_CNTL::CHANGE_SKILL)) { SkillChange(); }
-
 	AtkFunc();
-	
 	switch (skillNo_)
 	{
 	case PlayerBase::ATK_ACT::SKILL1:
@@ -649,15 +600,8 @@ void PlayerBase::ProcessAct(void)
 	case PlayerBase::ATK_ACT::SKILL2:
 		Skill2Func();
 		break;
-	}
-
-	//回避
-	if (ins.CheckAct(ACT_CNTL::DODGE) && IsSkillable())
-	{
-		float dodgeCnt = dodge_->GetDodgeCnt();
-		ResetAnim(ANIM::DODGE, SPEED_ANIM_DODGE);
-		CntUp(dodgeCnt);
-		dodge_->SetDodgeCnt(dodgeCnt);
+	default:
+		break;
 	}
 
 }
@@ -683,47 +627,4 @@ void PlayerBase::SkillTwoInit(void)
 {
 }
 
-
-
-
-#ifdef INPUT_DEBUG_ON
-void PlayerBase::InputUpdate(void)
-{
-	auto& ins = InputManager::GetInstance();
-	char keyState[256] = {};
-	int padState = {};
-	GetHitKeyStateAll(keyState);
-	padState = GetJoypadInputState(static_cast<int>(padNum_));
-
-	//それぞれのアクション名に割り当たっているすべての入力をチェック
-	for (const auto& mapInfo : inputActionMap_)
-	{
-		bool isPressed = false;
-		for (const auto& inputInfo : mapInfo.second)
-		{
-			isPressed = (inputInfo.type == InputType::KEYBOARD && keyState[inputInfo.buttonId_]) ||
-				(inputInfo.type == InputType::PAD && padState & inputInfo.buttonId_);
-			if (isPressed)
-			{
-				break;
-			}
-		}
-		//押されたら押されたアクションボタンがtrueになる？
-		currentInput_[mapInfo.first] = isPressed;
-	}
-}
-
-bool PlayerBase::IsPressed(const std::string& action)const
-{
-	auto it = currentInput_.find(action);
-	if (it == currentInput_.end())//未定義のボタン名が来たら無条件でfalseを返す
-	{
-		return false;
-	}
-	else
-	{
-		return it->second;
-	}
-}
-#endif // INPUT_DEBUG_ON
 

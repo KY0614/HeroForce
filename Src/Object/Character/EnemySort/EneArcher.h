@@ -10,10 +10,18 @@ public:
 	//定数(キャラ固有)
 	//****************************************************************
 
+	//弓矢関係
+	static constexpr int ARROW_SIZE_MAX = 5;	//矢の最大保持数
+	static constexpr float RELOAD_TIME = 5.0f;	//矢のリロード時間
+	static constexpr float ARROW_SPEED = 8.0f;	//矢の速さ
+
 	//アニメーション番号(キャラ固有)
 	static constexpr int ANIM_SKILL_ONE = 95;	//スキル1アニメーション
 	static constexpr int ANIM_AIMING = 5;		//構えアニメーション(固有アニメーション1)
 	static constexpr int ANIM_RELOAD = 6;		//弾補充アニメーション(固有アニメーション2)
+
+	//アニメーション速度(キャラ固有)
+	static constexpr int SPEED_ANIM_RELOAD = ARROW_SIZE_MAX * 7.0f;		//弾補充アニメーション(固有アニメーション2)
 
 	//モデル関係
 	static constexpr VECTOR  LOCAL_CENTER_POS = { 0.0f,100.0f * CHARACTER_SCALE,0.0f };	//モデルの中心座標への相対座標
@@ -30,17 +38,18 @@ public:
 	static constexpr float ATK_POW = 140.0f;	//敵の攻撃
 	static constexpr float DEF = 120.0f;		//敵の防御
 	static constexpr int STUN_DEF_MAX = 100;	//敵の最大スタン防御値
+	static constexpr float EXP = 300.0f;		//敵の経験値
 
 	//速度関係
 	static constexpr float WALK_SPEED = 2.0f;	//歩きの速度
 	static constexpr float RUN_SPEED = 4.0f;	//走りの速度
 
 	//範囲関係
-	static constexpr float SEARCH_RANGE = 2000.0f * CHARACTER_SCALE;		//索敵判定の大きさ
-	static constexpr float ATK_START_RANGE = 500.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
+	static constexpr float SEARCH_RANGE = 3000.0f * CHARACTER_SCALE;		//索敵判定の大きさ
+	static constexpr float ATK_START_RANGE = 1500.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
 
 	//スキルの当たり判定半径
-	static constexpr float SKILL_ONE_COL_RADIUS = 10.0f;	//スキル１の当たり判定半径
+	static constexpr float SKILL_ONE_COL_RADIUS = 23.0f;	//スキル１の当たり判定半径
 
 	//スキルの攻撃力
 	static constexpr float SKILL_ONE_POW = 15.0f;			//スキル１の攻撃力
@@ -59,15 +68,27 @@ public:
 		,SKILL_ONE_BACKLASH
 		,0.0f };
 
-	//弓矢関係
-	static constexpr int ARROW_SIZE_MAX = 5;	//矢の最大保持数
-	static constexpr float RELOAD_TIME = 5.0f;	//矢のリロード時間
-	static constexpr float ARROW_SPEED = 10.0f;	//矢のリロード時間
+	//コンストラクタ
+	EneArcher(const VECTOR& _spawnPos);
 
 private:
 	//****************************************************************
+	//変数
+	//****************************************************************
+
+	int arrowMdlId_;							//矢のモデル
+	std::vector<std::shared_ptr<Arrow>> arrow_;	//弓矢
+	bool isShotArrow_;							//矢を放ったかの判定(true:放った)
+	int arrowCnt_;								//矢の使用個数カウンタ
+	float reloadCnt_;							//矢のリロード時間
+	Arrow* lastArrow_;							//最後に生成された矢
+
+	//****************************************************************
 	//関数
 	//****************************************************************
+
+	//解放
+	void Destroy(void)override;
 
 	//キャラ固有設定
 	void SetParam(void)override;
@@ -85,14 +106,14 @@ private:
 	//リロード中かどうかを返す
 	const bool IsReload(void)const { return arrowCnt_ >= ARROW_SIZE_MAX; }
 
-	//敵の攻撃処理
-	void Attack(void)override;
+	//スキル1の警告
+	void AlertSkill_One(void)override;
 
 	//スキル1
 	void Skill_One(void)override;
 
 	//矢の生成
-	void CreateArrow(void);
+	Arrow& CreateArrow(void);
 
 	//矢のリロード
 	void ReloadArrow(void);
@@ -100,11 +121,11 @@ private:
 	//アニメーション終了時の動き
 	void FinishAnim(void)override;
 
-	//状態遷移(攻撃警告)
-	void ChangeStateAlert(void)override;
+	//攻撃判定の初期化
+	void ResetAtkJudge(void)override;
 
 	//状態遷移(休憩)
-	void ChangeStateBreak(void)override;
+	void ChangeStateAtk(void)override;
 
 	//更新(攻撃)
 	void Update(void)override;
@@ -112,15 +133,5 @@ private:
 	void UpdateBreak(void)override;
 	//描画
 	void Draw(void)override;
-
-	//****************************************************************
-	//変数
-	//****************************************************************
-
-	int arrowMdlId_;							//矢のモデル
-	std::vector<std::shared_ptr<Arrow>> arrow_;	//弓矢
-	bool isShotArrow_;							//矢を放ったかの判定(true:放った)
-	int arrowCnt_;								//矢の使用個数カウンタ
-	float reloadCnt_;							//矢のリロード時間
 };
 

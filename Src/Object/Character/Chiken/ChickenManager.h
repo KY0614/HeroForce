@@ -4,8 +4,6 @@
 #include <DxLib.h>
 #include "../../Common/Transform.h"
 #include "../../../Utility/AsoUtility.h"
-#include "../../../Manager/GameSystem/Collision.h"
-#include "../../Stage/StageManager.h"
 #include "../PlayableChara/PlayerBase.h"
 #include "ChickenBase.h"
 
@@ -19,16 +17,7 @@ public:
 	//チキン生成数
 	static constexpr int CREATE_COUNT = 10;
 
-	/// <summary>
-	/// チキンマネージャー
-	/// </summary>
-	/// <param name="pos"></param>	チキンの生成位置を受け取る
-	/// <param name="stageTrans"></param>	ステージのトランスフォーム
-	/// <param name="playerTrans"></param>	プレイヤーのトランスフォーム
-	ChickenManager(
-		std::vector<VECTOR> pos,
-		const Transform& stageTrans,
-		const Transform& playerTrans);
+	ChickenManager(std::vector<VECTOR> pos);	//生成位置をもらう
 	~ChickenManager();
 
 	void Init();
@@ -56,8 +45,7 @@ private:
 	VECTOR targetPos_;
 
 	//プレイヤー用トランスフォーム
-	const Transform &playerTrans_;
-	const Transform &stageTrans_;
+	Transform playerTrans_;
 
 	//チキンインスタンス
 	std::vector<std::shared_ptr<ChickenBase>> chickens_;

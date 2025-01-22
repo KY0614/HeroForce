@@ -1,4 +1,3 @@
-#include "../../Application.h"
 #include "../../Lib/nlohmann/json.hpp"
 #include "UnitPositionLoad.h"
 
@@ -25,7 +24,7 @@ void UnitPositionLoad::Init()
 void UnitPositionLoad::SetJsonFile()
 {
 	//JSONファイルネーム
-	jsonFile_ = Application::PATH_JSON + "CharacterPosData.json";
+	jsonFile_ = "Data/Json/CharacterPosData.json";
 }
 
 void UnitPositionLoad::JsonLoad()
@@ -35,9 +34,7 @@ void UnitPositionLoad::JsonLoad()
 	json posData;
 	if (ifs) { ifs >> posData; }	//開けたら情報を取得
 	else 
-	{ 
-		return; 
-	}						//開けない場合処理を終了
+	{ return; }						//開けない場合処理を終了
 
 	//名前の登録
 	std::string names[TYPE_MAX];

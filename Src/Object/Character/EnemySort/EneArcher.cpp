@@ -2,15 +2,31 @@
 #include"Enemy.h"
 #include "EneArcher.h"
 
+EneArcher::EneArcher(const VECTOR& _spawnPos) : Enemy(_spawnPos)
+{
+	trans_.pos = _spawnPos;
+}
+
+void EneArcher::Destroy(void)
+{
+	Enemy::Destroy();
+
+	lastArrow_ = nullptr;
+	delete lastArrow_;
+}
+
 void EneArcher::SetParam(void)
 {
+	//攻撃警告
+	alertSkills_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneArcher::AlertSkill_One, this));
+
 	//攻撃の遷移
 	changeSkill_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneArcher::Skill_One, this));
 
 	//モデル読み込み
 	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_ARCHER));
-	//arrowMdlId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::);	※TODO矢のモデル
-	arrowMdlId_ = 0;
+	arrowMdlId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ARROW);	//※TODO矢のモデル
+	//arrowMdlId_ = 0;
 
 	//※個々で設定する
 	trans_.scl = { CHARACTER_SCALE,CHARACTER_SCALE,CHARACTER_SCALE };
@@ -19,6 +35,7 @@ void EneArcher::SetParam(void)
 	hp_ = HP_MAX;
 	atkPow_ = ATK_POW;
 	def_ = DEF;
+	exp_ = EXP;
 	arrowCnt_ = 0;
 	isShotArrow_ = false;
 	walkSpeed_ = WALK_SPEED;
@@ -41,7 +58,7 @@ void EneArcher::InitAnim(void)
 	//アニメーション速度設定
 	changeSpeedAnim_.emplace(ANIM::SKILL_1, SPEED_ANIM);
 	changeSpeedAnim_.emplace(ANIM::UNIQUE_1, SPEED_ANIM);
-	changeSpeedAnim_.emplace(ANIM::UNIQUE_2, SPEED_ANIM);
+	changeSpeedAnim_.emplace(ANIM::UNIQUE_2, SPEED_ANIM_RELOAD);
 
 	//アニメーションリセット
 	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
@@ -53,34 +70,59 @@ void EneArcher::InitSkill(void)
 	skills_.emplace(ATK_ACT::SKILL_ONE, SKILL_ONE);
 
 	//ここにスキルの数分アニメーションを格納させる
+	//----------------------------------------------
+
+	//予備動作アニメーション
+	skillPreAnims_.emplace_back(ANIM::UNIQUE_1);
+
+	//動作アニメーション
 	skillAnims_.emplace_back(ANIM::SKILL_1);
+
 
 	//初期スキルを設定しておく
 	RandSkill();
 }
 
-void EneArcher::Attack(void)
+void EneArcher::AlertSkill_One(void)
 {
-	//リロード中　又は　矢を放った判定なら攻撃しない
-	if (IsReload() || isShotArrow_)return;
-
-	//対応スキル発動
-	processSkill_();
 }
 
 void EneArcher::Skill_One(void)
 {
+	//矢を放った
+	if (isShotArrow_)
+	{
+		//攻撃の終了判定
+		if (!lastArrow_->GetIsAlive() && lastAtk_->IsFinishMotion())
+		{
+			//攻撃終了
+			isEndAllAtk_ = true;
+
+			//処理終了
+			return;
+		}
+	}
+
+	//リロード中　又は　矢を放った判定なら攻撃しない
+	if (IsReload() || isShotArrow_)return;
+
 	//矢を生成
-	CreateArrow();
+	Arrow& arrow = CreateArrow();
+
+	//最後に生成された矢を格納
+	lastArrow_ = &arrow;
+
+	//同時に攻撃も生成
+	lastAtk_ = &createSkill_();
 
 	//矢を放つ
-	arrow_.back().get()->ChangeState(Arrow::STATE::SHOT);
+	arrow.ChangeState(Arrow::STATE::SHOT);
 
 	//矢を放った
 	isShotArrow_ = true;
 }
 
-void EneArcher::CreateArrow(void)
+Arrow& EneArcher::CreateArrow(void)
 {
 	//矢の生成処理
 	for (auto& arrow : arrow_)
@@ -95,7 +137,7 @@ void EneArcher::CreateArrow(void)
 			//カウント増加
 			arrowCnt_++;
 
-			return;
+			return *arrow;
 		}
 	}
 
@@ -108,6 +150,8 @@ void EneArcher::CreateArrow(void)
 
 	//カウント増加
 	arrowCnt_++;
+
+	return *arrow_.back();
 }
 
 void EneArcher::ReloadArrow(void)
@@ -135,27 +179,31 @@ void EneArcher::FinishAnim(void)
 	switch (anim_)
 	{
 	case UnitBase::ANIM::UNIQUE_1:
+		break;
 	case UnitBase::ANIM::UNIQUE_2:
+		//ループ再生
+		stepAnim_ = 0.0f;		
 		break;
 	}
 }
 
-void EneArcher::ChangeStateAlert(void)
+void EneArcher::ResetAtkJudge(void)
 {
-	//更新処理の中身初期化
-	Enemy::ChangeStateAlert();
-
-	//エイムアニメーション
-	ResetAnim(ANIM::UNIQUE_1, changeSpeedAnim_[ANIM::UNIQUE_1]);
-}
-
-void EneArcher::ChangeStateBreak(void)
-{
-	//更新処理の中身初期化
-	Enemy::ChangeStateBreak();
+	//共通
+	Enemy::ResetAtkJudge();
 
 	//矢を放った判定を初期化
 	isShotArrow_ = false;
+
+}
+
+void EneArcher::ChangeStateAtk(void)
+{
+	//更新処理の中身初期化
+	stateUpdate_ = std::bind(&EneArcher::UpdateAtk, this);
+
+	//向きを改めて設定
+	trans_.quaRot = trans_.quaRot.LookRotation(GetTargetVec());
 }
 
 void EneArcher::Update(void)
@@ -167,11 +215,11 @@ void EneArcher::Update(void)
 	//矢と矢に対応した攻撃の更新
 	for (int a = 0 ; a < arrowSize ; a++)
 	{
-		//攻撃状態が終わったら矢を破壊
-		if (!nowSkill_[a].IsAttack())arrow_[a].get()->Destroy();
-
 		//更新
 		arrow_[a].get()->Update(nowSkill_[a]);
+
+		//攻撃状態が終わったら矢を破壊
+		if (!nowSkill_[a].IsAttack())arrow_[a].get()->Destroy();
 	}
 }
 
@@ -192,14 +240,18 @@ void EneArcher::UpdateBreak(void)
 	//**********************************************************
 	//動作処理
 	//**********************************************************
+		
+	//リロード
+	if (IsReload())
+	{
+		ReloadArrow();
+		return;
+	}
+	//攻撃休憩時間カウンタ
+	else CntUp(breakCnt_);
 
 	//待機アニメーション
 	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
-
-	//リロード
-	if (IsReload())ReloadArrow();
-	//攻撃休憩時間カウンタ
-	else CntUp(breakCnt_);
 }
 
 void EneArcher::Draw(void)

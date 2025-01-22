@@ -9,7 +9,6 @@ public:
 	void Draw(void) override;
 	void Release(void) override;
 private:
-	//ƒ^ƒCƒgƒ‹‚Ö–ß‚é‰æ‘œ
-	int toTitleImg_;
+
 };
 

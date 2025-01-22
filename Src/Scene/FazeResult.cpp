@@ -1,6 +1,5 @@
 #include<DxLib.h>
 #include<cassert>
-#include "../Application.h"
 #include"../Manager/Generic/InputManager.h"
 #include"../Manager/Generic/ResourceManager.h"
 #include"../Manager/Generic/SceneManager.h"
@@ -59,9 +58,6 @@ void FazeResult::Init(void)
 void FazeResult::Update(void)
 {
 	ChangeRank();
-
-	//描画カウントの更新
-	step_ += SceneManager::GetInstance().GetDeltaTime();
 }
 
 void FazeResult::Draw(void)
@@ -129,8 +125,6 @@ void FazeResult::Draw(void)
 
 void FazeResult::Release(void)
 {
-	DeleteFontToHandle(font_);
-	DeleteFontToHandle(heasdFont_);
 }
 
 void FazeResult::Reset(void)

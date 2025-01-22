@@ -8,9 +8,15 @@ class Application
 {
 
 public:
+#ifdef DEBUG_SCREEN
+	static constexpr int SCREEN_SIZE_X = 800;
+	static constexpr int SCREEN_SIZE_Y = 600;
+	// スクリーンサイズ
 
-	static constexpr int DEFA_SCREEN_SIZE_X = 1920;
-	static constexpr int DEFA_SCREEN_SIZE_Y = 1080;
+	//static constexpr int SCREEN_SIZE_X = 1920;
+	//static constexpr int SCREEN_SIZE_Y = 1080;
+#endif // DEBUG_SCREEN
+
 
 	static constexpr int SCREEN_SIZE_X = 800;
 	static constexpr int SCREEN_SIZE_Y = 600;
@@ -29,14 +35,13 @@ public:
 	static const std::string PATH_MODEL;
 	static const std::string PATH_ENEMY;
 	static const std::string PATH_PLAYER;
+	static const std::string PATH_ARROW;
 	static const std::string PATH_STAGE;
 	static const std::string PATH_SKYDOME;
 	static const std::string PATH_OBJECT;
 	static const std::string PATH_EFFECT;
 	static const std::string PATH_TEXT;
 	static const std::string PATH_FONT;
-	static const std::string PATH_SHADER;
-	static const std::string PATH_JSON;
 	//-------------------------------------------
 
 	//ウィンドウモード設定

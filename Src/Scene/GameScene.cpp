@@ -1,5 +1,4 @@
 #include "../Manager/Generic/SceneManager.h"
-#include "../Manager/Decoration/EffectManager.h"
 #include "../Manager/Generic/Camera.h"
 #include "../Manager/GameSystem/Collision.h"
 #include"../Manager/GameSystem/Timer.h"
@@ -7,10 +6,7 @@
 #include"../Object/Character/EnemySort/Enemy.h"
 #include"../Object/Character/EnemyManager.h"
 #include"../Object/Character/PlayerManager.h"
-#include "../Manager/GameSystem/DataBank.h"
 #include"../Object/Character/Chiken/ChickenManager.h"
-#include"../Object/Character/EnemySort/EneAxe.h"
-#include"../Object/Character/EnemySort/EneGolem.h"
 #include "../Object/Common/Transform.h"
 #include "../Object/Stage/StageManager.h"
 #include "../Object/Stage/SkyDome.h"
@@ -59,21 +55,16 @@ void GameScene::Init(void)
 	level_ = std::make_unique<LevelScreenManager>();
 	level_->Init();
 
+	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU));
+	chicken_->Init();
 
 	//プレイヤー設定
 	playerMng_ = std::make_unique<PlayerManager>();
 	playerMng_->Init();
 
 	//敵マネージャの生成
-	enmMng_ = std::make_unique<EnemyManager>();
+	enmMng_ = std::make_unique<EnemyManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::ENEMY));
 	enmMng_->Init();
-
-	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU),
-		stage_->GetTtans(),
-		playerMng_->GetPlayer(0)->GetTransform());
-	chicken_->Init();
-
-
 
 	//カメラの設定
 	auto cameras = SceneManager::GetInstance().GetCameras();
@@ -124,16 +115,12 @@ void GameScene::Update(void)
 		return;
 	}
 
-	
-	//レベル更新
-	level_->Update();
-	//レベルUP中はキャラクター達を更新しない
-	if (level_->IsLevelUp())return;
-
-	//制限時間更新
 	Timer::GetInstance().Update();
 	//タイマーが終了したら
 	if (Timer::GetInstance().IsEnd())ChangePhase();
+
+	level_->Update();
+
 
 	//プレイヤーの更新
 	playerMng_->Update();
@@ -142,7 +129,7 @@ void GameScene::Update(void)
 	//敵の更新
 	enmMng_->Update(playerMng_->GetPlayer(0)->GetPos());
 	
-	//ニワトリ更新
+
 	chicken_->SetTargetPos(playerMng_->GetPlayer(0)->GetPos());
 	chicken_->Update();
 
@@ -152,19 +139,21 @@ void GameScene::Update(void)
 	//強化要素の反映
 	LevelUpReflection();
 
+
+
 	//いずれ消す
 	auto& ins = InputManager::GetInstance();
 	auto& mng = SceneManager::GetInstance();
 	//スペース推したらタイトルに戻る
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
-		mng.ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
+		mng.ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
 
-	//if (ins.IsTrgDown(KEY_INPUT_RETURN))
-	//{
-	//	ChangePhase();
-	//}
+	if (ins.IsTrgDown(KEY_INPUT_RETURN))
+	{
+		ChangePhase();
+	}
 }
 
 void GameScene::Draw(void)
@@ -197,11 +186,15 @@ void GameScene::Draw(void)
 	{
 		DrawPhase();
 	}
+	DataBank& data = DataBank::GetInstance();
+	DrawFormatString(0, 60, 0xff0000, "p1 role : %d", data.Output(1).role_);
+	DrawFormatString(0, 80, 0xff0000, "p1 role : %d", data.Output(2).role_);
 }
 
 void GameScene::Release(void)
 {
 	level_->Release();
+	stage_->Release();
 
 	SceneManager::GetInstance().ResetCameras();
 	SceneManager::GetInstance().ReturnSolo();
@@ -231,9 +224,6 @@ void GameScene::CollisionEnemy(void)
 	//敵の総数取得
 	int maxCnt = enmMng_->GetActiveNum();
 
-	//ステージとの判定
-	enmMng_->CollisionStage(stage_->GetTtans());
-
 	//あたり判定(主に索敵)
 	for (int i = 0; i < maxCnt; i++)
 	{
@@ -244,23 +234,25 @@ void GameScene::CollisionEnemy(void)
 		VECTOR ePos = e->GetPos();
 		UnitBase::ATK eAtk = e->GetAtk();
 
-		//各プレイヤーと当たり判定を取る
-		for (int i = 0; i < PlayerManager::PLAYER_NUM; i++) {
+		//動ける分だけ(のちに全員分に変える)
+		VECTOR pPos = playerMng_->GetPlayer(0)->GetPos();
 
-			PlayerBase* p = playerMng_->GetPlayer(i);
-			VECTOR pPos = p->GetPos();
+		//索敵
+		//範囲内に入っているとき
+		if (col.Search(ePos, pPos, e->GetSearchRange())) {
+			//移動を開始
+			e->SetIsMove(true);
+		}
+		else {
+			//移動を停止
+			e->SetIsMove(false);
+		}
 
-
-			//索敵
-			//範囲内に入っているとき
-			if (col.Search(ePos, pPos, e->GetSearchRange())) e->SetIsMove(true);	//移動を開始}
-			else e->SetIsMove(false);		//移動を停止
-
-				//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
-			if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL) {
-				//状態を変更
-				e->ChangeState(Enemy::STATE::ALERT);
-			}
+		//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
+		if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL) {
+			//状態を変更
+			e->ChangeState(Enemy::STATE::ALERT);
+		}
 
 			//攻撃判定
 
@@ -285,9 +277,6 @@ void GameScene::CollisionPlayer(void)
 	auto& col = Collision::GetInstance();
 	//敵の総数取得
 	int maxCnt = enmMng_->GetActiveNum();
-
-	//ステージとの判定
-	playerMng_->CollisionStage(stage_->GetTtans());
 
 	for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
 	{
@@ -363,19 +352,6 @@ void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
 	//}
 }
 
-//void GameScene::CollisionStageUnit()
-//{
-//	auto& col = Collision::GetInstance();
-//	stage_->GetTtans();
-//	for (auto& p : players_)
-//	{
-//		if (col.IsHitUnitStageObject(stage_->GetTtans().modelId, p->GetPos(), 20.0f))
-//		{
-//			p->SetPos(p->GetPrePos());
-//		}
-//	}
-//}
-
 void GameScene::Fade(void)
 {
 
@@ -446,26 +422,29 @@ void GameScene::DrawPhase(void)
 }
 void GameScene::LevelUpReflection()
 {
-	//プレイヤーごとに強化反映
-	int plNum = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
-	for (int i = 0; i < plNum; i++)
-	{
-		if (level_->GetPreType(i) != LevelScreenManager::TYPE::MAX)
-		{
-			level_->EffectSyne(*playerMng_->GetPlayer(i), i);
-		}
-	}
-	
 	//ステート確認
-	if (level_->GetState() != LevelScreenManager::STATE::NONE)
+	if (level_->GetState() == LevelScreenManager::STATE::FIN)
 	{
-		//通常時以外は処理しない
 		return;
 	}
 
-	for (int i = 0; i < plNum; i++)
+	//ここでプレイヤーの強化を反映
+	switch (level_->GetType())
 	{
-		level_->Reflection(*playerMng_->GetPlayer(i), i);
+	case LevelScreenManager::TYPE::ATTACK:
+		break;
+
+	case LevelScreenManager::TYPE::DEFENSE:
+		break;
+
+	case LevelScreenManager::TYPE::LIFE:
+		break;
+
+	case LevelScreenManager::TYPE::SPEED:
+		break;
+
+	default:
+		break;
 	}
 }
 

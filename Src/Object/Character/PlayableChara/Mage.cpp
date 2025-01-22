@@ -2,11 +2,15 @@
 
 Mage::Mage(void)
 {
-	hp_ = MAX_HP;
 }
 
 void Mage::SetParam(void)
 {
+	//ステータス関係
+//------------------------------------------
+	hp_ = HP_MAX;
+	atkPow_ = POW_ATK;
+	def_ = DEF_MAX;
 }
 
 void Mage::AtkFunc(void)

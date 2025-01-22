@@ -13,6 +13,12 @@ public:
 	//敵の出現最大数
 	static constexpr int ENEMY_MAX = 8;
 
+	//敵の出現半径
+	static constexpr float GENELATE_RADIUS = 100.0f;
+
+	//敵間の距離
+	static constexpr float ENEMY_DISTANCE = 30.0f;
+
 	enum class TYPE {
 		ARCHER,
 		AXE,
@@ -21,6 +27,12 @@ public:
 		MAGE,
 		MAX,
 	};
+
+	//コンストラクタ
+	EnemyManager(std::vector<VECTOR> _pos) : createPos_(_pos) {};
+
+	//デストラクタ
+	~EnemyManager() = default;
 
 	void Init(void);
 	void Update(VECTOR _target);
@@ -42,6 +54,7 @@ public:
 
 	//衝突判定
 	void CollisionStage(const Transform& stageTrans);
+	void DeathEnemy(int _num);
 private:
 
 	//更新等をかける動きのある敵
@@ -50,8 +63,34 @@ private:
 	//アクティブな敵の総数
 	int activeNum_;
 
+	//生成座標
+	std::vector<VECTOR> createPos_;
+
 	
 	//引数の敵をアクティブ状態に
 	void CreateEnemy(void);
+
+	/// <summary>
+	/// 重なっていない座標を取る
+	/// </summary>
+	/// <param name="_type">敵のタイプ</param>
+	/// <returns>重なっていない座標</returns>
+	VECTOR GetNotOverlappingPos(TYPE _type);
+
+	/// <summary>
+	/// 円範囲のランダム一点を取る
+	/// </summary>
+	/// <param name="_myPos">出現予定座標</param>
+	/// <param name="_r">出現範囲</param>
+	/// <param name="_tPos">出現させる座標</param>
+	void GetRandomPointInCircle(VECTOR _myPos, const int _r, VECTOR& _tPos);
+
+	/// <summary>
+	/// 敵達が重なっていないか
+	/// </summary>
+	/// <param name="_thisEnemy">比較したい敵</param>
+	/// <param name="_minDist">敵の直径</param>
+	/// <returns>敵が重なったか(true:重なった)</returns>
+	bool IsOverlap(VECTOR& _tPos, float _minDist);
 };
 

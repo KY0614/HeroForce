@@ -4,6 +4,14 @@ class Knight :
     public PlayerBase
 {
 public:
+    //ステータス
+    static constexpr float POW_ATK = 120.0f;
+    static constexpr float MAX_DEF = 150.0f;
+    static constexpr float MAX_HP = 250;
+
+
+
+
     static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//攻撃開始判定の大きさ
     //スキル使用開始時にクールタイムを増やす時間
     static constexpr float SKILL_TWO_START_COOLTIME = 3.0f;

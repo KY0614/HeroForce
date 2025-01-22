@@ -18,7 +18,11 @@ void Knight::SetParam(void)
 		0.0f
 	);
 
+	//ステータス
 	hp_ = MAX_HP;
+	atkPow_ = POW_ATK;
+	def_ = MAX_DEF;
+
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 }
 
@@ -57,15 +61,7 @@ void Knight::AtkFunc(void)
 	if (isSkill_)return;
 	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
-	//近接攻撃用
-	if (ins.CheckAct(ACT_CNTL::NMLATK) && !isAtk_)
-	{
-		if (isCool_[static_cast<int>(ATK_ACT::ATK)])return;
-		ChangeAct(ATK_ACT::ATK);
-		ResetParam(atk_);
-		CntUp(atkStartCnt_);
-		isAtk_ = true;
-	}
+
 	if (!isAtk_)return;
 
 	if (IsAtkStart())
@@ -104,16 +100,7 @@ void Knight::SkillOneInit(void)
 
 void Knight::SkillTwoInit(void)
 {
-	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > GUARD_STARTABLE_COOL && !IsAtkStart())
-	{
-		isCool_[static_cast<int>(SKILL_NUM::TWO)] = false;
-		ChangeAct(static_cast<ATK_ACT>(skillNo_));
-		ResetParam(atk_);
-		coolTime_[static_cast<int>(SKILL_NUM::TWO)] -= SKILL_TWO_START_COOLTIME;
-		atk_.duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
-		//CntUp(atkStartCnt_);
-		isSkill_ = true;
-	}
+
 }
 
 
@@ -134,11 +121,7 @@ void Knight::Skill1Func(void)
 	//斬撃飛ばす
 	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
-	//入力
-	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN))
-	{
-		InitSkill(skillNo_);
-	}
+
 	//近接攻撃用(atk_変数と遠距離で分ける)
 	if (IsAtkStart())
 	{
@@ -169,36 +152,6 @@ void Knight::Skill1Func(void)
 void Knight::Skill2Func(void)
 {
 	if (isAtk_)return;
-	//入力
-	auto& ins = PlayerInput::GetInstance();
-	using ACT_CNTL = PlayerInput::ACT_CNTL;
-	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN))
-	{
-		//ボタンの押しはじめの時に値初期化
-		SkillTwoInit();
-	}
-	//スキル(長押しでガード状態維持)
-	if (ins.CheckAct(ACT_CNTL::SKILL_KEEP)&&isSkill_)
-	{
-		if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > 0.0f)
-		{
-			moveAble_ = false;
-			isCool_[static_cast<int>(SKILL_NUM::TWO)] = false;
-			if (stepAnim_ >= 10.0f)
-			{
-				stepAnim_ = 10.0f;
-			}
-		}
-	}
-	else if (ins.CheckAct(ACT_CNTL::SKILL_UP) && isSkill_)
-	{
-		isPush_ = false;
-		isCool_[static_cast<int>(SKILL_NUM::TWO)] = true;
-		isSkill_ = false;
-		InitAtk();
-	}
-
-
 
 	//ボタン長押ししているときにクールタイムが0秒以下になった時
 	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] <= 0.0f)

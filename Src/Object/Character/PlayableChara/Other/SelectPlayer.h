@@ -11,6 +11,11 @@ public:
 
 	static constexpr float ANIM_SPEED = 20.0f;
 	static constexpr int IDLE_ANIM = 36;
+	static constexpr int KNIGHT_ANIM = 1;
+	static constexpr int AXE_ANIM = 2;
+	static constexpr int MAGE_ANIM = 61;
+	static constexpr int ARCHER_ANIM = 16;
+	static constexpr int SWING_ANIM = 6;
 
 	//コンストラクタ
 	SelectPlayer(void);
@@ -33,14 +38,19 @@ public:
 	void SetRole(int role){ role_ = role; };
 
 	void SetPos(VECTOR pos);
+	void SetChickenPos(VECTOR pos){trans_.pos = pos;};
 
 	void SetRot(Quaternion quo) { for (auto& tran : transArray_) { tran.quaRotLocal = quo; } };
+	void SetRotChicken(Quaternion quo) { trans_.quaRotLocal = quo;  };
 
 	VECTOR GetPos(void) { for (auto& tran : transArray_) { return tran.pos; } };
+	VECTOR GetChickenPos(void) { return trans_.pos; };
 	VECTOR GetPosArray(int i) { return transArray_[i].pos; };
 	
-private:
+	void SetAtkAnim(int i);
+	void SetIdleAnim(int i);
 
+private:
 	int role_;
 	float animChangeTime_;
 

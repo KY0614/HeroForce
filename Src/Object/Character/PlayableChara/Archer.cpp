@@ -1,5 +1,6 @@
 #include"../Manager/Generic/ResourceManager.h"
 #include"../Manager/Generic/SceneManager.h"
+//#include""
 #include"../../Arrow.h"
 
 #include "Archer.h"
@@ -26,7 +27,12 @@ void Archer::SetParam(void)
 	);
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 
+
+	//ステータス関係
 	hp_ = MAX_HP;
+	atkPow_ = POW_ATK;
+	def_ = MAX_DEF;
+
 
 	moveAble_ = true;
 
@@ -139,7 +145,7 @@ void Archer::CreateAtk(void)
 		if (!atk.IsAttack())
 		{
 			//atk初期化
-			atk = atkMax_[act_];
+			ResetParam(atk);
 			return;
 		}
 	}
@@ -185,16 +191,6 @@ void Archer::Draw(void)
 
 void Archer::AtkFunc(void)
 {
-	//入力
-	auto& ins = PlayerInput::GetInstance();
-	using ACT_CNTL = PlayerInput::ACT_CNTL;
-	//攻撃（攻撃アニメーションのフレームが0以下だったらフレームを設定）
-	if (ins.CheckAct(ACT_CNTL::NMLATK))
-	{
-		NmlAtkInit();
-		isAtk_ = true;
-	}
-
 	//明日からアーチャー作成する！
 	if (IsFinishAtkStart() && !isShotArrow_)
 	{
@@ -237,7 +233,6 @@ void Archer::NmlAtkInit(void)
 {
 	if (isCool_[static_cast<int>(ATK_ACT::ATK)])return;
 	ChangeAct(ATK_ACT::ATK);
-	ResetParam(atk_);
 	CntUp(atkStartCnt_);
 }
 

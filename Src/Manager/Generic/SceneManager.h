@@ -28,7 +28,6 @@ public:
 		GAME,
 		CLEAR,
 		GAMEOVER,
-		GAMECLEAR,
 	};
 
 	//ƒRƒ“ƒgƒ[ƒ‰Œn“

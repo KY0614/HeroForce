@@ -19,10 +19,6 @@ public:
 		DOT,
 		LOGO,
 		BOKUTACHI,
-		HANAZOME,
-		BANANA,
-		PENGS,
-		KAKUMEI,
 		MAX
 	};
 
@@ -35,6 +31,10 @@ public:
 		LV_DEF_MES,
 		LV_SPEED_MES,
 		LV_LIFE_MES,
+		LV_TRAP_MES,
+		LV_CANNON_MES,
+		LV_TRAP_UP_MES,
+		LV_CANNON_UP_MES,
 		MAX
 	};
 
@@ -55,9 +55,6 @@ public:
 
 	//フォント名前受け取り
 	inline std::string GetFontName(FONT_TYPE type) const { return fontName_[static_cast<int>(type)]; }
-
-	//テキストサイズの受け取る
-	int GetTextSize(std::string txt, int num)const;
 
 	//解放処理
 	void Destroy();
