@@ -22,11 +22,13 @@ void PlAxe::Init(void)
 
 void PlAxe::Update(void)
 {
+	PlayerDodge* dodge = obj_->GetDodge();
 	//更新
 	obj_->Update();
 
 	//キー入力
-	//PlayerInput::GetInstance().Update(obj_,padNum_,info_.cntrol_);
+	PlayerInput::GetInstance().Update(obj_,padNum_,info_.cntrol_);
+	ActionInput(obj_,dodge);
 
 	//通常攻撃
 	AtkInput();

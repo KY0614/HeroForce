@@ -231,10 +231,10 @@ void PlayerBase::Move(float _deg, VECTOR _axis)
 void PlayerBase::UserUpdate(void)
 {
 	//それぞれの操作更新
-	cntlUpdate_();
+	//cntlUpdate_();
 
 	//それぞれの入力処理
-	PlayerInput::GetInstance().Update(this,padNum_,cntl_);
+	//PlayerInput::GetInstance().Update(this,padNum_,cntl_);
 
 
 
@@ -330,17 +330,13 @@ void PlayerBase::ResetParam(void)
 
 void PlayerBase::KeyBoardControl(void)
 {
-	auto& ins = InputManager::GetInstance();
-	if (ins.IsNew(PlayerInput::MOVE_FRONT_KEY)) { moveDeg_ = 0.0f; }
-	else if (ins.IsNew(PlayerInput::MOVE_LEFT_KEY)) { moveDeg_ = 270.0f; }
-	else if (ins.IsNew(PlayerInput::MOVE_BACK_KEY)) { moveDeg_ = 180.0f; }
-	else if (ins.IsNew(PlayerInput::MOVE_RIGHT_KEY)) { moveDeg_ = 90.0f; }
+
 }
 
 void PlayerBase::GamePad(void)
 {
-	auto& ins = PlayerInput::GetInstance();
-	moveDeg_ = ins.GetStickDeg();
+	//auto& ins = PlayerInput::GetInstance();
+	//moveDeg_ = ins.GetStickDeg();
 }
 
 void PlayerBase::ResetGuardCnt(void)
@@ -599,36 +595,7 @@ void PlayerBase::CoolTimeCnt(void)
 
 void PlayerBase::ProcessAct(void)
 {
-	auto& ins = PlayerInput::GetInstance();
-	using ACT_CNTL = PlayerInput::ACT_CNTL;
-	//設定された向きに向かって動く
-	if (ins.CheckAct(ACT_CNTL::MOVE)) { Move(moveDeg_, AsoUtility::AXIS_Y); }
 
-	//動いてないときはスピード0にする
-	else { moveSpeed_ = 0.0f; }
-
-	if (ins.CheckAct(ACT_CNTL::CHANGE_SKILL)) { SkillChange(); }
-
-	AtkFunc();
-	
-	switch (skillNo_)
-	{
-	case PlayerBase::ATK_ACT::SKILL1:
-		Skill1Func();
-		break;
-	case PlayerBase::ATK_ACT::SKILL2:
-		Skill2Func();
-		break;
-	}
-
-	//回避
-	if (ins.CheckAct(ACT_CNTL::DODGE) && IsSkillable())
-	{
-		float dodgeCnt = dodge_->GetDodgeCnt();
-		ResetAnim(ANIM::DODGE, SPEED_ANIM_DODGE);
-		CntUp(dodgeCnt);
-		dodge_->SetDodgeCnt(dodgeCnt);
-	}
 
 }
 

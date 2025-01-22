@@ -115,6 +115,22 @@ public:
     //リセット
     void Reset(void);
 
+    //移動関連
+     //-------------------------------------
+    //移動処理
+    void Move(float _deg, VECTOR _axis);
+
+    //方向処理
+    void Turn(float _deg, VECTOR _axis);
+
+    //動いてるかどうか
+    bool IsMove(void) { return moveSpeed_ > 0.0f; }
+
+    //スキル使用可能かどうか
+    bool IsSkillable(void) { return !IsAtkAction() && !IsDodge(); }
+    //スキル変更処理
+    void SkillChange(void);
+
     //*****************************************************
     //ゲッタ
     //*****************************************************
@@ -139,10 +155,15 @@ public:
     //アニメーションステップ
     const float GetStepAnim(void) { return stepAnim_; }
 
+    //回避
+    PlayerDodge* GetDodge(void) { return dodge_; }
 
-    //*****************************************************
+
+    //**************************************************************
     //セッター
-    //*****************************************************
+    //**************************************************************
+    //攻撃系
+    //-------------------------------------------------------------------------------------------------------------------
     //攻撃のそれぞれの値
     void SetAtk(const ATK _atk) { atk_ = _atk; }
     //前隙のカウンター
@@ -160,6 +181,21 @@ public:
     //攻撃発生したのを確認する
     const bool IsFinishAtkStart(void)const { return atkStartCnt_ > atkStartTime_[static_cast<int>(act_)]; }
 
+    //攻撃変更用(主に入力されたら変えるようにする)
+    void ChangeAct(const ATK_ACT _act);
+
+    //攻撃の最大値の初期化(弓矢とかの違うatkの配列とか使う用)
+    void ResetParam(ATK& _atk);
+
+    //近接攻撃のatk初期化用
+    void ResetParam(void);
+
+    //攻撃終わった後の初期化
+    virtual void InitAtk(void);
+
+    //持続時間セッタ
+    void SetDulation(const float _dulation) { atk_.duration_ = _dulation; }
+
     //スキルするか
     void SetIsSkill(const bool _isSkill) { isSkill_ = _isSkill; }
 
@@ -171,33 +207,18 @@ public:
     //クールタイムセッタ
     void SetCoolTime(const float coolTime, ATK_ACT _act) { coolTime_[static_cast<int>(_act)] = coolTime; }
 
-    //持続時間セッタ
-    void SetDulation(const float _dulation) { atk_.duration_ = _dulation; }
-
+    //その他
+    //------------------------------------------------------------------------------------
     //アニメーションステップ
     void SetStepAnim(const float _stepAnim) { stepAnim_ = _stepAnim; }
 
-
-    //攻撃変更用(主に入力されたら変えるようにする)
-    void ChangeAct(const ATK_ACT _act);
-
-    //攻撃の最大値の初期化(弓矢とかの違うatkの配列とか使う用)
-    void ResetParam(ATK& _atk);
-
-    //近接攻撃のatk初期化用
-    void ResetParam(void);
-
-    //攻撃発生中フラグ
-    const bool IsAtkStart(void)const { return 0.0f < atkStartCnt_ && atkStartCnt_ <= atkStartTime_[static_cast<int>(act_)]; }
-
-    //攻撃終わった後の初期化
-    virtual void InitAtk(void);
+    //スピード
+    void SetMoveSpeed(const float _speed) { moveSpeed_ = _speed; }
 
 
 
 
-    //攻撃発生したのを確認する
-    const bool IsFinishAtkStart(void)const { return atkStartCnt_ > atkStartTime_[static_cast<int>(act_)]; }
+
 
 
 
@@ -265,8 +286,6 @@ protected:
     int leftStickX_;            //パッドのスティックのX角度  
     int leftStickY_;            //パッドのスティックのY角度
     float stickDeg_;            //パッドのスティックの角度
-
-    float moveDeg_;             //移動方向
 
    //回避系
     float dodgeCnt_;            //ドッジカウント
@@ -366,10 +385,7 @@ protected:
 
 
   
-    const bool IsAtkStart(void)const { return 0.0f < atkStartCnt_ && atkStartCnt_ <= atkStartTime_[static_cast<int>(act_)]; }
-
-    //攻撃発生したのを確認する
-    const bool IsFinishAtkStart(void)const { return atkStartCnt_ > atkStartTime_[static_cast<int>(act_)]; }
+ 
 
     //コントローラー変更
     void ChangeGamePad(void);
@@ -385,16 +401,7 @@ protected:
 
 
 
-    //移動関連
-    //-------------------------------------
-    //移動処理
-    void Move(float _deg, VECTOR _axis);
-
-    //方向処理
-    void Turn(float _deg, VECTOR _axis);
-
-    //動いてるかどうか
-    bool IsMove(void) { return moveSpeed_ > 0.0f; }
+ 
 
     //攻撃
     //-------------------------------------
@@ -413,7 +420,6 @@ protected:
     const bool IsDodgeable(void)const { return !IsDodge() && !IsAtkAction() && !IsCoolDodge(); }
     //クールタイム中かどうか
     const bool IsCoolDodge(void)const { return dodgeCdt_ < DODGE_CDT_MAX; }
-    void Dodge(void);
 
     //ドッジカウント初期化
     void ResetDodgeFrame(void) { dodgeCnt_ = 0.0f; }
@@ -431,8 +437,7 @@ protected:
             || atk_.IsBacklash();
     }
 
-    //スキル使用可能かどうか
-    bool IsSkillable(void) { return !IsAtkAction() && !IsDodge(); }
+
 
     //とりあえずランダムに攻撃を決める
     void RandAct(void);
@@ -458,8 +463,7 @@ private:
     //アクションの発動条件
     void ProcessAct(void);
 
-    //スキル変更処理
-    void SkillChange(void);
+ 
 
     //攻撃入力
     virtual void NmlAtkInit(void);

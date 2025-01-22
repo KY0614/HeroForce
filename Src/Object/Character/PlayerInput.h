@@ -58,8 +58,10 @@ public:
     bool CheckAct(ACT_CNTL _actCntl) { return actCntl_ == _actCntl ? true : false; }
 
     //ゲッタ
+    //----------------------------------------------------------------
     ACT_CNTL GetAct(void) { return actCntl_; }
     float GetStickDeg(void){ return stickDeg_; }
+    float GetMoveDeg(void) { return moveDeg_; }
 
 private:
 
@@ -79,6 +81,7 @@ private:
     float leftStickX_;
     float leftStickY_;
     float stickDeg_;            //パッドのスティックの角度
+    float moveDeg_;             //移動方向
     //PlayerBase* player_;
     //InputManager::JOYPAD_NO padNum_;
     //SceneManager::CNTL cntl_;
