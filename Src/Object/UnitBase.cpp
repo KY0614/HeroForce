@@ -30,6 +30,7 @@ UnitBase::UnitBase(void)
 	animArrayTotalTime_ = -1;
 	stepAnimArray_ = -1.0f;
 	speedAnimArray_ = -1.0f;
+	animTime_ = -1.0f;
 
 	prePos_ = AsoUtility::VECTOR_ZERO;
 	def_ = -1.0f;
@@ -165,6 +166,7 @@ void UnitBase::ResetAnim(const ANIM _anim, const float _speed)
 
 	// 再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
+	animTime_ = MV1GetAttachAnimTime(trans_.modelId, atcAnim_);
 }
 
 void UnitBase::AnimArray(void)
@@ -237,7 +239,7 @@ void UnitBase::ResetAnimArray(const ANIM _anim, const float _speed, int i)
 float UnitBase::GetAnimArrayTime(int i)
 {
 	float ret = MV1GetAttachAnimTime(transArray_[i].modelId, animArray_);
-	return ret;
+	return animTime_;
 }
 //座標の設定
 void UnitBase::SetPos(const VECTOR pos)

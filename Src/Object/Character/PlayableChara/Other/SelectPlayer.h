@@ -47,12 +47,17 @@ public:
 	VECTOR GetChickenPos(void) { return trans_.pos; };
 	VECTOR GetPosArray(int i) { return transArray_[i].pos; };
 	
+	void CheckAnim(void);
+
 	void SetAtkAnim(int i);
 	void SetIdleAnim(int i);
 
 private:
 	int role_;
-	float animChangeTime_;
+	float animKnightTime_;
+	float animAxeTime_;
+	float animMageTime_;
+	float animArcherTime_;
 
 	void Init3DModel(void);
 };
