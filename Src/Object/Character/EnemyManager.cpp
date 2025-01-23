@@ -23,7 +23,7 @@ void EnemyManager::Init(void)
 	createIntCnt_ = 0.0f;
 }
 
-void EnemyManager::Update(VECTOR _target)
+void EnemyManager::Update(void)
 {
 	//ƒJƒEƒ“ƒ^
 	createIntCnt_ = createIntCnt_ + SceneManager::GetInstance().GetDeltaTime();
@@ -41,7 +41,7 @@ void EnemyManager::Update(VECTOR _target)
 	//¶‘¶‚µ‚Ä‚¢‚é“G‚Ìˆ—
 	for (int i = 0; i < activeNum_; i++)
 	{
-		activeEnemys_[i]->SetTargetPos(_target);
+		//activeEnemys_[i]->SetTargetPos(_target);
 		activeEnemys_[i]->Update();
 	}
 }

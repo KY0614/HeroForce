@@ -152,8 +152,6 @@ void EneGolem::Skill_Two(void)
 
 void EneGolem::Skill_Three(void)
 {
-	//TODO:Å‰‚ðC³
-
 	//UŒ‚I—¹”»’è
 	if (lastAtk_ == nullptr ? false : lastAtk_->IsFinishMotion()
 		&& skillThreeCnt_ >= SKILL_THREE_MAX_CNT)

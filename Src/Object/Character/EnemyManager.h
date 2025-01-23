@@ -40,7 +40,7 @@ public:
 	~EnemyManager() = default;
 
 	void Init(void);
-	void Update(VECTOR _target);
+	void Update(void);
 	void Draw(void);
 	void Release(void);
 

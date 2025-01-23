@@ -72,6 +72,21 @@ void EneAxe::InitSkill(void)
 
 void EneAxe::AlertSkill_One(void)
 {
+	//UŒ‚‚ÌÄ¶¬
+	if (lastAtkSign_->IsFinishMotion())
+	{
+		//UŒ‚I—¹
+		isEndAllAtkSign_ = true;
+
+		//ˆ—I—¹
+		return;
+	}
+
+	for (auto& nowSkillSign : nowSkillSign_)
+	{
+		//À•W‚Ìİ’è
+		nowSkillSign.pos_ = MV1GetFramePosition(trans_.modelId, FRAME_AXE);
+	}
 }
 
 void EneAxe::Skill_One(void)

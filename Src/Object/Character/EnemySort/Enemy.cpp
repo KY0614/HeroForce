@@ -44,6 +44,7 @@ void Enemy::Init(void)
 	breakCnt_ = 0.0f;
 	stunDef_ = 0;
 	atkAct_ = ATK_ACT::MAX;
+	isEndAllAtkSign_ = false;
 	isEndAllAtk_ = false;
 	isMove_ = false;
 	ChangeSearchState(SEARCH_STATE::NOT_FOUND);
@@ -139,6 +140,9 @@ void Enemy::ChangeStateAlert(void)
 	//ランダムで攻撃情報を生成
 	RandSkill();
 
+	//攻撃予兆を生成
+	lastAtkSign_ = &createSkillSign_();
+
 	//予備動作アニメーション
 	ResetAnim(nowSkillPreAnim_, changeSpeedAnim_[nowSkillPreAnim_]);
 
@@ -208,7 +212,9 @@ void Enemy::UpdateNml(void)
 	//終了処理
 	//**********************************************************
 
-	/*ゲームシーンにあります*/
+	/*誰かが攻撃範囲に入ったら状態を遷移します*/
+	
+	/*処理はゲームシーンにあります*/
 
 	//**********************************************************
 	//動作処理
@@ -225,7 +231,7 @@ void Enemy::UpdateNml(void)
 		ResetAnim(ANIM::RUN, changeSpeedAnim_[ANIM::RUN]);
 	
 	//索敵
-	//if (!isMove_)return;
+	//if (!isMove_)return;		※のちに消すかも
 
 	//移動処理
 	Move();
@@ -371,6 +377,13 @@ void Enemy::Draw(void)
 		if (nowSkill.IsAttack()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
 		else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
 	}
+
+	for (auto& nowSkillSign : nowSkillSign_)
+	{
+		//攻撃予兆の描画
+		if (nowSkillSign.IsAttack()) { DrawSphere3D(nowSkillSign.pos_, nowSkillSign.radius_, 50.0f, 0x0fff0f, 0x0fff0f, true); }
+		else if (nowSkillSign.IsBacklash()) { DrawSphere3D(nowSkillSign.pos_, nowSkillSign.radius_, 5.0f, 0x0fff0f, 0x0fff0f, false); }
+	}
 }
 
 const VECTOR Enemy::GetMoveVec(const VECTOR _start, const VECTOR _goal, const float _speed)
@@ -403,6 +416,48 @@ void Enemy::Move(void)
 
 	//移動量の初期化
 	moveSpeed_ = 0.0f;
+}
+
+Enemy::ATK& Enemy::CreateSkillSign(ATK_ACT _atkAct)
+{
+	//**********************************************************
+	//使い終わった攻撃がある場合
+	//**********************************************************
+
+	//使い終わった攻撃に上書き
+	for (auto& nowSkillSign : nowSkillSign_)
+	{
+		if (nowSkillSign.IsFinishMotion())
+		{
+			//スキル上書き
+			nowSkillSign = skills_[_atkAct];
+
+			//カウンタの初期化
+			nowSkillSign.ResetCnt();
+
+			//ヒット判定の初期化
+			nowSkillSign.isHit_ = false;
+
+			//処理終了
+			return nowSkillSign;
+		}
+	}
+
+	//**********************************************************
+	//ない場合
+	//**********************************************************
+
+	//ランダムでとってきた攻撃の種類を今から発動するスキルに設定
+	nowSkillSign_.emplace_back(skills_[_atkAct]);
+
+	//カウンタの初期化
+	nowSkillSign_.back().ResetCnt();
+
+	//ヒット判定の初期化
+	nowSkillSign_.back().isHit_ = false;
+
+	//処理終了
+	return nowSkillSign_.back();
 }
 
 Enemy::ATK& Enemy::CreateSkill(ATK_ACT _atkAct)
@@ -493,6 +548,9 @@ void Enemy::RandSkill(void)
 
 	//スキルに対応したアニメーションの記録
 	nowSkillAnim_ = skillAnims_[static_cast<int>(atkAct_)];
+
+	//スキルの予兆生成
+	createSkillSign_ = std::bind(&Enemy::CreateSkillSign, this, atkAct_);
 
 	//スキル生成
 	createSkill_ = std::bind(&Enemy::CreateSkill, this, atkAct_);
