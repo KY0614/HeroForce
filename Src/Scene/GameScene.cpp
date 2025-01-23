@@ -228,6 +228,8 @@ void GameScene::CollisionEnemy(void)
 	//“G‚Ì‘”æ“¾
 	int maxCnt = enmMng_->GetActiveNum();
 
+	enmMng_->CollisionStage(stage_->GetTtans());
+
 	//‚ ‚½‚è”»’è(å‚Éõ“G)
 	for (int i = 0; i < maxCnt; i++)
 	{
@@ -284,6 +286,8 @@ void GameScene::CollisionPlayer(void)
 	auto& col = Collision::GetInstance();
 	//“G‚Ì‘”æ“¾
 	int maxCnt = enmMng_->GetActiveNum();
+
+	playerMng_->CollisionStage(stage_->GetTtans());
 
 	for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
 	{
