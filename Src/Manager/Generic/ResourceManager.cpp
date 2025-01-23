@@ -27,6 +27,18 @@ void ResourceManager::Init(void)
 void ResourceManager::InitTitle(void)
 {
 	Resource res;
+
+	//スカイドーム
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_SKYDOME + "SkyDome.mv1");
+	resourcesMap_.emplace(SRC::SKY_DOME, res);
+
+	//タイトルロゴ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "TitleLogo.png");
+	resourcesMap_.emplace(SRC::TITLE_LOGO, res);
+
+	//キー指示メッセージ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "PleaseKey.png");
+	resourcesMap_.emplace(SRC::PLEASE_KEY, res);
 }
 
 void ResourceManager::InitSelect(void)
