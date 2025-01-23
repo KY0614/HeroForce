@@ -68,6 +68,15 @@ void EffectManager::Play(const EFFECT& _efc, const VECTOR& _pos, const Quaternio
 		}
 }
 
+bool EffectManager::IsPlayEffect(const EFFECT& _efc)
+{
+	if (effectPlay_[_efc] == -1 || IsEffekseer3DEffectPlaying(effectPlay_[_efc]) == -1)
+	{
+		return true;
+	}
+	return false;
+}
+
 
 /// <summary>
 /// エフェクトの再生停止

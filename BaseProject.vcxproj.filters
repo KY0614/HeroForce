@@ -6,7 +6,6 @@
     <ClCompile Include="Src\Manager\GameSystem\DataBank.cpp" />
     <ClCompile Include="Src\Common\ImageFader.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\Collision.cpp" />
-    <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
     <ClCompile Include="Src\Object\System\Carsor.cpp" />
     <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
     <ClCompile Include="Src\Object\Arrow.cpp" />
@@ -74,10 +73,9 @@
     <ClCompile Include="Src\Object\Character\EnemyManager.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerDodge.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerInput.cpp" />
-    <ClCompile Include="Src\Manager\GameSystem\CharacterParamData.cpp" />
-    <ClCompile Include="Src\Object\Character\Chiken\ClearChicken.cpp" />
-    <ClCompile Include="Src\Scene\GameClearScene.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerManager.cpp" />
+    <ClCompile Include="Src\Scene\GameClearScene.cpp" />
+    <ClCompile Include="Src\Object\Character\Chiken\ClearChicken.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Application.cpp">
@@ -119,7 +117,6 @@
     <ClCompile Include="Src\Object\Arrow.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClInclude Include="Src\Object\Stage\StageObject.h" />
     <ClInclude Include="Src\Object\Stage\SkyDome.h" />
     <ClInclude Include="Src\Object\System\Carsor.h" />
     <ClInclude Include="Src\Object\System\LevelupNotice.h" />
@@ -168,7 +165,6 @@
     <ClInclude Include="Src\Common\Vector2.h" />
     <ClInclude Include="Src\Object\Character\PlayerDodge.h" />
     <ClInclude Include="Src\Object\Character\PlayerInput.h" />
-    <ClInclude Include="Src\Shader\PixelShader.h" />
     <ClInclude Include="Src\Common\ShaderFade.h" />
     <ClInclude Include="Src\Manager\GameSystem\CharacterParamData.h" />
     <ClInclude Include="Src\Object\System\GameUi\CpuHpBar.h" />

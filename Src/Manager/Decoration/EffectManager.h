@@ -18,6 +18,11 @@ public:
 	{
 		//使用するエフェクトを羅列
 		NONE,
+		LIFE_UP,
+		ATTACK_UP,
+		DEFENCE_UP,
+		SPEED_UP,
+		FIREWORK
 	};
 
 	// インスタンスの生成
@@ -44,6 +49,13 @@ public:
 	void Play(const EFFECT& _efc,
 		const VECTOR& _pos, const Quaternion& _qua, const float& _size,
 		const SoundManager::SOUND _sound);
+
+	/// <summary>
+	/// エフェクトの再生確認
+	/// </summary>
+	/// <param name="_efc">エフェクト名</param>
+	bool IsPlayEffect(const EFFECT& _efc);
+
 
 	/// <summary>
 	/// エフェクトの再生停止

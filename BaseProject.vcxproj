@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Src\Object\Character\Chiken\ChickenBase.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenManager.cpp" />
+    <ClCompile Include="Src\Object\Character\Chiken\ClearChicken.cpp" />
     <ClCompile Include="Src\Object\Character\EnemyManager.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneArcher.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneAxe.cpp" />
@@ -48,6 +49,7 @@
     <ClCompile Include="Src\Object\Character\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\JobManagerBase.cpp" />
     <ClCompile Include="Src\Scene\FazeResult.cpp" />
+    <ClCompile Include="Src\Scene\GameClearScene.cpp" />
     <ClCompile Include="Src\Scene\GameOverScene.cpp" />
     <ClCompile Include="Src\Manager\Decoration\SoundManager.cpp" />
     <ClCompile Include="Src\Manager\Generic\InputController.cpp" />
@@ -59,7 +61,6 @@
     <ClCompile Include="Src\Common\ImageFader.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\Collision.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\TextManager.cpp" />
-    <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
     <ClCompile Include="Src\Object\System\Carsor.cpp" />
     <ClCompile Include="Src\Object\System\LevelScreenManager.cpp" />
     <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
@@ -145,7 +146,6 @@
     <ClInclude Include="Src\Object\SelectImage.h" />
     <ClInclude Include="Src\Object\Stage\SkyDome.h" />
     <ClInclude Include="Src\Object\Stage\StageManager.h" />
-    <ClInclude Include="Src\Object\Stage\StageObject.h" />
     <ClInclude Include="Src\Object\System\Carsor.h" />
     <ClInclude Include="Src\Object\System\LevelScreenManager.h" />
     <ClInclude Include="Src\Object\System\LevelupNotice.h" />

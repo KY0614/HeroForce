@@ -54,4 +54,3 @@ protected:
 	void DebugDraw();
 
 };
-コンテキスト メニューあり
