@@ -18,6 +18,11 @@ public:
 	{
 		//使用するエフェクトを羅列
 		NONE,
+		LIFE_UP,
+		ATTACK_UP,
+		DEFENCE_UP,
+		SPEED_UP,
+		FIREWORK
 	};
 
 	// インスタンスの生成
@@ -46,6 +51,13 @@ public:
 		const SoundManager::SOUND _sound);
 
 	/// <summary>
+	/// エフェクトの再生確認
+	/// </summary>
+	/// <param name="_efc">エフェクト名</param>
+	bool IsPlayEffect(const EFFECT& _efc);
+
+
+	/// <summary>
 	/// エフェクトの再生停止
 	/// </summary>
 	/// <param name="_efc">エフェクト種類名</param>
@@ -59,12 +71,6 @@ public:
 	/// <param name="_qua">回転情報</param>
 	/// <param name="_size">大きさ</param>
 	void SyncEffect(const EFFECT& _efc, const VECTOR& _pos, const Quaternion& _qua, const float& _size);
-
-	/// <summary>
-	/// エフェクトの再生確認
-	/// </summary>
-	/// <param name="_efc">エフェクト名</param>
-	bool IsPlayEffect(const EFFECT& _efc);
 
 	//解放処理
 	void Release(void);
