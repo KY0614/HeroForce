@@ -55,9 +55,6 @@ void GameScene::Init(void)
 	level_ = std::make_unique<LevelScreenManager>();
 	level_->Init();
 
-	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU));
-	chicken_->Init();
-
 	//プレイヤー設定
 	playerMng_ = std::make_unique<PlayerManager>();
 	playerMng_->Init();
@@ -65,6 +62,13 @@ void GameScene::Init(void)
 	//敵マネージャの生成
 	enmMng_ = std::make_unique<EnemyManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::ENEMY));
 	enmMng_->Init();
+
+	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU),
+		stage_->GetTtans(),
+		playerMng_->GetPlayer(0)->GetTransform());
+	chicken_->Init();
+
+	
 
 	//カメラの設定
 	auto cameras = SceneManager::GetInstance().GetCameras();
@@ -96,7 +100,7 @@ void GameScene::Update(void)
 		{
 			//フェーズカウント増加
 			fazeCnt_++;
-			if(fazeCnt_ >LAST_FAZE)SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+			if(fazeCnt_ >LAST_FAZE)SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
 			//フェーズリザルトが終了したので明転及びリザルトリセット
 			fader_->SetFade(Fader::STATE::FADE_IN);
 			Timer::GetInstance().Reset();
@@ -194,7 +198,7 @@ void GameScene::Draw(void)
 void GameScene::Release(void)
 {
 	level_->Release();
-	stage_->Release();
+	stage_->Destroy();
 
 	SceneManager::GetInstance().ResetCameras();
 	SceneManager::GetInstance().ReturnSolo();

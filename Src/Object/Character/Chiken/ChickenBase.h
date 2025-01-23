@@ -85,7 +85,10 @@ public:
 	//ダメージを与える
 	void SetDamage(const int damage);
 
-private:
+	//状態を得る
+	const STATE GetState(void) const{ return state_; }
+
+protected:
 
 	//移動スピード
 	float moveSpeed_;

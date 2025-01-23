@@ -1,10 +1,11 @@
 #include "ChickenManager.h"
 
-ChickenManager::ChickenManager(std::vector<VECTOR> pos)
+ChickenManager::ChickenManager(
+	std::vector<VECTOR> pos,
+	const Transform& stageTrans,
+	const Transform& playerTrans)
+	: pos_(pos), stageTrans_(stageTrans), playerTrans_(playerTrans)
 {
-	//î•ñ‚Ìó‚¯æ‚è
-	pos_ = pos;
-
 	//‰Šú‰»
 	targetPos_ = AsoUtility::VECTOR_ZERO;
 }
@@ -94,9 +95,8 @@ const int ChickenManager::GetAliveNum(void) const
 {
 	int ret = 0;
 
-	for (auto& c : chickens_) {
-		//¶‚«‚Ä‚¢‚½‚çƒJƒEƒ“ƒ^‘‰Á
-		if (c->IsAlive())ret++;
+	for (auto it = chickens_.begin(); it != chickens_.end(); ) {
+		if ((*it)->IsAlive())ret++;
 	}
 
 	return ret;

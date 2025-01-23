@@ -26,7 +26,7 @@ public:
 		TITLE,
 		SELECT,
 		GAME,
-		CLEAR,
+		GAMECLEAR,
 		GAMEOVER,
 	};
 
