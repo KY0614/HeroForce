@@ -11,11 +11,16 @@ UnitBase::UnitBase(void)
 	trans_.scl = { 0.0f,0.0f,0.0f };
 	trans_.rot = { 0.0f,0.0f,0.0f };	
 
-	for (auto& tran_ : transArray_)
+	for (int i = 0; i < ARRAY_NUM;i++)
 	{
-		tran_.pos = { 0.0f,0.0f,0.0f };
-		tran_.scl = { 0.0f,0.0f,0.0f };
-		tran_.rot = { 0.0f,0.0f,0.0f };
+		transArray_[i].pos = {0.0f,0.0f,0.0f};
+		transArray_[i].scl = { 0.0f,0.0f,0.0f };
+		transArray_[i].rot = { 0.0f,0.0f,0.0f };
+
+		animArray_[i] = -1;
+		animArrayTotalTime_[i] = -1;
+		stepAnimArray_[i] = -1.0f;
+		speedAnimArray_[i] = -1.0f;
 	}
 
 	anim_ = ANIM::NONE;
@@ -25,12 +30,6 @@ UnitBase::UnitBase(void)
 	animTotalTime_ = -1;
 	stepAnim_ = -1.0f;
 	speedAnim_ = 1.0f;
-
-	animArray_ = -1;
-	animArrayTotalTime_ = -1;
-	stepAnimArray_ = -1.0f;
-	speedAnimArray_ = -1.0f;
-	animTime_ = -1.0f;
 
 	prePos_ = AsoUtility::VECTOR_ZERO;
 	def_ = -1.0f;
@@ -166,26 +165,23 @@ void UnitBase::ResetAnim(const ANIM _anim, const float _speed)
 
 	// 再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
-	animTime_ = MV1GetAttachAnimTime(trans_.modelId, atcAnim_);
 }
 
-void UnitBase::AnimArray(void)
+void UnitBase::AnimArray(int i)
 {
 	// アニメーション再生
 	// 経過時間の取得
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
-	stepAnimArray_ += (speedAnimArray_ * deltaTime);
-	if (stepAnimArray_ > animArrayTotalTime_)
+	stepAnimArray_[i] += (speedAnimArray_[i] * deltaTime);
+	if (stepAnimArray_[i] > animArrayTotalTime_[i])
 	{
 		//アニメーション終了時処理（継承先で行動を決めておく）
-		FinishAnimArray();
+		FinishAnimArray(i);
 	}
 
-	for (auto& tran : transArray_)
-	{
-		// 再生するアニメーション時間の設定
-		MV1SetAttachAnimTime(tran.modelId, animArray_, stepAnimArray_);
-	}
+	// 再生するアニメーション時間の設定
+	MV1SetAttachAnimTime(transArray_[i].modelId, animArray_[i], stepAnimArray_[i]);
+
 }
 
 void UnitBase::SetIsHit(const bool _flag)
@@ -214,32 +210,33 @@ void UnitBase::SubHp()
 
 void UnitBase::ResetAnimArray(const ANIM _anim, const float _speed, int i)
 {
-	if (anim_ == _anim)return;
+	if (animStateArray_[i] == _anim)return;
 
-	speedAnimArray_ = _speed;
+	speedAnimArray_[i] = _speed;
 
 	//デタッチ
 	//実質atcAnimの初期化
-	MV1DetachAnim(transArray_[i].modelId, animArray_);
+	MV1DetachAnim(transArray_[i].modelId, animArray_[i]);
 
-	anim_ = _anim;
+	animStateArray_[i] = _anim;
 
 	//アタッチ
 	//実質atcAnimの代入
-	animArray_ = MV1AttachAnim(transArray_[i].modelId, animNum_[anim_]);
+	animArray_[i] = MV1AttachAnim(transArray_[i].modelId, animNumArray_[i][animStateArray_[i]]);
 
-	animArrayTotalTime_ = MV1GetAttachAnimTotalTime(transArray_[i].modelId, animArray_);
-	stepAnimArray_ = 0.0f;
+	animArrayTotalTime_[i] = MV1GetAttachAnimTotalTime(transArray_[i].modelId, animArray_[i]);
+	stepAnimArray_[i] = 0.0f;
 
 	// 再生するアニメーション時間の設定
-	MV1SetAttachAnimTime(transArray_[i].modelId, animArray_, stepAnimArray_);
+	MV1SetAttachAnimTime(transArray_[i].modelId, animArray_[i], stepAnimArray_[i]);
 }
 
 
 float UnitBase::GetAnimArrayTime(int i)
 {
-	float ret = MV1GetAttachAnimTime(transArray_[i].modelId, animArray_);
-	return animTime_;
+	//float ret = MV1GetAttachAnimTime(transArray_[i].modelId, animArray_[i]);
+	float ret = static_cast<float>(animArrayTotalTime_[i]);
+	return ret;
 }
 //座標の設定
 void UnitBase::SetPos(const VECTOR pos)
@@ -293,9 +290,9 @@ void UnitBase::FinishAnim(void)
 	stepAnim_ = 0.0f;
 }
 
-void UnitBase::FinishAnimArray(void)
+void UnitBase::FinishAnimArray(int i)
 {
-	stepAnimArray_ = 0.0f;
+	stepAnimArray_[i] = 0.0f;
 }
 
 void UnitBase::CntUp(float& _count)

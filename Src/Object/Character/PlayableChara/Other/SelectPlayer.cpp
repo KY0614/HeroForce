@@ -22,33 +22,37 @@ void SelectPlayer::Init(void)
 	Init3DModel();
 
 	//キャラクター用
-	animNum_.emplace(ANIM::IDLE, IDLE_ANIM);
-	animNum_.emplace(ANIM::UNIQUE_2, IDLE_ANIM);
-	animNum_.emplace(ANIM::SKILL_1, KNIGHT_ANIM);
-	animNum_.emplace(ANIM::SKILL_2, AXE_ANIM);
-	animNum_.emplace(ANIM::SKILL_3, MAGE_ANIM);
-	animNum_.emplace(ANIM::SKILL_4, ARCHER_ANIM);
+	animNumArray_[0].emplace(ANIM::IDLE, IDLE_ANIM);
+	animNumArray_[1].emplace(ANIM::IDLE, IDLE_ANIM);
+	animNumArray_[2].emplace(ANIM::IDLE, IDLE_ANIM);
+	animNumArray_[3].emplace(ANIM::IDLE, IDLE_ANIM);
 
-	ResetAnimArray(ANIM::IDLE, ANIM_SPEED, 0);
+	animNumArray_[0].emplace(ANIM::SKILL_1, KNIGHT_ANIM);
+	animNumArray_[1].emplace(ANIM::SKILL_1, AXE_ANIM);
+	animNumArray_[2].emplace(ANIM::SKILL_1, MAGE_ANIM);
+	animNumArray_[3].emplace(ANIM::SKILL_1, ARCHER_ANIM);
+
+	ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 0);
 	ResetAnimArray(ANIM::IDLE, ANIM_SPEED, 1);
-	ResetAnimArray(ANIM::IDLE, ANIM_SPEED, 2);
-	ResetAnimArray(ANIM::IDLE, ANIM_SPEED, 3);
+	ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 2);
+	ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 3);
 
 	//チキン用
 	animNum_.emplace(ANIM::UNIQUE_1, SWING_ANIM);
-
+	ResetAnim(ANIM::UNIQUE_1, ANIM_SPEED);
 }
 
 void SelectPlayer::Update(void)
 {
-	AnimArray();
+	for (int i = 0; i < SceneManager::PLAYER_NUM; i++) { AnimArray(i); }
 	Anim();
+
 
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	animKnightTime_ += ANIM_SPEED * deltaTime;
 	animAxeTime_ += ANIM_SPEED * deltaTime;
 	
-	CheckAnim();
+	//CheckAnim();
 
 	for (auto& tran_ : transArray_) 
 	{
@@ -81,12 +85,12 @@ void SelectPlayer::CheckAnim(void)
 	{
 		if (anim_ == ANIM::IDLE)
 		{
-			SetAtkAnim(0);
+			ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 0);
 			animKnightTime_ = 0.0f;
 		}
 		else
 		{
-			SetIdleAnim(0);
+			ResetAnimArray(ANIM::IDLE, ANIM_SPEED, 0);
 			animKnightTime_ = 0.0f;
 		}
 	}
@@ -95,12 +99,12 @@ void SelectPlayer::CheckAnim(void)
 	{
 		if (anim_ == ANIM::IDLE)
 		{
-			SetAtkAnim(1);
+			ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 1);
 			animAxeTime_ = 0.0f;
 		}
 		else
 		{
-			SetIdleAnim(1);
+			ResetAnimArray(ANIM::IDLE, ANIM_SPEED, 1);
 			animAxeTime_ = 0.0f;
 		}
 	}
@@ -109,9 +113,9 @@ void SelectPlayer::CheckAnim(void)
 void SelectPlayer::SetAtkAnim(int i)
 {
 	if(i == 0)ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 0);
-	if(i == 1)ResetAnimArray(ANIM::SKILL_2, ANIM_SPEED, 1);
-	if(i == 2)ResetAnimArray(ANIM::SKILL_3, ANIM_SPEED, 2);
-	if(i == 3)ResetAnimArray(ANIM::SKILL_4, ANIM_SPEED, 3);
+	if(i == 1)ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 1);
+	if(i == 2)ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 2);
+	if(i == 3)ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 3);
 	return;
 }
 
