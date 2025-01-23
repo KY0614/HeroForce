@@ -234,8 +234,7 @@ void UnitBase::ResetAnimArray(const ANIM _anim, const float _speed, int i)
 
 float UnitBase::GetAnimArrayTime(int i)
 {
-	//float ret = MV1GetAttachAnimTime(transArray_[i].modelId, animArray_[i]);
-	float ret = static_cast<float>(animArrayTotalTime_[i]);
+	float ret = MV1GetAttachAnimTime(transArray_[i].modelId, animArray_[i]);
 	return ret;
 }
 //ç¿ïWÇÃê›íË
