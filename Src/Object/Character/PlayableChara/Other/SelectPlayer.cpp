@@ -42,8 +42,6 @@ void SelectPlayer::Init(void)
 	ResetAnim(ANIM::UNIQUE_1, ANIM_SPEED);
 }
 
-	ResetAnim(ANIM::UNIQUE_1, ANIM_SPEED);
-}
 
 void SelectPlayer::Update(void)
 {
@@ -128,35 +126,6 @@ void SelectPlayer::SetIdleAnim(int i)
 	return;
 }
 
-void SelectPlayer::SetAtkAnim(int i)
-{
-	switch (i)
-	{
-	case 0 :
-		ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 0);
-		break;
-
-	case 1:
-		ResetAnimArray(ANIM::SKILL_2, ANIM_SPEED, 1);
-		break;
-
-	case 2:
-		ResetAnimArray(ANIM::SKILL_3, ANIM_SPEED, 2);
-		break;
-
-	case 3:
-		ResetAnimArray(ANIM::SKILL_4, ANIM_SPEED, 3);
-		break;
-
-	default:
-		break;
-	}
-}
-
-void SelectPlayer::SetIdleAnim(int i)
-{
-	ResetAnimArray(ANIM::IDLE, ANIM_SPEED, i);
-}
 
 void SelectPlayer::Init3DModel(void)
 {	
