@@ -270,7 +270,7 @@ void GameScene::CollisionEnemy(void)
 			if (!(eAtk.IsAttack() && !eAtk.isHit_))continue;
 
 			//攻撃が当たる範囲 && プレイヤーが回避していないとき
-			if (col.IsHitAtk(*e, *p) && !p->IsDodge())
+			if (col.IsHitAtk(*e, *p) && !p->GetDodge()->IsDodge())
 			{
 				//ダメージ
 				p->SetDamage(e->GetCharaPow(), eAtk.pow_);

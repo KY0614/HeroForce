@@ -85,6 +85,8 @@ public:
 	//ダメージを与える
 	void SetDamage(const int damage);
 
+	const STATE GetState(void)const { return state_; }
+
 protected:
 
 	//移動スピード

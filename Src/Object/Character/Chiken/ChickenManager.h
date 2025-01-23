@@ -17,7 +17,10 @@ public:
 	//チキン生成数
 	static constexpr int CREATE_COUNT = 10;
 
-	ChickenManager(std::vector<VECTOR> pos);	//生成位置をもらう
+	ChickenManager(
+		std::vector<VECTOR> pos,
+		const Transform& stageTrans,
+		const Transform& playerTrans);
 	~ChickenManager();
 
 	void Init();
@@ -30,6 +33,12 @@ public:
 	//プレイヤー位置を取得(1Pので良い)
 	void SetTargetPos(const VECTOR pos);
 
+	//生存数
+	const int GetAliveNum(void)const;
+
+	//衝突判定
+	void CollisionStage(const Transform& stageTrans, std::shared_ptr<ChickenBase> cheken);
+
 private:
 
 	//リスポーン位置用座標配列
@@ -39,7 +48,8 @@ private:
 	VECTOR targetPos_;
 
 	//プレイヤー用トランスフォーム
-	Transform playerTrans_;
+	const Transform& playerTrans_;
+	const Transform& stageTrans_;
 
 	//チキンインスタンス
 	std::vector<std::shared_ptr<ChickenBase>> chickens_;

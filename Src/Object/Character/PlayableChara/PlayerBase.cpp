@@ -28,6 +28,7 @@ PlayerBase::PlayerBase(void)
 	for (int i = 0; i < static_cast<int>(ATK_ACT::MAX); i++)
 	{
 		coolTime_[i] = coolTimeMax_[i];
+		coolTimePer_[i] = 1.0f;
 	}
 }
 
@@ -103,6 +104,10 @@ void PlayerBase::Init(void)
 
 	isPush_ = false;
 
+	hp_ = hpMax_;
+
+
+
 	PlayerInput::CreateInstance();
 
 	//モデルの初期化
@@ -135,6 +140,9 @@ void PlayerBase::Update(void)
 	colPos_ = VAdd(trans_.pos, VScale(PLAYER_COL_LOCAL_POS, CHARACTER_SCALE));
 
 	UserUpdate();
+
+	//クールタイム割合の計算
+	CoolTimePerCalc();
 
 
 #ifdef DEBUG_ON
@@ -181,7 +189,7 @@ void PlayerBase::Draw(void)
 {
 	MV1DrawModel(trans_.modelId);
 #ifdef DEBUG_ON
-	//DrawDebug();
+	DrawDebug();
 
 #endif // DEBUG_ON
 #ifdef INPUT_DEBUG_ON
@@ -202,7 +210,7 @@ void PlayerBase::Draw(void)
 
 void PlayerBase::Move(float _deg, VECTOR _axis)
 {
-	if (!isAtk_&&!isSkill_)
+	if (!isAtk_ && !isSkill_)
 	{
 		ResetAnim(ANIM::WALK, SPEED_ANIM_RUN);
 	}
@@ -222,7 +230,7 @@ void PlayerBase::UserUpdate(void)
 {
 
 	//停止アニメーションになる条件
-	if (!IsMove() && !dodge_->IsDodge() && 0.0f >= atkStartCnt_ &&!isAtk_&&!isSkill_)
+	if (!IsMove() && !dodge_->IsDodge() && 0.0f >= atkStartCnt_ && !isAtk_ && !isSkill_)
 	{
 		ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 		moveSpeed_ = 0.0f;
@@ -339,11 +347,19 @@ void PlayerBase::DrawDebug(void)
 	//球体
 	DrawSphere3D(trans_.pos, 20.0f, 8, 0x0, 0xff0000, true);
 	//値見る用
-	DrawFormatString(0, 32, 0xffffff
-		, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\natkStartTime(%f)\natkStartCnt(%f)\nskillType(%d)"
-		, atk_.cnt_, atk_.IsAttack(), atk_.IsBacklash()
-		, dodge_->GetDodgeCnt(), atk_.cnt_, atkStartTime_[static_cast<int>(SKILL_NUM::ONE)], atkStartCnt_, atkType_);
+	//DrawFormatString(0, 32, 0xffffff
+	//	, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\natkStartTime(%f)\natkStartCnt(%f)\nskillType(%d)"
+	//	, atk_.cnt_, atk_.IsAttack(), atk_.IsBacklash()
+	//	, dodge_->GetDodgeCnt(), atk_.cnt_, atkStartTime_[static_cast<int>(SKILL_NUM::ONE)], atkStartCnt_, atkType_);
 
+
+	//DrawFormatString(0, 200, 0xffffff
+	//	, "AtkCooltime(%.2f)\nSkill1Cool(%.2f)\nSkill2Cool(%.2f)\natkDulation(%f)\natkCnt(%f)"
+	//	, coolTimePer_[static_cast<int>(ATK_ACT::ATK)]
+	//	, coolTimePer_[static_cast<int>(ATK_ACT::SKILL1)]
+	//	, coolTimePer_[static_cast<int>(ATK_ACT::SKILL2)]
+	//	, atk_.duration_
+	//	, atkStartCnt_);
 
 	//DrawFormatString(0, 32, 0xffffff, "atkPos(%f,%f,%f)", atk_.pos_.x, atk_.pos_.y, atk_.pos_.z);
 	DrawSphere3D(colPos_, CHARACTER_SCALE * 100, 8, color_Col_, color_Col_, false);
@@ -413,7 +429,7 @@ void PlayerBase::InitAtk(void)
 	//攻撃の発生
 	atkStartCnt_ = 0.0f;
 
-	
+
 }
 
 void PlayerBase::Reset(void)
@@ -475,11 +491,11 @@ void PlayerBase::ChangeSkillControll(ATK_ACT _skill)
 }
 const bool PlayerBase::IsAtkable(void) const
 {
-	 return!IsAtkAction() && !dodge_->IsDodge();
+	return!IsAtkAction() && !dodge_->IsDodge();
 }
 const bool PlayerBase::IsDodgeable(void) const
 {
-	 return !dodge_->IsDodge() && !IsAtkAction() && !dodge_->IsCoolDodge(); 
+	return !dodge_->IsDodge() && !IsAtkAction() && !dodge_->IsCoolDodge();
 }
 void PlayerBase::Damage(void)
 {
@@ -546,6 +562,14 @@ void PlayerBase::ProcessAct(void)
 		break;
 	}
 
+}
+
+void PlayerBase::CoolTimePerCalc(void)
+{
+	for (int i = 0; i < static_cast<int>(ATK_ACT::MAX); i++)
+	{
+		coolTimePer_[i] = coolTime_[i] / coolTimeMax_[i];
+	}
 }
 
 bool PlayerBase::IsSkillable(void)

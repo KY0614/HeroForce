@@ -39,6 +39,8 @@ public:
 	void Draw(void) override;
 	void Release(void) override;
 
+	
+
 private:
 
 	//ステージ

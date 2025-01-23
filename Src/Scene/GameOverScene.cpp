@@ -1,4 +1,6 @@
 #include<DxLib.h>
+#include"../Manager/Generic/InputManager.h"
+#include"../Manager/Generic/SceneManager.h"
 #include "GameOverScene.h"
 #include"../Application.h"
 
@@ -8,6 +10,11 @@ void GameOverScene::Init(void)
 
 void GameOverScene::Update(void)
 {
+	auto& ins = InputManager::GetInstance();
+	if (ins.IsTrgDown(KEY_INPUT_SPACE) || ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT)) {
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+	}
+
 }
 
 void GameOverScene::Draw(void)
