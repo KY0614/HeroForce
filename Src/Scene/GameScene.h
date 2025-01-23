@@ -66,8 +66,6 @@ private:
 	//敵
 	std::unique_ptr<EnemyManager>enmMng_;
 
-	//フェーズリザルト
-	std::unique_ptr<FazeResult>fazeResult_;
 	//リザルト中か
 	bool isFazeRezult_;
 	//倒した敵の総数
