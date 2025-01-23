@@ -26,49 +26,73 @@ public:
 		ENEMY_ARCHER,	//弓使い（敵）
 		ENEMY_AXEMAN,	//斧使い（敵）
 		ENEMY_GOLEM,	//ゴーレム(敵)
-		ARROW,			//矢
+		ARROW,
 
 		//ステージ
+		STAGE_01,
+		DECO_01,
 		SKY_DOME,
-		STAGE_BARREL,
-		STAGE_BENCH,
-		STAGE_FENCES_LONG,
-		STAGE_FENCES_SHORT,
-		STAGE_GROUND,
-		STAGE_HOUSE_01,
-		STAGE_HOUSE_02,
-		STAGE_HOUSE_03,
-		STAGE_HOUSE_04,
-		STAGE_HOUSE_05,
-		STAGE_HUNGER_01,
-		STAGE_HUNGER_02,
-		STAGE_ROCK_01,
-		STAGE_ROCK_02,
-		STAGE_ROCK_03,
-		STAGE_SACK,
-		STAGE_TABLE,
-		STAGE_TREE_01,
-		STAGE_TREE_02,
-		STAGE_TREE_03,
-		STAGE_TREE_04,
-		STAGE_TREE_05,
-		STAGE_WAGON,
-		STAGE_WELL,
-		STAGE_WOOD,
+
+		//UI
+		HP_PLAYER,
+		HP_ENEMY,
+		HP_CPU,
+		HP_GAGE,
+		CIRCLE_GAGE,
+		CIRCLE_EXP_GAGE,
+		NUMBERS,
+		CHARA_PARAMS,
+		TO_TITLE,
+		START,
+		TIME,
 
 		//レベル通知用
 		LEVEL_UP,
 		SELECT_UI,
+		CARSOLS,
+		LEVEL_SCREEN_EFE,
+		LEVEL_UP_BACK,
+
+		//強化
+		ATTACK_UP_UI,
+		DEFENCE_UP_UI,
+		SPEED_UP_UI,
+		LIFE_UP_UI,
+		ATTACK_UP_EFE,
+		DEFENCE_UP_EFE,
+		SPEED_UP_EFE,
+		LIFE_UP_EFE,
 
 		//CPU
 		CHICKEN,
+		HELP,
 
 		//選択画面用
 		PLAYER_NUM,		//人数選択
 		RIGHT_POINT,	//右矢印
 		LEFT_POINT,		//左矢印
+		READY,			//準備
+		DEVICE,			//デバイス
 
+		//タイトル画面
+		TITLE_LOGO,
+		PLEASE_KEY,
 
+		//リザルト
+		RANKS,
+		REZALT_BACK,
+
+		//ゲームクリア
+		CONGRATULATIONS,
+		FIREWORK,
+		ROLE,			//役職
+
+		//リザルト
+		RESULT,
+		RANK_S,
+		RANK_A,
+		RANK_B,
+		RANK_C,
 	};
 
 	// 明示的にインステンスを生成する
@@ -85,6 +109,7 @@ public:
 	void InitGame(void);
 	void InitResult(void);
 	void InitGameOver(void);
+	void InitGameClear(void);
 
 	void ResourcePlayer(void);
 	void ResourceEnemy(void);
