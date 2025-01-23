@@ -67,6 +67,7 @@
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\Timer.cpp" />
+    <ClCompile Include="Src\Shader\PixelShader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application.h" />
@@ -135,5 +136,6 @@
     <ClInclude Include="Src\Scene\SelectScene.h" />
     <ClInclude Include="Src\Scene\TitleScene.h" />
     <ClInclude Include="Src\Utility\AsoUtility.h" />
+    <ClInclude Include="Src\Shader\PixelShader.h" />
   </ItemGroup>
 </Project>
