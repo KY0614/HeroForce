@@ -3,10 +3,9 @@
 #include<windows.h>
 #include<vector>
 #include<memory>
-
-#include"../Application.h"
+#include"../../Application.h"
 #include"Camera.h"
-#include"../Common/Fader.h"
+#include"../../Common/Fader.h"
 
 class SceneBase;
 class Fader;

@@ -2,7 +2,7 @@
 #include <DxLib.h>
 #include <cmath>
 #include <DirectXMath.h>
-#include "../Common/Quaternion.h"
+#include "../../Common/Quaternion.h"
 
 class Transform;
 

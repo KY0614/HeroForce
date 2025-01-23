@@ -1,7 +1,7 @@
 #pragma once
 #include<DxLib.h>
 #include"SoundManager.h"
-#include"../Common/Quaternion.h"
+#include"../../Common/Quaternion.h"
 #include<unordered_map>
 #include<string>
 

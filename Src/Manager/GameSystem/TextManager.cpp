@@ -1,4 +1,4 @@
-#include "../Application.h"
+#include "../../Application.h"
 #include "TextManager.h"
 
 TextManager* TextManager::instance_ = nullptr;

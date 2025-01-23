@@ -1,11 +1,9 @@
 #include<DxLib.h>
 #include<string>
-#include"../Application.h"
 #include"DataBank.h"
 #include "Timer.h"
 
 Timer* Timer::instance_ = nullptr;
-//a
 
 Timer::Timer(void)
 {
