@@ -27,7 +27,7 @@ void AxeMan::SetParam(void)
 
 	//ステータス関係
 	//------------------------------------------
-	hp_ = HP_MAX;
+	hpMax_ = HP_MAX;
 	atkPow_ = POW_ATK;
 	def_ = DEF_MAX;
 
@@ -89,6 +89,10 @@ void AxeMan::InitCharaAnim(void)
 //{
 //
 //}
+
+void AxeMan::NmlAtkInit(void)
+{
+}
 
 void AxeMan::SkillOneInit(void)
 {

@@ -63,6 +63,7 @@ void PlKnight::AtkInput(void)
 	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
+	if(obj_->GetIsCool(PlayerBase::ATK_ACT::ATK))return;
 	if (ins.CheckAct(ACT_CNTL::NMLATK) && !obj_->GetIsAtk())
 	{
 		float deltaTime = 1.0f / 60.0f;
@@ -78,6 +79,7 @@ void PlKnight::SkillOneInput(void)
 {
 	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
+	if (obj_->GetIsCool(PlayerBase::ATK_ACT::SKILL1))return;
 	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN))
 	{
 		SkillOneInit();

@@ -95,7 +95,9 @@ protected:
     void InitCharaAnim(void)override;
 
     //void ChargeAct(void)override;
-
+    //UŒ‚“ü—Í
+    void NmlAtkInit(void)override;
+    //ƒXƒLƒ‹“ü—Í
     void SkillOneInit(void)override;
     void SkillTwoInit(void)override;
     //void ResetParam(ATK_ACT _act)override;

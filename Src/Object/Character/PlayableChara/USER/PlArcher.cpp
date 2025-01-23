@@ -76,6 +76,7 @@ void PlArcher::AtkInput(void)
 {
 	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
+	if (obj_->GetIsAtk()&&obj_->GetIsCool(PlayerBase::ATK_ACT::ATK))return;
 	if (ins.CheckAct(ACT_CNTL::NMLATK))
 	{
 		AtkInit();
@@ -84,6 +85,37 @@ void PlArcher::AtkInput(void)
 
 void PlArcher::SkillOneInput(void)
 {
+	auto& ins = PlayerInput::GetInstance();
+	using ACT_CNTL = PlayerInput::ACT_CNTL;
+	using ATK_ACT = PlayerBase::ATK_ACT;
+	float deltaTime = 1.0f / Application::DEFAULT_FPS;
+	int skillOne = static_cast<int>(ATK_ACT::SKILL1);
+	if (obj_->GetIsCool(PlayerBase::ATK_ACT::ATK))return;
+	if (!obj_->GetIsCool(ATK_ACT::SKILL1))
+	{
+		if (ins.CheckAct(ACT_CNTL::SKILL_DOWN) && !obj_->IsAtkStart())
+		{
+			SkillOneInit();
+		}
+		//スキル(長押しでガード状態維持)
+		if (ins.CheckAct(ACT_CNTL::SKILL_KEEP) && obj_->IsAtkStart())
+		{
+			//押している反応
+			//CntUp(atkStartCnt_);
+		}
+		else if (ins.CheckAct(ACT_CNTL::SKILL_UP) && obj_->IsAtkStart())
+		{
+			if (obj_->GetAtkStartCnt() <= SKILL_ONE_START_NOCHARGE)
+			{
+				obj_->SetAtkStartTime(SKILL_ONE_START_NOCHARGE, ATK_ACT::SKILL1);
+			}
+			else
+			{
+				float atkStartCnt = obj_->GetAtkStartCnt();
+				obj_->SetAtkStartTime(atkStartCnt, ATK_ACT::SKILL1);
+			}
+		}
+	}
 }
 
 void PlArcher::SkillTwoInput(void)
@@ -100,4 +132,16 @@ void PlArcher::AtkInit(void)
 	obj_->ChangeAct(ATK_ACT::ATK);
 	obj_->SetAtkStartCnt(deltaTime);
 	obj_->SetIsAtk(true);
+}
+
+void PlArcher::SkillOneInit(void)
+{
+	float deltaTime = 1.0f / 60.0f;
+	auto& ins = PlayerInput::GetInstance();
+	using ACT_CNTL = PlayerInput::ACT_CNTL;
+	using ATK_ACT = PlayerBase::ATK_ACT;
+	if (obj_->GetIsCool(ATK_ACT::SKILL1))return;
+	obj_->ChangeAct(ATK_ACT::SKILL1);
+	obj_->SetAtkStartCnt(deltaTime);
+	obj_->SetIsSkill(true);
 }

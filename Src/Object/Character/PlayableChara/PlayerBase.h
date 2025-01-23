@@ -24,12 +24,13 @@ public:
     unsigned int color_skl1_;
     unsigned int color_skl2_;
 
+    //デバッグ用関数
+    virtual void DrawDebug(void);
+
 #endif // DEBUG_ON
     //デバッグ用
 
 
-    //デバッグ用関数
-    virtual void DrawDebug(void);
 
     //各アニメーション番号
     static constexpr int T_POSE_NUM = 64;
@@ -100,12 +101,6 @@ public:
     virtual void Draw(void)override;
 
 
-
-
-
-    //コントローラー変更用関数
-    void ChangeControll(SceneManager::CNTL _cntl);
-
    // //回避関連
    ////---------------------------------------
    // const bool IsDodge(void)const { return 0.0f < dodgeCnt_ && dodgeCnt_ < FRAME_DODGE_MAX; }
@@ -159,6 +154,9 @@ public:
 
     //回避
     PlayerDodge* GetDodge(void) { return dodge_; }
+
+    //クールタイム割合のゲッタ
+    float* GetCoolTimePer(void) { return coolTimePer_; }
 
 
     //**************************************************************
@@ -217,13 +215,6 @@ public:
     //スピード
     void SetMoveSpeed(const float _speed) { moveSpeed_ = _speed; }
 
-
-
-
-
-
-
-
 protected:
     //ポインタ
       //回避機能
@@ -245,10 +236,9 @@ protected:
         ATK_ACT act_;
         float atkStartCnt_;
         ATK atk_;
-        float coolCnt_;
         float CoolTime_[static_cast<int>(ATK_ACT::MAX)];
-        std::map<ATK_ACT, ATK>atkMax_;
-        float coolTimeMax_[static_cast<int>(ATK_ACT::MAX)];             //クールタイム最大
+        float CoolTimeMax_[static_cast<int>(ATK_ACT::MAX)];                //クールタイム最大
+        std::map<ATK_ACT, ATK>atkMax_;         
         float atkStartTime_[static_cast<int>(ATK_ACT::MAX)];            //攻撃発生時間
         bool IsAtkStart(void){ return 0.0f < atkStartCnt_ && atkStartCnt_ <= atkStartTime_[static_cast<int>(act_)]; }
     };
@@ -310,10 +300,6 @@ protected:
     //それぞれのアクションの初期化
     virtual void InitAct(void);
 
-    //ほぼガード用
-    virtual void ResetGuardCnt(void);
-
-
     void ChangeNmlAtk(void);
     void ChangeSkillOne(void);
     void ChangeSkillTwo(void);
@@ -323,16 +309,7 @@ protected:
     //ユーザーがいるときの更新
     void UserUpdate(void);
 
-    //操作系（キーボード)
-    void KeyBoardControl(void);
-
-    //ゲームパッド
-    void GamePad(void);
-
-
     SceneManager::CNTL cntl_;
-    std::map < SceneManager::CNTL, std::function<void(void)>> changeCntl_;//コントローラー変更用
-    std::function<void(void)> cntlUpdate_;                                 //それぞれの更新
 
     ATK_ACT skillNo_;     //スキル変更用
 
@@ -346,25 +323,11 @@ protected:
     //スキル2
     virtual void Skill2Func(void) = 0;
 
-
-  
- 
-
-    //コントローラー変更
-    void ChangeGamePad(void);
-    //キーボード変更
-    void ChangeKeyBoard(void);
-
-
     //攻撃座標の同期
     void SyncActPos(ATK& _atk);
 
     //スキルごとの操作更新
     void ChangeSkillControll(ATK_ACT _skill);
-
-
-
- 
 
     //攻撃
     //-------------------------------------
@@ -381,12 +344,6 @@ protected:
     //回避中かどうか
 
     const bool IsDodgeable(void)const;
-    //クールタイム中かどうか
-    //const bool IsCoolDodge(void)const { return dodgeCdt_ < DODGE_CDT_MAX; }
-
-    //ドッジカウント初期化
-    //void ResetDodgeFrame(void) { dodgeCnt_ = 0.0f; }
-
 
     //スキル
     //virtual void Skill(void);
@@ -403,13 +360,9 @@ protected:
     //クールタイムのカウント
     void CoolTimeCnt(void);
 
-  
-
 private:
-
-    //std::map<ACT_CNTL, std::function<void(void)>>changeActCntl_;        //アクションごとに返すボタンを変更
-    //std::function<bool(void)>actCntlUpdate_;
-
+    //メンバ変数
+    float coolTimePer_[static_cast<int>(ATK_ACT::MAX)];
   
 #ifdef DEBUG_INPUT
 
@@ -418,13 +371,13 @@ private:
     
     //アクションの発動条件
     void ProcessAct(void);
-
+    void CoolTimePerCalc(void);
  
 
     //攻撃入力
-    virtual void NmlAtkInit(void);
+    virtual void NmlAtkInit(void)=0;
     //スキル入力
-    virtual void SkillOneInit(void);
-    virtual void SkillTwoInit(void);
+    virtual void SkillOneInit(void)=0;
+    virtual void SkillTwoInit(void)=0;
 
 };

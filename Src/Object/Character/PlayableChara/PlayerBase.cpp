@@ -28,6 +28,7 @@ PlayerBase::PlayerBase(void)
 	for (int i = 0; i < static_cast<int>(ATK_ACT::MAX); i++)
 	{
 		coolTime_[i] = coolTimeMax_[i];
+		coolTimePer_[i] = 1.0f;
 	}
 }
 
@@ -51,29 +52,9 @@ void PlayerBase::Init(void)
 	InitDebug();
 #endif // DEBUG_ON
 	//関数ポインタ初期化
-
-	changeCntl_.emplace(SceneManager::CNTL::KEYBOARD, std::bind(&PlayerBase::ChangeKeyBoard, this));
-	changeCntl_.emplace(SceneManager::CNTL::PAD, std::bind(&PlayerBase::ChangeGamePad, this));
-
 	changeAct_.emplace(ATK_ACT::ATK, std::bind(&PlayerBase::ChangeNmlAtk, this));
 	changeAct_.emplace(ATK_ACT::SKILL1, std::bind(&PlayerBase::ChangeSkillOne, this));
 	changeAct_.emplace(ATK_ACT::SKILL2, std::bind(&PlayerBase::ChangeSkillTwo, this));
-
-#ifdef DEBUG_INPUT
-	//キーボードとパッドのボタンを共通させる(これらはInputManagerで定義したものから使えるようにしたい)
-	//----------------------------------------------------------------------------------------------------------------
-	inputActionMap_["ATTACK"] = { {InputType::KEYBOARD,ATK_KEY},{InputType::PAD,RIGHT_BTN} };
-	inputActionMap_["DODGE"] = { {InputType::KEYBOARD,DODGE_KEY},{InputType::PAD,LEFT_BTN} };
-	inputActionMap_["SKILL"] = { {InputType::KEYBOARD,SKILL_KEY},{InputType::PAD,TOP_BTN} };
-	inputActionMap_["SKILL_CHANGE"] = { {InputType::KEYBOARD,SKILL_CHANGE_KEY},{InputType::PAD,R_BUTTON} };
-
-#endif // DEBUG_INPUT
-
-
-
-
-	//ChangeChargeActControll();
-	//ChangeNmlActControll();
 
 	radius_ = MY_COL_RADIUS;
 
@@ -85,8 +66,6 @@ void PlayerBase::Init(void)
 
 	//攻撃の初期化(とりあえず通常攻撃で初期化しておく)
 	ChangeAct(ATK_ACT::ATK);
-
-	ChangeControll(SceneManager::CNTL::KEYBOARD);
 
 	ChangeSkillControll(ATK_ACT::SKILL1);
 
@@ -102,6 +81,10 @@ void PlayerBase::Init(void)
 	atkStartCnt_ = 0.0f;
 
 	isPush_ = false;
+
+	hp_ = hpMax_;
+
+
 
 	PlayerInput::CreateInstance();
 
@@ -136,6 +119,9 @@ void PlayerBase::Update(void)
 
 	UserUpdate();
 
+	//クールタイム割合の計算
+	CoolTimePerCalc();
+
 
 #ifdef DEBUG_ON
 
@@ -143,59 +129,15 @@ void PlayerBase::Update(void)
 #endif // DEBUG_ON
 	//スキルが終わったらクールタイムのカウント開始
 	CoolTimeCnt();
-
-#ifdef DEBUG_ON
-	{
-		auto& ins = InputManager::GetInstance();
-		const float SPEED = 5.0f;
-		if (ins.IsNew(KEY_INPUT_W)) { userOnePos_.z += SPEED; }
-		if (ins.IsNew(KEY_INPUT_D)) { userOnePos_.x += SPEED; }
-		if (ins.IsNew(KEY_INPUT_S)) { userOnePos_.z -= SPEED; }
-		if (ins.IsNew(KEY_INPUT_A)) { userOnePos_.x -= SPEED; }
-
-
-
-		// 左スティックの横軸
-		leftStickX_ = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLX;
-
-		//縦軸
-		leftStickY_ = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLY;
-		auto stickRad = static_cast<float>(atan2(static_cast<double>(leftStickY_), static_cast<double>(leftStickX_)));
-		stickDeg_ = static_cast<float>(AsoUtility::DegIn360(AsoUtility::Rad2DegF(stickRad) + 90.0f));
-		//前
-		if (leftStickY_ < -1) { userOnePos_.z += SPEED; }
-		//右
-		else if (leftStickX_ > 1) { userOnePos_.x += SPEED; }
-		//下
-		else if (leftStickY_ > 1) { userOnePos_.z -= SPEED; }
-		//左
-		else if (leftStickX_ < -1) { userOnePos_.x -= SPEED; }
-
-	}
-
-#endif // DEBUG_ON
-
 }
 
 void PlayerBase::Draw(void)
 {
 	MV1DrawModel(trans_.modelId);
 #ifdef DEBUG_ON
-	//DrawDebug();
+	DrawDebug();
 
 #endif // DEBUG_ON
-#ifdef INPUT_DEBUG_ON
-	if (IsPressed("ATTACK"))
-	{
-		DrawString(0, 32, "ATTACK is pressed", 0x000000);
-	}
-	if (IsPressed("DODGE"))
-	{
-		DrawString(0, 32, "DODGE is pressed", 0x000000);
-	}
-#endif // INPUT_DEBUG_ON
-
-
 }
 
 
@@ -232,7 +174,6 @@ void PlayerBase::UserUpdate(void)
 	ProcessAct();
 
 	//回避
-	//Dodge();
 	dodge_->Update(trans_);
 	if (dodge_->IsDodge() && !dodge_->IsCoolDodge()) {
 		atk_.ResetCnt();
@@ -241,8 +182,6 @@ void PlayerBase::UserUpdate(void)
 		isSkill_ = false;
 		moveAble_ = true;
 	}
-
-
 }
 
 
@@ -309,27 +248,6 @@ void PlayerBase::ResetParam(void)
 	atk_ = atkMax_[act_];
 }
 
-void PlayerBase::KeyBoardControl(void)
-{
-
-}
-
-void PlayerBase::GamePad(void)
-{
-	//auto& ins = PlayerInput::GetInstance();
-	//moveDeg_ = ins.GetStickDeg();
-}
-
-void PlayerBase::ResetGuardCnt(void)
-{
-
-}
-
-void PlayerBase::ChangeControll(SceneManager::CNTL _cntl)
-{
-	cntl_ = _cntl;
-	changeCntl_[cntl_]();
-}
 
 
 #ifdef DEBUG_ON
@@ -339,11 +257,19 @@ void PlayerBase::DrawDebug(void)
 	//球体
 	DrawSphere3D(trans_.pos, 20.0f, 8, 0x0, 0xff0000, true);
 	//値見る用
-	DrawFormatString(0, 32, 0xffffff
-		, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\natkStartTime(%f)\natkStartCnt(%f)\nskillType(%d)"
-		, atk_.cnt_, atk_.IsAttack(), atk_.IsBacklash()
-		, dodge_->GetDodgeCnt(), atk_.cnt_, atkStartTime_[static_cast<int>(SKILL_NUM::ONE)], atkStartCnt_, atkType_);
+	//DrawFormatString(0, 32, 0xffffff
+	//	, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\natkStartTime(%f)\natkStartCnt(%f)\nskillType(%d)"
+	//	, atk_.cnt_, atk_.IsAttack(), atk_.IsBacklash()
+	//	, dodge_->GetDodgeCnt(), atk_.cnt_, atkStartTime_[static_cast<int>(SKILL_NUM::ONE)], atkStartCnt_, atkType_);
 
+
+	//DrawFormatString(0, 200, 0xffffff
+	//	, "AtkCooltime(%.2f)\nSkill1Cool(%.2f)\nSkill2Cool(%.2f)\natkDulation(%f)\natkCnt(%f)"
+	//	, coolTimePer_[static_cast<int>(ATK_ACT::ATK)]
+	//	, coolTimePer_[static_cast<int>(ATK_ACT::SKILL1)]
+	//	, coolTimePer_[static_cast<int>(ATK_ACT::SKILL2)]
+	//	, atk_.duration_
+	//	, atkStartCnt_);
 
 	//DrawFormatString(0, 32, 0xffffff, "atkPos(%f,%f,%f)", atk_.pos_.x, atk_.pos_.y, atk_.pos_.z);
 	DrawSphere3D(colPos_, CHARACTER_SCALE * 100, 8, color_Col_, color_Col_, false);
@@ -429,23 +355,12 @@ void PlayerBase::Reset(void)
 	//dodgeCdt_ = DODGE_CDT_MAX;
 	dodge_->Init();
 	moveSpeed_ = 0.0f;
-	ChangeControll(SceneManager::CNTL::KEYBOARD);
 
 	userOnePos_ = { -400.0f,0.0f,0.0f };
 
 	act_ = ATK_ACT::MAX;
 	//モデルの初期化
 	trans_.Update();
-}
-
-void PlayerBase::ChangeGamePad(void)
-{
-	cntlUpdate_ = std::bind(&PlayerBase::GamePad, this);
-}
-
-void PlayerBase::ChangeKeyBoard(void)
-{
-	cntlUpdate_ = std::bind(&PlayerBase::KeyBoardControl, this);
 }
 
 void PlayerBase::SyncActPos(ATK& _atk)
@@ -470,8 +385,6 @@ void PlayerBase::ChangeSkillControll(ATK_ACT _skill)
 	isPush_ = false;
 	moveAble_ = true;
 
-	//変更点
-	//ChangeAtkType(static_cast<ATK_ACT>(_skill));
 }
 const bool PlayerBase::IsAtkable(void) const
 {
@@ -548,6 +461,14 @@ void PlayerBase::ProcessAct(void)
 
 }
 
+void PlayerBase::CoolTimePerCalc(void)
+{
+	for (int i = 0; i < static_cast<int>(ATK_ACT::MAX); i++)
+	{
+		coolTimePer_[i] = coolTime_[i] / coolTimeMax_[i];
+	}
+}
+
 bool PlayerBase::IsSkillable(void)
 {
 	{ return !IsAtkAction() && !dodge_->IsDodge(); }
@@ -561,17 +482,3 @@ void PlayerBase::SkillChange(void)
 	//変更点
 	ChangeSkillControll(skillNo_);
 }
-
-void PlayerBase::NmlAtkInit(void)
-{
-}
-
-void PlayerBase::SkillOneInit(void)
-{
-}
-
-void PlayerBase::SkillTwoInit(void)
-{
-}
-
-

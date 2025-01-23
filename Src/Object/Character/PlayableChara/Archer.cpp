@@ -13,7 +13,7 @@ Archer::Archer(void)
 void Archer::SetParam(void)
 {
 	InitAct();
-
+	arrowMdlId_ = -1;
 	trans_.SetModel(
 		ResourceManager::GetInstance()
 		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_ARCHER));
@@ -29,10 +29,9 @@ void Archer::SetParam(void)
 
 
 	//ステータス関係
-	hp_ = MAX_HP;
+	hpMax_ = MAX_HP;
 	atkPow_ = POW_ATK;
 	def_ = MAX_DEF;
-
 
 	moveAble_ = true;
 
@@ -191,6 +190,7 @@ void Archer::Draw(void)
 
 void Archer::AtkFunc(void)
 {
+	if (!isAtk_||isSkill_)return;
 	//明日からアーチャー作成する！
 	if (IsFinishAtkStart() && !isShotArrow_)
 	{
@@ -221,7 +221,38 @@ void Archer::AtkFunc(void)
 
 void Archer::Skill1Func(void)
 {
+	if (isAtk_)return;
+	if (isCool_[static_cast<int>(skillNo_)])
+	{
+		return;
+	}
+	if (0.0f < atkStartCnt_ && atkStartCnt_ < atkStartTime_[static_cast<int>(act_)])
+	{
+		CntUp(atkStartCnt_);
+		if (stepAnim_ >= SKILL_CHARGE_STEPANIM)
+		{
+			stepAnim_ = SKILL_CHARGE_STEPANIM;
+		}
+	}
+	else if (atkStartCnt_ >= atkStartTime_[static_cast<int>(skillNo_)])
+	{
 
+		CreateArrow();
+		CreateAtk();
+		coolTime_[static_cast<int>(
+			ATK_ACT::SKILL1)] = 0.0f;
+
+		//スキル終わったら攻撃発生時間の最大時間をセットする
+		atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;
+
+		InitAtk();
+		isSkill_ = false;
+		if (atk_.IsFinishMotion())
+		{
+
+
+		}
+	}
 }
 
 void Archer::Skill2Func(void)
@@ -254,14 +285,6 @@ void Archer::SkillOneInit(void)
 void Archer::SkillTwoInit(void)
 {
 }
-
-//void PlArcher::NmlActCommon(void)
-//{
-//
-//}
-
-
-
 
 void Archer::InitArrowAtk(ATK& arrowAtk)
 {

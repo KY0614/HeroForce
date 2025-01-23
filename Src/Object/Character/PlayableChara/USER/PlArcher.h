@@ -7,6 +7,10 @@
 class PlArcher :public JobManagerBase
 {
 public:
+	//’è”
+	static constexpr float SKILL_ONE_START_NOCHARGE = 0.2;
+
+
 	PlArcher(const SceneManager::CNTL _cntl);
 	PlArcher(const InputManager::JOYPAD_NO _padNum);
 	~PlArcher(void) = default;
@@ -27,4 +31,7 @@ private:
 
 	//’ÊíUŒ‚‰Šú‰»
 	void AtkInit(void);
+
+	//ƒXƒLƒ‹1‰Šú‰»
+	void SkillOneInit(void);
 };
