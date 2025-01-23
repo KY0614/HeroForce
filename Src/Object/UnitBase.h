@@ -112,7 +112,7 @@ public:
 	void ResetAnim(const ANIM _anim, const float _speed);
 
 	//配列用アニメーション関数
-	void AnimArray(void);
+	void AnimArray(int i);
 	//アニメーションリセット
 	void ResetAnimArray(const ANIM _anim, const float _speed,int i);
 	float GetAnimArrayTime(int i);
@@ -178,16 +178,17 @@ protected:
 	float speedAnim_;						//アニメーション速度
 
 	//配列用アニメ関係
-	int animArray_;							//アタッチするアニメを格納
-	int animArrayTotalTime_;				//アニメーションの総再生時間
-	float stepAnimArray_;					//アニメーションの再生時間
-	float speedAnimArray_;					//アニメーション速度
-	float animTime_;
+	ANIM animStateArray_[ARRAY_NUM];			//アニメステート
+	std::unordered_map<ANIM, int> animNumArray_[ARRAY_NUM];		//アニメーションナンバー格納配列。
+	int animArray_[ARRAY_NUM];					//アタッチするアニメを格納
+	int animArrayTotalTime_[ARRAY_NUM];			//アニメーションの総再生時間
+	float stepAnimArray_[ARRAY_NUM];			//アニメーションの再生時間
+	float speedAnimArray_[ARRAY_NUM];			//アニメーション速度
 
 	//アニメーション終了時の動き
 	virtual void FinishAnim(void);	
 	//アニメーション配列用終了時の動き
-	virtual void FinishAnimArray(void);
+	virtual void FinishAnimArray(int i);
 	//カウンタ増加
 	void CntUp(float& _count);
 	//カウンタ減少
