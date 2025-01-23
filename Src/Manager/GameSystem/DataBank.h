@@ -22,6 +22,9 @@ public:
 		ROLE,
 		USER_NUM,
 		DHISPLAY_NUM,
+		FAZE_DUNK_ENEMY,
+		GAME_DUNK_ENEMY,
+		ALIVE_CHICKEN
 	};
 
 	// インスタンスの生成
@@ -31,13 +34,13 @@ public:
 	static DataBank& GetInstance(void);
 
 	void Init(void);
-	
+
 	//データ入力
-	void Input(const SceneManager::CNTL _cntl,const int _playerNum);		//コントロール方法の入力
-	void Input(const SceneManager::PLAY_MODE _mode,const int _playerNum);	//ユーザーかCPU科の入力
+	void Input(const SceneManager::CNTL _cntl, const int _playerNum);		//コントロール方法の入力
+	void Input(const SceneManager::PLAY_MODE _mode, const int _playerNum);	//ユーザーかCPU科の入力
 	void Input(const SceneManager::ROLE _role, const int _playerNum);		//役職の入力
 	void Input(const INFO _info, const int _num);							//システムに関する数値入力（画面数・ユーザー数用）
-	
+
 	//データ出力
 	const PLAYER_INFO Output(const int _playerNum);	//プレイヤーに関する情報を返す
 	const int Output(const INFO _info);				//システムに関する数値出力（画面数・ユーザー数用）
@@ -55,6 +58,11 @@ private:
 	//ディスプレイの数
 	int displayNum_;
 
+	//リザルト情報
+	int fazeDunk_;		//フェーズごとの倒した敵
+	int gameDunk_;		//倒した敵総数
+	int aliveChikenNum_;	//ニワトリ生存数
+
 	// 静的インスタンス
 	static DataBank* instance_;
 
@@ -62,4 +70,5 @@ private:
 	DataBank() = default;
 	~DataBank() = default;
 };
+
 
