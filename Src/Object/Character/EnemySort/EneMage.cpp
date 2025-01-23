@@ -26,6 +26,7 @@ void EneMage::SetParam(void)
 	def_ = DEF;
 	exp_ = EXP;
 	walkSpeed_ = WALK_SPEED;
+	runSpeed_ = RUN_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
 	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
@@ -101,7 +102,7 @@ void EneMage::Skill_One(void)
 	if (skillOneShotCnt_ < SKILL_ONE_MAX_CNT)
 	{
 		//座標の設定
-		skillOneShot_ = VAdd(skillOneShot_, GetTargetVec(skillOneShot_, SKILL_ONE_SPEED));
+		skillOneShot_ = VAdd(skillOneShot_, GetMoveVec(skillOneShot_, targetPos_,SKILL_ONE_SPEED));
 
 		//スキル１の発生間隔
 		if (skillOneDelayCnt_ >= SKILL_ONE_SHOT_DELAY)
@@ -130,7 +131,8 @@ void EneMage::Skill_One(void)
 void EneMage::DrawDebug(void)
 {
 	Enemy::DrawDebug();
-	DrawSphere3D(skillOneShot_, 25.0f, 20, 0xf0f0f0, 0xf0f0f0, true);
+	
+	if(!isEndAllAtk_)DrawSphere3D(skillOneShot_, 25.0f, 20, 0xf0f0f0, 0xf0f0f0, true);
 }
 
 void EneMage::FinishAnim(void)
@@ -168,7 +170,7 @@ void EneMage::ChangeStateAtk(void)
 	stateUpdate_ = std::bind(&EneMage::UpdateAtk, this);
 
 	//向きを改めて設定
-	trans_.quaRot = trans_.quaRot.LookRotation(GetTargetVec());
+	trans_.quaRot = trans_.quaRot.LookRotation(GetMoveVec(trans_.pos, targetPos_));
 
 	//座標の初期設定
 	skillOneShot_ = MV1GetFramePosition(trans_.modelId, FRAME_ROD);

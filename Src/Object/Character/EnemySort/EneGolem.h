@@ -71,7 +71,7 @@ public:
 
 	//速度関係
 	static constexpr float WALK_SPEED = 2.0f;	//歩きの速度
-	static constexpr float RUN_SPEED = 4.0f;	//走りの速度
+	static constexpr float RUN_SPEED = 2.5f;	//走りの速度
 
 	//範囲関係
 	static constexpr float SEARCH_RANGE = 2000.0f * CHARACTER_SCALE;		//索敵判定の大きさ

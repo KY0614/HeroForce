@@ -26,6 +26,7 @@ void EneBrig::SetParam(void)
 	def_ = DEF;
 	exp_ = EXP;
 	walkSpeed_ = WALK_SPEED;
+	runSpeed_ = RUN_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
 	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;

@@ -39,6 +39,7 @@ void EneArcher::SetParam(void)
 	arrowCnt_ = 0;
 	isShotArrow_ = false;
 	walkSpeed_ = WALK_SPEED;
+	runSpeed_ = RUN_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
 	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
@@ -203,7 +204,7 @@ void EneArcher::ChangeStateAtk(void)
 	stateUpdate_ = std::bind(&EneArcher::UpdateAtk, this);
 
 	//Œü‚«‚ğ‰ü‚ß‚Äİ’è
-	trans_.quaRot = trans_.quaRot.LookRotation(GetTargetVec());
+	trans_.quaRot = trans_.quaRot.LookRotation(GetMoveVec(trans_.pos, targetPos_));
 }
 
 void EneArcher::Update(void)

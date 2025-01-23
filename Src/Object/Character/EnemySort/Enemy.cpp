@@ -25,6 +25,11 @@ void Enemy::Init(void)
 	stateChanges_.emplace(STATE::ATTACK, std::bind(&Enemy::ChangeStateAtk, this));
 	stateChanges_.emplace(STATE::BREAK, std::bind(&Enemy::ChangeStateBreak, this));
 
+	//探索状態管理
+	SearchStateInfo_.emplace(SEARCH_STATE::NOT_FOUND, std::bind(&Enemy::SearchMoveInfo, this));
+	SearchStateInfo_.emplace(SEARCH_STATE::CHICKEN_FOUND, std::bind(&Enemy::FoundMoveInfo, this));
+	SearchStateInfo_.emplace(SEARCH_STATE::PLAYER_FOUND, std::bind(&Enemy::FoundMoveInfo, this));
+
 	//キャラ固有設定
 	SetParam();
 
@@ -40,6 +45,8 @@ void Enemy::Init(void)
 	stunDef_ = 0;
 	atkAct_ = ATK_ACT::MAX;
 	isEndAllAtk_ = false;
+	isMove_ = false;
+	ChangeSearchState(SEARCH_STATE::NOT_FOUND);
 
 	//攻撃情報の初期化
 	InitSkill();
@@ -82,6 +89,15 @@ void Enemy::Update(void)
 	trans_.Update();
 }
 
+void Enemy::ChangeSearchState(const SEARCH_STATE _searchState)
+{
+	//状態遷移
+	searchState_ = _searchState;
+
+	//状態による情報更新
+	SearchStateInfo_[searchState_]();
+}
+
 void Enemy::Damage(const int _damage, const int _stunPow)
 {
 	//既にやられているなら処理しない
@@ -118,7 +134,7 @@ void Enemy::ChangeStateAlert(void)
 	stateUpdate_ = std::bind(&Enemy::UpdateAlert, this);
 
 	//向きを改めて設定
-	trans_.quaRot = trans_.quaRot.LookRotation(GetTargetVec());
+	trans_.quaRot = trans_.quaRot.LookRotation(GetMoveVec(trans_.pos,targetPos_));
 
 	//ランダムで攻撃情報を生成
 	RandSkill();
@@ -199,15 +215,17 @@ void Enemy::UpdateNml(void)
 	//**********************************************************
 
 	//待機アニメーション
-	if (moveSpeed_ == 0.0)ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
+	if (moveSpeed_ == 0.0)
+		ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
 	//歩きアニメーション
-	else if (moveSpeed_ > 0.0f)ResetAnim(ANIM::WALK, changeSpeedAnim_[ANIM::WALK]);
-
-	//移動量の初期化
-	moveSpeed_ = 0.0f;
+	else if (moveSpeed_ > 0.0f && searchState_ == SEARCH_STATE::NOT_FOUND)
+		ResetAnim(ANIM::WALK, changeSpeedAnim_[ANIM::WALK]);
+	//走りアニメーション
+	else if (moveSpeed_ > 0.0f && searchState_ != SEARCH_STATE::NOT_FOUND)
+		ResetAnim(ANIM::RUN, changeSpeedAnim_[ANIM::RUN]);
 	
 	//索敵
-	if (!isMove_)return;
+	//if (!isMove_)return;
 
 	//移動処理
 	Move();
@@ -323,6 +341,18 @@ void Enemy::DrawDebug(void)
 	DrawSphere3D(trans_.pos, atkStartRange_, 2, state_ == STATE::ALERT ? 0xff0000 : 0xffffff, state_ == STATE::ALERT ? 0x0000ff : 0xffffff, false);
 }
 
+void Enemy::SearchMoveInfo(void)
+{
+	//移動速度更新
+	moveSpeed_ = walkSpeed_;
+}
+
+void Enemy::FoundMoveInfo(void)
+{
+	//移動速度更新
+	moveSpeed_ = runSpeed_;
+}
+
 void Enemy::Draw(void)
 {
 #ifdef DEBUG_ENEMY
@@ -343,10 +373,10 @@ void Enemy::Draw(void)
 	}
 }
 
-const VECTOR Enemy::GetTargetVec(const float _speed) const
+const VECTOR Enemy::GetMoveVec(const VECTOR _start, const VECTOR _goal, const float _speed)
 {
-	//標的への方向ベクトルを取得						※targetPosはSceneGameからもらう
-	VECTOR targetVec = VSub(targetPos_, trans_.pos);
+	//標的への方向ベクトルを取得
+	VECTOR targetVec = VSub(_goal, _start);
 
 	//正規化
 	targetVec = VNorm(targetVec);
@@ -358,46 +388,21 @@ const VECTOR Enemy::GetTargetVec(const float _speed) const
 	VECTOR ret = VScale(targetVec, _speed);
 
 	return ret;
-}
-
-const VECTOR Enemy::GetTargetVec(const VECTOR _pos, const float _speed) const
-{
-	//標的への方向ベクトルを取得						※targetPosはSceneGameからもらう
-	VECTOR targetVec = VSub(targetPos_, _pos);
-
-	//正規化
-	targetVec = VNorm(targetVec);
-
-	//Y座標は必要ないので要素を消す
-	targetVec = { targetVec.x,0.0f,targetVec.z };
-
-	//移動量を求める
-	VECTOR ret = VScale(targetVec, _speed);
-
-	return ret;
-}
-
-void Enemy::SearchChicken(void)
-{
-}
-
-void Enemy::SearchPlayer(void)
-{
 }
 
 void Enemy::Move(void)
 {
-	//移動速度の更新
-	moveSpeed_ = walkSpeed_;
-
 	//移動ベクトル取得
-	VECTOR targetVec = GetTargetVec(moveSpeed_);
+	VECTOR targetVec = GetMoveVec(trans_.pos, targetPos_, moveSpeed_);
 
 	//向き回転
 	trans_.quaRot = trans_.quaRot.LookRotation(targetVec);
 
 	//移動
 	trans_.pos = VAdd(trans_.pos, targetVec);
+
+	//移動量の初期化
+	moveSpeed_ = 0.0f;
 }
 
 Enemy::ATK& Enemy::CreateSkill(ATK_ACT _atkAct)

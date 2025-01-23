@@ -33,7 +33,7 @@ public:
 	static constexpr float EXP = 300.0f;		//敵の経験値
 
 	//速度関係
-	static constexpr float WALK_SPEED = 3.0f;	//歩きの速度
+	static constexpr float WALK_SPEED = 2.5f;	//歩きの速度
 	static constexpr float RUN_SPEED = 4.0f;	//走りの速度
 
 	//範囲関係

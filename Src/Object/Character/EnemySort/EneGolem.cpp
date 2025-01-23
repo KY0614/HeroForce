@@ -31,6 +31,7 @@ void EneGolem::SetParam(void)
 	def_ = DEF;
 	exp_ = EXP;
 	walkSpeed_ = WALK_SPEED;
+	runSpeed_ = RUN_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
 	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
@@ -46,6 +47,7 @@ void EneGolem::InitAnim(void)
 	//固有アニメーション初期化
 	animNum_.emplace(ANIM::IDLE, EneGolem::ANIM_IDLE);
 	animNum_.emplace(ANIM::WALK, EneGolem::ANIM_WALK);
+	animNum_.emplace(ANIM::RUN, EneGolem::ANIM_WALK);
 	animNum_.emplace(ANIM::SKILL_1, ANIM_PUNCH);
 	animNum_.emplace(ANIM::SKILL_2, ANIM_MOWDOWN);
 	animNum_.emplace(ANIM::SKILL_3, ANIM_SHOUT);
@@ -59,6 +61,7 @@ void EneGolem::InitAnim(void)
 	//アニメーション速度設定
 	changeSpeedAnim_.emplace(ANIM::IDLE, SPEED_ANIM_IDLE);
 	changeSpeedAnim_.emplace(ANIM::WALK, SPEED_ANIM_WALK);
+	changeSpeedAnim_.emplace(ANIM::RUN, SPEED_ANIM_WALK);
 	changeSpeedAnim_.emplace(ANIM::SKILL_1, SPEED_ANIM_PUNCH);
 	changeSpeedAnim_.emplace(ANIM::SKILL_2, SPEED_ANIM_MOWDOWN);
 	changeSpeedAnim_.emplace(ANIM::SKILL_3, SPEED_ANIM_SHOUT);
