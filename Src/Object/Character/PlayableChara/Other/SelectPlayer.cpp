@@ -29,6 +29,7 @@ void SelectPlayer::Init(void)
 		ResetAnimArray(ANIM::IDLE, ANIM_SPEED, i);
 	}
 
+	//アニメーション番号を設定
 	animNumArray_[0].emplace(ANIM::SKILL_1, KNIGHT_ANIM);
 	animNumArray_[1].emplace(ANIM::SKILL_1, AXE_ANIM);
 	animNumArray_[2].emplace(ANIM::SKILL_1, MAGE_ANIM);
@@ -74,7 +75,9 @@ void SelectPlayer::Update(void)
 
 void SelectPlayer::Draw(void)
 {
+	//キャラ
 	MV1DrawModel(transArray_[role_].modelId);
+	//チキン
 	MV1DrawModel(trans_.modelId);
 }
 
