@@ -85,7 +85,7 @@ public:
 	//ダメージを与える
 	void SetDamage(const int damage);
 
-private:
+protected:
 
 	//移動スピード
 	float moveSpeed_;
