@@ -31,6 +31,7 @@ GameScene::GameScene(void)
 	fazeResult_ = nullptr;
 
 	isPhaseChanging_ = false;
+	fazeCnt_ = 1;
 }
 
 GameScene::~GameScene(void)
@@ -54,9 +55,6 @@ void GameScene::Init(void)
 	level_ = std::make_unique<LevelScreenManager>();
 	level_->Init();
 
-	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU));
-	chicken_->Init();
-
 	//プレイヤー設定
 	playerMng_ = std::make_unique<PlayerManager>();
 	playerMng_->Init();
@@ -64,6 +62,13 @@ void GameScene::Init(void)
 	//敵マネージャの生成
 	enmMng_ = std::make_unique<EnemyManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::ENEMY));
 	enmMng_->Init();
+
+	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU),
+		stage_->GetTtans(),
+		playerMng_->GetPlayer(0)->GetTransform());
+	chicken_->Init();
+
+	
 
 	//カメラの設定
 	auto cameras = SceneManager::GetInstance().GetCameras();
@@ -93,7 +98,10 @@ void GameScene::Update(void)
 
 		if (fazeResult_->IsEnd())
 		{
-			//フェーズリザルトが終了したので明転
+			//フェーズカウント増加
+			fazeCnt_++;
+			if(fazeCnt_ >LAST_FAZE)SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
+			//フェーズリザルトが終了したので明転及びリザルトリセット
 			fader_->SetFade(Fader::STATE::FADE_IN);
 			Timer::GetInstance().Reset();
 			fazeResult_->Reset();
@@ -220,6 +228,8 @@ void GameScene::CollisionEnemy(void)
 	//敵の総数取得
 	int maxCnt = enmMng_->GetActiveNum();
 
+	enmMng_->CollisionStage(stage_->GetTtans());
+
 	//あたり判定(主に索敵)
 	for (int i = 0; i < maxCnt; i++)
 	{
@@ -230,44 +240,43 @@ void GameScene::CollisionEnemy(void)
 		VECTOR ePos = e->GetPos();
 		UnitBase::ATK eAtk = e->GetAtk();
 
-		//動ける分だけ(のちに全員分に変える)
-		VECTOR pPos = playerMng_->GetPlayer(0)->GetPos();
 
-		//索敵
-		//範囲内に入っているとき
-		if (col.Search(ePos, pPos, e->GetSearchRange())) {
-			//移動を開始
-			e->SetIsMove(true);
-		}
-		else {
-			//移動を停止
-			e->SetIsMove(false);
-		}
-
-		//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
-		if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL) {
-			//状態を変更
-			e->ChangeState(Enemy::STATE::ALERT);
-		}
-
-		//攻撃判定
-		//アタック中 && 攻撃判定が終了していないとき
-		if (eAtk.IsAttack() && !eAtk.isHit_)
+		for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
 		{
-			//各プレイヤーと当たり判定を取る
-			for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
-			{
-				PlayerBase* p = playerMng_->GetPlayer(i);
-				//攻撃が当たる範囲 && プレイヤーが回避していないとき
-				if (col.IsHitAtk(*e, *p) && !p->IsDodge())
-				{
-					//ダメージ
-					p->Damage();
-					//使用した攻撃を判定終了に
-					e->SetIsHit(true);
-				}
+			PlayerBase* p = playerMng_->GetPlayer(i);
+			VECTOR pPos = p->GetPos();
+
+			//索敵
+		//範囲内に入っているとき
+			if (col.Search(ePos, pPos, e->GetSearchRange())) {
+				//移動を開始
+				e->SetIsMove(true);
 			}
-		}
+			else {
+				//移動を停止
+				e->SetIsMove(false);
+			}
+
+			//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
+			if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL) {
+				//状態を変更
+				e->ChangeState(Enemy::STATE::ALERT);
+			}
+
+			//攻撃判定
+
+			//アタック中 && 攻撃判定が終了していないときだけ処理する。それ以外はしないので戻る
+			if (!(eAtk.IsAttack() && !eAtk.isHit_))continue;
+
+			//攻撃が当たる範囲 && プレイヤーが回避していないとき
+			if (col.IsHitAtk(*e, *p) && !p->IsDodge())
+			{
+				//ダメージ
+				p->SetDamage(e->GetCharaPow(), eAtk.pow_);
+				//使用した攻撃を判定終了に
+				e->SetIsHit(true);
+			}
+		}	
 	}
 }
 
@@ -277,6 +286,8 @@ void GameScene::CollisionPlayer(void)
 	auto& col = Collision::GetInstance();
 	//敵の総数取得
 	int maxCnt = enmMng_->GetActiveNum();
+
+	playerMng_->CollisionStage(stage_->GetTtans());
 
 	for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
 	{
@@ -299,7 +310,9 @@ void GameScene::CollisionPlayer(void)
 			//当たり判定
 			if (col.IsHitAtk(*p, *e)) {
 				//被弾
-				e->Damage(5, 4);
+				e->SetDamage(p->GetCharaPow(), pAtk.pow_);
+				//倒した敵の増加
+				if (!e->IsAlive())dunkEnmCnt_++;
 				//攻撃判定の終了
 				p->SetIsHit(true);
 			}
@@ -390,6 +403,16 @@ void GameScene::Fade(void)
 //*********************************************************
 void GameScene::ChangePhase(void)
 {
+	//リザルトに関係するデータを入力
+	DataBank& data = DataBank::GetInstance();
+
+	data.Input(DataBank::INFO::FAZE_DUNK_ENEMY, dunkEnmCnt_);	//倒した敵数
+	data.Input(DataBank::INFO::ALIVE_CHICKEN, chicken_->GetAliveNum());		//ニワトリ生存数
+
+	//リザルトで取得
+	fazeResult_->SetResult();
+	if (fazeCnt_ == LAST_FAZE)fazeResult_->SetLast();
+
 	isPhaseChanging_ = true;
 	fader_->SetFade(Fader::STATE::FADE_OUT);
 }

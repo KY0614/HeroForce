@@ -26,9 +26,8 @@ public:
 		TITLE,
 		SELECT,
 		GAME,
-		CLEAR,
-		GAMEOVER,
 		GAMECLEAR,
+		GAMEOVER,
 	};
 
 	//コントローラ系統
@@ -154,4 +153,5 @@ private:
 
 	// フェード
 	void Fade(void);
+
 };
