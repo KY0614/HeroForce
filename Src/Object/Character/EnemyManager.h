@@ -56,6 +56,9 @@ public:
 
 	//“|‚³‚ê‚½“G‚ÌŒãˆ— _num=“|‚³‚ê‚½“G‚Ì”z—ñ”Ô†
 	void DeathEnemy(int _num);
+
+	//Õ“Ë”»’è
+	void CollisionStage(const Transform& stageTrans);
 private:
 
 	//XV“™‚ğ‚©‚¯‚é“®‚«‚Ì‚ ‚é“G
