@@ -4,13 +4,9 @@
 #include "PlayableChara/PlayerBase.h"
 #include"PlayableChara/PlayerCpu.h"
 #include "PlayableChara/USER/PlAxeMan.h"
-#include "PlayableChara/CPU/CpuAxe.h"
 #include "PlayableChara/USER/PlKnight.h"
-#include "PlayableChara/CPU/CpuKnight.h"
 #include "PlayableChara/USER/PlArcher.h"
-#include "PlayableChara/CPU/CpuArcher.h"
 #include "PlayableChara/USER/PlMage.h"
-#include "PlayableChara/CPU/CpuMage.h"
 
 #include "PlayerManager.h"
 
@@ -69,7 +65,7 @@ PlayerBase* PlayerManager::GetPlayer(const int _num)
 }
 
 void PlayerManager::CollisionStage(const Transform& stageTrans)
-{ 
+{
 	auto& col = Collision::GetInstance();
 
 	for (int i = 0; i < PLAYER_NUM; i++)
@@ -147,23 +143,19 @@ JobManagerBase* PlayerManager::CreateCpuPlayer(const SceneManager::ROLE _role)
 
 	switch (_role) {
 	case SceneManager::ROLE::AXEMAN:
-		//ret = new PlAxe(SceneManager::CNTL::NONE);
-		ret = new CpuAxe();
+		ret = new PlAxe(SceneManager::CNTL::NONE);
 		//ret = new PlAxe();
 		break;
 	case SceneManager::ROLE::ARCHER:
-		//ret = new PlArcher(SceneManager::CNTL::NONE);
-		ret = new CpuArcher();
+		ret = new PlArcher(SceneManager::CNTL::NONE);
 		//ret = new PlArcher();
 		break;
 	case SceneManager::ROLE::KNIGHT:
-		//ret = new PlKnight(SceneManager::CNTL::NONE);
-		ret = new CpuKnight();
+		ret = new PlKnight(SceneManager::CNTL::NONE);
 		//ret = new PlKnight();
 		break;
 	case SceneManager::ROLE::MAGE:
-		//ret = new PlMage(SceneManager::CNTL::NONE);
-		ret = new CpuMage();
+		ret = new PlMage(SceneManager::CNTL::NONE);
 		//ret = new PlMage();
 		break;
 	default:

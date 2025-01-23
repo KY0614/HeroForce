@@ -8,6 +8,32 @@ class ResourceManager
 
 public:
 
+	//カーソル画像用定数
+	static constexpr int CARSORS_NUM_X = 4;
+	static constexpr int CARSORS_NUM_Y = 1;
+	static constexpr int CARSORS_SIZE = 64;
+
+	//数字画像用定数
+	static constexpr int NUMBERS_NUM_X = 5;
+	static constexpr int NUMBERS_NUM_Y = 2;
+	static constexpr int NUMBERS_SIZE = 128;
+
+	//レベルアップ画面エフェクト用定数
+	static constexpr int LV_EFE_NUM_X = 10;
+	static constexpr int LV_EFE_NUM_Y = 6;
+	static constexpr int LV_EFE_SIZE = 256;
+
+	//キャラクターパラメータ定数
+	static constexpr int CHARA_PARAM_NUM_X = 1;
+	static constexpr int CHARA_PARAM_NUM_Y = 4;
+	static constexpr int CHARA_PARAM_SIZE_X = 640;
+	static constexpr int CHARA_PARAM_SIZE_Y = 360;
+
+	//スコアランク用定数
+	static constexpr int RANKS_NUM_X = 4;
+	static constexpr int RANKS_NUM_Y = 1;
+	static constexpr int RANK_SIZE = 300;
+
 	// リソース名
 	enum class SRC
 	{
