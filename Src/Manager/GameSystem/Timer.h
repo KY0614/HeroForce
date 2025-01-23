@@ -4,12 +4,8 @@ class Timer
 	//a
 public:
 
-	//時間の上限・下限
 	static constexpr int TIME_MAX = 59;
 	static constexpr int TIME_MIN = 0;
-
-	//フォントサイズ初期値
-	static constexpr int TIME_FONT_SIZE = 50;
 
 	void Update();
 	void Draw();
@@ -30,16 +26,10 @@ private:
 	int minute_;	//分数
 	int second_;	//秒数
 
-	bool isEnd_;	//タイマー終了の知らせ
+	bool isEnd_;
 
 	int cnt_;	//カウンター
 
-	int font_;	//フォントハンドル
-	int fontSize_;	//フォントの大きさ
-	int strWidth_;	//文字列の横サイズ
-
-	VECTOR pos_;	//位置
-	
 	void ReduceTime(void);
 
 	Timer(void);

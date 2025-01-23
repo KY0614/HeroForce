@@ -28,7 +28,9 @@ public:
 
 	// コンストラクタ
 	TitleScene(void);
-	~TitleScene(void) = default;
+
+	// デストラクタ
+	~TitleScene(void);
 
 	void Init(void) override;
 	void Update(void) override;

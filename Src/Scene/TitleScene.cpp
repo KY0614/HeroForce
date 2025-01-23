@@ -16,12 +16,12 @@ TitleScene::TitleScene(void)
 	sky_ = nullptr;
 }
 
+TitleScene::~TitleScene(void)
+{
+}
+
 void TitleScene::Init(void)
 {
-	//スカイドーム
-	sky_ = std::make_unique<SkyDome>();
-	sky_->Init();
-
 	//画像読み込み
 	imgLogo_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::TITLE_LOGO).handleId_;
 	imgMes_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLEASE_KEY).handleId_;

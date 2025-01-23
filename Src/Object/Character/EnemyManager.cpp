@@ -231,18 +231,3 @@ void EnemyManager::DeathEnemy(int _num)
 	activeEnemys_[activeNum_]->Destroy();
 	delete activeEnemys_[activeNum_];
 }
-
-void EnemyManager::CollisionStage(const Transform& stageTrans)
-{
-	auto& col = Collision::GetInstance();
-
-	for (int i = 0; i < activeNum_; i++)
-	{
-		if (col.IsHitUnitStageObject(stageTrans.modelId, activeEnemys_[i]->GetTransform().pos, activeEnemys_[i]->GetRadius()))
-		{
-			activeEnemys_[i]->SetPrePos();
-		}
-	}
-
-
-}

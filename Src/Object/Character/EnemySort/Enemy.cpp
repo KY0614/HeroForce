@@ -56,9 +56,6 @@ void Enemy::Update(void)
 	//アニメーション
 	Anim();
 
-	//座標バックアップ
-	prePos_ = trans_.pos;
-
 #ifdef DEBUG_ENEMY
 	//入力用
 	InputManager& ins = InputManager::GetInstance();

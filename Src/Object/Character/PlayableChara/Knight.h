@@ -1,9 +1,18 @@
 #pragma once
 #include "PlayerBase.h"
+class Arrow;
 class Knight :
     public PlayerBase
 {
 public:
+    //ステータス
+    static constexpr float POW_ATK = 120.0f;
+    static constexpr float MAX_DEF = 150.0f;
+    static constexpr float MAX_HP = 250;
+
+
+
+
     static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//攻撃開始判定の大きさ
     //スキル使用開始時にクールタイムを増やす時間
     static constexpr float SKILL_TWO_START_COOLTIME = 3.0f;
@@ -99,7 +108,7 @@ public:
     Knight(void);
     ~Knight(void) = default;
     void SetParam(void)override;
-
+    void Update(void)override;
 protected:
     //攻撃アクションのパラメータの初期化
     void InitAct(void)override;
@@ -119,10 +128,20 @@ protected:
     //固有アニメーション番号の初期化
     void InitCharaAnim(void)override;
 
-    ////長押しスキル
-    //void ChargeAct(void)override;
-
 private:
+    //メンバー関数
+    void InitSlashAtk(ATK & arrowAtk);
+    void CreateSlash(void);
+
+    //メンバ変数
     float guardCnt_;        //ガード時間
+    std::vector<ATK>slashArrow_;
+    int arrowMdlId_;							//矢のモデル
+    std::vector<std::shared_ptr<Arrow>> arrow_;	//弓矢
+    bool isShotArrow_;							//矢を放ったかの判定(true:放った)
+    int arrowCnt_;								//矢の使用個数カウンタ
+    float reloadCnt_;							//矢のリロード時間
+
+    float atkAbleCnt_;                          //矢の発射可能カウント
 };
 

@@ -1,11 +1,18 @@
 #pragma once
 
-class Arrow;
 #include "PlayerBase.h"
+class Arrow;
 class Archer :
     public PlayerBase
 {
 public:
+    //ステータス
+    static constexpr int ATK_POW = 90;
+    static constexpr int MAX_HP = 235;
+    static constexpr int MAX_DEF = 90;
+
+
+
     static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//攻撃開始判定の大きさ
     static constexpr float ATKABLE_TIME = 1.0f;                         //連射受付時間
 
@@ -41,7 +48,7 @@ public:
     static constexpr float COL_SKILL2 = CHARACTER_SCALE * 200.0f;
 
     //攻撃威力
-    static constexpr float ATK_POW = 7.0f;
+    static constexpr float POW_ATK = 7.0f;
     static constexpr float SKILL_ONE_POW_MIN = 15.0f;
     static constexpr float SKILL_ONE_POW_MAX = 25.0f;
     static constexpr float SKILL_TWO_POW = 0.0f;

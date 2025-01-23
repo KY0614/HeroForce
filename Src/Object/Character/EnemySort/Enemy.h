@@ -8,7 +8,7 @@ class Enemy : public UnitBase
 {
 public:
 
-//#define DEBUG_ENEMY
+#define DEBUG_ENEMY
 
 	//移行テストしております
 

@@ -70,8 +70,7 @@ public:
 		LEFT_TRG,
 		RIGHT_TRG,
 
-		DECIDE,
-		CANCEL
+		DECIDE
 	};
 
 	//デバイス情報
@@ -122,8 +121,6 @@ public:
 	KEY_CONFIG GetConfig(void);					//入力キーを取得
 
 	SELECT GetSelect(void) { return select_; }	//現在の選択フェーズを取得
-
-	bool IsAllReady(void);
 
 	//セッター -----------------------------------------------------------
 

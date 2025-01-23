@@ -44,6 +44,11 @@ UnitBase::UnitBase(void)
 	atkUpPercent_ = -1.0f;
 	defUpPercent_= -1.0f;
 	speedUpPercent_ = -1.0f;
+	defHp_ = -1;
+
+	atkUpPercent_ = -1.0f;
+	defUpPercent_= -1.0f;
+	speedUpPercent_ = -1.0f;
 }
 
 UnitBase::~UnitBase(void)
@@ -108,14 +113,14 @@ const UnitBase::ATK UnitBase::GetAtk(void) const
 	return atk_;
 }
 
-const float UnitBase::GetRadius(void) const
-{
-	return radius_;
-}
-
 const VECTOR UnitBase::GetPrePos() const
 {
 	return prePos_;
+}
+
+const float UnitBase::GetRadius(void) const
+{
+	return radius_;
 }
 
 /// <summary>
@@ -124,18 +129,18 @@ const VECTOR UnitBase::GetPrePos() const
 /// <param name="_num">再生するアニメーションナンバー</param>
 void UnitBase::Anim(void)
 {
-	// アニメーション再生
+	if (stepAnim_ > animTotalTime_ )
 	// 経過時間の取得
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	// アニメーション時間の進行
 	stepAnim_ += (speedAnim_ * deltaTime);
-	if (stepAnim_ > animTotalTime_ )
+	if (stepAnim_ > animTotalTime_)
 	{
-		//アニメーション終了時処理（継承先で行動を決めておく）
-		FinishAnim();
-	}
-	// 再生するアニメーション時間の設定
-	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
+	//for (auto& tran : transArray_)
+	//{
+	//	// 再生するアニメーション時間の設定
+	//	MV1SetAttachAnimTime(tran.modelId, atcAnim_, stepAnim_);
+	//}
 }
 
 
@@ -155,18 +160,13 @@ void UnitBase::ResetAnim(const ANIM _anim, const float _speed)
 	//実質atcAnimの初期化
 	MV1DetachAnim(trans_.modelId, atcAnim_);
 
-	anim_ = _anim;
 	//アタッチ
 	//実質atcAnimの代入
 	atcAnim_ = MV1AttachAnim(trans_.modelId, animNum_[anim_]);
 
-	animTotalTime_ = MV1GetAttachAnimTotalTime(trans_.modelId, atcAnim_);
-	stepAnim_ = 0.0f;
 
-	// 再生するアニメーション時間の設定
-	MV1SetAttachAnimTime(trans_.modelId, atcAnim_, stepAnim_);
 }
-
+	//	//実質atcAnimの初期化
 void UnitBase::AnimArray(int i)
 {
 	// アニメーション再生
@@ -178,15 +178,15 @@ void UnitBase::AnimArray(int i)
 		//アニメーション終了時処理（継承先で行動を決めておく）
 		FinishAnimArray(i);
 	}
-
+	//	//アタッチ
 	// 再生するアニメーション時間の設定
 	MV1SetAttachAnimTime(transArray_[i].modelId, animArray_[i], stepAnimArray_[i]);
 
 }
 
-void UnitBase::SetIsHit(const bool _flag)
-{
-	atk_.isHit_ = _flag;
+	//	// 再生するアニメーション時間の設定
+	//	MV1SetAttachAnimTime(tran.modelId, atcAnim_, stepAnim_);
+	//}
 }
 
 void UnitBase::SetDamage(const int attackerPower, const int skillPower)
@@ -283,16 +283,21 @@ void UnitBase::ParamLoad()
 
 }
 
-//アニメ終了時の動き
-void UnitBase::FinishAnim(void)
+void UnitBase::SetIsHit(const bool _flag)
 {
-	//ループ再生
-	stepAnim_ = 0.0f;
+	atk_.isHit_ = _flag;
+}
+
 }
 
 void UnitBase::FinishAnimArray(int i)
 {
 	stepAnimArray_[i] = 0.0f;
+//アニメ終了時の動き
+void UnitBase::FinishAnim(void)
+{
+	//ループ再生
+	stepAnim_ = 0.0f;
 }
 
 void UnitBase::CntUp(float& _count)
@@ -302,9 +307,8 @@ void UnitBase::CntUp(float& _count)
 	_count += deltaTime;
 }
 
-void UnitBase::CntDown(float& _count)
-{
-	// 経過時間の取得
-	float deltaTime = 1.0f / Application::DEFAULT_FPS;
-	_count -= deltaTime;
+}	_count -= deltaTime;
 }
+
+
+

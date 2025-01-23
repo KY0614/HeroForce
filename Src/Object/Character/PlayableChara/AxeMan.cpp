@@ -25,7 +25,11 @@ void AxeMan::SetParam(void)
 	);
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 
-	hp_ = MAX_HP;
+	//ステータス関係
+	//------------------------------------------
+	hp_ = HP_MAX;
+	atkPow_ = POW_ATK;
+	def_ = DEF_MAX;
 
 	moveAble_ = true;
 
@@ -113,22 +117,6 @@ void AxeMan::SkillTwoInit(void)
 
 void AxeMan::AtkFunc(void)
 {
-	if (isSkill_)return;
-	auto& ins = PlayerInput::GetInstance();
-	using ACT_CNTL = PlayerInput::ACT_CNTL;
-	//近接攻撃用
-	//単押し処理
-	//---------------------------------------------------------
-	if (ins.CheckAct(ACT_CNTL::NMLATK) && !isAtk_)
-	{
-		if (isCool_[static_cast<int>(ATK_ACT::ATK)])return;
-		ChangeAct(ATK_ACT::ATK);
-		ResetParam(atk_);
-		CntUp(atkStartCnt_);
-		isAtk_ = true;
-	}
-	//---------------------------------------------------------
-
 	if (!isAtk_)return;
 
 	if (IsAtkStart())
@@ -160,33 +148,7 @@ void AxeMan::Skill1Func(void)
 {
 	//入力
 	//--------------------------------------------------------------
-	auto& ins = PlayerInput::GetInstance();
-	using ACT_CNTL = PlayerInput::ACT_CNTL;
-	int skillOne = static_cast<int>(ATK_ACT::SKILL1);
-	if (!isCool_[static_cast<int>(ATK_ACT::SKILL1)])
-	{
-		if (ins.CheckAct(ACT_CNTL::SKILL_DOWN) && !IsAtkStart())
-		{
-			InitSkill(skillNo_);
-		}
-		//スキル(長押しでガード状態維持)
-		if (ins.CheckAct(ACT_CNTL::SKILL_KEEP) && IsAtkStart())
-		{
-			//押している反応
-			//CntUp(atkStartCnt_);
-		}
-		else if (ins.CheckAct(ACT_CNTL::SKILL_UP) && IsAtkStart())
-		{
-			if (atkStartCnt_ <= SKILL_ONE_START_NOCHARGE)
-			{
-				atkStartTime_[skillOne] = SKILL_ONE_START_NOCHARGE;
-			}
-			else
-			{
-				atkStartTime_[skillOne] = atkStartCnt_;
-			}
-		}
-	}
+
 
 
 
@@ -221,14 +183,7 @@ void AxeMan::Skill1Func(void)
 void AxeMan::Skill2Func(void)
 {
 	if (isAtk_)return;
-	//入力
-	auto& ins = PlayerInput::GetInstance();
-	using ACT_CNTL = PlayerInput::ACT_CNTL;
-	int skillOne = static_cast<int>(ATK_ACT::SKILL1);
-	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN))
-	{
-		InitSkill(skillNo_);
-	}
+
 	if (!isSkill_)return;
 	//近接攻撃用(atk_変数と遠距離で分ける)
 	if (IsAtkStart())

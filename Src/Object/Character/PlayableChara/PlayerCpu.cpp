@@ -1,4 +1,5 @@
 //#include"../Manager/Collision.h"
+#include"../PlayerDodge.h"
 #include "PlayerCpu.h"
 
 PlayerCpu::PlayerCpu(void)
@@ -119,7 +120,7 @@ void PlayerCpu::CpuNmlUpdate(void)
 
 	//待機アニメーション
 	//停止状態の時のアニメーション
-	if (!isMove_ && !IsDodge() && !IsAtkAction())
+	if (!isMove_ && !dodge_->IsDodge() && !IsAtkAction())
 	{
 		ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 		moveSpeed_ = 0.0f;
