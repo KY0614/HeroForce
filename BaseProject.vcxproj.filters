@@ -68,6 +68,8 @@
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\Timer.cpp" />
     <ClCompile Include="Src\Shader\PixelShader.cpp" />
+    <ClCompile Include="Src\Scene\GameClearScene.cpp" />
+    <ClCompile Include="Src\Object\Character\Chiken\ClearChicken.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application.h" />
@@ -137,5 +139,7 @@
     <ClInclude Include="Src\Scene\TitleScene.h" />
     <ClInclude Include="Src\Utility\AsoUtility.h" />
     <ClInclude Include="Src\Shader\PixelShader.h" />
+    <ClInclude Include="Src\Scene\GameClearScene.h" />
+    <ClInclude Include="Src\Object\Character\Chiken\ClearChicken.h" />
   </ItemGroup>
 </Project>
