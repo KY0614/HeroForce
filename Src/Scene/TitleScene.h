@@ -8,7 +8,7 @@ class SkyDome;
 class StageManager;
 
 class TitleScene : public SceneBase
-{//a
+{
 
 public:
 
@@ -36,7 +36,7 @@ public:
 	void Release(void) override;
 
 private:
-
+	//a
 	//更新用ステップ
 	float step_;
 
