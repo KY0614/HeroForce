@@ -66,8 +66,6 @@ private:
 	//“G
 	std::unique_ptr<EnemyManager>enmMng_;
 
-	//ƒŠƒUƒ‹ƒg’†‚©
-	bool isFazeRezult_;
 	//“|‚µ‚½“G‚Ì‘”
 	int dunkEnmCnt_;
 
