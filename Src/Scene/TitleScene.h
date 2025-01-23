@@ -8,7 +8,7 @@ class SkyDome;
 class StageManager;
 
 class TitleScene : public SceneBase
-{
+{//a
 
 public:
 

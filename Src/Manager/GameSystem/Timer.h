@@ -1,6 +1,7 @@
 #pragma once
 class Timer
 {
+	//a
 public:
 
 	//ŠÔ‚ÌãŒÀE‰ºŒÀ

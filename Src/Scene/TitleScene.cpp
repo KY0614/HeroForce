@@ -30,6 +30,7 @@ void TitleScene::Init(void)
 	auto camera = SceneManager::GetInstance().GetCameras();
 	camera[0]->SetPos(DEFAULT_CAMERA_POS, DEFAULT_TARGET_POS);
 	camera[0]->ChangeMode(Camera::MODE::FIXED_POINT);
+	//a
 }
 
 void TitleScene::Update(void)
