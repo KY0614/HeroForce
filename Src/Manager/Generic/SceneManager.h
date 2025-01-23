@@ -154,5 +154,4 @@ private:
 
 	// フェード
 	void Fade(void);
-
 };

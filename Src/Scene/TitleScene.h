@@ -30,7 +30,7 @@ public:
 	TitleScene(void);
 
 	// デストラクタ
-	~TitleScene(void);
+	~TitleScene(void){};
 
 	void Init(void) override;
 	void Update(void) override;

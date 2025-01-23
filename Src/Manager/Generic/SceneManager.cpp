@@ -51,7 +51,6 @@ void SceneManager::Init(void)
 	cameras_.push_back(std::move(c));
 
 	scene_ = new TitleScene();
-	ResourceManager::GetInstance().InitTitle();
 	scene_->Init();
 
 	isSceneChanging_ = false;
