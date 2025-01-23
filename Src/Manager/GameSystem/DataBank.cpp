@@ -5,7 +5,7 @@ DataBank* DataBank::instance_ = nullptr;
 
 void DataBank::CreateInstance(void)
 {
-	if (instance_ == nullptr){
+	if (instance_ == nullptr) {
 		instance_ = new DataBank();
 	}
 	instance_->Init();
@@ -67,6 +67,17 @@ void DataBank::Input(const INFO _info, const int _num)
 	case INFO::USER_NUM:
 		userNum_ = _num;
 		break;
+
+	case INFO::FAZE_DUNK_ENEMY:
+		fazeDunk_ = _num;
+		//総数に追加
+		gameDunk_ += _num;
+		break;
+
+	case INFO::ALIVE_CHICKEN:
+		aliveChikenNum_ = _num;
+		break;
+
 	default:
 		//デバッグ用
 		assert("DataBankのInputの使用方法に間違いがあります。");
@@ -102,6 +113,18 @@ const int DataBank::Output(const INFO _info)
 		return userNum_;
 		break;
 	default:
+
+	case INFO::FAZE_DUNK_ENEMY:
+		return fazeDunk_;
+		break;
+
+	case INFO::GAME_DUNK_ENEMY:
+		return gameDunk_;
+		break;
+
+	case INFO::ALIVE_CHICKEN:
+		return aliveChikenNum_;
+		break;
 		//デバッグ用
 		assert("DataBankのInputの使用方法に間違いがあります。");
 		break;
