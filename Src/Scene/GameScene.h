@@ -25,6 +25,8 @@ public:
 	//定数
 	static constexpr int PHASE_TIME = 180;	//フェーズ切り替えの時間（仮）
 
+	static constexpr int LAST_FAZE = 3;
+
 
 	// コンストラクタ
 	GameScene(void);
@@ -63,6 +65,15 @@ private:
 
 	//敵
 	std::unique_ptr<EnemyManager>enmMng_;
+
+	//フェーズリザルト
+	std::unique_ptr<FazeResult>fazeResult_;
+	//リザルト中か
+	bool isFazeRezult_;
+	//倒した敵の総数
+	int dunkEnmCnt_;
+
+	int fazeCnt_;
 
 	//チキン
 	std::unique_ptr<ChickenManager> chicken_;
