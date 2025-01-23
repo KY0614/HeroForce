@@ -259,13 +259,13 @@ void GameScene::CollisionEnemy(void)
 			{
 				PlayerBase* p = playerMng_->GetPlayer(i);
 				//攻撃が当たる範囲 && プレイヤーが回避していないとき
-				//if (col.IsHitAtk(*e, *p) && !p->IsDodge())
-				//{
-				//	//ダメージ
-				//	p->Damage();
-				//	//使用した攻撃を判定終了に
-				//	e->SetIsHit(true);
-				//}
+				if (col.IsHitAtk(*e, *p) && !p->IsDodge())
+				{
+					//ダメージ
+					p->Damage();
+					//使用した攻撃を判定終了に
+					e->SetIsHit(true);
+				}
 			}
 		}
 	}

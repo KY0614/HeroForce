@@ -137,8 +137,11 @@ void SelectScene::Draw(void)
 {
 	auto& ins = InputManager::GetInstance();
 
+
+
 	skyDome_->Draw();
 	stage_->Draw();
+	SetUseLightAngleAttenuation(FALSE);
 
 	//選択中の種類ごとの更新処理
 	switch (select_)
@@ -160,7 +163,9 @@ void SelectScene::Draw(void)
 	}
 
 	//デバッグ描画
-	DrawDebug();
+	//DrawDebug();
+
+	SetUseLightAngleAttenuation(TRUE);
 }
 
 void SelectScene::Release(void)
@@ -340,6 +345,7 @@ void SelectScene::RoleDraw(void)
 		images_[i]->Draw();
 	}
 
+	SetUseLightAngleAttenuation(TRUE);
 	for (int i = 0; i < camera.size(); i++)
 	{
 		players_[i]->Draw();
