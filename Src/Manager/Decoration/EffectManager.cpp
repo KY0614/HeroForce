@@ -92,6 +92,15 @@ void EffectManager::SyncEffect(const EFFECT& _efc, const VECTOR& _pos, const Qua
 	SetPosPlayingEffekseer3DEffect(effectPlay_[_efc], _pos.x, _pos.y, _pos.z);
 }
 
+bool EffectManager::IsPlayEffect(const EFFECT& _efc)
+{
+	if (effectPlay_[_efc] == -1 || IsEffekseer3DEffectPlaying(effectPlay_[_efc]) == -1)
+	{
+		return true;
+	}
+	return false;
+}
+
 //‰ğ•úˆ—
 void EffectManager::Release(void)
 {

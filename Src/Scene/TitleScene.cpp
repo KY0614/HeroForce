@@ -68,19 +68,31 @@ void TitleScene::Draw(void)
 	auto& ps = PixelShader::GetInstance();
 
 	//メッセージ描画
-	/*COLOR_F buf = COLOR_F{ step_ };
-	ps.DrawTimeGraphToShader(
+	COLOR_F buf = COLOR_F();//= COLOR_F{ step_ };
+	buf.r = step_;
+
+	
+
+	/*ps.DrawExtendGraphToShader(
 		{ MES_POS_X ,MES_POS_Y },
 		imgMes_,
 		PixelShader::PS_TYPE::YELLOW_BLINK,
 		buf);*/
-	DrawRotaGraph(
-		MES_POS_X,MES_POS_Y,
-		1.0f,
-		0.0f,
+	ps.DrawExtendGraphToShader(
+		{ MES_POS_X,10 },
+		{ Application::SCREEN_SIZE_X, 200},
 		imgMes_,
-		true,
-		false);
+		PixelShader::PS_TYPE::YELLOW_BLINK,
+		buf
+	);
+
+	//DrawRotaGraph(
+	//	MES_POS_X,MES_POS_Y,
+	//	1.0f,
+	//	0.0f,
+	//	imgMes_,
+	//	true,
+	//	false);
 }
 
 void TitleScene::Release(void)
