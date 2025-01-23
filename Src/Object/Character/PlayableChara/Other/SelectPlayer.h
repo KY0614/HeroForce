@@ -10,11 +10,12 @@ public:
 	static constexpr float ROT_SPEED = 0.5f;
 
 	static constexpr float ANIM_SPEED = 20.0f;
+	static constexpr float CHICKEN_SPEED =40.0f;
 	static constexpr int IDLE_ANIM = 36;
 	static constexpr int KNIGHT_ANIM = 1;
 	static constexpr int AXE_ANIM = 2;
 	static constexpr int MAGE_ANIM = 61;
-	static constexpr int ARCHER_ANIM = 16;
+	static constexpr int ARCHER_ANIM = 6;
 	static constexpr int SWING_ANIM = 6;
 
 	//コンストラクタ

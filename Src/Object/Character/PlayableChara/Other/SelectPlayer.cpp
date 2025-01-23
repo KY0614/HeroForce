@@ -39,7 +39,7 @@ void SelectPlayer::Init(void)
 
 	//ƒ`ƒLƒ“—p
 	animNum_.emplace(ANIM::UNIQUE_1, SWING_ANIM);
-	ResetAnim(ANIM::UNIQUE_1, ANIM_SPEED);
+	ResetAnim(ANIM::UNIQUE_1, CHICKEN_SPEED);
 }
 
 void SelectPlayer::Update(void)
