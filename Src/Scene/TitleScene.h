@@ -36,10 +36,10 @@ public:
 	void Release(void) override;
 
 private:
-	//a
 	//更新用ステップ
 	float step_;
 
+	//a
 	// タイトルロゴ
 	int imgLogo_;
 	int imgMes_;
