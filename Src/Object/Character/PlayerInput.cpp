@@ -65,7 +65,7 @@ void PlayerInput::InputKeyBoard(PlayerBase* _player)
 	if (ins.IsTrgDown(ATK_KEY) && !_player->GetIsCool(ATK_ACT::ATK)) { actCntl_ = ACT_CNTL::NMLATK; }
 
 	//ƒXƒLƒ‹’Z‰Ÿ‚µ
-	if (ins.IsTrgDown(SKILL_KEY) && !_player->GetIsCool(_player->GetSkillNo())) { actCntl_ = ACT_CNTL::SKILL_DOWN; }
+	if (ins.IsTrgDown(SKILL_KEY)/* && !_player->GetIsCool(_player->GetSkillNo())*/) { actCntl_ = ACT_CNTL::SKILL_DOWN; }
 
 	//’·‰Ÿ‚µ
 	else if (ins.IsNew(SKILL_KEY)&& _player->GetIsSkill()) { actCntl_ = ACT_CNTL::SKILL_KEEP; }

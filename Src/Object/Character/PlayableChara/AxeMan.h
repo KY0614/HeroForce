@@ -8,7 +8,7 @@ public:
     static constexpr float POW_ATK = 160.0f;
     static constexpr int DEF_MAX = 110;
     static constexpr int HP_MAX = 265;
-
+    static constexpr float SPEED = PlayerBase::MOVE_SPEED_SLOW;
 #ifdef DEBUG_COOL
     //クールタイム
     static constexpr float ATK_COOLTIME = 1.0f;
@@ -95,7 +95,9 @@ protected:
     void InitCharaAnim(void)override;
 
     //void ChargeAct(void)override;
-
+    //攻撃入力
+    void NmlAtkInit(void)override;
+    //スキル入力
     void SkillOneInit(void)override;
     void SkillTwoInit(void)override;
     //void ResetParam(ATK_ACT _act)override;

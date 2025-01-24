@@ -13,7 +13,7 @@ Archer::Archer(void)
 void Archer::SetParam(void)
 {
 	InitAct();
-
+	arrowMdlId_ = -1;
 	trans_.SetModel(
 		ResourceManager::GetInstance()
 		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_ARCHER));
@@ -29,10 +29,10 @@ void Archer::SetParam(void)
 
 
 	//ステータス関係
-	hp_ = MAX_HP;
+	hpMax_ = MAX_HP;
 	atkPow_ = POW_ATK;
 	def_ = MAX_DEF;
-
+	speed_ = SPEED;
 
 	moveAble_ = true;
 
@@ -191,12 +191,13 @@ void Archer::Draw(void)
 
 void Archer::AtkFunc(void)
 {
+	if (isSkill_)return;
 	//明日からアーチャー作成する！
 	if (IsFinishAtkStart() && !isShotArrow_)
 	{
 		CreateArrow();
 		CreateAtk();
-		isShotArrow_ = true;
+		//isShotArrow_ = true;
 	}
 
 	size_t arrowSize = arrow_.size();
@@ -221,12 +222,72 @@ void Archer::AtkFunc(void)
 
 void Archer::Skill1Func(void)
 {
+	if (isAtk_)return;
+	if (isCool_[static_cast<int>(skillNo_)])
+	{
+		return;
+	}
+	if (0.0f < atkStartCnt_ && atkStartCnt_ < atkStartTime_[static_cast<int>(act_)])
+	{
+		CntUp(atkStartCnt_);
+		if (stepAnim_ >= SKILL_CHARGE_STEPANIM)
+		{
+			stepAnim_ = SKILL_CHARGE_STEPANIM;
+		}
+	}
+	else if (atkStartCnt_ >= atkStartTime_[static_cast<int>(skillNo_)])
+	{
 
+		if (!isShotArrow_)
+		{
+			CreateArrow();
+			CreateAtk();
+		}
+		isShotArrow_ = true;
+		CntUp(backrashCnt_);
+		if (backrashCnt_ >= BACKRASH_MAX)
+		{
+			coolTime_[static_cast<int>(ATK_ACT::SKILL1)] = 0.0f;
+
+			//スキル終わったら攻撃発生時間の最大時間をセットする
+			atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;
+
+			backrashCnt_ = 0.0f;
+			InitAtk();
+			isSkill_ = false;
+		}
+	}
 }
 
 void Archer::Skill2Func(void)
 {
+	if (isAtk_)return;
+	//明日からアーチャー作成する！
+	if (IsFinishAtkStart() && !isShotArrow_)
+	{
+		CreateArrow();
+		CreateAtk();
+		//isShotArrow_ = true;
+	}
 
+	size_t arrowSize = arrow_.size();
+	//近接攻撃用(atk_変数と遠距離で分ける)
+	if (IsAtkStart())
+	{
+		moveAble_ = false;
+		CntUp(atkStartCnt_);
+	}
+	else if (IsFinishAtkStart())
+	{
+		CntUp(atkAbleCnt_);
+		//クールタイムの初期化
+		coolTime_[static_cast<int>(act_)] = 0.0f;
+		if (atkAbleCnt_ >= ATKABLE_TIME)
+		{
+			InitAtk();
+			isSkill_ = false;
+		}
+	}
 }
 
 void Archer::NmlAtkInit(void)
@@ -254,14 +315,6 @@ void Archer::SkillOneInit(void)
 void Archer::SkillTwoInit(void)
 {
 }
-
-//void PlArcher::NmlActCommon(void)
-//{
-//
-//}
-
-
-
 
 void Archer::InitArrowAtk(ATK& arrowAtk)
 {

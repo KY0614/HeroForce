@@ -8,9 +8,10 @@ void Mage::SetParam(void)
 {
 	//ステータス関係
 //------------------------------------------
-	hp_ = HP_MAX;
+	hpMax_ = HP_MAX;
 	atkPow_ = POW_ATK;
 	def_ = DEF_MAX;
+	speed_ = SPEED;
 
 	//モデル
 	trans_.SetModel(
@@ -38,5 +39,17 @@ void Mage::Skill1Func(void)
 }
 
 void Mage::Skill2Func(void)
+{
+}
+
+void Mage::NmlAtkInit(void)
+{
+}
+
+void Mage::SkillOneInit(void)
+{
+}
+
+void Mage::SkillTwoInit(void)
 {
 }
