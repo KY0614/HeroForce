@@ -37,9 +37,9 @@ UnitBase::UnitBase(void)
 	radius_ = -1.0f;
 	hpMax_ = -1;
 
-	defAtk_ = -1.0f;
-	defDef_ = -1.0f;
-	defSpeed_ = -1.0f;
+	defAtk_ = 1.0f;
+	defDef_ = 1.0f;
+	defSpeed_ = 1.0f;
 	defHp_ = -1;
 
 	atkUpPercent_ = -1.0f;
