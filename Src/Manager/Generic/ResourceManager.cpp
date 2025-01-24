@@ -217,7 +217,7 @@ void ResourceManager::InitGameClear(void)
 	resourcesMap_.emplace(SRC::CONGRATULATIONS, res);
 
 	//花火
-	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Firework.efk");
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Fireworks.efkefc");
 	resourcesMap_.emplace(SRC::FIREWORK, res);
 
 	ResourcePlayer();
@@ -227,9 +227,6 @@ void ResourceManager::InitGameClear(void)
 	//チキン
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Chicken/Chicken.mv1");
 	resourcesMap_.emplace(SRC::CHICKEN, res);
-
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "To_Title.png");
-	resourcesMap_.emplace(SRC::TO_TITLE, res);
 }
 
 //プレイヤー

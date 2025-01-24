@@ -57,7 +57,10 @@ public:
 		//ステージ
 		STAGE_01,
 		DECO_01,
-		SKY_DOME,
+
+		//ゲームクリア
+		CONGRATULATIONS,
+		FIREWORK,
 
 		//UI
 		HP_PLAYER,
@@ -108,9 +111,7 @@ public:
 		RANKS,
 		REZALT_BACK,
 
-		//ゲームクリア
-		CONGRATULATIONS,
-		FIREWORK,
+		SKY_DOME,
 		ROLE,			//役職
 
 		//リザルト
