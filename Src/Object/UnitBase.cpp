@@ -66,6 +66,11 @@ void UnitBase::Draw(void)
 {
 }
 
+const bool UnitBase::IsAlive(void) const
+{
+	return hp_ > 0;
+}
+
 const Transform& UnitBase::GetTransform(void) const
 {
 	return trans_;

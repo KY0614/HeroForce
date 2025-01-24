@@ -30,6 +30,8 @@ PlayerBase::PlayerBase(void)
 		coolTime_[i] = coolTimeMax_[i];
 		coolTimePer_[i] = 1.0f;
 	}
+
+	
 }
 
 void PlayerBase::Destroy(void)

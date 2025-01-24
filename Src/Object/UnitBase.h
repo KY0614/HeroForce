@@ -83,7 +83,7 @@ public:
 
 	//ゲッター各種
 	//生存確認(生存しているとtrue)
-	const bool IsAlive(void)const { return hp_ > 0; };
+	const bool IsAlive(void)const;
 
 	//Transformいただき
 	const Transform& GetTransform(void)const;
