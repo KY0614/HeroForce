@@ -14,6 +14,7 @@
 #include "../Object/SelectImage.h"
 #include "../Object/Character/PlayableChara/PlayerBase.h"
 #include "../Object/Character/PlayableChara/USER/PlAxeMan.h"
+#include "../Object/Character/PlayableChara/Other/SelectEnemy.h"
 #include "SelectScene.h"
 
 SelectScene::SelectScene(void)
@@ -67,39 +68,18 @@ void SelectScene::Init(void)
 	stage_ = new StageManager();
 	stage_->Init();
 
-	//背景色を白に
-	SetBackgroundColor(255, 255, 255);
-	//背景のステージモデルやらを半透明に
-	//float alpha = 0.5f;
-	//MV1SetOpacityRate(skyDome_->GetTransform().modelId, alpha);
-	//for (int i = 0; i < StageManager::MODELS; i++) {
-	//	for (auto& s : stage_->GetTtans(static_cast<StageManager::MODEL_TYPE>(i)))
-	//	{
-	//		MV1SetOpacityRate(s.modelId, alpha);
-	//	}
-	//}
-
-	//フォグの設定
-	SetFogEnable(false);
-	//白
-	SetFogColor(255, 255, 255);
-	SetFogStartEnd(-300.0f, 15000.0f);
-
 	//プレイヤー設定
 	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
 	{
 		players_[i] = std::make_shared<SelectPlayer>();
 		players_[i]->Init();
-	}
+		
+		enemys_[i] = std::make_shared<SelectEnemy>();
+		enemys_[i]->Init();
 
-	//画像設定
-	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
-	{
 		images_[i] = std::make_unique<SelectImage>(*this, *players_);
 		images_[i]->Init();
 	}
-	//image_ = std::make_unique<SelectImage>(*this);
-	//image_->Init();
 
 	// カメラモード：定点カメラ
 	auto camera = SceneManager::GetInstance().GetCameras();
@@ -125,11 +105,6 @@ void SelectScene::Update(void)
 
 	//空を回転
 	skyDome_->Update();
-
-	for (auto& p : players_)
-	{
-		p->Update();
-	}
 
 	//更新ステップ
 	stateUpdate_();
@@ -224,10 +199,21 @@ void SelectScene::NumberUpdate(void)
 
 void SelectScene::OperationUpdate(void)
 {
+	auto camera = SceneManager::GetInstance().GetCameras();
 	KeyConfigSetting();
 	ControllDevice();
 
 	images_[0]->Update();
+	enemys_[0]->Update();
+	for (int i = 1; i < camera.size();i++)
+	{
+		for (int a = 0; a < SceneManager::PLAYER_NUM; a++) {
+			VECTOR pos = AsoUtility::RotXZPos(DEFAULT_CAMERA_POS, enemys_[i - 1]->GetPosArray(a), AsoUtility::Deg2RadF(90.0f));
+			enemys_[i]->SetPosArray(pos,a);
+			enemys_[i]->SetRot(Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-90.0f * i), 0.0f));
+		}
+		enemys_[i]->Update();
+	}
 }
 
 void SelectScene::RoleUpdate(void)
@@ -240,11 +226,16 @@ void SelectScene::RoleUpdate(void)
 	for (auto& i : input_)i.config_ = KEY_CONFIG::NONE;
 
 	//1Pがキーボードだったらキーボード処理もするように(その場合1PのPADは操作できなくなる)
-	if (input_[0].cntl_ == SceneManager::CNTL::KEYBOARD) KeyBoardProcess();
+	if (Get1PDevice() == SceneManager::CNTL::KEYBOARD) KeyBoardProcess();
 	PadProcess();
 
+	for (auto& p : players_)
+	{
+		p->Update();
+	}
+
 	//オブジェクトを90度ずつ回転させる
-	//(プレイヤーのカメラが90度ずつ回転してるのでそれに合わせるため)
+	//(カメラが90度ずつ回転してるのでそれに合わせるため)
 	VERTEX3D ver[4];
 	VERTEX3D ready[4];
 	VERTEX3D pointL[4];
@@ -330,7 +321,14 @@ void SelectScene::NumberDraw(void)
 
 void SelectScene::OperationDraw(void)
 {
+	auto camera = SceneManager::GetInstance().GetCameras();
+
 	images_[0]->Draw();
+
+	for (int i = 1; i < camera.size(); i++)
+	{
+		enemys_[i]->Draw();
+	}
 }
 
 void SelectScene::RoleDraw(void)

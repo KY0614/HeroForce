@@ -154,6 +154,7 @@ private:
 	
 	//画像ハンドル
 	int* imgPlayerNum_;		//人数選択画像
+	int* imgDisplayNum_;		//人数選択画像
 	int* imgLeftPoint_;		//左向きの矢印画像
 	int* imgRightPoint_;	//右向きの矢印画像
 	int* imgReady_;			//右向きの矢印画像

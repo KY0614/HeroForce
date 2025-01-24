@@ -8,6 +8,7 @@
 class SkyDome;
 class StageManager;
 class SelectPlayer;
+class SelectEnemy;
 class SelectImage;
 
 class SelectScene :public SceneBase
@@ -148,6 +149,9 @@ private:
 
 	// 画像
 	std::unique_ptr<SelectImage>images_[SceneManager::PLAYER_NUM];
+
+	//プレイヤー
+	std::shared_ptr<SelectEnemy>enemys_[SceneManager::PLAYER_NUM];
 
 	//背景のステージ
 	StageManager* stage_;

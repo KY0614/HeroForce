@@ -92,7 +92,7 @@ private:
 	//役職
 	int role_;
 
-	//
+	//アニメーション変更時間
 	float animChangeTime_[SceneManager::PLAYER_NUM];
 
 	void Init3DModel(void);

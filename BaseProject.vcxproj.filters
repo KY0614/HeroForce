@@ -83,6 +83,7 @@
     <ClCompile Include="Src\Manager\GameSystem\CharacterParamData.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ClearChicken.cpp" />
     <ClCompile Include="Src\Scene\GameClearScene.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Other\SelectEnemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\Character\PlayableChara\PlayerBase.h" />
@@ -205,6 +206,7 @@
     <ClInclude Include="Src\Scene\FazeResult.h" />
     <ClInclude Include="Src\Object\Character\Chiken\ClearChicken.h" />
     <ClInclude Include="Src\Scene\GameClearScene.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Other\SelectEnemy.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Common\Fader.h">

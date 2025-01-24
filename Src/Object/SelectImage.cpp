@@ -8,6 +8,7 @@
 SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> player) : selectScene_(select), player_(player)
 {
 	imgPlayerNum_ = nullptr;
+	imgDisplayNum_ = nullptr;
 	imgLeftPoint_ = nullptr;
 	imgRightPoint_ = nullptr;
 	imgReady_ = nullptr;
@@ -87,16 +88,16 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	rightTop_ = AsoUtility::VECTOR_ZERO;
 	rightBottom_ = AsoUtility::VECTOR_ZERO;
 
-	displayNum_ = 1;
-	playerNum_ = 1;
+	displayNum_ = -1;
+	playerNum_ = -1;
 	isPad_ = false;
-	role_ = 0;
+	role_ = -1;
 	isReady_ = false;
 
-	keyPressTime_ = 0.0f;
-	interval_ = 0.0f;
+	keyPressTime_ = -1.0f;
+	interval_ = -1.0f;
 	press_ = false;
-	angle_ = 0.0f;
+	angle_ = -1.0f;
 
 	target_[0] = AsoUtility::VECTOR_ZERO;
 	target_[1] = AsoUtility::VECTOR_ZERO;
@@ -125,6 +126,16 @@ void SelectImage::Init(void)
 	Load();
 
 	InitVertex();
+
+	displayNum_ = 1;
+	playerNum_ = 1;
+	isPad_ = false;
+	role_ = 0;
+	isReady_ = false;
+	keyPressTime_ = 0.0f;
+	interval_ = 0.0f;
+	press_ = false;
+	angle_ = 0.0f;
 
 	target_[0] = SelectScene::DEFAULT_TARGET_POS;
 
@@ -224,14 +235,14 @@ void SelectImage::MoveVertexPos(void)
 	pointR_.mesh_.vertex_[1].pos = { -POINT_LEFT_X + 25.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 右下
 	pointR_.mesh_.vertex_[2].pos = { -POINT_RIGHT_X + 25.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 左上
 	pointR_.mesh_.vertex_[3].pos = { -POINT_LEFT_X + 25.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 右上
-
-
 }
 
 void SelectImage::Load(void)
 {
 	//画像
 	imgPlayerNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_NUM).handleIds_;
+
+	imgDisplayNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::DISPLAY_NUM).handleIds_;
 
 	imgRightPoint_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::RIGHT_POINT).handleIds_;
 
@@ -643,7 +654,7 @@ void SelectImage::RoleUpdate(void)
 
 void SelectImage::DisplayDraw(void)
 {
-	mesh_.DrawTwoMesh(*imgPlayerNum_);
+	mesh_.DrawTwoMesh(*imgDisplayNum_);
 
 	PointsDraw();
 }
@@ -853,10 +864,10 @@ void SelectImage::InitVertex(void)
 	mesh_.vertex_[2].pos = leftTop_;		// 左上
 	mesh_.vertex_[3].pos = rightTop_;		// 右上
 
-	readyMesh_.vertex_[0].pos = { -80.0f, 70.0f, VERTEX_UNDER_Z };	// 左下
-	readyMesh_.vertex_[1].pos = { 80.0f, 70.0f, VERTEX_UNDER_Z };	// 右下
-	readyMesh_.vertex_[2].pos = { -80.0f, 160.0f, VERTEX_Z };		// 左上
-	readyMesh_.vertex_[3].pos = { 80.0f, 160.0f, VERTEX_Z };		// 右上
+	readyMesh_.vertex_[0].pos = { -80.0f, 70.0f, -408.0f };	// 左下
+	readyMesh_.vertex_[1].pos = { 80.0f, 70.0f, -408.0f };	// 右下
+	readyMesh_.vertex_[2].pos = { -80.0f, 160.0f, -410.0f };		// 左上
+	readyMesh_.vertex_[3].pos = { 80.0f, 160.0f, -410.0f };		// 右上
 
 	pointL_.mesh_.vertex_[0].pos = { POINT_LEFT_X, POINT_UNDER_Y, POINT_TOP_Z };	// 左下
 	pointL_.mesh_.vertex_[1].pos = { POINT_RIGHT_X, POINT_UNDER_Y, POINT_TOP_Z };	// 右下

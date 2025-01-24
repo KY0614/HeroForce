@@ -1,4 +1,3 @@
-#include <assert.h>
 #include "../../../../Manager/Generic/ResourceManager.h"
 #include "../PlayerBase.h"
 #include "../../Chiken/ChickenBase.h"

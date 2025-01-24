@@ -48,6 +48,10 @@ void ResourceManager::InitSelect(void)
 	//人数選択画像
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "PlayerNumber.png", 4, 1, 300, 300);
 	resourcesMap_.emplace(SRC::PLAYER_NUM, res);
+	
+	//画面数選択画像
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "DisPlayNumber.png", 4, 1, 300, 300);
+	resourcesMap_.emplace(SRC::DISPLAY_NUM, res);
 
 	//右矢印
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Right_point.png", 1, 1, 52, 52);
@@ -78,6 +82,7 @@ void ResourceManager::InitSelect(void)
 	resourcesMap_.emplace(SRC::CHICKEN, res);
 
 	ResourcePlayer();
+	ResourceEnemy();
 	ResourceStage();
 }
 
