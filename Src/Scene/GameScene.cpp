@@ -2,6 +2,7 @@
 #include "../Manager/Generic/Camera.h"
 #include "../Manager/GameSystem/Collision.h"
 #include"../Manager/GameSystem/Timer.h"
+#include"../Manager/Decoration/SoundManager.h"
 
 #include"../Object/Character/EnemySort/Enemy.h"
 #include"../Object/Character/EnemyManager.h"
@@ -47,12 +48,13 @@ void GameScene::Init(void)
 	unitLoad_ = std::make_unique<UnitPositionLoad>();
 	unitLoad_->Init();
 
+	//ステージ
 	stage_ = std::make_unique<StageManager>();
 	stage_->Init();
-
+	//スカイドーム
 	sky_ = std::make_unique<SkyDome>();
 	sky_->Init();
-
+	//レベル関係
 	level_ = std::make_unique<LevelScreenManager>();
 	level_->Init();
 
@@ -63,7 +65,7 @@ void GameScene::Init(void)
 	//敵マネージャの生成
 	enmMng_ = std::make_unique<EnemyManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::ENEMY));
 	enmMng_->Init();
-
+	//ニワトリの生成
 	chicken_ = std::make_unique<ChickenManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::CPU),
 		stage_->GetTtans(),
 		playerMng_->GetPlayer(0)->GetTransform());
@@ -85,6 +87,19 @@ void GameScene::Init(void)
 	//フェーズリザルトの作成
 	fazeResult_ = std::make_unique<FazeResult>();
 	fazeResult_->Init();
+
+	//BGMの初期化
+	auto& snd = SoundManager::GetInstance();
+
+
+	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::GAME_NOMAL,
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::GAME_NOMAL_BGM).handleId_);
+
+	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::GAME_NOMAL,
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::GAME_LAST_BGM).handleId_);
+
+	//ゲームシーン開始時はノーマルのBGMを再生
+	snd.Play(SoundManager::SOUND::GAME_NOMAL);
 }
 
 void GameScene::Update(void)
@@ -97,16 +112,22 @@ void GameScene::Update(void)
 	{
 		fazeResult_->Update();
 
+		//リザルトが終了したとき
 		if (fazeResult_->IsEnd())
 		{
 			//フェーズカウント増加
 			fazeCnt_++;
+			//カウント後最終フェーズ数より大きくなったらクリアシーンへ
 			if(fazeCnt_ >LAST_FAZE)SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
-			//フェーズリザルトが終了したので明転及びリザルトリセット
+
+
+			//フェーズリザルトが終了したので明転及びリザルトリセット・タイマー初期化・BGMの再生
 			fader_->SetFade(Fader::STATE::FADE_IN);
 			Timer::GetInstance().Reset();
 			fazeResult_->Reset();
 			isFazeRezult_ = false;
+			if (fazeCnt_ == LAST_FAZE)SoundManager::GetInstance().Play(SoundManager::SOUND::GAME_LAST);
+			else SoundManager::GetInstance().Play(SoundManager::SOUND::GAME_NOMAL);
 		}
 		return;
 	}
@@ -191,9 +212,6 @@ void GameScene::Draw(void)
 	{
 		DrawPhase();
 	}
-	DataBank& data = DataBank::GetInstance();
-	DrawFormatString(0, 60, 0xff0000, "p1 role : %d", data.Output(1).role_);
-	DrawFormatString(0, 80, 0xff0000, "p1 role : %d", data.Output(2).role_);
 }
 
 void GameScene::Release(void)
@@ -444,6 +462,10 @@ void GameScene::Fade(void)
 //*********************************************************
 void GameScene::ChangePhase(void)
 {
+	//BGMの停止
+	if (fazeCnt_ == LAST_FAZE)SoundManager::GetInstance().Stop(SoundManager::SOUND::GAME_LAST);
+	else SoundManager::GetInstance().Stop(SoundManager::SOUND::GAME_NOMAL);
+
 	//リザルトに関係するデータを入力
 	DataBank& data = DataBank::GetInstance();
 

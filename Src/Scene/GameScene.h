@@ -70,7 +70,7 @@ private:
 
 	//倒した敵の総数
 	int dunkEnmCnt_;
-
+	//フェーズ数カウント
 	int fazeCnt_;
 
 	//チキン

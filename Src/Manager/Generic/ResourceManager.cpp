@@ -86,10 +86,10 @@ void ResourceManager::InitGame(void)
 	Resource res;
 
 	//BGM
-	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "GameNomal.png");
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Game_Nomal.mp3");
 	resourcesMap_.emplace(SRC::GAME_NOMAL_BGM, res);
 
-	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "GameBoss.png");
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Game_Boss.mp3");
 	resourcesMap_.emplace(SRC::GAME_LAST_BGM, res);
 
 
