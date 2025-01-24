@@ -20,12 +20,12 @@ void PlayerManager::Init(void)
 
 	padNum_ = 1;
 
-	DataBank::PLAYER_INFO info[4];
+	PLAYER info[4];
 
-	auto a = DataBank::GetInstance().Output(1);
-	auto b = DataBank::GetInstance().Output(2);
-	auto c = DataBank::GetInstance().Output(3);
-	auto d = DataBank::GetInstance().Output(4);
+	info[0].info= DataBank::GetInstance().Output(1);
+	info[1].info= DataBank::GetInstance().Output(2);
+	info[2].info= DataBank::GetInstance().Output(3);
+	info[3].info= DataBank::GetInstance().Output(4);
 
 	for (int i = 0; i < PLAYER_NUM; i++) {
 		//情報を取得
@@ -44,7 +44,6 @@ void PlayerManager::Init(void)
 		//デバッグ用
 		if (players_[i].ins == nullptr)assert("プレイヤーの生成が正常に動作していません");
 
-		//初期化
 		players_[i].ins->Init();
 	}
 }
