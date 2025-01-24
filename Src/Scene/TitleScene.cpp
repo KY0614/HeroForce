@@ -92,7 +92,7 @@ void TitleScene::Draw(void)
 
 	DrawRotaGraph(
 		MES_POS_X,MES_POS_Y,
-		0.5f,
+		0.8f,
 		0.0f,
 		imgMes_,
 		true,

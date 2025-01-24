@@ -140,7 +140,7 @@ public:
 	void SetAttack(const float percent);
 	void SetDefense(const float percent);
 	void SetSpeed(const float percent);
-	void SetHpMax(const float hp);
+	void SetHpMax(const int hp);
 
 	//パラメータ読み込み
 	void ParamLoad();

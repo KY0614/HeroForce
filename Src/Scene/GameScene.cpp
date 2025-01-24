@@ -130,11 +130,15 @@ void GameScene::Update(void)
 		return;
 	}
 
+
+	level_->Update();
+
+	if (level_->IsLevelUp())return;
+
 	Timer::GetInstance().Update();
 	//タイマーが終了したら
 	if (Timer::GetInstance().IsEnd())ChangePhase();
 
-	level_->Update();
 
 
 	//プレイヤーの更新
@@ -165,10 +169,10 @@ void GameScene::Update(void)
 	//	mng.ChangeScene(SceneManager::SCENE_ID::TITLE);
 	//}
 
-	if (ins.IsTrgDown(KEY_INPUT_RETURN))
-	{
-		ChangePhase();
-	}
+	//if (ins.IsTrgDown(KEY_INPUT_RETURN))
+	//{
+	//	ChangePhase();
+	//}
 }
 
 void GameScene::Draw(void)

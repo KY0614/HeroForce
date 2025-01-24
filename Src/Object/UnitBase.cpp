@@ -285,7 +285,7 @@ void UnitBase::SetSpeed(const float percent)
 }
 
 //‘Ì—Í‹­‰»
-void UnitBase::SetHpMax(const float hp)
+void UnitBase::SetHpMax(const int hp)
 {
 	hpMax_ += hp;
 }
