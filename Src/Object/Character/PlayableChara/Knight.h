@@ -9,7 +9,7 @@ public:
     static constexpr float POW_ATK = 120.0f;
     static constexpr float MAX_DEF = 150.0f;
     static constexpr float MAX_HP = 250;
-
+    static constexpr float SPEED = PlayerBase::MOVE_SPEED_NORMAL;
 
 
 
@@ -125,6 +125,9 @@ public:
     void SetParam(void)override;
     void Update(void)override;
     void Draw(void)override;
+
+
+
 protected:
     //攻撃アクションのパラメータの初期化
     void InitAct(void)override;

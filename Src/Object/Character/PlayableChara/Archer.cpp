@@ -32,6 +32,7 @@ void Archer::SetParam(void)
 	hpMax_ = MAX_HP;
 	atkPow_ = POW_ATK;
 	def_ = MAX_DEF;
+	speed_ = SPEED;
 
 	moveAble_ = true;
 
@@ -141,7 +142,7 @@ void Archer::CreateAtk(void)
 {
 	for (auto& atk : arrowAtk_)
 	{
-		if (!atk.IsAttack())
+		if (atk.IsFinishMotion())
 		{
 			//atk初期化
 			ResetParam(atk);
@@ -165,10 +166,13 @@ void Archer::Update(void)
 			CntUp(arrowAtk_[a].cnt_);
 		}
 		//攻撃状態が終わったら矢を破壊
-		if (!arrowAtk_[a].IsAttack())
+		if (arrowAtk_[a].IsFinishMotion())
 		{
 			arrow_[a].get()->Destroy();
 			InitArrowAtk(arrowAtk_[a]);
+
+			//存在している矢を減らす
+			arrowCnt_--;
 		}
 		//更新
 		arrow_[a].get()->Update(arrowAtk_[a]);
@@ -185,18 +189,23 @@ void Archer::Draw(void)
 	{
 		arrow.get()->Draw();
 	}
-	DrawFormatString(300, 100, 0xffffff, "arrowSize(%d)", arrowSize);
+#ifdef DEBUG_ON
+	//DrawFormatString(300, 100, 0xffffff, "arrowSize(%d)", arrowSize);
+	DrawFormatString(0, 0, 0x000000, "arrowCnt(%d)", arrowCnt_);
+#endif // DEBUG_ON
+
+	
 }
 
 void Archer::AtkFunc(void)
 {
-	if (!isAtk_||isSkill_)return;
+	if (isSkill_)return;
 	//明日からアーチャー作成する！
 	if (IsFinishAtkStart() && !isShotArrow_)
 	{
 		CreateArrow();
 		CreateAtk();
-		isShotArrow_ = true;
+		//isShotArrow_ = true;
 	}
 
 	size_t arrowSize = arrow_.size();
@@ -237,27 +246,56 @@ void Archer::Skill1Func(void)
 	else if (atkStartCnt_ >= atkStartTime_[static_cast<int>(skillNo_)])
 	{
 
-		CreateArrow();
-		CreateAtk();
-		coolTime_[static_cast<int>(
-			ATK_ACT::SKILL1)] = 0.0f;
-
-		//スキル終わったら攻撃発生時間の最大時間をセットする
-		atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;
-
-		InitAtk();
-		isSkill_ = false;
-		if (atk_.IsFinishMotion())
+		if (!isShotArrow_)
 		{
+			CreateArrow();
+			CreateAtk();
+		}
+		isShotArrow_ = true;
+		CntUp(backrashCnt_);
+		if (backrashCnt_ >= BACKRASH_MAX)
+		{
+			coolTime_[static_cast<int>(ATK_ACT::SKILL1)] = 0.0f;
 
+			//スキル終わったら攻撃発生時間の最大時間をセットする
+			atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;
 
+			backrashCnt_ = 0.0f;
+			InitAtk();
+			isSkill_ = false;
 		}
 	}
 }
 
 void Archer::Skill2Func(void)
 {
+	if (isAtk_)return;
+	//明日からアーチャー作成する！
+	if (IsFinishAtkStart() && !isShotArrow_)
+	{
+		CreateArrow();
+		CreateAtk();
+		//isShotArrow_ = true;
+	}
 
+	size_t arrowSize = arrow_.size();
+	//近接攻撃用(atk_変数と遠距離で分ける)
+	if (IsAtkStart())
+	{
+		moveAble_ = false;
+		CntUp(atkStartCnt_);
+	}
+	else if (IsFinishAtkStart())
+	{
+		CntUp(atkAbleCnt_);
+		//クールタイムの初期化
+		coolTime_[static_cast<int>(act_)] = 0.0f;
+		if (atkAbleCnt_ >= ATKABLE_TIME)
+		{
+			InitAtk();
+			isSkill_ = false;
+		}
+	}
 }
 
 void Archer::NmlAtkInit(void)

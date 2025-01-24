@@ -120,6 +120,13 @@ void PlArcher::SkillOneInput(void)
 
 void PlArcher::SkillTwoInput(void)
 {
+	auto& ins = PlayerInput::GetInstance();
+	using ACT_CNTL = PlayerInput::ACT_CNTL;
+	if (obj_->GetIsAtk() && obj_->GetIsCool(PlayerBase::ATK_ACT::ATK))return;
+	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN))
+	{
+		SkillTwoInit();
+	}
 }
 
 void PlArcher::AtkInit(void)
@@ -128,7 +135,7 @@ void PlArcher::AtkInit(void)
 	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
-	if (obj_->GetIsCool(ATK_ACT::ATK))return;
+	if (obj_->GetIsCool(ATK_ACT::ATK)||obj_->GetIsAtk())return;
 	obj_->ChangeAct(ATK_ACT::ATK);
 	obj_->SetAtkStartCnt(deltaTime);
 	obj_->SetIsAtk(true);
@@ -140,8 +147,20 @@ void PlArcher::SkillOneInit(void)
 	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
-	if (obj_->GetIsCool(ATK_ACT::SKILL1))return;
+	if (obj_->GetIsCool(ATK_ACT::SKILL1) || obj_->GetIsSkill())return;
 	obj_->ChangeAct(ATK_ACT::SKILL1);
+	obj_->SetAtkStartCnt(deltaTime);
+	obj_->SetIsSkill(true);
+}
+
+void PlArcher::SkillTwoInit(void)
+{
+	float deltaTime = 1.0f / 60.0f;
+	auto& ins = PlayerInput::GetInstance();
+	using ACT_CNTL = PlayerInput::ACT_CNTL;
+	using ATK_ACT = PlayerBase::ATK_ACT;
+	if (obj_->GetIsCool(ATK_ACT::SKILL2) || obj_->GetIsSkill())return;
+	obj_->ChangeAct(ATK_ACT::SKILL2);
 	obj_->SetAtkStartCnt(deltaTime);
 	obj_->SetIsSkill(true);
 }

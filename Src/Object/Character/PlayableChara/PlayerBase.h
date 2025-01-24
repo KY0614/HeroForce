@@ -52,8 +52,10 @@ public:
 
     // 移動スピード
     static constexpr float SPEED_MOVE = 5.0f;
-    static constexpr float SPEED_DEG = 5.0f;
     static constexpr float SPEED_DODGE = 15.0f;
+    static constexpr float MOVE_SPEED_SLOW = 3.0f;
+    static constexpr float MOVE_SPEED_NORMAL = 5.0f;
+    static constexpr float MOVE_SPEED_FAST = 8.0f;
    
 
 
@@ -99,6 +101,16 @@ public:
     void Init(void)override;
     virtual void Update(void)override;
     virtual void Draw(void)override;
+
+
+    /// <summary>
+    /// 矢の当たり判定
+    /// </summary>
+    /// <param name="_chaser">攻撃する人</param>
+    /// <param name="_target">攻撃される人</param>
+    /// <param name="_num">当たり判定する矢の配列番号</param>
+    /// <returns></returns>
+    virtual const bool IsHitArrowAtk(const PlayerBase& _chaser, const UnitBase& _target,const int _num) { return false; }
 
 
    // //回避関連
@@ -157,6 +169,12 @@ public:
 
     //クールタイム割合のゲッタ
     float* GetCoolTimePer(void) { return coolTimePer_; }
+
+    //矢などの遠距離武器のゲッタ(KnightとArcherで使う)
+    virtual const ATK GetArrowAtk(const int i) { return ATK(); }
+
+    //遠距離武器の個数を獲得
+    virtual const int GetArrowCnt(void) { return 0; }
 
 
     //**************************************************************
@@ -257,12 +275,12 @@ protected:
     std::map<ATK_TYPE, std::function<void(void)>>changeAtkType_;//攻撃タイプ変更
     std::function<void(void)>atkTypeUpdate_;                    //攻撃タイプごとのアップデート
     ATK_TYPE atkType_;                                          //タイプ変数
-    float moveSpeed_;                                           //移動スピード
     float coolTime_[static_cast<int>(ATK_ACT::MAX)];            //それぞれのクールタイムカウント
     bool isCool_[static_cast<int>(ATK_ACT::MAX)];               //それぞれの攻撃使い終わりを格納する
     float multiHitInterval_;                                    //多段ヒットのダメージ間隔
     VECTOR userOnePos_;                                         //ユーザー1追従用の座標   
     VECTOR colPos_;                                             //プレイヤーの当たり判定座標
+    float speed_;                                               //キャラクターのステータスとしてのスピード
 
     bool isPush_;                                               //長押しスキル用のボタンを押しているかどうか  true:押している
     bool moveAble_;             //移動可能かを返す  true:移動可能

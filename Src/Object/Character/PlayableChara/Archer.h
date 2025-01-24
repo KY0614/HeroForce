@@ -10,7 +10,7 @@ public:
     static constexpr int ATK_POW = 90;
     static constexpr int MAX_HP = 235;
     static constexpr int MAX_DEF = 90;
-
+    static constexpr float SPEED = PlayerBase::MOVE_SPEED_FAST;
 
 
     static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//攻撃開始判定の大きさ
@@ -45,14 +45,19 @@ public:
     static constexpr float SKILL_ONE_POW_MAX = 25.0f;
 
     //溜めアニメーションのステップ
-    static constexpr float SKILL_CHARGE_STEPANIM = 14.3f;
+    static constexpr float SKILL_CHARGE_STEPANIM = 9.5f;
+
+
+    //プレイヤー自体の後隙
+    static constexpr float BACKRASH_MAX = 0.5f;
 
 
     //-----------------------------------------------------------
 
     //スキル2
     //-----------------------------------------------------------
-    static constexpr float SKILL_TWO_COOLTIME = 5.0f;
+    //static constexpr float SKILL_TWO_COOLTIME = 5.0f;
+    static constexpr float SKILL_TWO_COOLTIME = 0.5f;
     static constexpr float SKILL_TWO_START = 0.2f;
     static constexpr float FRAME_SKILL2_DURATION = 3.0f - SKILL_TWO_START;
     static constexpr float FRAME_SKILL2_BACKRASH = 0.2f;
@@ -65,36 +70,11 @@ public:
 
 
     //-----------------------------------------------------------
-
-
-
-    //クールタイム
-
-    //攻撃発生の時間
-
-    //各攻撃の持続時間
-
-    //後隙
-
-    //各攻撃の座標
-
-
-
-
-    //攻撃範囲
-
-  
-   
-
-    //攻撃威力
-    
-
-    
-
+    // 
     //固有アニメーション
     static constexpr int ATK_NUM = 16;
-    static constexpr int SKILL_ONE_NUM = 14;
-    static constexpr int SKILL_TWO_NUM = 57;
+    static constexpr int SKILL_ONE_NUM = 16;
+    static constexpr int SKILL_TWO_NUM = 16;
     //static constexpr int AIMING_NUM = 14;
 
     //通常攻撃の最大値
@@ -132,6 +112,12 @@ public:
     //arrowAtkの作成
     void CreateAtk(void);
 
+    //矢のゲッタ
+    const ATK GetArrowAtk(const int i)override { return arrowAtk_[i]; }
+    const int GetArrowCnt(void)override { return arrowCnt_; }
+
+    
+
     void Update(void)override;
 
     void Draw(void)override;
@@ -159,5 +145,6 @@ protected:
     float reloadCnt_;							//矢のリロード時間
 
     float atkAbleCnt_;                          //矢の発射可能カウント
+    float backrashCnt_;                            //アーチャー自体の後隙
 };
 

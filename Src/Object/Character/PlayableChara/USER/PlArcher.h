@@ -34,4 +34,7 @@ private:
 
 	//スキル1初期化
 	void SkillOneInit(void);
+
+	//スキル2初期化
+	void SkillTwoInit(void);
 };

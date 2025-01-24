@@ -136,7 +136,6 @@ void PlayerBase::Draw(void)
 	MV1DrawModel(trans_.modelId);
 #ifdef DEBUG_ON
 	DrawDebug();
-
 #endif // DEBUG_ON
 }
 
@@ -150,7 +149,7 @@ void PlayerBase::Move(float _deg, VECTOR _axis)
 	}
 	if (!dodge_->IsDodge() && moveAble_)
 	{
-		moveSpeed_ = SPEED_MOVE;
+		moveSpeed_ = speed_;
 		Turn(_deg, _axis);
 		VECTOR dir = trans_.GetForward();
 		//ˆÚ“®•ûŒü

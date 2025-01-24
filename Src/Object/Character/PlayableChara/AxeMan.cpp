@@ -30,6 +30,7 @@ void AxeMan::SetParam(void)
 	hpMax_ = HP_MAX;
 	atkPow_ = POW_ATK;
 	def_ = DEF_MAX;
+	speed_ = SPEED;
 
 	moveAble_ = true;
 
