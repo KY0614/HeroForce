@@ -4,8 +4,7 @@
 #include "../Object/Common/Transform.h"
 #include "../Object/Stage/SkyDome.h"
 
-class SkyDome;
-class StageManager;
+class SpaceDome;
 
 class TitleScene : public SceneBase
 {
@@ -28,9 +27,7 @@ public:
 
 	// コンストラクタ
 	TitleScene(void);
-
-	// デストラクタ
-	~TitleScene(void){};
+	~TitleScene(void) = default;
 
 	void Init(void) override;
 	void Update(void) override;
@@ -38,10 +35,10 @@ public:
 	void Release(void) override;
 
 private:
+
 	//更新用ステップ
 	float step_;
 
-	//a
 	// タイトルロゴ
 	int imgLogo_;
 	int imgMes_;

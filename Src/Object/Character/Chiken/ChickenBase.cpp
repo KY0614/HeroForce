@@ -8,6 +8,8 @@ ChickenBase::ChickenBase()
 	aliveState_ = ALIVE_MOVE::MAX;
 	targetPos_ = AsoUtility::VECTOR_ZERO;
 
+	hp_ = 5;
+
 	// 状態管理
 	stateChanges_.emplace(STATE::NONE, std::bind(&ChickenBase::ChangeStateNone, this));
 	stateChanges_.emplace(STATE::ALIVE , std::bind(&ChickenBase::ChangeStateAlive, this));
@@ -59,7 +61,7 @@ void ChickenBase::Draw(void)
 	stateDraw_();
 
 	//デバッグ描画
-	DebagDraw();
+	//DebagDraw();
 }
 
 void ChickenBase::ModelSet()

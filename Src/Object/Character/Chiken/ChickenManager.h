@@ -38,6 +38,10 @@ public:
 
 	//Õ“Ë”»’è
 	void CollisionStage(const Transform& stageTrans, std::shared_ptr<ChickenBase> cheken);
+	//chicken’P‘Ì‚Ìæ“¾
+	std::shared_ptr<ChickenBase> GetChicken(const int _num);
+
+	const int GetChickenAllNum(void)const;
 
 private:
 

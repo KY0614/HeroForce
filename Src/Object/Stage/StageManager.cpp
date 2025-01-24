@@ -31,7 +31,7 @@ void StageManager::Init(void)
 		trans_[i].quaRotLocal = Quaternion::Euler(
 			0.0f,
 			AsoUtility::Deg2RadF(180.0f),
-			0.0f);
+			0.0f);	
 		trans_[i].Update();
 	}
 }

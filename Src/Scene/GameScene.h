@@ -85,6 +85,7 @@ private:
 	void Collision(void);
 	void CollisionEnemy(void);	//敵関連の当たり判定
 	void CollisionPlayer(void);	//プレイヤー関連の当たり判定
+	void CollisionChicken(void);//ニワトリあたり判定
 	void CollisionPlayerCPU(PlayerBase& _player,const VECTOR& _pPos);	//プレイヤー(CPU)関連の当たり判定
 
 	//フェード

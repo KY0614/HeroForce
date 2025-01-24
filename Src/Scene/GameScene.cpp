@@ -218,7 +218,7 @@ void GameScene::Collision(void)
 
 	CollisionEnemy();
 	CollisionPlayer();
-
+	CollisionChicken();
 }
 
 //“GŠÖŒW‚Ì“–‚½‚è”»’è
@@ -320,6 +320,13 @@ void GameScene::CollisionPlayer(void)
 		}
 		
 	}
+}
+
+void GameScene::CollisionChicken(void)
+{
+	auto& col = Collision::GetInstance();
+
+	
 }
 
 void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)

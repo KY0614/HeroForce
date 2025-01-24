@@ -102,3 +102,13 @@ void ChickenManager::CollisionStage(const Transform& stageTrans, std::shared_ptr
 		cheken->SetPrePos();
 	}
 }
+
+std::shared_ptr<ChickenBase> ChickenManager::GetChicken(const int _num)
+{
+	return std::shared_ptr<ChickenBase>();
+}
+
+const int ChickenManager::GetChickenAllNum(void) const
+{
+	return static_cast<int>(chickens_.size());
+}

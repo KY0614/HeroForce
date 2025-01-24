@@ -278,14 +278,14 @@ void PixelShader::InitPS()
 	loadPS(PS_TYPE::FADE, "Fade.cso");
 	loadPS(PS_TYPE::FADE_TEXTURE, "FadeTextrure.cso");
 	loadPS(PS_TYPE::COL_TX, "ColorTex.cso");
-	//loadPS(PS_TYPE::YELLOW_BLINK, "YellowBlink.cso");
+	loadPS(PS_TYPE::YELLOW_BLINK, "YellowBlink.cso");
 
-	fileName = "x64/Debug/YellowBlink.cso";
-	psMap_.emplace(std::make_pair(PS_TYPE::YELLOW_BLINK, LoadPixelShader(fileName.c_str())));
+	//fileName = "x64/Debug/YellowBlink.cso";
+	//psMap_.emplace(std::make_pair(PS_TYPE::YELLOW_BLINK, LoadPixelShader(fileName.c_str())));
 
 
 	//fileName = "x64/Debug/ColorTex.cso";
-	psMap_.emplace(std::make_pair(PS_TYPE::COL_TX, LoadPixelShader(fileName.c_str())));
+	//psMap_.emplace(std::make_pair(PS_TYPE::COL_TX, LoadPixelShader(fileName.c_str())));
 }
 
 const int& PixelShader::SearchPS(const PS_TYPE& ps) const
