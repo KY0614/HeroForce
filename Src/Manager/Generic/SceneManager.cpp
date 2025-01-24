@@ -365,6 +365,9 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	
 	case SCENE_ID::GAME:
 		//ウィンドウの設定
+
+		
+
 		RedySubWindow();
 		scene_ = new GameScene();
 		resM.InitGame();

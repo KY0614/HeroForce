@@ -58,6 +58,9 @@ void GameScene::Init(void)
 	level_ = std::make_unique<LevelScreenManager>();
 	level_->Init();
 
+	
+
+
 	//ƒvƒŒƒCƒ„[İ’è
 	playerMng_ = std::make_unique<PlayerManager>();
 	playerMng_->Init();
@@ -89,6 +92,7 @@ void GameScene::Init(void)
 	fazeResult_->Init();
 
 	SoundInit();
+
 }
 
 void GameScene::Update(void)

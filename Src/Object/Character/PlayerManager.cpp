@@ -20,9 +20,16 @@ void PlayerManager::Init(void)
 
 	padNum_ = 1;
 
+	DataBank::PLAYER_INFO info[4];
+
+	auto a = DataBank::GetInstance().Output(1);
+	auto b = DataBank::GetInstance().Output(2);
+	auto c = DataBank::GetInstance().Output(3);
+	auto d = DataBank::GetInstance().Output(4);
+
 	for (int i = 0; i < PLAYER_NUM; i++) {
 		//î•ñ‚ðŽæ“¾
-		players_[i].info = data.Output(i + 1);
+		players_[i].info = DataBank::GetInstance().Output(i+1);
 		//¶¬
 		if (players_[i].info.mode_ == SceneManager::PLAY_MODE::USER){
 			//ƒ†[ƒU[
