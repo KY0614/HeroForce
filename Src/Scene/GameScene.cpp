@@ -257,9 +257,10 @@ void GameScene::Collision(void)
 {
 	auto& col = Collision::GetInstance();
 
+
+	CollisionChicken();
 	CollisionEnemy();
 	CollisionPlayer();
-	CollisionChicken();
 }
 
 //敵関係の当たり判定
@@ -269,6 +270,8 @@ void GameScene::CollisionEnemy(void)
 	auto& col = Collision::GetInstance();
 	//敵の総数取得
 	int maxCnt = enmMng_->GetActiveNum();
+
+	bool isPlayerFound = false;
 
 	enmMng_->CollisionStage(stage_->GetTtans());
 
@@ -288,20 +291,24 @@ void GameScene::CollisionEnemy(void)
 			PlayerBase* p = playerMng_->GetPlayer(i);
 			VECTOR pPos = p->GetPos();
 
-			//索敵
-		//範囲内に入っているとき
+			//範囲内に入っているとき
 			if (col.Search(ePos, pPos, e->GetSearchRange())) {
 				//移動を開始
 				e->SetIsMove(true);
+
 				//プレイヤーを狙う
 				e->ChangeSearchState(Enemy::SEARCH_STATE::PLAYER_FOUND);
 				e->SetTargetPos(pPos);
+
+				//見つけた
+				isPlayerFound = true;
 			}
-			else {
+			else if (!isPlayerFound) {
+				//移動を停止
+				e->SetIsMove(false);
+
 				//誰も狙っていない
 				e->ChangeSearchState(Enemy::SEARCH_STATE::NOT_FOUND);
-				//中央に向かう
-				e->SetTargetPos(AsoUtility::VECTOR_ZERO);
 			}
 
 			//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
@@ -313,7 +320,7 @@ void GameScene::CollisionEnemy(void)
 			//攻撃判定
 
 			//アタック中 && 攻撃判定が終了していないときだけ処理する。それ以外はしないので戻る
-			if (!(eAtk.IsAttack() && !eAtk.isHit_))continue;
+			//if (!(eAtk.IsAttack() && !eAtk.isHit_))continue;
 
 			//攻撃が当たる範囲 && プレイヤーが回避していないとき
 			if (col.IsHitAtk(*e, *p) && !p->GetDodge()->IsDodge())
@@ -354,6 +361,7 @@ void GameScene::CollisionPlayer(void)
 		{
 			//敵の取得
 			Enemy* e = enmMng_->GetActiveEnemy(i);
+
 			//当たり判定
 			if (col.IsHitAtk(*p, *e)) {
 				//被弾
@@ -397,6 +405,23 @@ void GameScene::CollisionChicken(void)
 			//敵個人の位置と攻撃を取得
 			VECTOR ePos = e->GetPos();
 			UnitBase::ATK eAtk = e->GetAtk();
+
+			//索敵
+			//範囲内に入っているとき
+			if (col.Search(ePos, c->GetPos(), e->GetSearchRange())) {
+				//移動を開始
+				e->SetIsMove(true);
+				//プレイヤーを狙う
+				e->ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_FOUND);
+				e->SetTargetPos(c->GetPos());
+			}
+
+			//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
+			if (col.Search(ePos, c->GetPos(), e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL) {
+				//状態を変更
+				e->ChangeState(Enemy::STATE::ALERT);
+			}
+
 
 			//アタック中 && 攻撃判定が終了していないときだけ処理する。それ以外はしないので戻る
 			if (!(eAtk.IsAttack() && !eAtk.isHit_))continue;

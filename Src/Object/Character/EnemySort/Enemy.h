@@ -113,7 +113,7 @@ public:
 	/// 標的の座標を変更
 	/// </summary>
 	/// <param name="_targetPos">標的の座標</param>
-	void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; }
+	void SetTargetPos(const VECTOR _targetPos);
 
 	/// <summary>
 	/// ダメージ
@@ -172,8 +172,7 @@ protected:
 
 	VECTOR localCenterPos_;	//敵中央の相対座標
 	VECTOR colPos_;			//敵自身の当たり判定用の相対座標
-
-	float moveSpeed_;													//移動量
+												//移動量
 	bool isMove_;														//移動しているかどうか(true:移動中)
 	SEARCH_STATE searchState_;											//探索判定
 	std::map<SEARCH_STATE, std::function<void(void)>> SearchStateInfo_;	//探索状態による情報更新

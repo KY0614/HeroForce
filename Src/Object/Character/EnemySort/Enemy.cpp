@@ -100,6 +100,11 @@ void Enemy::ChangeSearchState(const SEARCH_STATE _searchState)
 	SearchStateInfo_[searchState_]();
 }
 
+void Enemy::SetTargetPos(const VECTOR _targetPos)
+{
+	targetPos_ = _targetPos;
+}
+
 void Enemy::Damage(const int _damage, const int _stunPow)
 {
 	//既にやられているなら処理しない
@@ -370,7 +375,7 @@ void Enemy::Draw(void)
 #ifdef DEBUG_ENEMY
 	
 	//デバッグ
-	DrawDebug();
+	//DrawDebug();
 
 #endif // DEBUG_ENEMY
 
