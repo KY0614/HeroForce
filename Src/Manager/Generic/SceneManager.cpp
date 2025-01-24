@@ -432,13 +432,25 @@ void SceneManager::SetWindowPram(void)
 	int posX = 0;
 	int posY = 0;
 
-	int sizeX = DISPLAY_X * DataBank::GetInstance().Output(DataBank::INFO::DHISPLAY_NUM);
+
+	int displayNum = DataBank::GetInstance().Output(DataBank::INFO::DHISPLAY_NUM);
+
+	int sizeX = DISPLAY_X * displayNum;
 	int sizeY = DISPLAY_Y;
 
-	if (activeWindowNum_ != 1)sizeX /= 2;
-	if (activeWindowNum_ > 2)sizeY /= 2;
-
-	if (sizeX > DISPLAY_X)sizeX = DISPLAY_X;
+	//生成するウィンドウの数よりディスプレイの方が多い場合
+	if(displayNum>activeWindowNum_)
+	{
+		//フルスクリーンで移す
+		sizeX = DISPLAY_X;
+		sizeY = DISPLAY_Y;
+	}
+	else
+	{
+		if (activeWindowNum_ != 1)sizeX /= 2;
+		if (activeWindowNum_ > 2)sizeY /= 2;
+	}
+	
 
 	//DataBank::GetInstance().Input(DataBank::INFO::SCREEN_SIZE, sizeX - 15, sizeY - 30);
 
