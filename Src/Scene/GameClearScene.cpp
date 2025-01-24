@@ -88,7 +88,7 @@ void GameClearScene::Update(void)
 		ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD3, InputManager::JOYPAD_BTN::RIGHT) ||
 		ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD4, InputManager::JOYPAD_BTN::RIGHT))
 	{
-		scm.ChangeScene(SceneManager::SCENE_ID::SELECT);
+		scm.ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
 }
 

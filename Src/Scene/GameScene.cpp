@@ -149,11 +149,11 @@ void GameScene::Update(void)
 	//いずれ消す
 	auto& ins = InputManager::GetInstance();
 	auto& mng = SceneManager::GetInstance();
-	//スペース推したらタイトルに戻る
-	if (ins.IsTrgDown(KEY_INPUT_SPACE))
-	{
-		mng.ChangeScene(SceneManager::SCENE_ID::TITLE);
-	}
+	////スペース推したらタイトルに戻る
+	//if (ins.IsTrgDown(KEY_INPUT_SPACE))
+	//{
+	//	mng.ChangeScene(SceneManager::SCENE_ID::TITLE);
+	//}
 
 	if (ins.IsTrgDown(KEY_INPUT_RETURN))
 	{
