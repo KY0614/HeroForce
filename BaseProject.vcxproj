@@ -50,6 +50,8 @@
     <ClCompile Include="Src\Object\Character\PlayerInput.cpp" />
     <ClCompile Include="Src\Object\Character\PlayerManager.cpp" />
     <ClCompile Include="Src\Object\JobManagerBase.cpp" />
+    <ClCompile Include="Src\Object\System\GameUi\CpuHpBar.cpp" />
+    <ClCompile Include="Src\Object\System\GameUi\GamaUIBase.cpp" />
     <ClCompile Include="Src\Scene\FazeResult.cpp" />
     <ClCompile Include="Src\Scene\GameClearScene.cpp" />
     <ClCompile Include="Src\Scene\GameOverScene.cpp" />
@@ -149,6 +151,8 @@
     <ClInclude Include="Src\Object\Stage\StageManager.h" />
     <ClInclude Include="Src\Object\Stage\StageObject.h" />
     <ClInclude Include="Src\Object\System\Carsor.h" />
+    <ClInclude Include="Src\Object\System\GameUi\CpuHpBar.h" />
+    <ClInclude Include="Src\Object\System\GameUi\GamaUIBase.h" />
     <ClInclude Include="Src\Object\System\LevelScreenManager.h" />
     <ClInclude Include="Src\Object\System\LevelupNotice.h" />
     <ClInclude Include="Src\Object\System\LevelupSelect.h" />

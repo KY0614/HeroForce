@@ -123,6 +123,12 @@ public:
 		//BGM
 		GAME_NOMAL_BGM,
 		GAME_LAST_BGM,
+
+		//効果音
+		HIT_SND,
+		PLAYER_DETH_SND,
+		ENEMY_DETH_SND,
+		CHICKEN_DETH_SND,
 	};
 
 	// 明示的にインステンスを生成する

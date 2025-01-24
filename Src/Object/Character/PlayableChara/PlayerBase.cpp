@@ -102,6 +102,9 @@ void PlayerBase::Update(void)
 	//アニメーションの更新
 	Anim();
 
+	//体力減らす(攻撃を喰らっていないときはどうでもいい関数)
+	SubHp();
+
 #ifdef INPUT_DEBUG_ON
 	InputUpdate();
 #endif // INPUT_DEBUG_ON
@@ -396,6 +399,8 @@ const bool PlayerBase::IsDodgeable(void) const
 }
 void PlayerBase::Damage(void)
 {
+
+
 	//とりあえず1ダメージ減らす
 	hp_--;
 

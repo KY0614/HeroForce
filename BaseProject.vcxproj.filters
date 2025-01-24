@@ -72,6 +72,8 @@
     <ClCompile Include="Src\Object\Character\Chiken\ClearChicken.cpp" />
     <ClCompile Include="Src\Common\ShaderFade.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Other\ClearPlayers.cpp" />
+    <ClCompile Include="Src\Object\System\GameUi\CpuHpBar.cpp" />
+    <ClCompile Include="Src\Object\System\GameUi\GamaUIBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application.h" />
@@ -145,5 +147,7 @@
     <ClInclude Include="Src\Object\Character\Chiken\ClearChicken.h" />
     <ClInclude Include="Src\Common\ShaderFade.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Other\ClearPlayers.h" />
+    <ClInclude Include="Src\Object\System\GameUi\CpuHpBar.h" />
+    <ClInclude Include="Src\Object\System\GameUi\GamaUIBase.h" />
   </ItemGroup>
 </Project>

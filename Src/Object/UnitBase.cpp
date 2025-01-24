@@ -1,4 +1,5 @@
 #include"../Application.h"
+#include"../Manager/Decoration/SoundManager.h"
 #include "../Lib/nlohmann/json.hpp"
 #include"../Utility/AsoUtility.h"
 #include "UnitBase.h"
@@ -198,6 +199,8 @@ void UnitBase::SetDamage(const int attackerPower, const int skillPower)
 {
 	//—^‚¦‚éƒ_ƒ[ƒW‚ğ‘‚â‚·
 	damage_ += attackerPower * skillPower / defDef_;
+	//UŒ‚‚ğ‹ò‚ç‚Á‚½‚Ì‚ÅSEÄ¶
+	SoundManager::GetInstance().Play(SoundManager::SOUND::HIT);
 }
 
 void UnitBase::SubHp()

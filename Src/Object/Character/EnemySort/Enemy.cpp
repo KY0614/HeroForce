@@ -56,6 +56,9 @@ void Enemy::Update(void)
 	//アニメーション
 	Anim();
 
+	//体力減らす(攻撃を喰らっていないときはどうでもいい関数)
+	SubHp();
+
 #ifdef DEBUG_ENEMY
 	//入力用
 	InputManager& ins = InputManager::GetInstance();

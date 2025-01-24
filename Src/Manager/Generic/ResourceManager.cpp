@@ -86,12 +86,26 @@ void ResourceManager::InitGame(void)
 	Resource res;
 
 	//BGM
+	//ゲームノーマル
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Game_Nomal.mp3");
 	resourcesMap_.emplace(SRC::GAME_NOMAL_BGM, res);
-
+	//ゲームボス
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Game_Boss.mp3");
 	resourcesMap_.emplace(SRC::GAME_LAST_BGM, res);
 
+	//効果音
+	//攻撃喰らい
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "hit.mp3");
+	resourcesMap_.emplace(SRC::HIT_SND, res);
+	//死亡(プレイヤー)
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "PlayerDeth.mp3");
+	resourcesMap_.emplace(SRC::PLAYER_DETH_SND, res);
+	//死亡(敵)
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "EnemyDeth.mp3");
+	resourcesMap_.emplace(SRC::ENEMY_DETH_SND, res);
+	//死亡(ニワトリ)
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "ChickenDeth.mp3");
+	resourcesMap_.emplace(SRC::CHICKEN_DETH_SND, res);
 
 	//強化選択用UI画像
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "SelectUI.png");

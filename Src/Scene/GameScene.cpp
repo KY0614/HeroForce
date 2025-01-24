@@ -88,18 +88,7 @@ void GameScene::Init(void)
 	fazeResult_ = std::make_unique<FazeResult>();
 	fazeResult_->Init();
 
-	//BGMの初期化
-	auto& snd = SoundManager::GetInstance();
-
-
-	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::GAME_NOMAL,
-		ResourceManager::GetInstance().Load(ResourceManager::SRC::GAME_NOMAL_BGM).handleId_);
-
-	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::GAME_NOMAL,
-		ResourceManager::GetInstance().Load(ResourceManager::SRC::GAME_LAST_BGM).handleId_);
-
-	//ゲームシーン開始時はノーマルのBGMを再生
-	snd.Play(SoundManager::SOUND::GAME_NOMAL);
+	SoundInit();
 }
 
 void GameScene::Update(void)
@@ -227,6 +216,36 @@ void GameScene::Release(void)
 	enmMng_->Release();
 }
 
+
+void GameScene::SoundInit(void)
+{
+	//BGMの初期化
+	auto& snd = SoundManager::GetInstance();
+
+	//通常
+	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::GAME_NOMAL,
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::GAME_NOMAL_BGM).handleId_);
+	//ボス戦
+	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::GAME_NOMAL,
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::GAME_LAST_BGM).handleId_);
+
+	//ゲームシーン開始時はノーマルのBGMを再生
+	snd.Play(SoundManager::SOUND::GAME_NOMAL);
+
+	//効果音設定
+	//プレイヤー死亡
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::DETH_PLAYER,
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_DETH_SND).handleId_);
+	//敵死亡
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::DETH_ENEMY,
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::ENEMY_DETH_SND).handleId_);
+	//ニワトリ死亡
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::DETH_CHICKEN,
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::CHICKEN_DETH_SND).handleId_);
+	//攻撃喰らい時
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::HIT,
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::HIT_SND).handleId_);
+}
 
 //当たり判定（他項目に干渉するもののみ）
 //あたり判定総括
