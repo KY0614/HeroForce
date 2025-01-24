@@ -326,7 +326,40 @@ void GameScene::CollisionChicken(void)
 {
 	auto& col = Collision::GetInstance();
 
-	
+	int chickenNum = chicken_->GetChickenAllNum();
+
+	for (int i = 0; i < chickenNum; i++) {
+		auto c = chicken_->GetChicken(i);
+		//ニワトリが死んでいたら次へ
+ 		if (!c->IsAlive())continue;
+
+		//敵の総数取得
+		int maxCnt = enmMng_->GetActiveNum();
+		//攻撃判定
+
+		for (int r = 0; r < maxCnt; r++)
+		{
+
+			//敵の取得
+			Enemy* e = enmMng_->GetActiveEnemy(r);
+
+			//敵個人の位置と攻撃を取得
+			VECTOR ePos = e->GetPos();
+			UnitBase::ATK eAtk = e->GetAtk();
+
+			//アタック中 && 攻撃判定が終了していないときだけ処理する。それ以外はしないので戻る
+			if (!(eAtk.IsAttack() && !eAtk.isHit_))continue;
+
+			//攻撃が当たる範囲 && プレイヤーが回避していないとき
+			if (col.IsHitAtk(*e, *c))
+			{
+				//ダメージ
+				c->SetDamage(1);
+				//使用した攻撃を判定終了に
+				e->SetIsHit(true);
+			}
+		}
+	}
 }
 
 void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)

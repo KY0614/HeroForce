@@ -105,7 +105,7 @@ void ChickenManager::CollisionStage(const Transform& stageTrans, std::shared_ptr
 
 std::shared_ptr<ChickenBase> ChickenManager::GetChicken(const int _num)
 {
-	return std::shared_ptr<ChickenBase>();
+	return chickens_[_num];
 }
 
 const int ChickenManager::GetChickenAllNum(void) const

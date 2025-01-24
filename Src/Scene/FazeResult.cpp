@@ -143,6 +143,9 @@ void FazeResult::SetResult(void)
 	//ƒŠƒUƒ‹ƒgî•ñ
 	dunkEnm_ = DataBank::GetInstance().Output(DataBank::INFO::FAZE_DUNK_ENEMY);
 	aliveChicken_ = DataBank::GetInstance().Output(DataBank::INFO::ALIVE_CHICKEN);
+	//ƒ‰ƒ“ƒN‚ÌŒˆ’è
+	JudgeRank();
+
 }
 
 float FazeResult::GetBonusExp(const RANK _rank) const
@@ -185,4 +188,23 @@ void FazeResult::ChangeRank(void)
 	if (ins.IsTrgDown(KEY_INPUT_SPACE)||ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1,InputManager::JOYPAD_BTN::RIGHT))isEnd_ = true;
 
 	afterExp_ = GetBonusExp(rank_);
+}
+
+void FazeResult::JudgeRank(void)
+{
+	int value = (aliveChicken_ * CHICKEN_VALUE) + (dunkEnm_ * ENEMY_VALUE);
+	rank_ = RANK::C;
+
+	if (value >= RANK_S_BORDER) {
+		rank_ = RANK::S;
+		return;
+	}
+	if (value >= RANK_A_BORDER) {
+		rank_ = RANK::A;
+		return;
+	}
+	if (value >= RANK_B_BORDER) {
+		rank_ = RANK::B;
+		return;
+	}
 }
