@@ -23,7 +23,7 @@ void EnemyManager::Init(void)
 	createIntCnt_ = 0.0f;
 }
 
-void EnemyManager::Update(VECTOR _target)
+void EnemyManager::Update(void)
 {
 	//カウンタ
 	createIntCnt_ = createIntCnt_ + SceneManager::GetInstance().GetDeltaTime();
@@ -41,7 +41,7 @@ void EnemyManager::Update(VECTOR _target)
 	//生存している敵の処理
 	for (int i = 0; i < activeNum_; i++)
 	{
-		activeEnemys_[i]->SetTargetPos(_target);
+		//activeEnemys_[i]->SetTargetPos(_target);
 		activeEnemys_[i]->Update();
 	}
 }
@@ -54,6 +54,19 @@ void EnemyManager::Draw(void)
 void EnemyManager::Release(void)
 {
 	
+}
+
+void EnemyManager::CollisionStage(const Transform& stageTrans)
+{
+	auto& col = Collision::GetInstance();
+
+	for (int i = 0; i < activeNum_; i++)
+	{
+		if (col.IsHitUnitStageObject(stageTrans.modelId, activeEnemys_[i]->GetTransform().pos, activeEnemys_[i]->GetRadius()))
+		{
+			activeEnemys_[i]->SetPrePos();
+		}
+	}
 }
 
 
@@ -90,7 +103,6 @@ void EnemyManager::CreateEnemy(void)
 		break;
 	case EnemyManager::TYPE::GOLEM:
 		//ゴーレムはボスキャラなのでここでは生成しない
-		//enm = new EneGolem(AsoUtility::VECTOR_ZERO);
 		return;
 		break;
 	case EnemyManager::TYPE::MAGE:
@@ -230,17 +242,4 @@ void EnemyManager::DeathEnemy(int _num)
 	//末尾の消去
 	activeEnemys_[activeNum_]->Destroy();
 	delete activeEnemys_[activeNum_];
-}
-
-void EnemyManager::CollisionStage(const Transform& stageTrans)
-{
-	auto& col = Collision::GetInstance();
-
-	for (int i = 0; i < activeNum_; i++)
-	{
-		if (col.IsHitUnitStageObject(stageTrans.modelId, activeEnemys_[i]->GetTransform().pos, activeEnemys_[i]->GetRadius()))
-		{
-			activeEnemys_[i]->SetPrePos();
-		}
-	}
 }

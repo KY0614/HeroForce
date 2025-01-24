@@ -33,15 +33,15 @@ public:
 	static constexpr float EXP = 300.0f;		//敵の経験値
 
 	//速度関係
-	static constexpr float WALK_SPEED = 2.0f;	//歩きの速度
-	static constexpr float RUN_SPEED = 4.0f;	//走りの速度
+	static constexpr float WALK_SPEED = 1.5f;	//歩きの速度
+	static constexpr float RUN_SPEED = 3.0f;	//走りの速度
 
 	//範囲関係
 	static constexpr float SEARCH_RANGE = 1000.0f * CHARACTER_SCALE;		//索敵判定の大きさ
 	static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
 
 	//スキルの当たり判定半径
-	static constexpr float SKILL_ONE_COL_RADIUS = 15.0f;	//スキル１の当たり判定半径
+	static constexpr float SKILL_ONE_COL_RADIUS = 35.0f;	//スキル１の当たり判定半径
 
 	//スキルの攻撃力
 	static constexpr float SKILL_ONE_POW = 30.0f;			//スキル１の攻撃力

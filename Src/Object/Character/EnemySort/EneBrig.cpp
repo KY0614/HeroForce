@@ -26,6 +26,7 @@ void EneBrig::SetParam(void)
 	def_ = DEF;
 	exp_ = EXP;
 	walkSpeed_ = WALK_SPEED;
+	runSpeed_ = RUN_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
 	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
@@ -70,6 +71,17 @@ void EneBrig::InitSkill(void)
 
 void EneBrig::AlertSkill_One(void)
 {
+	//“G‚Ì‘O•û
+	VECTOR pos = trans_.GetForward();
+
+	//UŒ‚”ÍˆÍ
+	pos = VScale(pos, SKILL_ONE_COL_RADIUS);
+
+	//À•W‡‚í‚¹
+	pos = VAdd(trans_.pos, pos);
+
+	//”ÍˆÍì¬
+	CreateAlert(pos, SKILL_ONE_COL_RADIUS * 2, SKILL_ONE_COL_RADIUS * 2);
 }
 
 void EneBrig::Skill_One(void)

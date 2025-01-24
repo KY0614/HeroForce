@@ -71,7 +71,7 @@ public:
 
 	//速度関係
 	static constexpr float WALK_SPEED = 2.0f;	//歩きの速度
-	static constexpr float RUN_SPEED = 4.0f;	//走りの速度
+	static constexpr float RUN_SPEED = 2.5f;	//走りの速度
 
 	//範囲関係
 	static constexpr float SEARCH_RANGE = 2000.0f * CHARACTER_SCALE;		//索敵判定の大きさ
@@ -93,6 +93,10 @@ public:
 		,SKILL_ONE_BACKLASH
 		,0.0f };
 
+	//スキルの警告判定用相対座標
+	static constexpr VECTOR SKILL_ONE_ALERT = { 0.0f,0.0f,210.0f };	//スキル１の警告判定用相対座標
+
+	
 	//スキルの当たり判定半径
 	static constexpr float SKILL_TWO_COL_RADIUS = 50.0f;	//スキル２の当たり判定半径
 	//スキルの攻撃力
@@ -108,6 +112,11 @@ public:
 		,SKILL_TWO_DURATION
 		,SKILL_TWO_BACKLASH
 		,0.0f };
+
+	//スキルの警告判定用相対座標
+	static constexpr VECTOR SKILL_TWO_ALERT = { 0.0f,0.0f,200.0f };		//スキル２の警告判定用相対座標
+	//スキルの警告判定用範囲
+	static constexpr float SKILL_TWO_ALERT_RANGE_X = 200.0f;			//スキル２の警告判定用範囲
 
 	//スキルの当たり判定半径
 	static constexpr float SKILL_THREE_COL_RADIUS = 100.0f;	//スキル３の当たり判定半径
@@ -129,7 +138,7 @@ public:
 	static constexpr float SKILL_THREE_FALL_RADIUS = 500.0f;	//スキル３の隕石の落ちる範囲の半径
 
 	//攻撃生成間隔
-	static constexpr float SKILL_THREE_DELAY = 0.1f;			//スキル３の攻撃生成間隔
+	static constexpr float SKILL_THREE_DELAY = 0.5f;			//スキル３の攻撃生成間隔
 
 	//攻撃回数
 	static constexpr int SKILL_THREE_MAX_CNT = 5;				//スキル３の攻撃回数
@@ -142,8 +151,10 @@ private:
 	//変数
 	//****************************************************************
 
-	int skillThreeCnt_;			//スキル３の生成カウンタ
-	float skillThreeDelayCnt_;	//スキル３の発生間隔用カウンタ
+	int skillThreeCnt_;							//スキル３の生成カウンタ
+	float skillThreeDelayCnt_;					//スキル３の発生間隔用カウンタ
+	bool isPreSkillThreeAtk_;					//スキル３の発生予兆生成判定(true:生成しきった)
+	ATK skillThreePreAtk_[SKILL_THREE_MAX_CNT];	//スキル３の発生予兆用
 
 	//****************************************************************
 	//関数
@@ -163,6 +174,9 @@ private:
 	//休憩時間中かどうかを返す
 	const bool IsBreak(void)const override { return breakCnt_ < BREAK_TIME; }
 
+	//警告処理
+	void Alert(void)override;
+
 	//スキル1の警告
 	void AlertSkill_One(void)override;
 	
@@ -181,6 +195,9 @@ private:
 	//スキル3(叫び攻撃)
 	void Skill_Three(void);
 
+	//攻撃判定の初期化
+	void ResetAlertJudge(void)override;
+	
 	//攻撃判定の初期化
 	void ResetAtkJudge(void)override;
 

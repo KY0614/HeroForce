@@ -40,9 +40,12 @@ public:
 	~EnemyManager() = default;
 
 	void Init(void);
-	void Update(VECTOR _target);
+	void Update(void);
 	void Draw(void);
 	void Release(void);
+
+	//Õ“Ë”»’è
+	void CollisionStage(const Transform& stageTrans);
 
 	/// <summary>
 	/// w’è‚µ‚½“G‚Ìæ“¾
@@ -56,9 +59,6 @@ public:
 
 	//“|‚³‚ê‚½“G‚ÌŒãˆ— _num=“|‚³‚ê‚½“G‚Ì”z—ñ”Ô†
 	void DeathEnemy(int _num);
-
-	//Õ“Ë”»’è
-	void CollisionStage(const Transform& stageTrans);
 private:
 
 	//XV“™‚ğ‚©‚¯‚é“®‚«‚Ì‚ ‚é“G

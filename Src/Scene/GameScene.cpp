@@ -146,7 +146,7 @@ void GameScene::Update(void)
 
 
 	//敵の更新
-	enmMng_->Update(playerMng_->GetPlayer(0)->GetPos());
+	enmMng_->Update();
 	
 
 	chicken_->SetTargetPos(playerMng_->GetPlayer(0)->GetPos());
@@ -293,10 +293,15 @@ void GameScene::CollisionEnemy(void)
 			if (col.Search(ePos, pPos, e->GetSearchRange())) {
 				//移動を開始
 				e->SetIsMove(true);
+				//プレイヤーを狙う
+				e->ChangeSearchState(Enemy::SEARCH_STATE::PLAYER_FOUND);
+				e->SetTargetPos(pPos);
 			}
 			else {
-				//移動を停止
-				e->SetIsMove(false);
+				//誰も狙っていない
+				e->ChangeSearchState(Enemy::SEARCH_STATE::NOT_FOUND);
+				//中央に向かう
+				e->SetTargetPos(AsoUtility::VECTOR_ZERO);
 			}
 
 			//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始

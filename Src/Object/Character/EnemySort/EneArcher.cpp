@@ -39,6 +39,7 @@ void EneArcher::SetParam(void)
 	arrowCnt_ = 0;
 	isShotArrow_ = false;
 	walkSpeed_ = WALK_SPEED;
+	runSpeed_ = RUN_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
 	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
@@ -85,6 +86,17 @@ void EneArcher::InitSkill(void)
 
 void EneArcher::AlertSkill_One(void)
 {
+	//敵の前方
+	VECTOR pos = trans_.GetForward();
+
+	//攻撃範囲
+	pos = VScale(pos, SKILL_ONE_COL_RADIUS);
+
+	//座標合わせ
+	pos = VAdd(trans_.pos, VScale(pos, ARROW_SPEED * SKILL_ONE_DURATION));
+
+	//範囲作成
+	CreateAlert(pos, SKILL_ONE_COL_RADIUS * 2, SKILL_ONE_COL_RADIUS * 2 * ARROW_SPEED * SKILL_ONE_DURATION);
 }
 
 void EneArcher::Skill_One(void)
@@ -201,9 +213,6 @@ void EneArcher::ChangeStateAtk(void)
 {
 	//更新処理の中身初期化
 	stateUpdate_ = std::bind(&EneArcher::UpdateAtk, this);
-
-	//向きを改めて設定
-	trans_.quaRot = trans_.quaRot.LookRotation(GetTargetVec());
 }
 
 void EneArcher::Update(void)
