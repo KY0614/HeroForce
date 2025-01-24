@@ -81,21 +81,22 @@ void TitleScene::Draw(void)
 		imgMes_,
 		PixelShader::PS_TYPE::YELLOW_BLINK,
 		buf);*/
-	ps.DrawExtendGraphToShader(
+
+	/*ps.DrawExtendGraphToShader(
 		{ MES_POS_X,10 },
 		{ Application::SCREEN_SIZE_X, 200},
 		imgMes_,
 		PixelShader::PS_TYPE::YELLOW_BLINK,
 		buf
-	);
+	);*/
 
-	/*DrawRotaGraph(
+	DrawRotaGraph(
 		MES_POS_X,MES_POS_Y,
-		1.0f,
+		0.5f,
 		0.0f,
 		imgMes_,
 		true,
-		false);*/
+		false);
 }
 
 void TitleScene::Release(void)
