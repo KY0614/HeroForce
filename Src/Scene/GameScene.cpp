@@ -58,9 +58,6 @@ void GameScene::Init(void)
 	level_ = std::make_unique<LevelScreenManager>();
 	level_->Init();
 
-	
-
-
 	//プレイヤー設定
 	playerMng_ = std::make_unique<PlayerManager>();
 	playerMng_->Init();
@@ -99,6 +96,7 @@ void GameScene::Update(void)
 {
 	//ゲームオーバー判定
 	if(IsGameOver())SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+	if (!playerMng_->GetPlayer(0)->IsAlive())SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 
 	//フェーズリザルト
 	if (isFazeRezult_)
@@ -177,6 +175,9 @@ void GameScene::Update(void)
 	//{
 	//	ChangePhase();
 	//}
+
+	if (ins.IsTrgDown(KEY_INPUT_K))
+		playerMng_->GetPlayer(0)->SetDamage(20, 20);
 }
 
 void GameScene::Draw(void)
@@ -218,6 +219,7 @@ void GameScene::Release(void)
 
 	SceneManager::GetInstance().ResetCameras();
 	SceneManager::GetInstance().ReturnSolo();
+	Timer::GetInstance().Reset();
 
 	playerMng_->Release();
 
@@ -296,6 +298,14 @@ void GameScene::CollisionEnemy(void)
 			VECTOR pPos = p->GetPos();
 
 			//範囲内に入っているとき
+
+
+			//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
+			if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL) {
+				//状態を変更
+				e->ChangeState(Enemy::STATE::ALERT);
+			}
+
 			if (col.Search(ePos, pPos, e->GetSearchRange())) {
 				//移動を開始
 				e->SetIsMove(true);
@@ -313,26 +323,24 @@ void GameScene::CollisionEnemy(void)
 
 				//誰も狙っていない
 				e->ChangeSearchState(Enemy::SEARCH_STATE::NOT_FOUND);
+				//e->SetTargetPos(VECTOR{0,0,0});
 			}
 
-			//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
-			if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL) {
-				//状態を変更
-				e->ChangeState(Enemy::STATE::ALERT);
-			}
 
 			//攻撃判定
 
 			//アタック中 && 攻撃判定が終了していないときだけ処理する。それ以外はしないので戻る
-			//if (!(eAtk.IsAttack() && !eAtk.isHit_))continue;
+			if (eAtk.IsAttack() && !eAtk.isHit_) {
 
-			//攻撃が当たる範囲 && プレイヤーが回避していないとき
-			if (col.IsHitAtk(*e, *p) && !p->GetDodge()->IsDodge())
-			{
-				//ダメージ
-				p->SetDamage(e->GetCharaPow(), eAtk.pow_);
-				//使用した攻撃を判定終了に
-				e->SetIsHit(true);
+
+				//攻撃が当たる範囲 && プレイヤーが回避していないとき
+				if (col.IsHitAtk(*e, *p)/* && !p->GetDodge()->IsDodge()*/)
+				{
+					//ダメージ
+					p->SetDamage(e->GetCharaPow(), eAtk.pow_);
+					//使用した攻撃を判定終了に
+					e->SetIsHit(true);
+				}
 			}
 		}	
 	}
