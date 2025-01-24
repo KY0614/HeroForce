@@ -432,11 +432,13 @@ void SceneManager::SetWindowPram(void)
 	int posX = 0;
 	int posY = 0;
 
-	int sizeX = DISPLAY_X;
+	int sizeX = DISPLAY_X * DataBank::GetInstance().Output(DataBank::INFO::DHISPLAY_NUM);
 	int sizeY = DISPLAY_Y;
 
 	if (activeWindowNum_ != 1)sizeX /= 2;
 	if (activeWindowNum_ > 2)sizeY /= 2;
+
+	if (sizeX > DISPLAY_X)sizeX = DISPLAY_X;
 
 	//DataBank::GetInstance().Input(DataBank::INFO::SCREEN_SIZE, sizeX - 15, sizeY - 30);
 
