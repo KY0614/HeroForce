@@ -41,7 +41,7 @@ public:
 	static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
 
 	//スキルの当たり判定半径
-	static constexpr float SKILL_ONE_COL_RADIUS = 15.0f;	//スキル１の当たり判定半径
+	static constexpr float SKILL_ONE_COL_RADIUS = 35.0f;	//スキル１の当たり判定半径
 
 	//スキルの攻撃力
 	static constexpr float SKILL_ONE_POW = 30.0f;			//スキル１の攻撃力

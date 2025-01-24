@@ -72,21 +72,17 @@ void EneAxe::InitSkill(void)
 
 void EneAxe::AlertSkill_One(void)
 {
-	//攻撃の再生成
-	if (lastAtkSign_->IsFinishMotion())
-	{
-		//攻撃終了
-		isEndAllAtkSign_ = true;
+	//敵の前方
+	VECTOR pos = trans_.GetForward();
 
-		//処理終了
-		return;
-	}
+	//攻撃範囲
+	pos = VScale(pos, SKILL_ONE_COL_RADIUS);
 
-	for (auto& nowSkillSign : nowSkillSign_)
-	{
-		//座標の設定
-		nowSkillSign.pos_ = MV1GetFramePosition(trans_.modelId, FRAME_AXE);
-	}
+	//座標合わせ
+	pos = VAdd(trans_.pos, pos);
+
+	//範囲作成
+	CreateAlert(pos, SKILL_ONE_COL_RADIUS * 2, SKILL_ONE_COL_RADIUS * 2);
 }
 
 void EneAxe::Skill_One(void)

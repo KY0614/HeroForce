@@ -37,7 +37,7 @@ public:
 	static constexpr float RUN_SPEED = 2.5f;		//走りの速度
 
 	//範囲関係
-	static constexpr float SEARCH_RANGE = 1500.0f * CHARACTER_SCALE;		//索敵判定の大きさ
+	static constexpr float SEARCH_RANGE = 2500.0f * CHARACTER_SCALE;		//索敵判定の大きさ
 	static constexpr float ATK_START_RANGE = 1000.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
 
 	//スキルの射程

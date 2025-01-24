@@ -86,6 +86,17 @@ void EneArcher::InitSkill(void)
 
 void EneArcher::AlertSkill_One(void)
 {
+	//敵の前方
+	VECTOR pos = trans_.GetForward();
+
+	//攻撃範囲
+	pos = VScale(pos, SKILL_ONE_COL_RADIUS);
+
+	//座標合わせ
+	pos = VAdd(trans_.pos, VScale(pos, ARROW_SPEED * SKILL_ONE_DURATION));
+
+	//範囲作成
+	CreateAlert(pos, SKILL_ONE_COL_RADIUS * 2, SKILL_ONE_COL_RADIUS * 2 * ARROW_SPEED * SKILL_ONE_DURATION);
 }
 
 void EneArcher::Skill_One(void)
@@ -202,9 +213,6 @@ void EneArcher::ChangeStateAtk(void)
 {
 	//更新処理の中身初期化
 	stateUpdate_ = std::bind(&EneArcher::UpdateAtk, this);
-
-	//向きを改めて設定
-	trans_.quaRot = trans_.quaRot.LookRotation(GetMoveVec(trans_.pos, targetPos_));
 }
 
 void EneArcher::Update(void)

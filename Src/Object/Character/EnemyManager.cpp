@@ -90,7 +90,6 @@ void EnemyManager::CreateEnemy(void)
 		break;
 	case EnemyManager::TYPE::GOLEM:
 		//ゴーレムはボスキャラなのでここでは生成しない
-		//enm = new EneGolem(AsoUtility::VECTOR_ZERO);
 		return;
 		break;
 	case EnemyManager::TYPE::MAGE:

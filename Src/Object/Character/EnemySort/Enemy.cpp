@@ -44,6 +44,7 @@ void Enemy::Init(void)
 	breakCnt_ = 0.0f;
 	stunDef_ = 0;
 	atkAct_ = ATK_ACT::MAX;
+	isEndAlert_ = false;
 	isEndAllAtkSign_ = false;
 	isEndAllAtk_ = false;
 	isMove_ = false;
@@ -134,14 +135,14 @@ void Enemy::ChangeStateAlert(void)
 	//更新処理の中身初期化
 	stateUpdate_ = std::bind(&Enemy::UpdateAlert, this);
 
+	//予兆範囲を初期化
+	ResetAlertVertex();
+
 	//向きを改めて設定
 	trans_.quaRot = trans_.quaRot.LookRotation(GetMoveVec(trans_.pos,targetPos_));
 
 	//ランダムで攻撃情報を生成
 	RandSkill();
-
-	//攻撃予兆を生成
-	lastAtkSign_ = &createSkillSign_();
 
 	//予備動作アニメーション
 	ResetAnim(nowSkillPreAnim_, changeSpeedAnim_[nowSkillPreAnim_]);
@@ -191,6 +192,11 @@ void Enemy::Alert(void)
 {
 	//警告
 	alertNowSkill_();
+
+	//クールダウンカウンタ
+	CntUp(alertCnt_);
+
+	if (!IsAlertTime())isEndAlert_ = true;
 }
 
 void Enemy::Attack(void)
@@ -244,8 +250,11 @@ void Enemy::UpdateAlert(void)
 	//**********************************************************
 
 	//警告カウンタが終わったなら攻撃開始
-	if (!IsAlertTime())
+	if (isEndAlert_)
 	{		
+		//警告終了判定の初期化
+		ResetAlertJudge();
+
 		//攻撃状態に遷移
 		ChangeState(STATE::ATTACK);
 
@@ -258,9 +267,6 @@ void Enemy::UpdateAlert(void)
 
 	//警告
 	Alert();
-
-	//クールダウンカウンタ
-	CntUp(alertCnt_);
 }
 
 void Enemy::UpdateAtk(void)
@@ -378,11 +384,10 @@ void Enemy::Draw(void)
 		else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
 	}
 
-	for (auto& nowSkillSign : nowSkillSign_)
+	//攻撃予兆の描画
+	if (state_ == STATE::ALERT)
 	{
-		//攻撃予兆の描画
-		if (nowSkillSign.IsAttack()) { DrawSphere3D(nowSkillSign.pos_, nowSkillSign.radius_, 50.0f, 0x0fff0f, 0x0fff0f, true); }
-		else if (nowSkillSign.IsBacklash()) { DrawSphere3D(nowSkillSign.pos_, nowSkillSign.radius_, 5.0f, 0x0fff0f, 0x0fff0f, false); }
+		DrawPolygon3D(alertVertex_, 2, DX_NONE_GRAPH, false);
 	}
 }
 
@@ -416,48 +421,6 @@ void Enemy::Move(void)
 
 	//移動量の初期化
 	moveSpeed_ = 0.0f;
-}
-
-Enemy::ATK& Enemy::CreateSkillSign(ATK_ACT _atkAct)
-{
-	//**********************************************************
-	//使い終わった攻撃がある場合
-	//**********************************************************
-
-	//使い終わった攻撃に上書き
-	for (auto& nowSkillSign : nowSkillSign_)
-	{
-		if (nowSkillSign.IsFinishMotion())
-		{
-			//スキル上書き
-			nowSkillSign = skills_[_atkAct];
-
-			//カウンタの初期化
-			nowSkillSign.ResetCnt();
-
-			//ヒット判定の初期化
-			nowSkillSign.isHit_ = false;
-
-			//処理終了
-			return nowSkillSign;
-		}
-	}
-
-	//**********************************************************
-	//ない場合
-	//**********************************************************
-
-	//ランダムでとってきた攻撃の種類を今から発動するスキルに設定
-	nowSkillSign_.emplace_back(skills_[_atkAct]);
-
-	//カウンタの初期化
-	nowSkillSign_.back().ResetCnt();
-
-	//ヒット判定の初期化
-	nowSkillSign_.back().isHit_ = false;
-
-	//処理終了
-	return nowSkillSign_.back();
 }
 
 Enemy::ATK& Enemy::CreateSkill(ATK_ACT _atkAct)
@@ -523,6 +486,27 @@ void Enemy::FinishAnim(void)
 	}
 }
 
+void Enemy::ResetAlertJudge(void)
+{
+	//終了判定初期化
+	isEndAlert_ = false;
+}
+
+void Enemy::ResetAlertVertex(void)
+{
+	for (auto& ver : alertVertex_)
+	{
+		ver.pos = AsoUtility::VECTOR_ZERO;
+		ver.u = 0.0f;
+		ver.v = 0.0f;
+		ver.norm = { 0.0f,0.0f,0.0f };
+		ver.dif = GetColorU8(0, 0, 0, 0);
+		ver.spc = GetColorU8(0, 0, 0, 0);
+		ver.su = 0;
+		ver.sv = 0;
+	}
+}
+
 void Enemy::ResetAtkJudge(void)
 {
 	//攻撃終了判定の初期化
@@ -549,9 +533,6 @@ void Enemy::RandSkill(void)
 	//スキルに対応したアニメーションの記録
 	nowSkillAnim_ = skillAnims_[static_cast<int>(atkAct_)];
 
-	//スキルの予兆生成
-	createSkillSign_ = std::bind(&Enemy::CreateSkillSign, this, atkAct_);
-
 	//スキル生成
 	createSkill_ = std::bind(&Enemy::CreateSkill, this, atkAct_);
 }
@@ -563,4 +544,48 @@ void Enemy::SetUpSkill(ATK_ACT _atkAct)
 
 	//攻撃情報をセット
 	processSkill_ = changeSkill_[_atkAct];
+}
+
+void Enemy::CreateAlert(const VECTOR& _pos, const float _widthX, const float _widthZ)
+{
+	//半径
+	float radX = _widthX / 2;
+	float radZ = _widthZ / 2;
+
+	alertVertex_[0].pos = { _pos.x + radX,0.0f,_pos.z + radZ };
+	alertVertex_[0].u = _widthX;
+	alertVertex_[0].v = 0.0f;
+
+	alertVertex_[1].pos = { _pos.x - radX,0.0f,_pos.z - radZ };
+	alertVertex_[1].u = 0.0f;
+	alertVertex_[1].v = _widthX;
+
+	alertVertex_[2].pos = { _pos.x - radX,0.0f,_pos.z + radZ };
+	alertVertex_[2].u = 0.0f;
+	alertVertex_[2].v = 0.0f;
+
+	alertVertex_[3].pos = { _pos.x + radX,0.0f,_pos.z + radZ };
+	alertVertex_[3].u = _widthX;
+	alertVertex_[3].v = 0.0f;
+
+	alertVertex_[4].pos = { _pos.x + radX,0.0f,_pos.z - radZ };
+	alertVertex_[4].u = _widthX;
+	alertVertex_[4].v = _widthZ;
+
+	alertVertex_[5].pos = { _pos.x - radX,0.0f,_pos.z - radZ };
+	alertVertex_[5].u = 0.0f;
+	alertVertex_[5].v = _widthZ;
+
+	for (auto& ver : alertVertex_)
+	{
+		ver.pos = VSub(ver.pos, _pos);
+		ver.pos = Quaternion::PosAxis(trans_.quaRot, ver.pos);
+		ver.pos = VAdd(ver.pos, _pos);
+		
+		ver.norm = { 0.0f,0.0f,-1.0f };
+		ver.dif = GetColorU8(255, 0, 0, 100);
+		ver.spc = GetColorU8(0, 0, 0, 0);
+		ver.su = 0;
+		ver.sv = 0;
+	}
 }

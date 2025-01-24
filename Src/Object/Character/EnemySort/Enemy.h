@@ -150,18 +150,18 @@ protected:
 	float walkSpeed_;		//敵ごとの歩く速度
 	float runSpeed_;		//敵ごとの走る速度
 
+	VERTEX3D alertVertex_[6];	//警告用の頂点情報
+
 	std::map<ATK_ACT, ATK> skills_;								//スキルの種類
-	std::vector<ATK> nowSkillSign_;								//現在のスキルの予兆用
 	std::vector<ATK> nowSkill_;									//現在のスキル
-	std::function<ATK& (void)> createSkillSign_;				//スキルの生成
 	std::function<void(void)> alertNowSkill_;					//現在のスキルの警告処理
 	std::function<ATK&(void)> createSkill_;						//スキルの生成
 	std::function<void(void)> processSkill_;					//スキルの処理
 	std::map<ATK_ACT, std::function<void(void)>> alertSkills_;	//スキルごとの警告
 	std::map<ATK_ACT, std::function<void(void)>> changeSkill_;	//スキルの変更用
 	ATK_ACT atkAct_;											//スキルの種別用
-	ATK* lastAtkSign_;											//最後に生成されたスキルの予兆
 	ATK* lastAtk_;												//最後に生成されたスキル
+	bool isEndAlert_;											//警告が終わったか(true:終了した)
 	bool isEndAllAtkSign_;										//全攻撃予兆が終了したか(true:終了した)
 	bool isEndAllAtk_;											//全攻撃が終了したか(true:終了した)
 
@@ -223,11 +223,12 @@ protected:
 	void SetUpSkill(ATK_ACT _atkAct);
 
 	/// <summary>
-	/// スキル予兆の生成
+	/// 警告範囲を描画する
 	/// </summary>
-	/// <param name="_atkAct">生成するスキル予兆</param>
-	/// <returns>生成したスキル予兆</returns>
-	ATK& CreateSkillSign(ATK_ACT _atkAct);
+	/// <param name="_pos">中心座標</param>
+	/// <param name="_widthX">Xの描画の大きさ</param>
+	/// <param name="_widthZ">Zの描画の大きさ</param>
+	void CreateAlert(const VECTOR& _pos, const float _widthX, const float _widthZ);
 
 	/// <summary>
 	/// スキルの生成
@@ -238,6 +239,12 @@ protected:
 
 	//アニメーション終了時の動き
 	virtual void FinishAnim(void)override;
+
+	//攻撃判定の初期化
+	virtual void ResetAlertJudge(void);
+
+	//頂点情報の初期化
+	void ResetAlertVertex(void);
 
 	//攻撃判定の初期化
 	virtual void ResetAtkJudge(void);

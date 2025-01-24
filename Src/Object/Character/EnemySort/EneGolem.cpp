@@ -38,6 +38,7 @@ void EneGolem::SetParam(void)
 	atkStartRange_ = ATK_START_RANGE;
 	skillThreeCnt_ = 0;
 	skillThreeDelayCnt_ = 0.0f;
+	isPreSkillThreeAtk_ = false;
 }
 
 void EneGolem::InitAnim(void)
@@ -100,16 +101,90 @@ void EneGolem::InitSkill(void)
 	RandSkill();
 }
 
+void EneGolem::Alert(void)
+{
+	//警告
+	alertNowSkill_();
+
+	//クールダウンカウンタ
+	CntUp(alertCnt_);
+
+	//スキル３以外は通常通り
+	if (!IsAlertTime() && atkAct_ != ATK_ACT::SKILL_THREE)isEndAlert_ = true;
+}
+
 void EneGolem::AlertSkill_One(void)
 {
+	//座標
+	VECTOR pos = trans_.pos;
+
+	//相対座標合わせ
+	pos = VAdd(pos, Quaternion::PosAxis(trans_.quaRot, SKILL_ONE_ALERT));
+
+	//範囲作成
+	CreateAlert(pos, SKILL_ONE_COL_RADIUS * 2, SKILL_ONE_COL_RADIUS * 2);
 }
 
 void EneGolem::AlertSkill_Two(void)
 {
+	//座標
+	VECTOR pos = trans_.pos;
+
+	//相対座標合わせ
+	pos = VAdd(pos, Quaternion::PosAxis(trans_.quaRot, SKILL_TWO_ALERT));
+
+	//範囲作成
+	CreateAlert(pos, SKILL_TWO_COL_RADIUS * 2 + SKILL_TWO_ALERT_RANGE_X, SKILL_TWO_COL_RADIUS * 2);
 }
 
 void EneGolem::AlertSkill_Three(void)
 {
+	//攻撃の数分予兆発生
+	if (skillThreeCnt_ >= SKILL_THREE_MAX_CNT
+		&& skillThreeDelayCnt_ >= SKILL_THREE_DELAY)
+	{
+		//生成終了
+		isEndAlert_ = true;
+
+		//処理終了
+		return;
+	}
+
+	if (skillThreeDelayCnt_ < SKILL_THREE_DELAY)
+	{
+		//カウント
+		CntUp(skillThreeDelayCnt_);
+
+		return;
+	}
+	
+	//攻撃生成できたかの判定
+	bool isGenelateAttack = false;
+
+	//生成できるまで繰り返す
+	while (!isGenelateAttack)
+	{
+		//円範囲の中の一点を取る
+		GetRandomPointInCircle(trans_.pos, SKILL_THREE_FALL_RADIUS, skillThreePreAtk_[skillThreeCnt_].pos_);
+
+		if (!IsOverlap(skillThreePreAtk_[skillThreeCnt_], SKILL_THREE_COL_RADIUS * 2))
+		{
+			//生成完了
+			isGenelateAttack = true;
+		}
+	}
+
+	//生成された判定用
+	CntUp(skillThreePreAtk_[skillThreeCnt_].cnt_);
+
+	//範囲作成
+	CreateAlert(skillThreePreAtk_[skillThreeCnt_].pos_, SKILL_THREE_COL_RADIUS * 2, SKILL_THREE_COL_RADIUS * 2);
+
+	//初期化
+	skillThreeDelayCnt_ = 0.0f;
+
+	//カウント
+	skillThreeCnt_++;
 }
 
 void EneGolem::Skill_One(void)
@@ -170,34 +245,36 @@ void EneGolem::Skill_Three(void)
 		//間隔カウンタの初期化
 		skillThreeDelayCnt_ = 0.0f;
 
-		//攻撃生成できたかの判定
-		bool isGenelateAttack = false;
-
-		//カウンタ増加
-		skillThreeCnt_++;
-
 		//スキル生成
 		ATK& thisAtk = createSkill_();
 
 		//最後に生成された攻撃を格納
 		lastAtk_ = &thisAtk;
 
-		//生成できるまで繰り返す
-		while (!isGenelateAttack)
-		{
-			//円範囲の中の一点を取る
-			GetRandomPointInCircle(trans_.pos, SKILL_THREE_FALL_RADIUS, thisAtk.pos_);
+		//保持していた座標情報をもとにセット
+		thisAtk.pos_ = skillThreePreAtk_[skillThreeCnt_].pos_;
 
-			if (!IsOverlap(thisAtk, SKILL_THREE_COL_RADIUS * 2))
-			{
-				//生成完了
-				isGenelateAttack = true;
-			}
-		}
+		//カウンタ増加
+		skillThreeCnt_++;
 	}
 
 	//間隔カウンタ
 	CntUp(skillThreeDelayCnt_);
+}
+
+void EneGolem::ResetAlertJudge(void)
+{
+	//共通
+	Enemy::ResetAlertJudge();
+
+	//スキル３の生成カウンタ初期化
+	skillThreeCnt_ = 0;
+
+	//スキル３の生成間隔カウンタ初期化
+	skillThreeDelayCnt_ = 0.0f;
+
+	//スキル３の発生予兆生成判定初期化
+	isPreSkillThreeAtk_ = false;
 }
 
 void EneGolem::ResetAtkJudge(void)
@@ -247,7 +324,7 @@ void EneGolem::GetRandomPointInCircle(const VECTOR _myPos, const int _r, VECTOR&
 
 bool EneGolem::IsOverlap(ATK& _thisAtk, float _minDist)
 {
-	for (const auto& atk : nowSkill_) {
+	for (const auto& atk : skillThreePreAtk_) {
 		//自分自身とは判定しない
 		if (atk.cnt_ == _thisAtk.cnt_)
 			continue;
