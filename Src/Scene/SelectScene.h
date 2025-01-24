@@ -27,13 +27,6 @@ public:
 	//図形同士の間隔
 	static constexpr int PRI_SPACE = 100;
 
-
-	////キー押下経過時間
-	//static constexpr float SELECT_TIME = 1.0f;
-
-	////インターバル上限
-	//static constexpr float INTERVAL_TIME = 0.5f;
-
 	static constexpr int PLAYER_NUM = SceneManager::PLAYER_NUM;
 	static constexpr int ROLE_NUM = SceneManager::PLAYER_NUM;
 
@@ -50,6 +43,7 @@ public:
 	//選択している種類
 	enum class SELECT 
 	{
+		DISPLAY,		//ディスプレイ数
 		NUMBER,		//人数
 		OPERATION,	//1Pをキーボード操作にするかどうか
 		ROLE,		//役職
@@ -172,12 +166,15 @@ private:
 	Device input_[SceneManager::PLAYER_NUM];
 
 	//状態遷移
+	void ChangeStateDisplay(void);
 	void ChangeStateNumber(void);
 	void ChangeStateOperation(void);
 	void ChangeStateRole(void);
 	void ChangeStateMax(void);
 
 	//更新処理関連-----------------------------------------------
+
+	void DisplayUpdate(void);		//ディスプレイ数選択中の処理
 
 	void NumberUpdate(void);		//人数選択中の処理
 
@@ -188,6 +185,8 @@ private:
 	void MaxUpdate(void);			//無
 
 	//描画処理関連-----------------------------------------------
+
+	void DisplayDraw(void);			//ディスプレイ数選択中の処理
 
 	void NumberDraw(void);			//人数選択中の処理
 

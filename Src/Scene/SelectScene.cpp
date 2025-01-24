@@ -25,6 +25,8 @@ SelectScene::SelectScene(void)
 
 	// 状態管理
 	stateChanges_.emplace(
+		SELECT::DISPLAY, std::bind(&SelectScene::ChangeStateDisplay, this));
+	stateChanges_.emplace(
 		SELECT::NUMBER, std::bind(&SelectScene::ChangeStateNumber, this));
 	stateChanges_.emplace(
 		SELECT::OPERATION, std::bind(&SelectScene::ChangeStateOperation, this));
@@ -105,7 +107,7 @@ void SelectScene::Init(void)
 	camera[0]->ChangeMode(Camera::MODE::FIXED_POINT);
 
 	//人数選択から
-	ChangeSelect(SELECT::NUMBER);
+	ChangeSelect(SELECT::DISPLAY);
 
 	key_ = KEY_CONFIG::NONE;
 	Change1PDevice(SceneManager::CNTL::NONE);
@@ -137,8 +139,6 @@ void SelectScene::Draw(void)
 {
 	auto& ins = InputManager::GetInstance();
 
-	
-
 	skyDome_->Draw();
 	stage_->Draw();
 	SetUseLightAngleAttenuation(FALSE);
@@ -146,6 +146,10 @@ void SelectScene::Draw(void)
 	//選択中の種類ごとの更新処理
 	switch (select_)
 	{
+	case SELECT::DISPLAY:
+		DisplayDraw();
+		break;
+
 	case SELECT::NUMBER:
 		NumberDraw();
 		break;
@@ -174,6 +178,11 @@ void SelectScene::Release(void)
 	//image_->Destroy();
 }
 
+void SelectScene::ChangeStateDisplay(void)
+{
+	stateUpdate_ = std::bind(&SelectScene::DisplayUpdate, this);
+}
+
 void SelectScene::ChangeStateNumber(void)
 {
 	stateUpdate_ = std::bind(&SelectScene::NumberUpdate, this);
@@ -196,6 +205,13 @@ void SelectScene::ChangeStateRole(void)
 void SelectScene::ChangeStateMax(void)
 {
 	stateUpdate_ = std::bind(&SelectScene::MaxUpdate, this);
+}
+
+void SelectScene::DisplayUpdate(void)
+{
+	KeyConfigSetting();
+	ControllDevice();
+	images_[0]->Update();
 }
 
 void SelectScene::NumberUpdate(void)
@@ -300,6 +316,11 @@ void SelectScene::RoleUpdate(void)
 void SelectScene::MaxUpdate(void)
 {
 	//何もしない
+}
+
+void SelectScene::DisplayDraw(void)
+{
+	images_[0]->Draw();
 }
 
 void SelectScene::NumberDraw(void)

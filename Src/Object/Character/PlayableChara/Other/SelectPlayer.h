@@ -36,25 +36,63 @@ public:
 	virtual void Draw(void)override;
 
 	//セッター
+
+	/// <summary>
+	/// 役職を設定する
+	/// </summary>
+	/// <param name="role">役職</param>
 	void SetRole(int role){ role_ = role; };
 
+	/// <summary>
+	/// 座標を設定する
+	/// </summary>
+	/// <param name="pos">座標</param>
 	void SetPos(VECTOR pos);
+
+	/// <summary>
+	/// 座標を設定する(チキン用)
+	/// </summary>
+	/// <param name="pos">座標</param>
 	void SetChickenPos(VECTOR pos){trans_.pos = pos;};
 
+	/// <summary>
+	/// 角度(向き)を設定する
+	/// </summary>
+	/// <param name="quo">角度</param>
 	void SetRot(Quaternion quo) { for (auto& tran : transArray_) { tran.quaRotLocal = quo; } };
+
+	/// <summary>
+	/// 角度(向き)を設定する(チキン用)
+	/// </summary>
+	/// <param name="quo">角度</param>
 	void SetRotChicken(Quaternion quo) { trans_.quaRotLocal = quo;  };
 
+	//
 	VECTOR GetPos(void) { for (auto& tran : transArray_) { return tran.pos; } };
 	VECTOR GetChickenPos(void) { return trans_.pos; };
 	VECTOR GetPosArray(int i) { return transArray_[i].pos; };
 	
-	void CheckAnim(void);
+	//アニメーションを変更する
+	void ChangeAnim(void);
 
+	/// <summary>
+	/// 攻撃アニメーションを設定
+	/// </summary>
+	/// <param name="i">設定する配列の引数</param>
 	void SetAtkAnim(int i);
+
+	/// <summary>
+	/// 通常アニメーションを設定
+	/// </summary>
+	/// <param name="i">設定する配列の引数</param>
 	void SetIdleAnim(int i);
 
 private:
+
+	//役職
 	int role_;
+
+	//
 	float animChangeTime_[SceneManager::PLAYER_NUM];
 
 	void Init3DModel(void);

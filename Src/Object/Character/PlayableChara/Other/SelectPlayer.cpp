@@ -60,7 +60,7 @@ void SelectPlayer::Update(void)
 	}
 
 	//アニメーションを変更する
-	CheckAnim();
+	ChangeAnim();
 
 	for (auto& tran_ : transArray_) 
 	{
@@ -89,7 +89,7 @@ void SelectPlayer::SetPos(VECTOR pos)
 	}
 }
 
-void SelectPlayer::CheckAnim(void)
+void SelectPlayer::ChangeAnim(void)
 {
 	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
 	{

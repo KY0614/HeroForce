@@ -171,6 +171,9 @@ private:
 	Point pointL_;		//左
 	Point pointR_;		//右
 
+	//ディスプレイ数
+	int displayNum_;
+
 	//プレイヤー人数
 	int playerNum_;
 
@@ -208,11 +211,14 @@ private:
 	VECTOR RotateVertex(VECTOR pos, VECTOR center, float angle);
 
 	//状態遷移
+	void ChangeStateDisplay(void);
 	void ChangeStateNumber(void);
 	void ChangeStateOperation(void);
 	void ChangeStateRole(void);
 
 	//更新処理関連-----------------------------------------------
+
+	void DisplayUpdate(void);		//ディスプレイ数選択中の処理
 
 	void NumberUpdate(void);		//人数選択中の処理
 
@@ -221,6 +227,8 @@ private:
 	void RoleUpdate(void);			//役職選択中の処理
 
 	//描画処理関連-----------------------------------------------
+
+	void DisplayDraw(void);			//ディスプレイ数選択中の処理
 
 	void NumberDraw(void);			//人数選択中の処理
 
