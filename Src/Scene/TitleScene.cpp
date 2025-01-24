@@ -58,7 +58,7 @@ void TitleScene::Draw(void)
 	//ÉçÉSÇÃï`âÊ
 	DrawRotaGraph(
 		LOGO_POS_X,LOGO_POS_Y,
-		1.0f,
+		0.5f,
 		0.0f,
 		imgLogo_,
 		true,

@@ -55,10 +55,7 @@ public:
 
 private:
 	int role_;
-	float animKnightTime_;
-	float animAxeTime_;
-	float animMageTime_;
-	float animArcherTime_;
+	float animChangeTime_[SceneManager::PLAYER_NUM];
 
 	void Init3DModel(void);
 };

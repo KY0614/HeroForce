@@ -7,10 +7,10 @@
 SelectPlayer::SelectPlayer(void)
 {
 	role_ = 0;
-	animKnightTime_ = 0.0f;
-	animAxeTime_ = 0.0f;
-	animMageTime_ = 0.0f;
-	animArcherTime_ = 0.0f;
+	for (auto& animTime : animChangeTime_)
+	{
+		animTime = -1.0f;
+	}
 }
 
 void SelectPlayer::Destroy(void)
@@ -19,40 +19,48 @@ void SelectPlayer::Destroy(void)
 
 void SelectPlayer::Init(void)
 {
+	//3Dモデル初期化
 	Init3DModel();
 
 	//キャラクター用
-	animNumArray_[0].emplace(ANIM::IDLE, IDLE_ANIM);
-	animNumArray_[1].emplace(ANIM::IDLE, IDLE_ANIM);
-	animNumArray_[2].emplace(ANIM::IDLE, IDLE_ANIM);
-	animNumArray_[3].emplace(ANIM::IDLE, IDLE_ANIM);
+	for (int i = 0; i < SceneManager::PLAYER_NUM;i++)
+	{
+		animNumArray_[i].emplace(ANIM::IDLE, IDLE_ANIM);
+		ResetAnimArray(ANIM::IDLE, ANIM_SPEED, i);
+	}
 
+	//アニメーション番号を設定
 	animNumArray_[0].emplace(ANIM::SKILL_1, KNIGHT_ANIM);
 	animNumArray_[1].emplace(ANIM::SKILL_1, AXE_ANIM);
 	animNumArray_[2].emplace(ANIM::SKILL_1, MAGE_ANIM);
 	animNumArray_[3].emplace(ANIM::SKILL_1, ARCHER_ANIM);
 
-	ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 0);
-	ResetAnimArray(ANIM::IDLE, ANIM_SPEED, 1);
-	ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 2);
-	ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 3);
-
 	//チキン用
 	animNum_.emplace(ANIM::UNIQUE_1, SWING_ANIM);
 	ResetAnim(ANIM::UNIQUE_1, CHICKEN_SPEED);
+
+	//アニメーション時間を初期化
+	for (auto& animTime : animChangeTime_)
+	{
+		animTime = 0.0f;
+	}
 }
 
 void SelectPlayer::Update(void)
 {
+	//アニメーション
 	for (int i = 0; i < SceneManager::PLAYER_NUM; i++) { AnimArray(i); }
 	Anim();
 
-
+	//アニメーションと同じ時間を加算していく
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
-	animKnightTime_ += ANIM_SPEED * deltaTime;
-	animAxeTime_ += ANIM_SPEED * deltaTime;
-	
-	//CheckAnim();
+	for (auto& animTime : animChangeTime_)
+	{
+		animTime += ANIM_SPEED * deltaTime;
+	}
+
+	//アニメーションを変更する
+	CheckAnim();
 
 	for (auto& tran_ : transArray_) 
 	{
@@ -67,7 +75,9 @@ void SelectPlayer::Update(void)
 
 void SelectPlayer::Draw(void)
 {
+	//キャラ
 	MV1DrawModel(transArray_[role_].modelId);
+	//チキン
 	MV1DrawModel(trans_.modelId);
 }
 
@@ -81,31 +91,21 @@ void SelectPlayer::SetPos(VECTOR pos)
 
 void SelectPlayer::CheckAnim(void)
 {
-	if (animKnightTime_ > GetAnimArrayTime(0))
+	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
 	{
-		if (anim_ == ANIM::IDLE)
+		//現在のアニメーション再生時間を超えていたら違うアニメーションにする
+		if (animChangeTime_[i] > GetAnimArrayTime(i))
 		{
-			ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 0);
-			animKnightTime_ = 0.0f;
-		}
-		else
-		{
-			ResetAnimArray(ANIM::IDLE, ANIM_SPEED, 0);
-			animKnightTime_ = 0.0f;
-		}
-	}
-
-	if (animAxeTime_ > GetAnimArrayTime(1))
-	{
-		if (anim_ == ANIM::IDLE)
-		{
-			ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 1);
-			animAxeTime_ = 0.0f;
-		}
-		else
-		{
-			ResetAnimArray(ANIM::IDLE, ANIM_SPEED, 1);
-			animAxeTime_ = 0.0f;
+			if (animStateArray_[i] != ANIM::IDLE)
+			{
+				ResetAnimArray(ANIM::IDLE, ANIM_SPEED, i);
+				animChangeTime_[i] = 0.0f;
+			}
+			else
+			{
+				ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, i);
+				animChangeTime_[i] = 0.0f;
+			}
 		}
 	}
 }
@@ -116,13 +116,11 @@ void SelectPlayer::SetAtkAnim(int i)
 	if(i == 1)ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 1);
 	if(i == 2)ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 2);
 	if(i == 3)ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 3);
-	return;
 }
 
 void SelectPlayer::SetIdleAnim(int i)
 {
 	ResetAnimArray(ANIM::IDLE, ANIM_SPEED, i);
-	return;
 }
 
 void SelectPlayer::Init3DModel(void)
@@ -152,6 +150,7 @@ void SelectPlayer::Init3DModel(void)
 		ResourceManager::GetInstance()
 		.LoadModelDuplicate(ResourceManager::SRC::CHICKEN));
 
+	//座標、拡大率、回転を設定
 	float scale = 0.4f;
 	for (auto& tran_ : transArray_) 
 	{
@@ -173,8 +172,9 @@ void SelectPlayer::Init3DModel(void)
 		0.0f
 	);
 
-	for (auto& tran_ : transArray_) {
-		//モデルの初期化
+	//モデルの初期化
+	for (auto& tran_ : transArray_) 
+	{	
 		tran_.Update();
 	}
 	trans_.Update();
