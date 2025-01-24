@@ -20,6 +20,8 @@ const std::string Application::PATH_EFFECT = "Data/Effect/";
 const std::string Application::PATH_TEXT = "Data/Text/";
 const std::string Application::PATH_FONT = "Data/Font/";
 const std::string Application::PATH_JSON = "Data/Json/";
+const std::string Application::PATH_BGM = "Data/Sound/BGM/";
+const std::string Application::PATH_WAVE = "Data/Sound/wave/";
 
 void Application::CreateInstance(void)
 {
