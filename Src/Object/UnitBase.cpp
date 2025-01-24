@@ -199,8 +199,14 @@ void UnitBase::SetDamage(const int attackerPower, const int skillPower)
 {
 	//—^‚¦‚éƒ_ƒ[ƒW‚ğ‘‚â‚·
 	damage_ += attackerPower * skillPower / defDef_;
+
 	//UŒ‚‚ğ‹ò‚ç‚Á‚½‚Ì‚ÅSEÄ¶
 	SoundManager::GetInstance().Play(SoundManager::SOUND::HIT);
+}
+
+int UnitBase::GetDamage(void)
+{
+	return damage_;
 }
 
 void UnitBase::SubHp()

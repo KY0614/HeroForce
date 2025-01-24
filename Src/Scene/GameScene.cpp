@@ -349,6 +349,11 @@ void GameScene::CollisionPlayer(void)
 			if (col.IsHitAtk(*p, *e)) {
 				//”í’e
 				e->SetDamage(p->GetCharaPow(), pAtk.pow_);
+				e->Damage(e->GetDamage(), pAtk.pow_);
+
+				//€‚ñ‚¾‚çŒoŒ±’l‘‰Á
+				if (!e->IsAlive())level_->AddExp(e->GetExp());
+
 				//“|‚µ‚½“G‚Ì‘‰Á
 				if (!e->IsAlive())dunkEnmCnt_++;
 				//UŒ‚”»’è‚ÌI—¹

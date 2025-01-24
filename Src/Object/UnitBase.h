@@ -127,6 +127,7 @@ public:
 	/// <param name="attackerPower"></param>攻撃者の攻撃力
 	/// <param name="skillPower"></param>当てた技の技威力
 	void SetDamage(const int attackerPower, const int skillPower);
+	int GetDamage(void);
 
 	//残量HPの処理(少しずつHpを減らす)
 	void SubHp();
