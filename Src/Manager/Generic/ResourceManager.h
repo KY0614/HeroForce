@@ -119,6 +119,10 @@ public:
 		RANK_A,
 		RANK_B,
 		RANK_C,
+
+		//BGM
+		GAME_NOMAL_BGM,
+		GAME_LAST_BGM,
 	};
 
 	// 明示的にインステンスを生成する

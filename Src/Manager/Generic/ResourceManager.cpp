@@ -85,6 +85,14 @@ void ResourceManager::InitGame(void)
 {
 	Resource res;
 
+	//BGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "GameNomal.png");
+	resourcesMap_.emplace(SRC::GAME_NOMAL_BGM, res);
+
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "GameBoss.png");
+	resourcesMap_.emplace(SRC::GAME_LAST_BGM, res);
+
+
 	//‹­‰»‘I‘ð—pUI‰æ‘œ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "SelectUI.png");
 	resourcesMap_.emplace(SRC::SELECT_UI, res);
