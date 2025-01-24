@@ -15,6 +15,8 @@ public:
 	static constexpr float SPEED_SCENE = 5.0f;	//シーン遷移
 	static constexpr float SPEED_PHASE = 2.0f;	//フェーズ遷移
 	static constexpr float SPEED_ALPHA = 3.0f;
+
+	static constexpr int ALPHA_MAX = 255;
 	
 
 	// 状態

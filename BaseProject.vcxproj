@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Common\ShaderFade.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenBase.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenManager.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ClearChicken.cpp" />
@@ -95,6 +96,7 @@
     <ClInclude Include="Src\Common\ImageFader.h" />
     <ClInclude Include="Src\Common\IntVector3.h" />
     <ClInclude Include="Src\Common\Quaternion.h" />
+    <ClInclude Include="Src\Common\ShaderFade.h" />
     <ClInclude Include="Src\Common\Vector2.h" />
     <ClInclude Include="Src\main.h" />
     <ClInclude Include="Src\Manager\Decoration\EffectManager.h" />

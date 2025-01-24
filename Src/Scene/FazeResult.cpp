@@ -58,6 +58,7 @@ void FazeResult::Init(void)
 void FazeResult::Update(void)
 {
 	ChangeRank();
+	step_++;
 }
 
 void FazeResult::Draw(void)
@@ -181,7 +182,7 @@ void FazeResult::ChangeRank(void)
 	if (ins.IsTrgDown(KEY_INPUT_C))rank_ = RANK::C;
 
 	//フェーズの終了
-	if (ins.IsTrgDown(KEY_INPUT_SPACE))isEnd_ = true;
+	if (ins.IsTrgDown(KEY_INPUT_SPACE)||ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1,InputManager::JOYPAD_BTN::RIGHT))isEnd_ = true;
 
 	afterExp_ = GetBonusExp(rank_);
 }

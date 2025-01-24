@@ -70,6 +70,7 @@
     <ClCompile Include="Src\Shader\PixelShader.cpp" />
     <ClCompile Include="Src\Scene\GameClearScene.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ClearChicken.cpp" />
+    <ClCompile Include="Src\Common\ShaderFade.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application.h" />
@@ -141,5 +142,6 @@
     <ClInclude Include="Src\Shader\PixelShader.h" />
     <ClInclude Include="Src\Scene\GameClearScene.h" />
     <ClInclude Include="Src\Object\Character\Chiken\ClearChicken.h" />
+    <ClInclude Include="Src\Common\ShaderFade.h" />
   </ItemGroup>
 </Project>

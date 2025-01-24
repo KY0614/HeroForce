@@ -43,10 +43,10 @@ public:
 
 
     enum class RANK {
-        S,
-        A,
-        B,
         C,
+        B,
+        A,
+        S,
         MAX
     };
 

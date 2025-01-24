@@ -82,11 +82,11 @@ void ChickenManager::SetTargetPos(const VECTOR pos)
 }
 
 const int ChickenManager::GetAliveNum(void) const
-{
+{      
 	int ret = 0;
 
-	for (auto it = chickens_.begin(); it != chickens_.end(); ) {
-		if ((*it)->IsAlive())ret++;
+	for (auto& c:chickens_ ) {
+		if (c->IsAlive())ret++;
 	}
 
 	return ret;

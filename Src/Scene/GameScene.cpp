@@ -434,29 +434,25 @@ void GameScene::DrawPhase(void)
 }
 void GameScene::LevelUpReflection()
 {
-	//ステート確認
-	if (level_->GetState() == LevelScreenManager::STATE::FIN)
+	//プレイヤーごとに強化反映
+	int plNum = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
+	for (int i = 0; i < plNum; i++)
 	{
+		if (level_->GetPreType(i) != LevelScreenManager::TYPE::MAX)
+		{
+			level_->EffectSyne(*playerMng_->GetPlayer(i), i);
+		}
+	}
+	//ステート確認
+	if (level_->GetState() != LevelScreenManager::STATE::NONE)
+	{
+		//通常時以外は処理しない
 		return;
 	}
 
-	//ここでプレイヤーの強化を反映
-	switch (level_->GetType())
+	for (int i = 0; i < plNum; i++)
 	{
-	case LevelScreenManager::TYPE::ATTACK:
-		break;
-
-	case LevelScreenManager::TYPE::DEFENSE:
-		break;
-
-	case LevelScreenManager::TYPE::LIFE:
-		break;
-
-	case LevelScreenManager::TYPE::SPEED:
-		break;
-
-	default:
-		break;
+		level_->Reflection(*playerMng_->GetPlayer(i), i);
 	}
 }
 

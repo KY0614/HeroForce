@@ -19,6 +19,7 @@ const std::string Application::PATH_OBJECT = "Data/Model/Object/";
 const std::string Application::PATH_EFFECT = "Data/Effect/";
 const std::string Application::PATH_TEXT = "Data/Text/";
 const std::string Application::PATH_FONT = "Data/Font/";
+const std::string Application::PATH_JSON = "Data/Json/";
 
 void Application::CreateInstance(void)
 {

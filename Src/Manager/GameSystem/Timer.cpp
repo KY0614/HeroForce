@@ -7,8 +7,8 @@ Timer* Timer::instance_ = nullptr;
 
 Timer::Timer(void)
 {
-	minute_ = 1;
-	second_ = 0;
+	minute_ = 0;
+	second_ = 5;
 	cnt_ = 0;
 	isEnd_ = false;
 
@@ -91,5 +91,8 @@ void Timer::ReduceTime(void)
 	}
 
 	//•ª”‚ª‚O–¢–‚Ì‚Æ‚«I—¹ó‘Ô‚É
-	if (minute_ <= TIME_MIN && second_ <= TIME_MIN)isEnd_ = true;
+	if (minute_ <= TIME_MIN && second_ <= TIME_MIN)
+	{
+		isEnd_ = true;
+	}
 }
