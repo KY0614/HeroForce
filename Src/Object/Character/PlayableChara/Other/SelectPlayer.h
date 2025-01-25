@@ -1,7 +1,7 @@
 #pragma once
 #include"../../../../Utility/AsoUtility.h"
 #include"../../../Common/Transform.h"
-#include"../Manager/Generic/SceneManager.h"
+#include"../../../../Manager/Generic/SceneManager.h"
 #include "../../../UnitBase.h"
 
 class SelectPlayer : public UnitBase

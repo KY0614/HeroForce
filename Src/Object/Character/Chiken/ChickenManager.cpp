@@ -83,10 +83,22 @@ void ChickenManager::SetTargetPos(const VECTOR pos)
 
 void ChickenManager::CollisionStage(const Transform& stageTrans, std::shared_ptr<ChickenBase> cheken)
 {
-
 	auto& col = Collision::GetInstance();
 	if (col.IsHitUnitStageObject(stageTrans.modelId, cheken->GetTransform().pos, cheken->GetRadius()))
 	{
 		cheken->SetPrePos();
 	}
+}
+
+VECTOR ChickenManager::GetChickenPos(const int value) const
+{
+	//受け取った値がチキンの数以下か調べる
+	if (value < chickens_.size())
+	{
+		//数以下の場合、0番目のチキンの位置を返す
+		return chickens_[0]->GetPos();
+	}
+
+	//座標を返す
+	return chickens_[value]->GetPos();
 }

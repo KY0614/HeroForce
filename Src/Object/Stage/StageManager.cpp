@@ -3,7 +3,6 @@
 #include "../../Manager/Generic/InputManager.h"
 #include "../../Utility/AsoUtility.h"
 #include "StageManager.h"
-#include "StageObject.h"
 
 StageManager::StageManager(void)
 {

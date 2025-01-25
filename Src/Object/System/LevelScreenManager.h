@@ -39,7 +39,7 @@ public:
 	static constexpr int DEFAULT_LEVEL = 1;
 	
 	//ゲージ最大値
-	static constexpr float CONSTANT_GAGE = 120.0f;
+	static constexpr float CONSTANT_GAGE = 1200.0f;
 
 	//ゲージUI拡大率
 	static constexpr float GAGE_SCALE_RATE = Application::SCREEN_SIZE_X * 1.8f / Application::DEFA_SCREEN_SIZE_X;
@@ -57,11 +57,15 @@ public:
 	static constexpr int TYPE_MAX = static_cast<int>(TYPE::MAX);
 
 	//エフェクトサイズ
-	static constexpr float EFFECT_SCALE = 20.0f;
+	static constexpr float EFFECT_SCALE = 30.0f;
 
 	//ゲージ座標
 	static constexpr int GAGE_POS_X = 20;
 	static constexpr int GAGE_POS_Y = 20;
+
+	//強化上昇量
+	static constexpr float POW_UP = 3.0f;
+	static constexpr int HP = 20;
 
 	LevelScreenManager(void);
 	~LevelScreenManager(void);

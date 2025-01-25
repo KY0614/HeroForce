@@ -175,7 +175,7 @@ void ResourceManager::InitGameClear(void)
 	resourcesMap_.emplace(SRC::CONGRATULATIONS, res);
 
 	//‰Ô‰Î
-	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Firework.efk");
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Fireworks.efkefc");
 	resourcesMap_.emplace(SRC::FIREWORK, res);
 
 	ResourcePlayer();

@@ -44,6 +44,12 @@ public:
 	//衝突判定
 	void CollisionStage(const Transform& stageTrans, std::shared_ptr<ChickenBase> cheken);
 
+	//チキンの残り数
+	int GetChickenRestCount()const { return chickens_.size(); }
+
+	//特定のチキンの座標を受け取る
+	VECTOR GetChickenPos(const int value)const;
+
 private:
 
 	//リスポーン位置用座標配列

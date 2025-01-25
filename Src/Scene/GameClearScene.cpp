@@ -1,10 +1,16 @@
 #include "../Object/Stage/SkyDome.h"
 #include "../Object/Stage/StageManager.h"
 #include "../Object/Character/Chiken/ClearChicken.h"
+#include "../Object/Character/PlayableChara/Other/ClearPlayers.h"
 #include "GameClearScene.h"
 
 GameClearScene::GameClearScene()
 {
+	sky_ = nullptr;
+	stage_ = nullptr;
+	for (auto& c : chickens_) { c = nullptr; }
+	player_ = nullptr;
+	imgMes_ = -1;
 }
 
 void GameClearScene::Init(void)
@@ -25,6 +31,10 @@ void GameClearScene::Init(void)
 		chickens_[i]->Create(pos[i]);
 		chickens_[i]->SetTarget(DEFAULT_CAMERA_POS);
 	}
+
+	//プレイヤー
+	player_ = std::make_unique<ClearPlayers>();
+	player_->Init();
 
 	//画像
 	imgMes_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CONGRATULATIONS).handleId_;
@@ -50,11 +60,14 @@ void GameClearScene::Init(void)
 void GameClearScene::Update(void)
 {	
 	auto& efe = EffectManager::GetInstance();
+	auto& ins = InputManager::GetInstance();
+	auto& scm = SceneManager::GetInstance();
 
 	//各種オブジェクト処理
 	sky_->Update();
 	stage_->Update();
 	for (auto& c : chickens_) { c->Update(); }
+	player_->Update();
 
 	//エフェクトが非再生中の場合
 	if (efe.IsPlayEffect(EffectManager::EFFECT::FIREWORK))
@@ -68,10 +81,14 @@ void GameClearScene::Update(void)
 			SoundManager::SOUND::NONE);
 	}
 
-	//シーン遷移
-	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_SPACE))
+	// シーン遷移
+	if (ins.IsTrgDown(KEY_INPUT_SPACE) ||
+		ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT) ||
+		ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD2, InputManager::JOYPAD_BTN::RIGHT) ||
+		ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD3, InputManager::JOYPAD_BTN::RIGHT) ||
+		ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD4, InputManager::JOYPAD_BTN::RIGHT))
 	{
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+		scm.ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
 }
 
@@ -79,6 +96,7 @@ void GameClearScene::Draw(void)
 {
 	sky_->Draw();
 	stage_->Draw();
+	player_->Draw();
 	for (auto& c : chickens_) { c->Draw(); }
 
 	//メッセージの描画
