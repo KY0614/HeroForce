@@ -277,8 +277,6 @@ void GameScene::CollisionEnemy(void)
 	//“G‚Ì‘”æ“¾
 	int maxCnt = enmMng_->GetActiveNum();
 
-	bool isPlayerFound = false;
-
 	enmMng_->CollisionStage(stage_->GetTtans());
 
 	//‚ ‚½‚è”»’è(å‚Éõ“G)
@@ -289,6 +287,9 @@ void GameScene::CollisionEnemy(void)
 
 		//“GŒÂl‚ÌˆÊ’u‚ÆUŒ‚‚ğæ“¾
 		VECTOR ePos = e->GetPos();
+		
+		//“GŒÂl‚Ìõ“G”»’è
+		bool isPlayerFound = false;
 
 		for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
 		{
@@ -296,7 +297,6 @@ void GameScene::CollisionEnemy(void)
 			VECTOR pPos = p->GetPos();
 
 			//”ÍˆÍ“à‚É“ü‚Á‚Ä‚¢‚é‚Æ‚«
-
 
 			//’Êíó‘Ô && UŒ‚”ÍˆÍ“à‚ÉƒvƒŒƒCƒ„[‚ª“ü‚Á‚½‚çUŒ‚‚ğŠJn
 			if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL) {
@@ -321,7 +321,7 @@ void GameScene::CollisionEnemy(void)
 
 				//’N‚à‘_‚Á‚Ä‚¢‚È‚¢
 				e->ChangeSearchState(Enemy::SEARCH_STATE::NOT_FOUND);
-				//e->SetTargetPos(VECTOR{0,0,0});
+				e->SetTargetPos(VECTOR{0,0,0});
 			}
 
 			//UŒ‚”»’è

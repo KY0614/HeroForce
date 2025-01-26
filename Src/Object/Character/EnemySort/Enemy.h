@@ -98,7 +98,7 @@ public:
 	const float GetExp(void)const { return exp_; }
 
 	//UŒ‚î•ñ‚ğİ’è
-	void SetAtk(const ATK _atk) { atk_ = _atk; }
+	void SetAtk(const ATK& _atk) { atk_ = _atk; }
 
 	/// <summary>
 	/// ˆÚ“®ó‘Ô‚ğ•ÏX
