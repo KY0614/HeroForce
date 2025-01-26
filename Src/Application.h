@@ -9,12 +9,8 @@ class Application
 
 public:
 #ifdef DEBUG_SCREEN
-
-	
-
-	static constexpr int SCREEN_SIZE_X = 1920;
-	static constexpr int SCREEN_SIZE_Y = 1080;
-#else
+	static constexpr int SCREEN_SIZE_X = 800;
+	static constexpr int SCREEN_SIZE_Y = 600;
 	// スクリーンサイズ
 
 	//static constexpr int SCREEN_SIZE_X = 1920;
@@ -49,7 +45,9 @@ public:
 	static const std::string PATH_EFFECT;
 	static const std::string PATH_TEXT;
 	static const std::string PATH_FONT;
-	static const std::string PATH_SHADER;
+	static const std::string PATH_JSON;
+	static const std::string PATH_BGM;
+	static const std::string PATH_WAVE;
 	//-------------------------------------------
 
 	//ウィンドウモード設定

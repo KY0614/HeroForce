@@ -19,49 +19,52 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Object\Character\PlayerDodge.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayerInput.cpp" />
-    <ClCompile Include="Src\Object\JobManagerBase.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\Knight.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\Mage.cpp" />
+    <ClCompile Include="Src\Common\ShaderFade.cpp" />
+    <ClCompile Include="Src\Object\Character\Chiken\ChickenBase.cpp" />
+    <ClCompile Include="Src\Object\Character\Chiken\ChickenManager.cpp" />
+    <ClCompile Include="Src\Object\Character\Chiken\ClearChicken.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemyManager.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneArcher.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneAxe.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneBrig.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneGolem.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneMage.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\Enemy.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Archer.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\AxeMan.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuArcher.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuAxe.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuKnight.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuMage.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuAxe.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayerManager.cpp" />
-    <ClCompile Include="Src\Object\Character\EnemyManager.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Knight.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Mage.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Other\ClearPlayers.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\PlayerBase.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\PlayerCpu.cpp" />
-    <ClCompile Include="Src\Common\ShaderFade.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlArcher.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlAxeMan.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlKnight.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlMage.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerDodge.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerInput.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerManager.cpp" />
+    <ClCompile Include="Src\Object\JobManagerBase.cpp" />
     <ClCompile Include="Src\Object\System\GameUi\CpuHpBar.cpp" />
     <ClCompile Include="Src\Object\System\GameUi\GamaUIBase.cpp" />
     <ClCompile Include="Src\Scene\FazeResult.cpp" />
+    <ClCompile Include="Src\Scene\GameClearScene.cpp" />
     <ClCompile Include="Src\Scene\GameOverScene.cpp" />
     <ClCompile Include="Src\Manager\Decoration\SoundManager.cpp" />
     <ClCompile Include="Src\Manager\Generic\InputController.cpp" />
     <ClCompile Include="Src\Object\SelectImage.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.cpp" />
     <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
-    <ClCompile Include="Src\Object\Character\EnemySort\EneArcher.cpp" />
-    <ClCompile Include="Src\Object\Character\EnemySort\EneBrig.cpp" />
-    <ClCompile Include="Src\Object\Character\EnemySort\EneGolem.cpp" />
-    <ClCompile Include="Src\Object\Character\EnemySort\EneMage.cpp" />
     <ClCompile Include="Src\Scene\SelectScene.cpp" />
-    <ClCompile Include="Src\Object\Character\EnemySort\EneAxe.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlArcher.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlKnight.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlMage.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlAxeMan.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\DataBank.cpp" />
-    <ClCompile Include="Src\Object\Character\Chiken\ChickenManager.cpp" />
-    <ClCompile Include="Src\Object\Character\Chiken\ChickenBase.cpp" />
     <ClCompile Include="Src\Object\System\UnitPositionLoad.cpp" />
     <ClCompile Include="Src\Common\ImageFader.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\Collision.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\TextManager.cpp" />
-    <ClCompile Include="Src\Object\Character\EnemySort\Enemy.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\PlayerBase.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
     <ClCompile Include="Src\Object\System\Carsor.cpp" />
     <ClCompile Include="Src\Object\System\LevelScreenManager.cpp" />
@@ -96,6 +99,7 @@
     <ClInclude Include="Src\Common\ImageFader.h" />
     <ClInclude Include="Src\Common\IntVector3.h" />
     <ClInclude Include="Src\Common\Quaternion.h" />
+    <ClInclude Include="Src\Common\ShaderFade.h" />
     <ClInclude Include="Src\Common\Vector2.h" />
     <ClInclude Include="Src\main.h" />
     <ClInclude Include="Src\Manager\Decoration\EffectManager.h" />
@@ -113,13 +117,14 @@
     <ClInclude Include="Src\Object\Arrow.h" />
     <ClInclude Include="Src\Object\Character\Chiken\ChickenBase.h" />
     <ClInclude Include="Src\Object\Character\Chiken\ChickenManager.h" />
-    <ClInclude Include="Src\Object\Character\EnemySort\Enemy.h" />
+    <ClInclude Include="Src\Object\Character\Chiken\ClearChicken.h" />
     <ClInclude Include="Src\Object\Character\EnemyManager.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneArcher.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneAxe.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneBrig.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneGolem.h" />
     <ClInclude Include="Src\Object\Character\EnemySort\EneMage.h" />
+    <ClInclude Include="Src\Object\Character\EnemySort\Enemy.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Archer.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\AxeMan.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\CPU\CpuArcher.h" />
@@ -128,17 +133,17 @@
     <ClInclude Include="Src\Object\Character\PlayableChara\CPU\CpuMage.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Knight.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Mage.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Other\ClearPlayers.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\PlayerBase.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\PlayerCpu.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\USER\PlArcher.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\USER\PlAxeMan.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\USER\PlKnight.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\USER\PlMage.h" />
-    <ClInclude Include="Src\Object\Character\PlayerAnim.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlayerBase.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\PlayerCpu.h" />
     <ClInclude Include="Src\Object\Character\PlayerDodge.h" />
     <ClInclude Include="Src\Object\Character\PlayerInput.h" />
     <ClInclude Include="Src\Object\Character\PlayerManager.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.h" />
     <ClInclude Include="Src\Object\Common\Transform.h" />
     <ClInclude Include="Src\Object\JobManagerBase.h" />
     <ClInclude Include="Src\Object\SelectImage.h" />
@@ -146,12 +151,15 @@
     <ClInclude Include="Src\Object\Stage\StageManager.h" />
     <ClInclude Include="Src\Object\Stage\StageObject.h" />
     <ClInclude Include="Src\Object\System\Carsor.h" />
+    <ClInclude Include="Src\Object\System\GameUi\CpuHpBar.h" />
+    <ClInclude Include="Src\Object\System\GameUi\GamaUIBase.h" />
     <ClInclude Include="Src\Object\System\LevelScreenManager.h" />
     <ClInclude Include="Src\Object\System\LevelupNotice.h" />
     <ClInclude Include="Src\Object\System\LevelupSelect.h" />
     <ClInclude Include="Src\Object\System\UnitPositionLoad.h" />
     <ClInclude Include="Src\Object\UnitBase.h" />
     <ClInclude Include="Src\Scene\FazeResult.h" />
+    <ClInclude Include="Src\Scene\GameClearScene.h" />
     <ClInclude Include="Src\Scene\GameOverScene.h" />
     <ClInclude Include="Src\Scene\GameScene.h" />
     <ClInclude Include="Src\Scene\SceneBase.h" />
@@ -159,32 +167,6 @@
     <ClInclude Include="Src\Scene\TitleScene.h" />
     <ClInclude Include="Src\Shader\PixelShader.h" />
     <ClInclude Include="Src\Utility\AsoUtility.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Src\Shader\HLSL\ColorTex.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="Src\Shader\HLSL\Fade.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="Src\Shader\HLSL\FadeTextrure.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="Src\Shader\HLSL\Texture.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -258,13 +240,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXLIB_DIR);</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXLIB_DIR)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXLIB_DIR);</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -273,14 +255,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir)Src/Lib/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir)Src/Lib/;C:\DxLib</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXLIB_DIR)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXLIB_DIR);</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -291,7 +273,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXLIB_DIR);</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -299,7 +281,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXLIB_DIR)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXLIB_DIR);</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -318,7 +300,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXLIB_DIR)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXLIB_DIR);</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

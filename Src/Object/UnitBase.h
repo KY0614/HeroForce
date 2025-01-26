@@ -64,6 +64,7 @@ public:
 	//初期強化パーセント
 	static constexpr float DEFAULT_PERCENT = 100.0f;
 
+	static constexpr int ARRAY_NUM = 4;
 
 	//コンストラクタ
 	UnitBase(void);
@@ -82,7 +83,7 @@ public:
 
 	//ゲッター各種
 	//生存確認(生存しているとtrue)
-	const bool IsAlive(void)const { return hp_ > 0; };
+	const bool IsAlive(void)const;
 
 	//Transformいただき
 	const Transform& GetTransform(void)const;
@@ -99,6 +100,7 @@ public:
 	const float GetDef(void)const;
 	//攻撃関係
 	const ATK GetAtk(void)const;
+	const float GetCharaPow(void)const { return atkPow_; }
 	//あたり判定
 	const float GetRadius(void)const;
 	//移動前の座標位置
@@ -109,27 +111,39 @@ public:
 	//アニメーションリセット
 	void ResetAnim(const ANIM _anim, const float _speed);
 
+	//配列用アニメーション関数
+	void AnimArray(int i);
+	//アニメーションリセット
+	void ResetAnimArray(const ANIM _anim, const float _speed,int i);
+	float GetAnimArrayTime(int i);
+
 	//攻撃関係
 	//isHit設定用（外部）
 	void SetIsHit(const bool _flag);
 
-	//ダメージの設定
-	void SetDamage(const int damage);
+	/// <summary>
+	/// ダメージ設定
+	/// </summary>
+	/// <param name="attackerPower"></param>攻撃者の攻撃力
+	/// <param name="skillPower"></param>当てた技の技威力
+	void SetDamage(const int attackerPower, const int skillPower);
+	int GetDamage(void);
 
 	//残量HPの処理(少しずつHpを減らす)
 	void SubHp();
 
 	//位置の設定
 	void SetPos(const VECTOR pos);
+	void SetPrePos(void);
 
 	//強化反映
 	void SetAttack(const float percent);
 	void SetDefense(const float percent);
 	void SetSpeed(const float percent);
-	void SetHpMax(const float hp);
+	void SetHpMax(const int hp);
 
-	//衝突判定
-	void CollisionStage(const Transform& stageTrans);
+	//パラメータ読み込み
+	void ParamLoad();
 
 protected:
 
@@ -148,12 +162,13 @@ protected:
 	int hpMax_;			//体力最大値
 	int damage_;		//ダメージ
 	Transform trans_;	//位置情報関係
-	Transform transArray_[4];	//位置情報関係
+	Transform transArray_[ARRAY_NUM];	//位置情報関係
 	float radius_;		//自身の当たり判定の半径
 	float def_;			//防御力
 	float atkPow_;		//攻撃力
 	ATK atk_;			//現在のスキル
 	VECTOR prePos_;		//移動前の座標位置
+	float moveSpeed_;   //移動スピード
 
 	//アニメ関係
 	ANIM anim_;								//アニメステート
@@ -163,8 +178,18 @@ protected:
 	float stepAnim_;						//アニメーションの再生時間
 	float speedAnim_;						//アニメーション速度
 
+	//配列用アニメ関係
+	ANIM animStateArray_[ARRAY_NUM];			//アニメステート
+	std::unordered_map<ANIM, int> animNumArray_[ARRAY_NUM];		//アニメーションナンバー格納配列。
+	int animArray_[ARRAY_NUM];					//アタッチするアニメを格納
+	int animArrayTotalTime_[ARRAY_NUM];			//アニメーションの総再生時間
+	float stepAnimArray_[ARRAY_NUM];			//アニメーションの再生時間
+	float speedAnimArray_[ARRAY_NUM];			//アニメーション速度
+
 	//アニメーション終了時の動き
-	virtual void FinishAnim(void);
+	virtual void FinishAnim(void);	
+	//アニメーション配列用終了時の動き
+	virtual void FinishAnimArray(int i);
 	//カウンタ増加
 	void CntUp(float& _count);
 	//カウンタ減少

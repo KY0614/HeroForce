@@ -137,8 +137,11 @@ void SelectScene::Draw(void)
 {
 	auto& ins = InputManager::GetInstance();
 
+	
+
 	skyDome_->Draw();
 	stage_->Draw();
+	SetUseLightAngleAttenuation(FALSE);
 
 	//選択中の種類ごとの更新処理
 	switch (select_)
@@ -158,9 +161,10 @@ void SelectScene::Draw(void)
 	default:
 		break;
 	}
-
 	//デバッグ描画
-	DrawDebug();
+	//DrawDebug();
+
+	SetUseLightAngleAttenuation(TRUE);
 }
 
 void SelectScene::Release(void)
@@ -168,7 +172,6 @@ void SelectScene::Release(void)
 	SceneManager::GetInstance().ResetCameras();
 
 	//image_->Destroy();
-
 }
 
 void SelectScene::ChangeStateNumber(void)
@@ -214,6 +217,8 @@ void SelectScene::OperationUpdate(void)
 void SelectScene::RoleUpdate(void)
 {
 	auto camera = SceneManager::GetInstance().GetCameras();
+	bool checkAllReady = false;
+	if (IsAllReady()) checkAllReady = true;
 
 	// 何も押されてないとき
 	for (auto& i : input_)i.config_ = KEY_CONFIG::NONE;
@@ -222,7 +227,10 @@ void SelectScene::RoleUpdate(void)
 	if (input_[0].cntl_ == SceneManager::CNTL::KEYBOARD) KeyBoardProcess();
 	PadProcess();
 
+	//オブジェクトを90度ずつ回転させる
+	//(プレイヤーのカメラが90度ずつ回転してるのでそれに合わせるため)
 	VERTEX3D ver[4];
+	VERTEX3D ready[4];
 	VERTEX3D pointL[4];
 	VERTEX3D pointR[4];
 	for (int m = 1; m < 4; m++)
@@ -230,21 +238,31 @@ void SelectScene::RoleUpdate(void)
 		for (int i = 0; i < 4; i++)
 		{
 			ver[i] = images_[m - 1]->GetMeshVertex(i);
+			ready[i] = images_[m - 1]->GetReadyMeshVertex(i);
 			pointL[i] = images_[m - 1]->GetPointLMeshVertex(i);
 			pointR[i] = images_[m - 1]->GetPointRMeshVertex(i);
 
 			VECTOR prevPos = ver[i].pos;
+			VECTOR readyPos = ready[i].pos;
 			VECTOR pointLPos = pointL[i].pos;
 			VECTOR pointRPos = pointR[i].pos;
 
+			//人数オブジェクト
 			VECTOR pos = AsoUtility::RotXZPos(
-				DEFAULT_CAMERA_POS, prevPos,AsoUtility::Deg2RadF(90.0f));
+				DEFAULT_CAMERA_POS, prevPos, AsoUtility::Deg2RadF(90.0f));
 			images_[m]->RotMeshPos(pos, i);
 
+			//Readyオブジェクト
+			pos = AsoUtility::RotXZPos(
+				DEFAULT_CAMERA_POS, readyPos, AsoUtility::Deg2RadF(90.0f));
+			images_[m]->RotReadyMeshPos(pos, i);
+
+			//左矢印オブジェクト
 			pos = AsoUtility::RotXZPos(
 				DEFAULT_CAMERA_POS, pointLPos, AsoUtility::Deg2RadF(90.0f));
 			images_[m]->RotPointLMeshPos(pos, i);
 
+			//右矢印オブジェクト
 			pos = AsoUtility::RotXZPos(
 				DEFAULT_CAMERA_POS, pointRPos, AsoUtility::Deg2RadF(90.0f));
 			images_[m]->RotPointRMeshPos(pos, i);
@@ -253,60 +271,30 @@ void SelectScene::RoleUpdate(void)
 
 	for (int i = 0; i < camera.size(); i++)
 	{
-		images_[i]->ChangeObject(input_[i], i );
+		//プレイヤーごとの操作でオブジェクトを変更する
+		images_[i]->ChangeObject(input_[i], i);
+		//プレイヤーの準備状態をいれる
+		isOk_[i] = images_[i]->GetReady();
+		//プレイヤーごとの操作で変更した役職に応じて出すキャラクターを変更
 		players_[i]->SetRole(images_[i]->GetRole());
 	}
+
 	//キャラクターの位置と向きを設定
 	for (int i = 1; i < camera.size(); i++)
 	{
 		players_[i]->SetPos(AsoUtility::RotXZPos(DEFAULT_CAMERA_POS, players_[i - 1]->GetPos(), AsoUtility::Deg2RadF(90.0f)));
 		players_[i]->SetRot(Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-90.0f * i), 0.0f));
+
+		players_[i]->SetChickenPos(AsoUtility::RotXZPos(DEFAULT_CAMERA_POS, players_[i - 1]->GetChickenPos(), AsoUtility::Deg2RadF(90.0f)));
+		players_[i]->SetRotChicken(Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-90.0f * i), 0.0f));
 	}
 
-	for (int i = 0; i < camera.size(); i++)
-	{
-		if (readyNum > camera.size())
-		{
-			break;
-		}
-		if (images_[i]->GetReady()) 
-		{
-			readyNum++;
-		}
-	}
-
-	if (readyNum >= camera.size() && input_[0].config_ == KEY_CONFIG::DECIDE)
-	{
-		readyNum++;
-	}
-
-	if (readyNum > camera.size())
-	{
-		//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
-		for (int i = 0; i < camera.size(); i++)
-		{
-			if (isOk_[i])
-			{
-				continue;
-			}
-			if (input_[i].config_ == KEY_CONFIG::DECIDE)
-			{
-				isOk_[i] = true;
-				okNum++;
-			}
-		}
-	}
-
-	if (okNum >= camera.size() && input_[0].config_ == KEY_CONFIG::DECIDE)
+	//全員準備完了状態で1Pが決定ボタン押下でゲーム画面へ
+	if (checkAllReady && input_[0].config_ == KEY_CONFIG::DECIDE)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 	}
 
-	//if (readyNum >= camera.size() && 
-	//	input_[0].config_ == KEY_CONFIG::DECIDE)
-	//{
-	//	readyNum++;
-	//}
 }
 
 void SelectScene::MaxUpdate(void)
@@ -321,10 +309,6 @@ void SelectScene::NumberDraw(void)
 
 void SelectScene::OperationDraw(void)
 {
-	//for (auto& i : images_)
-	//{
-	//	i->Draw();
-	//}
 	images_[0]->Draw();
 }
 
@@ -337,6 +321,7 @@ void SelectScene::RoleDraw(void)
 		images_[i]->Draw();
 	}
 
+	SetUseLightAngleAttenuation(TRUE);
 	for (int i = 0; i < camera.size(); i++)
 	{
 		players_[i]->Draw();
@@ -354,6 +339,8 @@ void SelectScene::DrawDebug(void)
 
 	for (int i = 0; i < 4; i++)
 	{
+		DrawFormatString(Application::SCREEN_SIZE_X - 100, 0 + (20 * i), 0x000000, "isOk_ : %d", isOk_[i]);
+
 		//DrawFormatString(0, 20 + (20 * i), 0Xff0000, "player : %0.2f,%0.2f,%0.2f",
 		//	players_[0]->GetPosArray(i).x, players_[0]->GetPosArray(i).y, players_[0]->GetPosArray(i).z);
 
@@ -367,9 +354,6 @@ void SelectScene::DrawDebug(void)
 		//DrawFormatString(500, 40 + (20 * i), 0x00CC00, "pos: %2.f,%2.f,%2.f", images_[i]->GetMeshVertex(i).pos.x, images_[i]->GetMeshVertex(i).pos.y, images_[i]->GetMeshVertex(i).pos.z);
 		DrawFormatString(500, 40 + (20 * i), 0x00CC00, "isOk: %d", isOk_[i]);
 		//DrawFormatString(Application::SCREEN_SIZE_X - 100, 100 + (i*20), 0xFF3333, "ready : %d", images_[i]->GetReady());
-		if (isOk_[i]) {
-			DrawCircle(Application::SCREEN_SIZE_X / 2 + (70 * i), Application::SCREEN_SIZE_Y / 2, 50, 0x00FF00, true);
-		}
 	}
 	DrawFormatString(100, 120, 0x00CC00, "input_: %d", input_[0].config_);
 
@@ -433,6 +417,7 @@ void SelectScene::KeyBoardProcess(void)
 	if (ins.IsTrgDown(KEY_INPUT_RIGHT) || ins.IsTrgDown(KEY_INPUT_D))input_[0].config_ = KEY_CONFIG::RIGHT_TRG;
 
 	if (ins.IsTrgDown(KEY_INPUT_SPACE) || ins.IsTrgDown(KEY_INPUT_RETURN))input_[0].config_ = KEY_CONFIG::DECIDE;
+	if (ins.IsTrgDown(KEY_INPUT_C))input_[0].config_ = KEY_CONFIG::CANCEL;
 }
 
 void SelectScene::PadProcess(void)
@@ -484,6 +469,10 @@ void SelectScene::PadProcess(void)
 		{
 			input_[i].config_ = KEY_CONFIG::DECIDE;
 		}
+		if (ins.IsPadBtnTrgDown(static_cast<InputManager::JOYPAD_NO>(i + 1), InputManager::JOYPAD_BTN::DOWN))
+		{
+			input_[i].config_ = KEY_CONFIG::CANCEL;
+		}
 	}
 }
 
@@ -519,4 +508,17 @@ void SelectScene::ControllDevice(void)
 SelectScene::KEY_CONFIG SelectScene::GetConfig(void)
 {
 	return input_[0].config_;
+}
+
+bool SelectScene::IsAllReady(void)
+{
+	auto camera = SceneManager::GetInstance().GetCameras();
+	for (int i = 0; i < camera.size(); i++)
+	{
+		if (!isOk_[i])
+		{
+			return false;
+		}
+	}
+	return true;
 }

@@ -370,7 +370,7 @@ void Enemy::Draw(void)
 #ifdef DEBUG_ENEMY
 	
 	//デバッグ
-	DrawDebug();
+	//DrawDebug();
 
 #endif // DEBUG_ENEMY
 

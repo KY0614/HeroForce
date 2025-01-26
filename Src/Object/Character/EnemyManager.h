@@ -44,6 +44,9 @@ public:
 	void Draw(void);
 	void Release(void);
 
+	//Õ“Ë”»’è
+	void CollisionStage(const Transform& stageTrans);
+
 	/// <summary>
 	/// w’è‚µ‚½“G‚Ìæ“¾
 	/// </summary>

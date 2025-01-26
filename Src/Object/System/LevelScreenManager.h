@@ -99,6 +99,7 @@ public:
 	inline STATE GetState(void)const { return state_; };
 	inline TYPE GetType(const int playerNum)const;
 	TYPE GetPreType(const int playerNum)const;
+	const bool IsLevelUp(void) { return !(state_ == STATE::NONE || state_ == STATE::END); }
 
 private:
 

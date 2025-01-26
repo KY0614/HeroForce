@@ -1,5 +1,6 @@
 #pragma once
 #include <DxLib.h>
+#include <string>
 #include<unordered_map>
 #include "../Common/Vector2.h"
 
@@ -31,6 +32,7 @@ public:
 		COL_TX,
 		FADE,
 		FADE_TEXTURE,
+		YELLOW_BLINK,
 		MAX
 	};
 
@@ -45,6 +47,14 @@ public:
 		const Vector2& pos, 
 		const int& handle);
 
+	//画像描画（定数付き）
+	void DrawGraphToShader(
+		const Vector2& pos,
+		const int& handle, 
+		const PS_TYPE& type,
+		const COLOR_F& buf,
+		const COLOR_F& subBuf = COLOR_F{});
+
 	//サイズ指定描画（通常）
 	void DrawExtendGraphToShader(
 		const Vector2& pos,
@@ -56,6 +66,14 @@ public:
 		const Vector2& pos, 
 		const Vector2& size,
 		const int& handle, 
+		const PS_TYPE& type,
+		const COLOR_F& buf,
+		const COLOR_F& subBuf = COLOR_F{});
+
+	//画像描画（更新処理付き)
+	void DrawTimeGraphToShader(
+		const Vector2& pos,
+		const int& handle,
 		const PS_TYPE& type,
 		const COLOR_F& buf,
 		const COLOR_F& subBuf = COLOR_F{});

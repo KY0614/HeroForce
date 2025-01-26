@@ -20,6 +20,12 @@ public:
 	enum class SOUND {
 		//‚±‚±‚ÉŽg—p‚·‚é‰¹Šy‚âŒø‰Ê‰¹‚È‚Ç‚ð—…—ñ
 		NONE,
+		GAME_NOMAL,
+		GAME_LAST,
+		DETH_PLAYER,
+		DETH_ENEMY,
+		DETH_CHICKEN,
+		HIT,
 	};
 
 	struct SOUND_DATA

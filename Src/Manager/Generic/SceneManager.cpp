@@ -7,6 +7,7 @@
 #include "../Scene/SelectScene.h"
 #include "../Scene/GameScene.h"
 #include "../Scene/GameOverScene.h"
+#include "../Scene/GameClearScene.h"
 #include "ResourceManager.h"
 #include "Camera.h"
 #include"../Manager/GameSystem/Collision.h"
@@ -364,6 +365,9 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	
 	case SCENE_ID::GAME:
 		//ウィンドウの設定
+
+		
+
 		RedySubWindow();
 		scene_ = new GameScene();
 		resM.InitGame();
@@ -372,6 +376,11 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	case SCENE_ID::GAMEOVER:
 		scene_ = new GameOverScene();
 		resM.InitGameOver();
+		break;
+
+	case SCENE_ID::GAMECLEAR:
+		scene_ = new GameClearScene();
+		resM.InitGameClear();
 		break;
 	}
 
@@ -426,11 +435,31 @@ void SceneManager::SetWindowPram(void)
 	int posX = 0;
 	int posY = 0;
 
-	int sizeX = DISPLAY_X;
+
+	int displayNum = DataBank::GetInstance().Output(DataBank::INFO::DHISPLAY_NUM);
+
+
+	int sizeX = DISPLAY_X /** displayNum*/;
 	int sizeY = DISPLAY_Y;
 
 	if (activeWindowNum_ != 1)sizeX /= 2;
 	if (activeWindowNum_ > 2)sizeY /= 2;
+
+	////生成するウィンドウの数よりディスプレイの方が多い場合
+	//if(displayNum>activeWindowNum_)
+	//{
+	//	//フルスクリーンで移す
+	//	sizeX = DISPLAY_X;
+	//	sizeY = DISPLAY_Y;
+	//}
+	//else
+	//{
+	//	if (activeWindowNum_ != 1)sizeX /= 2;
+	//	if (activeWindowNum_ > 2)sizeY /= 2;
+	//}
+	
+
+	//DataBank::GetInstance().Input(DataBank::INFO::SCREEN_SIZE, sizeX - 15, sizeY - 30);
 
 	for (HWND hwnd : subWindowH_)
 	{
@@ -441,6 +470,7 @@ void SceneManager::SetWindowPram(void)
 		if (cnt == 1)
 		{
 			SetWindowSize(sizeX - 15, sizeY - 30);
+			//SetWindowSizeExtendRate(0.95, 0.95);
 			SetWindowPosition(posX, posY);
 		}
 		else

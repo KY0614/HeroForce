@@ -4,8 +4,6 @@
 #include <DxLib.h>
 #include "../../Common/Transform.h"
 #include "../../../Utility/AsoUtility.h"
-#include "../../../Manager/GameSystem/Collision.h"
-#include "../../Stage/StageManager.h"
 #include "../PlayableChara/PlayerBase.h"
 #include "ChickenBase.h"
 
@@ -19,12 +17,6 @@ public:
 	//チキン生成数
 	static constexpr int CREATE_COUNT = 10;
 
-	/// <summary>
-	/// チキンマネージャー
-	/// </summary>
-	/// <param name="pos"></param>	チキンの生成位置を受け取る
-	/// <param name="stageTrans"></param>	ステージのトランスフォーム
-	/// <param name="playerTrans"></param>	プレイヤーのトランスフォーム
 	ChickenManager(
 		std::vector<VECTOR> pos,
 		const Transform& stageTrans,
@@ -41,6 +33,16 @@ public:
 	//プレイヤー位置を取得(1Pので良い)
 	void SetTargetPos(const VECTOR pos);
 
+	//生存数
+	const int GetAliveNum(void)const;
+
+	//衝突判定
+	void CollisionStage(const Transform& stageTrans, std::shared_ptr<ChickenBase> cheken);
+	//chicken単体の取得
+	std::shared_ptr<ChickenBase> GetChicken(const int _num);
+
+	const int GetChickenAllNum(void)const;
+
 private:
 
 	//リスポーン位置用座標配列
@@ -50,8 +52,8 @@ private:
 	VECTOR targetPos_;
 
 	//プレイヤー用トランスフォーム
-	const Transform &playerTrans_;
-	const Transform &stageTrans_;
+	const Transform& playerTrans_;
+	const Transform& stageTrans_;
 
 	//チキンインスタンス
 	std::vector<std::shared_ptr<ChickenBase>> chickens_;

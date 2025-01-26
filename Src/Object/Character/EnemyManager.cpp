@@ -56,6 +56,19 @@ void EnemyManager::Release(void)
 	
 }
 
+void EnemyManager::CollisionStage(const Transform& stageTrans)
+{
+	auto& col = Collision::GetInstance();
+
+	for (int i = 0; i < activeNum_; i++)
+	{
+		if (col.IsHitUnitStageObject(stageTrans.modelId, activeEnemys_[i]->GetTransform().pos, activeEnemys_[i]->GetRadius()))
+		{
+			activeEnemys_[i]->SetPrePos();
+		}
+	}
+}
+
 
 
 void EnemyManager::CreateEnemy(void)

@@ -84,7 +84,7 @@ void ChickenBase::Draw(void)
 	stateDraw_();
 
 	//デバッグ描画
-	DebagDraw();
+	//DebagDraw();
 
 	//ビルボード描画
 	DrawHelp();
@@ -124,10 +124,19 @@ void ChickenBase::LoadImages()
 void ChickenBase::SetParam()
 {
 	//ステータス設定
-	hp_ = DEFAULT_LIFE;
-	def_ = DEFAULT_DEF;
-	atkPow_ = DEFAULT_ATK;
-	moveSpeed_ = DEFAULT_SPEED;
+	defAtk_ = DEFAULT_ATK;
+	defDef_ = DEFAULT_DEF;
+	defSpeed_ = DEFAULT_SPEED;
+	hpMax_ = DEFAULT_LIFE;
+
+	atkPow_ = defAtk_;
+	def_ = defDef_;
+	moveSpeed_ = defSpeed_;
+	hp_ = hpMax_;
+
+	atkUpPercent_ = DEFAULT_PERCENT;
+	defUpPercent_ = DEFAULT_PERCENT;
+	speedUpPercent_ = DEFAULT_PERCENT;
 
 	//衝突判定用半径
 	radius_ = RADIUS;

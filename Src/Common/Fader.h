@@ -5,9 +5,6 @@ class Fader
 
 public:
 
-	//透過最大値
-	static constexpr int ALPHA_MAX = 255;
-
 	// 画面を少し暗くするようのアルファ値
 	static constexpr int LITTLE_ALPHA = 150;
 
@@ -18,6 +15,8 @@ public:
 	static constexpr float SPEED_SCENE = 5.0f;	//シーン遷移
 	static constexpr float SPEED_PHASE = 2.0f;	//フェーズ遷移
 	static constexpr float SPEED_ALPHA = 3.0f;
+
+	static constexpr int ALPHA_MAX = 255;
 	
 
 	// 状態
@@ -41,6 +40,7 @@ public:
 
 	// どれくらい暗くするかのアルファ値を決める
 	void SetAlpha(float alpha);
+
 
 	virtual void Init(void);
 	virtual void Update(void);
@@ -66,13 +66,5 @@ protected:
 
 	// フェード処理の終了判定
 	bool isEnd_;
-
-private:
-	
-	//マスク画像領域
-	int tmpScreen_;
-
-	//円が他のくりぬき処理
-	void CircleMask();
 
 };

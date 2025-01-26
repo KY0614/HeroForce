@@ -23,6 +23,17 @@ public:
 	static constexpr int LV_EFE_NUM_Y = 6;
 	static constexpr int LV_EFE_SIZE = 256;
 
+	//キャラクターパラメータ定数
+	static constexpr int CHARA_PARAM_NUM_X = 1;
+	static constexpr int CHARA_PARAM_NUM_Y = 4;
+	static constexpr int CHARA_PARAM_SIZE_X = 640;
+	static constexpr int CHARA_PARAM_SIZE_Y = 360;
+
+	//スコアランク用定数
+	static constexpr int RANKS_NUM_X = 4;
+	static constexpr int RANKS_NUM_Y = 1;
+	static constexpr int RANK_SIZE = 300;
+
 	// リソース名
 	enum class SRC
 	{
@@ -41,12 +52,15 @@ public:
 		ENEMY_ARCHER,	//弓使い（敵）
 		ENEMY_AXEMAN,	//斧使い（敵）
 		ENEMY_GOLEM,	//ゴーレム(敵)
-		ARROW,			//矢
+		ARROW,
 
 		//ステージ
 		STAGE_01,
 		DECO_01,
-		SKY_DOME,
+
+		//ゲームクリア
+		CONGRATULATIONS,
+		FIREWORK,
 
 		//UI
 		HP_PLAYER,
@@ -56,6 +70,10 @@ public:
 		CIRCLE_GAGE,
 		CIRCLE_EXP_GAGE,
 		NUMBERS,
+		CHARA_PARAMS,
+		TO_TITLE,
+		START,
+		TIME,
 
 		//レベル通知用
 		LEVEL_UP,
@@ -82,8 +100,36 @@ public:
 		PLAYER_NUM,		//人数選択
 		RIGHT_POINT,	//右矢印
 		LEFT_POINT,		//左矢印
+		READY,			//準備
+		DEVICE,			//デバイス
 
+		//タイトル画面
+		TITLE_LOGO,
+		PLEASE_KEY,
 
+		//リザルト
+		RANKS,
+		REZALT_BACK,
+
+		SKY_DOME,
+		ROLE,			//役職
+
+		//リザルト
+		RESULT,
+		RANK_S,
+		RANK_A,
+		RANK_B,
+		RANK_C,
+
+		//BGM
+		GAME_NOMAL_BGM,
+		GAME_LAST_BGM,
+
+		//効果音
+		HIT_SND,
+		PLAYER_DETH_SND,
+		ENEMY_DETH_SND,
+		CHICKEN_DETH_SND,
 	};
 
 	// 明示的にインステンスを生成する
@@ -100,6 +146,7 @@ public:
 	void InitGame(void);
 	void InitResult(void);
 	void InitGameOver(void);
+	void InitGameClear(void);
 
 	void ResourcePlayer(void);
 	void ResourceEnemy(void);

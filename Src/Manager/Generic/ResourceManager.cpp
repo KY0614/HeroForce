@@ -27,6 +27,18 @@ void ResourceManager::Init(void)
 void ResourceManager::InitTitle(void)
 {
 	Resource res;
+
+	//スカイドーム
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_SKYDOME + "SkyDome.mv1");
+	resourcesMap_.emplace(SRC::SKY_DOME, res);
+
+	//タイトルロゴ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "TitleLogo.png");
+	resourcesMap_.emplace(SRC::TITLE_LOGO, res);
+
+	//キー指示メッセージ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "PleaseKey.png");
+	resourcesMap_.emplace(SRC::PLEASE_KEY, res);
 }
 
 void ResourceManager::InitSelect(void)
@@ -45,6 +57,26 @@ void ResourceManager::InitSelect(void)
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Left_point.png", 1, 1, 52, 52);
 	resourcesMap_.emplace(SRC::LEFT_POINT, res);
 
+	//準備
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "test.png", 1, 1, 500, 200);
+	resourcesMap_.emplace(SRC::READY, res);
+
+	//役職
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "RoleNum.png", 1, 1, 300, 300);
+	resourcesMap_.emplace(SRC::ROLE, res);
+
+	//デバイス
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Device.png", 1, 1, 300, 300);
+	resourcesMap_.emplace(SRC::DEVICE, res);
+
+	//キャラクターパラメータリスト
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "CharaParams.png", CHARA_PARAM_NUM_X, CHARA_PARAM_NUM_Y, CHARA_PARAM_SIZE_X, CHARA_PARAM_SIZE_Y);
+	resourcesMap_.emplace(SRC::CHARA_PARAMS, res);
+
+	//チキン
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Chicken/Chicken.mv1");
+	resourcesMap_.emplace(SRC::CHICKEN, res);
+
 	ResourcePlayer();
 	ResourceStage();
 }
@@ -52,6 +84,28 @@ void ResourceManager::InitSelect(void)
 void ResourceManager::InitGame(void)
 {
 	Resource res;
+
+	//BGM
+	//ゲームノーマル
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Game_Nomal.mp3");
+	resourcesMap_.emplace(SRC::GAME_NOMAL_BGM, res);
+	//ゲームボス
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Game_Boss.mp3");
+	resourcesMap_.emplace(SRC::GAME_LAST_BGM, res);
+
+	//効果音
+	//攻撃喰らい
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "hit.mp3");
+	resourcesMap_.emplace(SRC::HIT_SND, res);
+	//死亡(プレイヤー)
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "PlayerDeth.mp3");
+	resourcesMap_.emplace(SRC::PLAYER_DETH_SND, res);
+	//死亡(敵)
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "EnemyDeth.mp3");
+	resourcesMap_.emplace(SRC::ENEMY_DETH_SND, res);
+	//死亡(ニワトリ)
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "ChickenDeth.mp3");
+	resourcesMap_.emplace(SRC::CHICKEN_DETH_SND, res);
 
 	//強化選択用UI画像
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "SelectUI.png");
@@ -111,6 +165,10 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "HpBarCpu.jpg");
 	resourcesMap_.emplace(SRC::HP_CPU, res);
 
+	//時間
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "time.png");
+	resourcesMap_.emplace(SRC::TIME, res);
+
 
 	ResourcePlayer();
 	ResourceEnemy();
@@ -123,16 +181,52 @@ void ResourceManager::InitGame(void)
 	//ヘルプ画像
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Help!.png");
 	resourcesMap_.emplace(SRC::HELP, res);
+
+	//ランクリスト
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Ranks.png", RANKS_NUM_X, RANKS_NUM_Y, RANK_SIZE, RANK_SIZE);
+	resourcesMap_.emplace(SRC::RANKS, res);
+
+	//リザルト背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "FazeRezaltBack.jpg");
+	resourcesMap_.emplace(SRC::REZALT_BACK, res);
 }
 
 void ResourceManager::InitResult(void)
 {
 	Resource res;
+	//ランクリスト
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Ranks.png", RANKS_NUM_X, RANKS_NUM_Y, RANK_SIZE, RANK_SIZE);
+	resourcesMap_.emplace(SRC::RANKS, res);
+
+	//リザルト背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "FazeRezaltBack.jpg");
+	resourcesMap_.emplace(SRC::REZALT_BACK, res);
 }
 
 void ResourceManager::InitGameOver(void)
 {
 	Resource res;
+}
+
+void ResourceManager::InitGameClear(void)
+{
+	Resource res;
+
+	//cong
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Congratulations.png");
+	resourcesMap_.emplace(SRC::CONGRATULATIONS, res);
+
+	//花火
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Fireworks.efkefc");
+	resourcesMap_.emplace(SRC::FIREWORK, res);
+
+	ResourcePlayer();
+	ResourceEnemy();
+	ResourceStage();
+
+	//チキン
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Chicken/Chicken.mv1");
+	resourcesMap_.emplace(SRC::CHICKEN, res);
 }
 
 //プレイヤー

@@ -4,7 +4,11 @@ class AxeMan :
     public PlayerBase
 {
 public:
-
+    //ステータス
+    static constexpr float POW_ATK = 160.0f;
+    static constexpr int DEF_MAX = 110;
+    static constexpr int HP_MAX = 265;
+    static constexpr float SPEED = PlayerBase::MOVE_SPEED_SLOW;
 #ifdef DEBUG_COOL
     //クールタイム
     static constexpr float ATK_COOLTIME = 1.0f;
@@ -22,9 +26,6 @@ public:
     static constexpr float ATK_START = 0.2f;
     static constexpr float SKILL_ONE_START = 10.0f;
     static constexpr float SKILL_TWO_START = 0.2f;
-
-    //スキル１の長押ししていなかった時の攻撃発生
-    static constexpr float SKILL_ONE_START_NOCHARGE = 3.5f;
 
     //各攻撃の持続時間
     static constexpr float FRAME_ATK_DURATION = 0.5f - ATK_START;
@@ -94,7 +95,9 @@ protected:
     void InitCharaAnim(void)override;
 
     //void ChargeAct(void)override;
-
+    //攻撃入力
+    void NmlAtkInit(void)override;
+    //スキル入力
     void SkillOneInit(void)override;
     void SkillTwoInit(void)override;
     //void ResetParam(ATK_ACT _act)override;

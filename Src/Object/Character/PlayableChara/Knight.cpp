@@ -1,3 +1,4 @@
+#include"../../Arrow.h"
 #include "Knight.h"
 
 Knight::Knight(void)
@@ -18,8 +19,46 @@ void Knight::SetParam(void)
 		0.0f
 	);
 
-	hp_ = MAX_HP;
+	//ステータス
+	hpMax_ = MAX_HP;
+	atkPow_ = POW_ATK;
+	def_ = MAX_DEF;
+	speed_ = SPEED;
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
+}
+
+void Knight::Update(void)
+{
+	PlayerBase::Update();
+
+	size_t arrowSize = arrow_.size();
+	//矢と矢に対応した攻撃の更新
+	for (int a = 0; a < arrowSize; a++)
+	{
+		if (arrow_[a].get()->GetIsAlive())
+		{
+			CntUp(slashArrow_.cnt_);
+		}
+		//攻撃状態が終わったら矢を破壊
+		if (!slashArrow_.IsAttack())
+		{
+			arrow_[a].get()->Destroy();
+			InitSlashAtk(slashArrow_);
+			isShotArrow_ = false;
+		}
+		//更新
+		arrow_[a].get()->Update(slashArrow_);
+	}
+}
+
+void Knight::Draw(void)
+{
+	PlayerBase::Draw();
+	size_t arrowSize = arrow_.size();
+	for (auto& arrow : arrow_)
+	{
+		arrow.get()->Draw();
+	}
 }
 
 void Knight::InitAct(void)
@@ -32,6 +71,10 @@ void Knight::InitAct(void)
 
 	//スキル２の最大値
 	atkMax_.emplace(ATK_ACT::SKILL2, SKILL_TWO_MAX);
+
+	//斬撃
+	slashArrow_ = SLASH_MAX;
+
 
 
 	//クールタイム
@@ -57,15 +100,7 @@ void Knight::AtkFunc(void)
 	if (isSkill_)return;
 	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
-	//近接攻撃用
-	if (ins.CheckAct(ACT_CNTL::NMLATK) && !isAtk_)
-	{
-		if (isCool_[static_cast<int>(ATK_ACT::ATK)])return;
-		ChangeAct(ATK_ACT::ATK);
-		ResetParam(atk_);
-		CntUp(atkStartCnt_);
-		isAtk_ = true;
-	}
+
 	if (!isAtk_)return;
 
 	if (IsAtkStart())
@@ -94,6 +129,10 @@ void Knight::AtkFunc(void)
 }
 
 
+void Knight::NmlAtkInit(void)
+{
+}
+
 void Knight::SkillOneInit(void)
 {
 	//スキルごとにアニメーションを決めて、カウント開始
@@ -104,16 +143,7 @@ void Knight::SkillOneInit(void)
 
 void Knight::SkillTwoInit(void)
 {
-	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > GUARD_STARTABLE_COOL && !IsAtkStart())
-	{
-		isCool_[static_cast<int>(SKILL_NUM::TWO)] = false;
-		ChangeAct(static_cast<ATK_ACT>(skillNo_));
-		ResetParam(atk_);
-		coolTime_[static_cast<int>(SKILL_NUM::TWO)] -= SKILL_TWO_START_COOLTIME;
-		atk_.duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
-		//CntUp(atkStartCnt_);
-		isSkill_ = true;
-	}
+
 }
 
 
@@ -134,11 +164,15 @@ void Knight::Skill1Func(void)
 	//斬撃飛ばす
 	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
-	//入力
-	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN))
+	//明日からアーチャー作成する！
+	if (IsFinishAtkStart() && !isShotArrow_)
 	{
-		InitSkill(skillNo_);
+		if (hp_ < hpMax_)return;
+		CreateSlash();
+		//CreateAtk();
+		isShotArrow_ = true;
 	}
+
 	//近接攻撃用(atk_変数と遠距離で分ける)
 	if (IsAtkStart())
 	{
@@ -168,37 +202,6 @@ void Knight::Skill1Func(void)
 
 void Knight::Skill2Func(void)
 {
-	if (isAtk_)return;
-	//入力
-	auto& ins = PlayerInput::GetInstance();
-	using ACT_CNTL = PlayerInput::ACT_CNTL;
-	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN))
-	{
-		//ボタンの押しはじめの時に値初期化
-		SkillTwoInit();
-	}
-	//スキル(長押しでガード状態維持)
-	if (ins.CheckAct(ACT_CNTL::SKILL_KEEP)&&isSkill_)
-	{
-		if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] > 0.0f)
-		{
-			moveAble_ = false;
-			isCool_[static_cast<int>(SKILL_NUM::TWO)] = false;
-			if (stepAnim_ >= 10.0f)
-			{
-				stepAnim_ = 10.0f;
-			}
-		}
-	}
-	else if (ins.CheckAct(ACT_CNTL::SKILL_UP) && isSkill_)
-	{
-		isPush_ = false;
-		isCool_[static_cast<int>(SKILL_NUM::TWO)] = true;
-		isSkill_ = false;
-		InitAtk();
-	}
-
-
 
 	//ボタン長押ししているときにクールタイムが0秒以下になった時
 	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] <= 0.0f)
@@ -235,7 +238,66 @@ void Knight::InitCharaAnim(void)
 	animNum_.emplace(ANIM::SKILL_2, SKILL_TWO_NUM);
 }
 
+void Knight::InitSlashAtk(ATK& arrowAtk)
+{
+	//攻撃カウント初期化
+	arrowAtk.ResetCnt();
 
+	SyncActPos(arrowAtk);
+
+	//消すかも
+	arrowAtk.isHit_ = false;
+}
+
+void Knight::CreateSlash(void)
+{
+	//矢の生成処理
+//使い終わった攻撃がある場合
+	for (auto& arrow : arrow_)
+	{
+		// 破壊状態のとき
+		if (arrow->GetState() == Arrow::STATE::DESTROY)
+		{
+			//矢の情報を上書き
+			arrow = nullptr;
+
+			// 生成
+			arrow = std::make_shared<Arrow>();
+
+			// 初期化
+			arrow->Init(arrowMdlId_, trans_, SLASH_SPEED);
+			InitSlashAtk(slashArrow_);
+
+			arrow->ChangeState(Arrow::STATE::SHOT);
+
+			//カウント増加
+			arrowCnt_++;
+
+			return;
+		}
+	}
+
+
+	//新しく作る場合
+	//新しく配列を追加
+	std::shared_ptr<Arrow> arrow = std::make_shared<Arrow>();
+	arrow->Init(arrowMdlId_, trans_, SLASH_SPEED);
+	InitSlashAtk(slashArrow_);
+	arrow->ChangeState(Arrow::STATE::SHOT);
+
+	//配列に格納
+	arrow_.emplace_back(arrow);
+
+	//カウント増加
+	arrowCnt_++;
+}
+
+void Knight::CreateSlashAtk(void)
+{
+
+}
+
+#ifdef DEBUG_ON
 void Knight::DrawDebug(void)
 {
 	PlayerBase::DrawDebug();
@@ -247,3 +309,5 @@ void Knight::DrawDebug(void)
 		, atk_.duration_
 		, atkStartCnt_);
 }
+#endif // DEBUG_ON
+
