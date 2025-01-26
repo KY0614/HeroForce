@@ -97,6 +97,9 @@ public:
 	//経験値を返す
 	const float GetExp(void)const { return exp_; }
 
+	//攻撃情報を設定
+	void SetAtk(const ATK _atk) { atk_ = _atk; }
+
 	/// <summary>
 	/// 移動状態を変更
 	/// </summary>
@@ -172,7 +175,7 @@ protected:
 
 	VECTOR localCenterPos_;	//敵中央の相対座標
 	VECTOR colPos_;			//敵自身の当たり判定用の相対座標
-												//移動量
+
 	bool isMove_;														//移動しているかどうか(true:移動中)
 	SEARCH_STATE searchState_;											//探索判定
 	std::map<SEARCH_STATE, std::function<void(void)>> SearchStateInfo_;	//探索状態による情報更新

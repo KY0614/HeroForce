@@ -289,8 +289,6 @@ void GameScene::CollisionEnemy(void)
 
 		//敵個人の位置と攻撃を取得
 		VECTOR ePos = e->GetPos();
-		UnitBase::ATK eAtk = e->GetAtk();
-
 
 		for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
 		{
@@ -326,23 +324,30 @@ void GameScene::CollisionEnemy(void)
 				//e->SetTargetPos(VECTOR{0,0,0});
 			}
 
-
 			//攻撃判定
+			for (auto& eAtks : e->GetAtks())
+			{
+				//攻撃情報をセット
+				e->SetAtk(eAtks);
 
-			//アタック中 && 攻撃判定が終了していないときだけ処理する。それ以外はしないので戻る
-			if (eAtk.IsAttack() && !eAtk.isHit_) {
+				//セットしてきた情報をとってくる
+				UnitBase::ATK eAtk = e->GetAtk();
+
+				//アタック中 && 攻撃判定が終了していないときだけ処理する。それ以外はしないので戻る
+				if (eAtk.IsAttack() && !eAtk.isHit_) {
 
 
-				//攻撃が当たる範囲 && プレイヤーが回避していないとき
-				if (col.IsHitAtk(*e, *p)/* && !p->GetDodge()->IsDodge()*/)
-				{
-					//ダメージ
-					p->SetDamage(e->GetCharaPow(), eAtk.pow_);
-					//使用した攻撃を判定終了に
-					e->SetIsHit(true);
+					//攻撃が当たる範囲 && プレイヤーが回避していないとき
+					if (col.IsHitAtk(*e, *p)/* && !p->GetDodge()->IsDodge()*/)
+					{
+						//ダメージ
+						p->SetDamage(e->GetCharaPow(), eAtk.pow_);
+						//使用した攻撃を判定終了に
+						e->SetIsHit(true);
+					}
 				}
 			}
-		}	
+		}
 	}
 }
 
