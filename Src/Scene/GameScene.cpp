@@ -233,6 +233,8 @@ void GameScene::SoundInit(void)
 	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::GAME_LAST,
 		ResourceManager::GetInstance().Load(ResourceManager::SRC::GAME_LAST_BGM).handleId_);
 
+	snd.AdjustVolume(SoundManager::SOUND::GAME_LAST, 150);
+
 	//ゲームシーン開始時はノーマルのBGMを再生
 	snd.Play(SoundManager::SOUND::GAME_NOMAL);
 
