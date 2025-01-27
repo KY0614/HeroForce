@@ -217,6 +217,8 @@ public:
     //スピード
     void SetMoveSpeed(const float _speed) { moveSpeed_ = _speed; }
 
+    void SetSpeed(const float percent)override;
+
 protected:
     //ポインタ
       //回避機能

@@ -139,7 +139,7 @@ public:
 	//強化反映
 	void SetAttack(const float percent);
 	void SetDefense(const float percent);
-	void SetSpeed(const float percent);
+	virtual void SetSpeed(const float percent);
 	void SetHpMax(const int hp);
 
 	//パラメータ読み込み

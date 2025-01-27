@@ -123,6 +123,15 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "CircleExpGage.png");
 	resourcesMap_.emplace(SRC::CIRCLE_EXP_GAGE, res);
 
+	//ミッション①
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Mission_Nomal.png");
+	resourcesMap_.emplace(SRC::MISSION_NOMAL, res);
+
+	//ミッション②
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Mission_Last.png");
+	resourcesMap_.emplace(SRC::MISSION_LAST, res);
+
+
 	//ゲームUI用数字画像
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Numbers.png", NUMBERS_NUM_X,NUMBERS_NUM_Y, NUMBERS_SIZE, NUMBERS_SIZE);
 	resourcesMap_.emplace(SRC::NUMBERS, res);

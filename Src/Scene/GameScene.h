@@ -73,6 +73,13 @@ private:
 	//フェーズ数カウント
 	int fazeCnt_;
 
+	//フェーズ数通知関連
+	bool isInformFaze_;		//通知中かのtrue/false
+	int informCnt_;			//カウント
+	std::string fazeStr_;	//ファーズ数の文章
+	int missionImg_[2];		//ミッション画像
+
+
 	//チキン
 	std::unique_ptr<ChickenManager> chicken_;
 
@@ -105,6 +112,7 @@ private:
 
 	//リザルト
 	void FazeResultUpdate(void);
+	void InformFazeNum(void);
 
 	//ゲームオーバー判定
 	bool IsGameOver(void);

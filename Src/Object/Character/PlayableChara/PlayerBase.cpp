@@ -345,6 +345,12 @@ void PlayerBase::InitAtk(void)
 	
 }
 
+void PlayerBase::SetSpeed(const float percent)
+{
+	speedUpPercent_ += percent;
+	speed_ = defSpeed_ * speedUpPercent_;
+}
+
 void PlayerBase::Reset(void)
 {
 	//アニメーション初期化
@@ -357,7 +363,7 @@ void PlayerBase::Reset(void)
 
 	//dodgeCdt_ = DODGE_CDT_MAX;
 	dodge_->Init();
-	moveSpeed_ = 0.0f;
+	//moveSpeed_ = 0.0f;
 
 	userOnePos_ = { -400.0f,0.0f,0.0f };
 

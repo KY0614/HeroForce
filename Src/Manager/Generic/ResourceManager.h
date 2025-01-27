@@ -74,6 +74,8 @@ public:
 		TO_TITLE,
 		START,
 		TIME,
+		MISSION_NOMAL,
+		MISSION_LAST,
 
 		//ƒŒƒxƒ‹’Ê’m—p
 		LEVEL_UP,

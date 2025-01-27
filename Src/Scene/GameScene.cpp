@@ -87,6 +87,9 @@ void GameScene::Init(void)
 	//フェーズリザルトの作成
 	fazeResult_ = std::make_unique<FazeResult>();
 	fazeResult_->Init();
+	missionImg_[static_cast<int>(FazeResult::STATE::NOMAL)]= ResourceManager::GetInstance().Load(ResourceManager::SRC::MISSION_NOMAL).handleId_;
+	missionImg_[static_cast<int>(FazeResult::STATE::LAST)]= ResourceManager::GetInstance().Load(ResourceManager::SRC::MISSION_LAST).handleId_;
+
 	//音声関係設定
 	SoundInit();
 
@@ -113,8 +116,11 @@ void GameScene::Update(void)
 		Fade();
 		return;
 	}
-
-
+	//フェーズ数の知らせ
+	if (isInformFaze_) {
+		InformFazeNum();
+		return;
+	}
 
 	//レベル処理
 	level_->Update();
@@ -593,6 +599,11 @@ void GameScene::FazeResultUpdate(void)
 		if (fazeCnt_ == LAST_FAZE)SoundManager::GetInstance().Play(SoundManager::SOUND::GAME_LAST);
 		else SoundManager::GetInstance().Play(SoundManager::SOUND::GAME_NOMAL);
 	}
+}
+
+void GameScene::InformFazeNum(void)
+{
+	informCnt_++;
 }
 
 bool GameScene::IsGameOver(void)
