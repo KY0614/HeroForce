@@ -224,22 +224,55 @@ void ResourceManager::InitResult(void)
 void ResourceManager::InitGameOver(void)
 {
 	Resource res;
+
+	//ゲームオーバーUI
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "GameOver.png");
+	resourcesMap_.emplace(SRC::GAMEOVER, res);
+
+	//ゲームオーバー背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "GameOverBack.png");
+	resourcesMap_.emplace(SRC::GAMEOVER_BACK, res);
+
+	//タイトル遷移メッセージ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "ChangeTitleMes.png");
+	resourcesMap_.emplace(SRC::CHANGE_TITLE_UI, res);
+
+	//SE
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "GameOverSE.wav");
+	resourcesMap_.emplace(SRC::GAMEOVER_SE, res);
+
+	//BGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "GameOverBGM.mp3");
+	resourcesMap_.emplace(SRC::GAMEOVER_BGM, res);
+
+	ResourcePlayer();
 }
 
 void ResourceManager::InitGameClear(void)
 {
 	Resource res;
 
-	//cong
+	//祝福メッセージ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Congratulations.png");
 	resourcesMap_.emplace(SRC::CONGRATULATIONS, res);
+
+	//タイトル遷移メッセージ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "ChangeTitleMes.png");
+	resourcesMap_.emplace(SRC::CHANGE_TITLE_UI, res);
 
 	//花火
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Fireworks.efkefc");
 	resourcesMap_.emplace(SRC::FIREWORK, res);
 
+	//SE
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "GameClearSE.mp3");
+	resourcesMap_.emplace(SRC::GAMECLEAR_SE, res);
+
+	//BGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "GameClearBGM.mp3");
+	resourcesMap_.emplace(SRC::GAMECLEAR_BGM, res);
+
 	ResourcePlayer();
-	ResourceEnemy();
 	ResourceStage();
 
 	//チキン

@@ -38,7 +38,6 @@ public:
 	enum class SRC
 	{
 		TITLE,
-		GAMEOVER,
 		RESTART,
 		NEXT,
 		//モデル
@@ -61,6 +60,14 @@ public:
 		//ゲームクリア
 		CONGRATULATIONS,
 		FIREWORK,
+		GAMECLEAR_SE,
+		GAMECLEAR_BGM,
+
+		//ゲームオーバー
+		GAMEOVER,
+		GAMEOVER_SE,
+		GAMEOVER_BGM,
+		GAMEOVER_BACK,
 
 		//UI
 		HP_PLAYER,
@@ -76,6 +83,7 @@ public:
 		TIME,
 		MISSION_NOMAL,
 		MISSION_LAST,
+		CHANGE_TITLE_UI,
 
 		//レベル通知用
 		LEVEL_UP,

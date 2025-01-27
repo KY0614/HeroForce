@@ -22,6 +22,7 @@
     <ClCompile Include="Src\Common\ShaderFade.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenBase.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenManager.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Other\OverPlayers.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Other\SelectEnemy.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ClearChicken.cpp" />
     <ClCompile Include="Src\Object\Character\EnemyManager.cpp" />
@@ -95,6 +96,7 @@
     <ClCompile Include="Src\Manager\GameSystem\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\PlayableChara\Other\OverPlayers.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Other\SelectEnemy.h" />
     <ClInclude Include="Src\Object\Character\Chiken\ClearChicken.h" />
     <ClInclude Include="Src\Scene\GameClearScene.h" />
