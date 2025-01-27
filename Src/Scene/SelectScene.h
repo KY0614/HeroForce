@@ -159,10 +159,6 @@ private:
 	//選択中の種類
 	SELECT select_;
 
-	//デバイス
-	//SceneManager::CNTL device_;
-	//SceneManager::CNTL devices_[SceneManager::PLAYER_NUM];
-
 	//キーコンフィグ
 	KEY_CONFIG key_;
 

@@ -95,11 +95,12 @@ public:
 
 		//選択画面用
 		PLAYER_NUM,		//人数選択
-		DISPLAY_NUM,		//人数選択
+		DISPLAY_NUM,	//人数選択
 		RIGHT_POINT,	//右矢印
 		LEFT_POINT,		//左矢印
 		READY,			//準備
 		DEVICE,			//デバイス
+		COMING_SOON,	//ComingSoon
 
 		//タイトル画面
 		TITLE_LOGO,

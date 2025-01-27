@@ -62,7 +62,7 @@ void ResourceManager::InitSelect(void)
 	resourcesMap_.emplace(SRC::LEFT_POINT, res);
 
 	//準備
-	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "test.png", 1, 1, 500, 200);
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Ready.png", 1, 1, 500, 200);
 	resourcesMap_.emplace(SRC::READY, res);
 
 	//役職
@@ -72,6 +72,10 @@ void ResourceManager::InitSelect(void)
 	//デバイス
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Device.png", 1, 1, 300, 300);
 	resourcesMap_.emplace(SRC::DEVICE, res);
+
+	//ComingSoon
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Coming Soon.png", 1, 1, 410, 200);
+	resourcesMap_.emplace(SRC::COMING_SOON, res);
 
 	//キャラクターパラメータリスト
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "CharaParams.png", CHARA_PARAM_NUM_X, CHARA_PARAM_NUM_Y, CHARA_PARAM_SIZE_X, CHARA_PARAM_SIZE_Y);

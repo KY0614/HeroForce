@@ -14,6 +14,7 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	imgReady_ = nullptr;
 	imgRoleNum_ = nullptr;
 	imgDeviceNum_ = nullptr;
+	imgComingSoon_ = nullptr;
 
 	state_ = SelectScene::SELECT::NUMBER;
 
@@ -104,8 +105,6 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	target_[2] = AsoUtility::VECTOR_ZERO;
 	target_[3] = AsoUtility::VECTOR_ZERO;
 
-	lerpTime_ = 0.0f;
-
 	// 状態管理
 	stateChanges_.emplace(
 		SelectScene::SELECT::DISPLAY, std::bind(&SelectImage::ChangeStateDisplay, this));
@@ -139,9 +138,7 @@ void SelectImage::Init(void)
 
 	target_[0] = SelectScene::DEFAULT_TARGET_POS;
 
-	lerpTime_ = 1.0f;
-
-	//人数選択から
+	//ディスプレイ数選択から
 	ChangeSelect(SelectScene::SELECT::DISPLAY);
 }
 
@@ -175,31 +172,6 @@ void SelectImage::Draw(void)
 		break;
 	}
 
-#ifdef DRAW_DEBUG
-	//DrawFormatString(Application::SCREEN_SIZE_X - 100, 0, 0x000000, "L : %d", pointL_.isToggle_);
-	//DrawFormatString(Application::SCREEN_SIZE_X - 100, 20, 0x000000, "R : %d", pointR_.isToggle_);
-	//DrawFormatString(Application::SCREEN_SIZE_X - 100, 40, 0x000000, "num : %d", playerNum_);
-	//DrawFormatString(Application::SCREEN_SIZE_X - 100, 80, 0x000000, "pad : %d", isPad_);
-	//for (int i = 0; i < 4; i++)
-	//{
-	//	DrawFormatString(Application::SCREEN_SIZE_X - 250, 100 + (20 * i), 0x000000,
-	//		"L_mesh : %0.2f,%0.2f,%0.2f", pointL_.mesh_.vertex_[i].pos.x,
-	//		pointL_.mesh_.vertex_[i].pos.y, pointL_.mesh_.vertex_[i].pos.z);
-	//}
-	//auto camera = SceneManager::GetInstance().GetCameras();
-	//DrawFormatString(Application::SCREEN_SIZE_X - 100, 120, 0x000000, "camera : %d", camera.size());
-
-	//球
-	////左下
-	//DrawSphere3D(pointL_.mesh_.vertex_[0].pos, 5.0f, 10, 0xFF0000, 0xFF0000, false);
-	////右下
-	//DrawSphere3D(pointL_.mesh_.vertex_[1].pos, 5.0f, 10, 0x00FF00, 0x00FF00, false);
-	////左上
-	//DrawSphere3D(pointL_.mesh_.vertex_[2].pos, 5.0f, 10, 0x0000FF, 0x0000FF, false);
-	////右上
-	//DrawSphere3D(pointL_.mesh_.vertex_[3].pos, 5.0f, 10, 0x000000, 0x000000, false);
-
-#endif // DRAW_DEBUG
 }
 
 void SelectImage::MoveVertexPos(void)
@@ -221,10 +193,12 @@ void SelectImage::MoveVertexPos(void)
 	//pointR_.mesh_.vertex_[3].pos = { -POINT_LEFT_X + 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 右上
 
 	//600,800用
-	mesh_.vertex_[0].pos = { -55.0f, 100.0f, VERTEX_Z + 12.0f };	//左下
-	mesh_.vertex_[1].pos = { 15.0f, 100.0f, VERTEX_Z + 12.0f };		//右下
-	mesh_.vertex_[2].pos = { -55.0f, 170.0f, VERTEX_Z };			//左上
-	mesh_.vertex_[3].pos = { 15.0f, 170.0f, VERTEX_Z };				//右上
+	mesh_.vertex_[0].pos = { ROLE_MESH_LEFT_X, ROLE_MESH_UNDER_Z, VERTEX_Z + 12.0f };	//左下
+	mesh_.vertex_[1].pos = { ROLE_MESH_RIGHT_X, ROLE_MESH_UNDER_Z, VERTEX_Z + 12.0f };		//右下
+	mesh_.vertex_[2].pos = { ROLE_MESH_LEFT_X, ROLE_MESH_TOP_Z, VERTEX_Z };			//左上
+	mesh_.vertex_[3].pos = { ROLE_MESH_RIGHT_X, ROLE_MESH_TOP_Z, VERTEX_Z };				//右上
+
+	float a;
 
 	pointL_.mesh_.vertex_[0].pos = { POINT_LEFT_X - 25.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 左下
 	pointL_.mesh_.vertex_[1].pos = { POINT_RIGHT_X - 25.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 右下
@@ -239,7 +213,7 @@ void SelectImage::MoveVertexPos(void)
 
 void SelectImage::Load(void)
 {
-	//画像
+	//画像の読み込み
 	imgPlayerNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_NUM).handleIds_;
 
 	imgDisplayNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::DISPLAY_NUM).handleIds_;
@@ -253,6 +227,8 @@ void SelectImage::Load(void)
 	imgRoleNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CHARA_PARAMS).handleIds_;
 
 	imgDeviceNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::DEVICE).handleIds_;
+	
+	imgComingSoon_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::COMING_SOON).handleIds_;
 }
 
 void SelectImage::DisplayUpdate(void)
@@ -336,33 +312,6 @@ void SelectImage::DisplayUpdate(void)
 
 		//ディスプレイの設定
 		data.Input(DataBank::INFO::DHISPLAY_NUM, displayNum_);
-		//data.Input(DataBank::INFO::USER_NUM, i);
-
-
-	////ウィンドウ複製の準備
-	//SceneManager::GetInstance().RedySubWindow();
-
-	////カメラの設定
-	//auto cameras = SceneManager::GetInstance().GetCameras();
-	//for (int i = 1; i < cameras.size(); i++)
-	//{
-	//	//最初の座標を保持
-	//	VECTOR prevPos = target_[i - 1];
-	//	//XZ平面で座標を回転させる
-	//	target_[i] = AsoUtility::RotXZPos(SelectScene::DEFAULT_CAMERA_POS, prevPos, AsoUtility::Deg2RadF(90.0f));
-
-	//	cameras[i]->SetPos(SelectScene::DEFAULT_CAMERA_POS, target_[i]);
-	//	cameras[i]->ChangeMode(Camera::MODE::FIXED_POINT);
-	//}
-
-		if (displayNum_ > 1)
-		{
-			//プレイヤー2以上の場合、2P以上のコントローラーをPAD操作に設定
-			for (int num = 2; num <= displayNum_; num++)
-			{
-				data.Input(SceneManager::CNTL::PAD, num);
-			}
-		}
 
 		selectScene_.ChangeSelect(SelectScene::SELECT::NUMBER);
 		ChangeSelect(SelectScene::SELECT::NUMBER);
@@ -690,6 +639,12 @@ void SelectImage::RoleDraw(void)
 	}
 
 	PointsDraw();
+
+	//仮表記
+	if (role_ == 2)
+	{
+		readyMesh_.DrawTwoMesh(*imgComingSoon_);
+	}
 }
 
 void SelectImage::PointsDraw(void)
@@ -744,6 +699,7 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 		{
 			isReady_ = false;
 		}
+		//準備完了の時にキャラ選択を操作できないようにする
 		return;
 	}
 
@@ -812,7 +768,8 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 	}
 
 	//スペースキー押下でゲーム画面へ
-	if (input.config_ == SelectScene::KEY_CONFIG::DECIDE)
+	if (role_ != 2	&&
+		input.config_ == SelectScene::KEY_CONFIG::DECIDE)
 	{
 		//役職の設定
 		data.Input(static_cast<SceneManager::ROLE>(role_ + 1), i + 1);
