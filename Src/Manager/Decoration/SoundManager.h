@@ -70,6 +70,8 @@ public:
 	/// <param name="_sound">音声</param>
 	/// <param name="_persent">調整割合(0%～100%)</param>
 	void AdjustVolume(const SOUND _sound, const int _persent);
+
+	void Destroy(void);
 private:
 	//インスタンス用
 	static SoundManager* instance_;

@@ -188,8 +188,8 @@ void SceneManager::Destroy(void)
 	}
 
 	DataBank::GetInstance().Destroy();
-	EffectManager::GetInstance().Release();
-	SoundManager::GetInstance().Release();
+	EffectManager::GetInstance().Destroy();
+	SoundManager::GetInstance().Destroy();
 	PixelShader::GetInstance().Destroy();
 
 	delete instance_;
@@ -339,6 +339,8 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 
 	// リソースの解放
 	resM.Release();
+	EffectManager::GetInstance().Release();
+	SoundManager::GetInstance().Release();
 
 	// シーンを変更する
 	sceneId_ = sceneId;

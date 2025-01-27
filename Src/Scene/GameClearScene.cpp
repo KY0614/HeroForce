@@ -113,6 +113,7 @@ void GameClearScene::Release(void)
 {
 	sky_->Release();
 	stage_->Destroy();
+	EffectManager::GetInstance().Stop(EffectManager::EFFECT::FIREWORK);
 }
 
 void GameClearScene::DebagPlay()

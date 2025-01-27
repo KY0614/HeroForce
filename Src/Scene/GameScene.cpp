@@ -212,6 +212,9 @@ void GameScene::Release(void)
 	SceneManager::GetInstance().ReturnSolo();
 	Timer::GetInstance().Reset();
 
+	if (fazeCnt_ == LAST_FAZE)SoundManager::GetInstance().Stop(SoundManager::SOUND::GAME_LAST);
+	else SoundManager::GetInstance().Stop(SoundManager::SOUND::GAME_NOMAL);
+
 	playerMng_->Release();
 
 	enmMng_->Release();
@@ -597,8 +600,11 @@ void GameScene::FazeResultUpdate(void)
 		Timer::GetInstance().Reset();
 		fazeResult_->Reset();
 		isFazeRezult_ = false;
-		if (fazeCnt_ == LAST_FAZE)SoundManager::GetInstance().Play(SoundManager::SOUND::GAME_LAST);
-		else SoundManager::GetInstance().Play(SoundManager::SOUND::GAME_NOMAL);
+		if (fazeCnt_ <= LAST_FAZE)
+		{
+			if (fazeCnt_ == LAST_FAZE)SoundManager::GetInstance().Play(SoundManager::SOUND::GAME_LAST);
+			else SoundManager::GetInstance().Play(SoundManager::SOUND::GAME_NOMAL);
+		}
 	}
 }
 

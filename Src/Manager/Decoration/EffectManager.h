@@ -74,6 +74,9 @@ public:
 	//解放処理
 	void Release(void);
 
+	//消去処理
+	void Destroy(void);
+
 private:
 	//インスタンス用
 	static EffectManager* instance_;
