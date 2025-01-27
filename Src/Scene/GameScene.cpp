@@ -320,15 +320,15 @@ void GameScene::CollisionEnemy(void)
 				e->SetIsMove(false);
 
 				//誰も狙っていない
-				e->ChangeSearchState(Enemy::SEARCH_STATE::NOT_FOUND);
-				e->SetTargetPos(VECTOR{0,0,0});
+				if(e->GetSearchState() == Enemy::SEARCH_STATE::PLAYER_FOUND)
+					e->ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_SEARCH);
 			}
 
 			//攻撃判定
-			for (auto& eAtks : e->GetAtks())
+			for (int a = 0 ; a < e->GetAtks().size() ; a++)
 			{
 				//攻撃情報をセット
-				e->SetAtk(eAtks);
+				e->SetAtk(e->GetAtks()[a]);
 
 				//セットしてきた情報をとってくる
 				UnitBase::ATK eAtk = e->GetAtk();
@@ -343,7 +343,7 @@ void GameScene::CollisionEnemy(void)
 						//ダメージ
 						p->SetDamage(e->GetCharaPow(), eAtk.pow_);
 						//使用した攻撃を判定終了に
-						e->SetIsHit(true);
+						e->SetAtksIsHit(a,true);
 					}
 				}
 			}
@@ -421,16 +421,22 @@ void GameScene::CollisionChicken(void)
 
 			//敵個人の位置と攻撃を取得
 			VECTOR ePos = e->GetPos();
-			UnitBase::ATK eAtk = e->GetAtk();
 
 			//索敵
 			//範囲内に入っているとき
-			if (col.Search(ePos, c->GetPos(), e->GetSearchRange())) {
+			if (col.Search(ePos, c->GetPos(), e->GetSearchRange()) && e->GetSearchState() != Enemy::SEARCH_STATE::CHICKEN_SEARCH) {
 				//移動を開始
 				e->SetIsMove(true);
-				//プレイヤーを狙う
+				//鶏を狙う
 				e->ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_FOUND);
 				e->SetTargetPos(c->GetPos());
+			}
+			else if(e->GetSearchState() != Enemy::SEARCH_STATE::PLAYER_FOUND) {
+				//移動を開始
+				e->SetIsMove(true);
+				//まだ探し中
+				e->ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_SEARCH);
+				e->SetTargetPos(chicken_->GetChicken(0)->GetPos());
 			}
 
 			//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
@@ -439,17 +445,26 @@ void GameScene::CollisionChicken(void)
 				e->ChangeState(Enemy::STATE::ALERT);
 			}
 
-
-			//アタック中 && 攻撃判定が終了していないときだけ処理する。それ以外はしないので戻る
-			if (!(eAtk.IsAttack() && !eAtk.isHit_))continue;
-
-			//攻撃が当たる範囲 && プレイヤーが回避していないとき
-			if (col.IsHitAtk(*e, *c))
+			//攻撃判定
+			for (int a = 0; a < e->GetAtks().size(); a++)
 			{
-				//ダメージ
-				c->SetDamage(1);
-				//使用した攻撃を判定終了に
-				e->SetIsHit(true);
+				//攻撃情報をセット
+				e->SetAtk(e->GetAtks()[a]);
+
+				//セットしてきた情報をとってくる
+				UnitBase::ATK eAtk = e->GetAtk();
+
+				//アタック中 && 攻撃判定が終了していないときだけ処理する。それ以外はしないので戻る
+				if (!(eAtk.IsAttack() && !eAtk.isHit_))continue;
+
+				//攻撃が当たる範囲 && プレイヤーが回避していないとき
+				if (col.IsHitAtk(*e, *c))
+				{
+					//ダメージ
+					c->SetDamage(e->GetCharaPow());
+					//使用した攻撃を判定終了に
+					e->SetAtksIsHit(a,true);
+				}
 			}
 		}
 	}

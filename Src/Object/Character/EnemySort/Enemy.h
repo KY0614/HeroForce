@@ -41,7 +41,7 @@ public:
 	//“G‚Ì’Tõó‘Ô
 	enum class SEARCH_STATE
 	{
-		NOT_FOUND			//’N‚àŒ©‚Â‚¯‚Ä‚¢‚È‚¢
+		CHICKEN_SEARCH		//Œ{’T‚µ’†
 		,CHICKEN_FOUND		//’ÇÕ’†(Œ{)
 		,PLAYER_FOUND		//’ÇÕ’†(ƒvƒŒƒCƒ„[)
 		,MAX
@@ -100,11 +100,16 @@ public:
 	//UŒ‚î•ñ‚ğİ’è
 	void SetAtk(const ATK& _atk) { atk_ = _atk; }
 
+	void SetAtksIsHit(int _arrayNum, const bool _isHit) { nowSkill_[_arrayNum].isHit_ = _isHit; }
+
 	/// <summary>
 	/// ˆÚ“®ó‘Ô‚ğ•ÏX
 	/// </summary>
 	/// <param name="_isMove">ˆÚ“®‚·‚é‚Ç‚¤‚©(true:ˆÚ“®‚·‚é)</param>
 	void SetIsMove(const bool _isMove) { isMove_ = _isMove; }
+
+	//’Tõó‘Ô‚ğ•Ô‚·
+	SEARCH_STATE GetSearchState(void) { return searchState_; }
 
 	/// <summary>
 	/// ’Tõó‘Ô‚ğ•ÏX

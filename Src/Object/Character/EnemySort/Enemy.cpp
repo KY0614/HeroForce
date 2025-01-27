@@ -26,7 +26,7 @@ void Enemy::Init(void)
 	stateChanges_.emplace(STATE::BREAK, std::bind(&Enemy::ChangeStateBreak, this));
 
 	//’Tõó‘ÔŠÇ—
-	SearchStateInfo_.emplace(SEARCH_STATE::NOT_FOUND, std::bind(&Enemy::SearchMoveInfo, this));
+	SearchStateInfo_.emplace(SEARCH_STATE::CHICKEN_SEARCH, std::bind(&Enemy::SearchMoveInfo, this));
 	SearchStateInfo_.emplace(SEARCH_STATE::CHICKEN_FOUND, std::bind(&Enemy::FoundMoveInfo, this));
 	SearchStateInfo_.emplace(SEARCH_STATE::PLAYER_FOUND, std::bind(&Enemy::FoundMoveInfo, this));
 
@@ -48,7 +48,7 @@ void Enemy::Init(void)
 	isEndAllAtkSign_ = false;
 	isEndAllAtk_ = false;
 	isMove_ = false;
-	ChangeSearchState(SEARCH_STATE::NOT_FOUND);
+	ChangeSearchState(SEARCH_STATE::CHICKEN_SEARCH);
 
 	//UŒ‚î•ñ‚Ì‰Šú‰»
 	InitSkill();
@@ -230,10 +230,10 @@ void Enemy::UpdateNml(void)
 	if (moveSpeed_ == 0.0)
 		ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
 	//•à‚«ƒAƒjƒ[ƒVƒ‡ƒ“
-	else if (moveSpeed_ > 0.0f && searchState_ == SEARCH_STATE::NOT_FOUND)
+	else if (runSpeed_ > moveSpeed_ > 0.0f)
 		ResetAnim(ANIM::WALK, changeSpeedAnim_[ANIM::WALK]);
 	//‘–‚èƒAƒjƒ[ƒVƒ‡ƒ“
-	else if (moveSpeed_ > 0.0f && searchState_ != SEARCH_STATE::NOT_FOUND)
+	else if (moveSpeed_ >= runSpeed_)
 		ResetAnim(ANIM::RUN, changeSpeedAnim_[ANIM::RUN]);
 	
 	//õ“G
@@ -370,24 +370,27 @@ void Enemy::Draw(void)
 #ifdef DEBUG_ENEMY
 	
 	//ƒfƒoƒbƒO
-	//DrawDebug();
+	DrawDebug();
 
 #endif // DEBUG_ENEMY
 
-	//“Gƒ‚ƒfƒ‹‚Ì•`‰æ
-	MV1DrawModel(trans_.modelId);
-
-	for (auto& nowSkill : nowSkill_)
+	if (IsAlive() || anim_ == ANIM::DEATH && animTotalTime_ >= stepAnim_)
 	{
-		//UŒ‚‚Ì•`‰æ
-		if (nowSkill.IsAttack()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
-		else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
-	}
+		//“Gƒ‚ƒfƒ‹‚Ì•`‰æ
+		MV1DrawModel(trans_.modelId);
 
-	//UŒ‚—\’›‚Ì•`‰æ
-	if (state_ == STATE::ALERT)
-	{
-		DrawPolygon3D(alertVertex_, 2, DX_NONE_GRAPH, false);
+		for (auto& nowSkill : nowSkill_)
+		{
+			//UŒ‚‚Ì•`‰æ
+			if (nowSkill.IsAttack()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
+			else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
+		}
+
+		//UŒ‚—\’›‚Ì•`‰æ
+		if (state_ == STATE::ALERT)
+		{
+			DrawPolygon3D(alertVertex_, 2, DX_NONE_GRAPH, false);
+		}
 	}
 }
 
