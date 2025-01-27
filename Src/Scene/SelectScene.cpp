@@ -204,7 +204,7 @@ void SelectScene::OperationUpdate(void)
 	ControllDevice();
 
 	images_[0]->Update();
-	enemys_[0]->Update();
+	//enemys_[0]->Update();
 	for (int i = 1; i < camera.size();i++)
 	{
 		for (int a = 0; a < SceneManager::PLAYER_NUM; a++) {
