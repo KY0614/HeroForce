@@ -103,6 +103,9 @@ private:
 	//強化要素反映
 	void LevelUpReflection();
 
+	//リザルト
+	void FazeResultUpdate(void);
+
 	//ゲームオーバー判定
 	bool IsGameOver(void);
 };

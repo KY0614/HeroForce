@@ -87,7 +87,7 @@ void GameScene::Init(void)
 	//フェーズリザルトの作成
 	fazeResult_ = std::make_unique<FazeResult>();
 	fazeResult_->Init();
-
+	//音声関係設定
 	SoundInit();
 
 }
@@ -101,25 +101,7 @@ void GameScene::Update(void)
 	//フェーズリザルト
 	if (isFazeRezult_)
 	{
-		fazeResult_->Update();
-
-		//リザルトが終了したとき
-		if (fazeResult_->IsEnd())
-		{
-			//フェーズカウント増加
-			fazeCnt_++;
-			//カウント後最終フェーズ数より大きくなったらクリアシーンへ
-			if(fazeCnt_ >LAST_FAZE)SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
-
-
-			//フェーズリザルトが終了したので明転及びリザルトリセット・タイマー初期化・BGMの再生
-			fader_->SetFade(Fader::STATE::FADE_IN);
-			Timer::GetInstance().Reset();
-			fazeResult_->Reset();
-			isFazeRezult_ = false;
-			if (fazeCnt_ == LAST_FAZE)SoundManager::GetInstance().Play(SoundManager::SOUND::GAME_LAST);
-			else SoundManager::GetInstance().Play(SoundManager::SOUND::GAME_NOMAL);
-		}
+		FazeResultUpdate();
 		return;
 	}
 
@@ -133,10 +115,12 @@ void GameScene::Update(void)
 	}
 
 
+
+	//レベル処理
 	level_->Update();
-
+	//レベルアップ中その他の更新はかけない
 	if (level_->IsLevelUp())return;
-
+	//タイマー更新
 	Timer::GetInstance().Update();
 	//タイマーが終了したら
 	if (Timer::GetInstance().IsEnd())ChangePhase();
@@ -171,10 +155,10 @@ void GameScene::Update(void)
 	//	mng.ChangeScene(SceneManager::SCENE_ID::TITLE);
 	//}
 
-	//if (ins.IsTrgDown(KEY_INPUT_RETURN))
-	//{
-	//	ChangePhase();
-	//}
+	if (ins.IsTrgDown(KEY_INPUT_RETURN))
+	{
+		ChangePhase();
+	}
 
 	if (ins.IsTrgDown(KEY_INPUT_K))
 		playerMng_->GetPlayer(0)->SetDamage(20, 20);
@@ -236,7 +220,7 @@ void GameScene::SoundInit(void)
 	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::GAME_NOMAL,
 		ResourceManager::GetInstance().Load(ResourceManager::SRC::GAME_NOMAL_BGM).handleId_);
 	//ボス戦
-	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::GAME_NOMAL,
+	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::GAME_LAST,
 		ResourceManager::GetInstance().Load(ResourceManager::SRC::GAME_LAST_BGM).handleId_);
 
 	//ゲームシーン開始時はノーマルのBGMを再生
@@ -585,6 +569,29 @@ void GameScene::LevelUpReflection()
 	for (int i = 0; i < plNum; i++)
 	{
 		level_->Reflection(*playerMng_->GetPlayer(i), i);
+	}
+}
+
+void GameScene::FazeResultUpdate(void)
+{
+	fazeResult_->Update();
+
+	//リザルトが終了したとき
+	if (fazeResult_->IsEnd())
+	{
+		//フェーズカウント増加
+		fazeCnt_++;
+		//カウント後最終フェーズ数より大きくなったらクリアシーンへ
+		if (fazeCnt_ > LAST_FAZE)SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
+
+
+		//フェーズリザルトが終了したので明転及びリザルトリセット・タイマー初期化・BGMの再生
+		fader_->SetFade(Fader::STATE::FADE_IN);
+		Timer::GetInstance().Reset();
+		fazeResult_->Reset();
+		isFazeRezult_ = false;
+		if (fazeCnt_ == LAST_FAZE)SoundManager::GetInstance().Play(SoundManager::SOUND::GAME_LAST);
+		else SoundManager::GetInstance().Play(SoundManager::SOUND::GAME_NOMAL);
 	}
 }
 
