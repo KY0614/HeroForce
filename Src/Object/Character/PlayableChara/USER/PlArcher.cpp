@@ -76,6 +76,7 @@ void PlArcher::AtkInput(void)
 {
 	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
+	if ((obj_->GetIsAtk() || obj_->GetIsSkill()))return;
 	if (obj_->GetIsAtk()&&obj_->GetIsCool(PlayerBase::ATK_ACT::ATK))return;
 	if (ins.CheckAct(ACT_CNTL::NMLATK))
 	{

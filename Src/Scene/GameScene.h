@@ -77,6 +77,8 @@ private:
 	//当たり判定（他項目に干渉するもののみ）
 	void Collision(void);
 	void CollisionEnemy(void);	//敵関連の当たり判定
+
+	void CollisionPlayerArrow(void);	//遠距離関係の当たり判定
 	void CollisionPlayer(void);	//プレイヤー関連の当たり判定
 	void CollisionPlayerCPU(PlayerBase& _player,const VECTOR& _pPos);	//プレイヤー(CPU)関連の当たり判定
 	//void CollisionStageUnit();

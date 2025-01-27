@@ -6,6 +6,10 @@ class Archer :
     public PlayerBase
 {
 public:
+#ifdef DEBUG_ON
+    void DrawDebug(void)override;
+#endif // DEBUG_ON
+
     //ステータス
     static constexpr int ATK_POW = 90;
     static constexpr int MAX_HP = 235;
@@ -28,17 +32,17 @@ public:
 
 
     //-----------------------------------------------------------
-    
+
 
 
     //スキル1
     //-----------------------------------------------------------
     static constexpr float SKILL_ONE_COOLTIME = 3.0f;
-    static constexpr float SKILL_ONE_START =2.0f;
+    static constexpr float SKILL_ONE_START = 2.0f;
     static constexpr float FRAME_SKILL1_DURATION = 0.7f;
     static constexpr float FRAME_SKILL1_BACKRASH = 0.2f;
     static constexpr VECTOR SKILL1_COL_LOCAL_POS = { 0.0f,100.0f,100.0f };
-    static constexpr float COL_SKILL1 = CHARACTER_SCALE * 150.0f; 
+    static constexpr float COL_SKILL1 = CHARACTER_SCALE * 150.0f;
 
     //溜めた時と溜めなかった時の威力
     static constexpr float SKILL_ONE_POW_MIN = 15.0f;
@@ -107,16 +111,24 @@ public:
     void InitAtk(void)override;
 
     //弓矢の作成
-    void CreateArrow(void);
+    void CreateArrow(ATK_TYPE _type);
 
     //arrowAtkの作成
-    void CreateAtk(void);
+    //void CreateAtk(void);
+    void CreateAtk(ATK_TYPE _type);
 
     //矢のゲッタ
-    const ATK GetArrowAtk(const int i)override { return arrowAtk_[i]; }
-    const int GetArrowCnt(void)override { return arrowCnt_; }
+    //const PlayerBase::ATK GetArrowAtk(const int i)override;
+    const PlayerBase::ATK GetArrowAtk(const ATK_TYPE _type, const int i)override;
+    const int GetArrowCnt(const int _type)override { return arrowCnt_[_type]; }
+    void SetIsArrowHit(ATK_TYPE _type, const bool _flg, int _num)override;
 
-    
+    //ヒットのセッタ
+    //void SetIsArrowHit(const bool _flg, ATK _atk)override { _atk.isHit_ = _flg; }
+
+    //std::vector<ATK>GetAtks(void)override { return arrowAtk_; }
+
+    std::vector<ATK> GetAtks(ATK_TYPE _type)override { return arrowAtk_[_type]; }
 
     void Update(void)override;
 
@@ -131,17 +143,27 @@ protected:
     void SkillOneInit(void)override;
     void SkillTwoInit(void)override;
 
+    //矢と矢に対応した攻撃に対応する更新処理(スキルに名前を付けてやってみる)
+    void ArrowUpdate(ATK_TYPE _type);
+
     //弓連射用
     //void NmlActCommon (void)override;
 
     //弓矢一つのatk初期化
-    void InitArrowAtk(ATK & arrowAtk);
+    void InitArrowAtk(ATK& arrowAtk);
 
-    std::vector<ATK>arrowAtk_;
+    //std::vector<ATK>arrowAtk_;
+
+    std::map<ATK_TYPE, std::vector<ATK>>arrowAtk_;
+
     int arrowMdlId_;							//矢のモデル
-    std::vector<std::shared_ptr<Arrow>> arrow_;	//弓矢
+    //std::vector<std::shared_ptr<Arrow>> arrow_;	//弓矢
+    std::map<ATK_TYPE, std::vector<std::shared_ptr<Arrow>>> arrow_;	//弓矢
+    //std::map<ATK_ACT, std::shared_ptr<Arrow>>arrow_;
     bool isShotArrow_;							//矢を放ったかの判定(true:放った)
-    int arrowCnt_;								//矢の使用個数カウンタ
+
+    //各攻撃の矢の個数カウント
+    int arrowCnt_[static_cast<int>(ATK_TYPE::MAX)];								//矢の使用個数カウンタ
     float reloadCnt_;							//矢のリロード時間
 
     float atkAbleCnt_;                          //矢の発射可能カウント

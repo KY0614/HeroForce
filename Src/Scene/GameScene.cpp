@@ -221,6 +221,7 @@ void GameScene::Collision(void)
 
 	CollisionEnemy();
 	CollisionPlayer();
+	CollisionPlayerArrow();
 
 }
 
@@ -284,6 +285,17 @@ void GameScene::CollisionEnemy(void)
 	}
 }
 
+
+
+
+
+
+
+
+
+
+
+
 void GameScene::CollisionPlayer(void)
 {
 	//衝突判定マネージャ取得
@@ -301,44 +313,120 @@ void GameScene::CollisionPlayer(void)
 		auto pPos = p->GetPos();
 		auto pAtk = p->GetAtk();
 
-		int pArrowCnt = p->GetArrowCnt();
+		//int pArrowCnt = p->GetArrowCnt();
 
-		//プレイヤーの遠距離攻撃の当たり判定
-		for (int arrow = 0; arrow < pArrowCnt; arrow++)
+		//プレイヤーがCPUの時だけサーチしたい
+		//if (p->GetPlayMode() == SceneManager::PLAY_MODE::CPU)CollisionPlayerCPU(*p, pPos);
+
+		//プレイヤー攻撃判定
+		//攻撃していない || 攻撃がすでに当たっている
+		if (!pAtk.IsAttack() || pAtk.isHit_)continue;
+
+		for (int i = 0; i < maxCnt; i++)
 		{
-			auto arrowAtk = p->GetArrowAtk(arrow);
-			if (!arrowAtk.IsAttack())continue;
-
-
-			//プレイヤーがCPUの時だけサーチしたい
-			//if (p->GetPlayMode() == SceneManager::PLAY_MODE::CPU)CollisionPlayerCPU(*p, pPos);
-
-			//プレイヤー攻撃判定
-			//攻撃していない || 攻撃がすでに当たっている
-			if (!pAtk.IsAttack() || pAtk.isHit_)continue;
-
-			for (int i = 0; i < maxCnt; i++)
-			{
-				//敵の取得
-				Enemy* e = enmMng_->GetActiveEnemy(i);
-				//当たり判定
-				if (col.IsHitAtk(*p, *e)) {
-					//被弾
-					e->Damage(5, 4);
-					if (!e->IsAlive())DunkEnmCnt_++;
-					//攻撃判定の終了
-					p->SetIsHit(true);
-				}
-
-				if (col.IsHitArrowAtk(p, *e, arrow))
-				{
-					int i = 0;
-				}
-
+			//敵の取得
+			Enemy* e = enmMng_->GetActiveEnemy(i);
+			//当たり判定
+			if (col.IsHitAtk(*p, *e)) {
+				//被弾
+				e->Damage(5, 4);
+				if (!e->IsAlive())DunkEnmCnt_++;
+				//攻撃判定の終了
+				p->SetIsHit(true);
 			}
 		}
 	}
 }
+
+void GameScene::CollisionPlayerArrow(void)
+{
+	//衝突判定マネージャ取得
+	auto& col = Collision::GetInstance();
+	//敵の総数取得
+	int maxCnt = enmMng_->GetActiveNum();
+
+
+	for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
+	{
+		PlayerBase* p = playerMng_->GetPlayer(i);
+
+		auto pPos = p->GetPos();
+		auto pAtk = p->GetAtk();
+
+
+		//プレイヤーがCPUの時だけサーチしたい
+		//if (p->GetPlayMode() == SceneManager::PLAY_MODE::CPU)CollisionPlayerCPU(*p, pPos);
+
+		//プレイヤー攻撃判定
+		//攻撃していない || 攻撃がすでに当たっている
+
+		for (int enemy = 0; enemy < maxCnt; enemy++)
+		{
+			for (int type = 0; type < static_cast<int>(PlayerBase::ATK_TYPE::MAX); type++)
+			{
+				int pArrowCnt = p->GetArrowCnt(type);
+				for (int arrowCnt = 0; arrowCnt < pArrowCnt; arrowCnt++)
+				{
+					if (p->GetAtks(static_cast<PlayerBase::ATK_TYPE>(type)).empty())continue;
+					auto arrow = p->GetArrowAtk(static_cast<PlayerBase::ATK_TYPE>(type), arrowCnt);
+
+					if (!arrow.IsAttack() || arrow.isHit_)continue;
+					p->SetAtk(arrow);
+					//敵の取得
+					Enemy* e = enmMng_->GetActiveEnemy(enemy);
+					//当たり判定
+					//if (col.IsHitArrowAtk(p, *e, arrowCnt)) {
+					if (col.IsHitAtk(*p, *e)) {
+						//被弾
+						e->Damage(5, 4);
+						if (!e->IsAlive())DunkEnmCnt_++;
+						//攻撃判定の終了
+						p->SetIsArrowHit(static_cast<PlayerBase::ATK_TYPE>(type), true, arrowCnt);
+					}
+				}
+			}
+		}
+
+		for (int pl = 0; pl < PlayerManager::PLAYER_NUM; pl++)
+		{
+			//当たり判定する者が自分自身だった場合無視する
+			if (i == pl)continue;
+			PlayerBase* p2 = playerMng_->GetPlayer(pl);
+			for (int type = 0; type < static_cast<int>(PlayerBase::ATK_TYPE::MAX); type++)
+			{
+				int pArrowCnt = p->GetArrowCnt(type);
+				for (int arrowCnt = 0; arrowCnt < pArrowCnt; arrowCnt++)
+				{
+					auto arrow = p->GetArrowAtk(static_cast<PlayerBase::ATK_TYPE>(type), arrowCnt);
+					if (!arrow.IsAttack() || arrow.isHit_)continue;
+					p->SetAtk(arrow);
+					if (col.IsHitAtk(*p, *p2))
+					{
+						//アーチャーの弓が当たったら当たったプレイヤーの能力を上げる
+
+						//攻撃判定の終了
+						p->SetIsArrowHit(static_cast<PlayerBase::ATK_TYPE>(type), true, arrowCnt);
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
 {

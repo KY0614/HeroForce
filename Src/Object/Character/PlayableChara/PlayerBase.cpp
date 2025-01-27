@@ -84,6 +84,8 @@ void PlayerBase::Init(void)
 
 	hp_ = hpMax_;
 
+	atkUpPercent_ = 1.0f;
+
 
 
 	PlayerInput::CreateInstance();
@@ -207,7 +209,7 @@ void PlayerBase::InitAct(void)
 void PlayerBase::ChangeAct(const ATK_ACT _act)
 {
 	//クールタイム中なら処理しない
-	if (isCool_[static_cast<int>(act_)] && !IsAtkable())return;
+	if (isCool_[static_cast<int>(_act)] && !IsAtkable())return;
 	act_ = _act;
 
 
