@@ -16,6 +16,8 @@ public:
     static constexpr int MAX_DEF = 90;
     static constexpr float SPEED = PlayerBase::MOVE_SPEED_FAST;
 
+    //バフ強化値
+    static constexpr float BUFF = 0.2f;
 
     static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//攻撃開始判定の大きさ
     static constexpr float ATKABLE_TIME = 0.0f;                         //連射受付時間
@@ -122,6 +124,9 @@ public:
     const PlayerBase::ATK GetArrowAtk(const ATK_TYPE _type, const int i)override;
     const int GetArrowCnt(const int _type)override { return arrowCnt_[_type]; }
     void SetIsArrowHit(ATK_TYPE _type, const bool _flg, int _num)override;
+
+    //バフ
+    void Buff(UnitBase& _target)override;
 
     //ヒットのセッタ
     //void SetIsArrowHit(const bool _flg, ATK _atk)override { _atk.isHit_ = _flg; }

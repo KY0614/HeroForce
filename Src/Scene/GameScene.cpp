@@ -394,7 +394,9 @@ void GameScene::CollisionPlayerArrow(void)
 			PlayerBase* p2 = playerMng_->GetPlayer(pl);
 			for (int type = 0; type < static_cast<int>(PlayerBase::ATK_TYPE::MAX); type++)
 			{
-				int pArrowCnt = p->GetArrowCnt(type);
+				if (type == static_cast<int>(PlayerBase::ATK_TYPE::ATTACK))continue;
+					
+				int pArrowCnt = p->GetArrowCnt(static_cast<int>(PlayerBase::ATK_TYPE::BUFF));
 				for (int arrowCnt = 0; arrowCnt < pArrowCnt; arrowCnt++)
 				{
 					auto arrow = p->GetArrowAtk(static_cast<PlayerBase::ATK_TYPE>(type), arrowCnt);
@@ -403,7 +405,7 @@ void GameScene::CollisionPlayerArrow(void)
 					if (col.IsHitAtk(*p, *p2))
 					{
 						//アーチャーの弓が当たったら当たったプレイヤーの能力を上げる
-
+						p->Buff(*p2);
 						//攻撃判定の終了
 						p->SetIsArrowHit(static_cast<PlayerBase::ATK_TYPE>(type), true, arrowCnt);
 					}

@@ -124,16 +124,14 @@ public:
 
     virtual void SetIsArrowHit(ATK_TYPE _type, const bool _flg, int _num){ atks_[_type][_num].isHit_ = _flg; }
 
-    // //回避関連
-    ////---------------------------------------
-    // const bool IsDodge(void)const { return 0.0f < dodgeCnt_ && dodgeCnt_ < FRAME_DODGE_MAX; }
-
-     //-------------------------------------------------------------
      //ダメージ関数
     void Damage(void);
 
     //リセット
     void Reset(void);
+
+    //役職それぞれのバフ
+    virtual void Buff(UnitBase& _target) { return; }
 
     //移動関連
      //-------------------------------------
@@ -192,9 +190,6 @@ public:
 
     //遠距離武器の個数を獲得
     virtual const int GetArrowCnt(const int _act) { return 0; }
-
-    //バフかどうかゲッタ
-    bool GetIsBuff(void) { return isBuff_; }
 
 
     //**************************************************************

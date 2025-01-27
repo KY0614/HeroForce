@@ -60,7 +60,7 @@ void Archer::SetParam(void)
 
 	atkAbleCnt_ = 0;
 
-	for (int i = 0; i < static_cast<int>(ATK_ACT::MAX); i++)
+	for (int i = 0; i < static_cast<int>(ATK_TYPE::MAX); i++)
 	{
 		arrowCnt_[i] = 0;
 	}
@@ -260,6 +260,13 @@ const PlayerBase::ATK Archer::GetArrowAtk(const ATK_TYPE _type, const int i)
 void Archer::SetIsArrowHit(ATK_TYPE _type, const bool _flg, int _num)
 {
 	arrowAtk_[_type][_num].isHit_ = true;
+}
+
+void Archer::Buff(UnitBase& _target)
+{
+	_target.SetAttack(BUFF);
+	_target.SetDefense(BUFF);
+	_target.SetSpeed(BUFF);
 }
 
 //void Archer::SetIsArrowHit(const bool _flg, int _num)
