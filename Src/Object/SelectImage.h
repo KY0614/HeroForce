@@ -24,23 +24,29 @@ public:
 	static constexpr int VERTEX_NUM = 4;			//頂点数
 	static constexpr float VERTEX_ROTSPEED = 1.0f;	//頂点を回転させる速度
 
-	static constexpr float VERTEX_LEFT_X = -25.0f;	//画像(頂点)左のX座標	memo:元50
+	static constexpr float VERTEX_LEFT_X = -25.0f;	//画像(頂点)左のX座標
 	static constexpr float VERTEX_RIGHT_X = 25.0f;	//画像(頂点)右のX座標
 	
-	static constexpr float VERTEX_TOP_Y = 150.0f;	//画像上のY座標	memo:元170
-	static constexpr float VERTEX_UNDER_Y = 90.0f;	//画像下のY座標 70
+	static constexpr float VERTEX_TOP_Y = 150.0f;	//画像上のY座標	
+	static constexpr float VERTEX_UNDER_Y = 90.0f;	//画像下のY座標 
 
 	static constexpr float VERTEX_Z = -400.0f;		//画像上のZ座標
 	static constexpr float VERTEX_UNDER_Z = -392.0f;//画像下のZ座標
 
 	//矢印(左のほうはそのままで右の場合はLEFTとRIGHTを入れ替えてマイナス値をかける)
-	static constexpr float POINT_LEFT_X = -50.0f;	//画像(頂点)左のX座標 memo:元-110
-	static constexpr float POINT_RIGHT_X = -28.0f;	//画像(頂点)右のX座標 memo:元-58
+	static constexpr float POINT_LEFT_X = -50.0f;	//画像(頂点)左のX座標
+	static constexpr float POINT_RIGHT_X = -28.0f;	//画像(頂点)右のX座標
 	static constexpr float POINT_TOP_Y = 130.0f;	//画像(頂点)下のY座標
 	static constexpr float POINT_UNDER_Y = 110.0f;	//画像(頂点)上のY座標
 													
-	static constexpr float POINT_TOP_Z = VERTEX_Z;	//画像上のY座標
-	static constexpr float POINT_UNDER_Z = -402.0f;	//画像下のY座標
+	static constexpr float POINT_TOP_Z = VERTEX_Z;	//画像上のZ座標
+	static constexpr float POINT_UNDER_Z = -402.0f;	//画像下のZ座標
+
+	static constexpr float ROLE_MESH_LEFT_X = -55.0f;
+	static constexpr float ROLE_MESH_RIGHT_X = 15.0f;
+
+	static constexpr float ROLE_MESH_TOP_Z = 170.0f;
+	static constexpr float ROLE_MESH_UNDER_Z = 100.0f;
 
 	static constexpr int BLEND_PARAM = 128;			//ブレンドモードの強さ
 
@@ -54,6 +60,7 @@ public:
 	struct Mesh {
 		VERTEX3D vertex_[VERTEX_NUM];	//頂点情報
 
+		//初期化
 		Mesh() : vertex_(){}
 
 		/// <summary>
@@ -65,14 +72,13 @@ public:
 
 	//矢印
 	struct Point {
-		int w, h;		//w:底辺,h:高さ	
 		bool isToggle_;	//オン、オフの切り替え用
-		Mesh mesh_;
+		Mesh mesh_;		//矢印用のメッシュ
 
 		//初期化
-		Point() :  w(0), h(0), isToggle_(false),mesh_() {}
-		Point(int inw, int inh, bool isT,Mesh& mesh) :
-			 w(inw), h(inh), isToggle_(isT) , mesh_(mesh)  {}
+		Point() : isToggle_(false),mesh_() {}
+		Point(bool isT,Mesh& mesh) :
+			 isToggle_(isT) , mesh_(mesh)  {}
 	};
 
 	//------------------------------------------------------------------------------
@@ -93,6 +99,7 @@ public:
 	//描画
 	virtual void Draw(void)override;
 
+	//役職選択の際に表示するメッシュの座標へ移動させる
 	void MoveVertexPos(void);
 
 	/// <summary>
@@ -110,7 +117,8 @@ public:
 
 	//ゲッター　---------------------------------------------------
 
-	int GetRole(void) { return role_; };	//選んでいる役職を取得
+	//選んでいる役職を取得
+	int GetRole(void) { return role_; };	
 
 	/// <summary>
 	/// メッシュの頂点情報を取得
@@ -122,9 +130,8 @@ public:
 	VERTEX3D GetPointLMeshVertex(int i){ return pointL_.mesh_.vertex_[i]; };
 	VERTEX3D GetPointRMeshVertex(int i){ return pointR_.mesh_.vertex_[i]; };
 
+	//準備完了かどうか得る
 	bool GetReady(void) { return isReady_; };
-
-	VECTOR GetVerPos(void) { return mesh_.vertex_[0].pos; }
 
 	// セッター　--------------------------------------------------
 
@@ -149,16 +156,18 @@ private:
 	SelectScene::SELECT state_;
 
 	//メッシュ
-	Mesh mesh_;	//人数選択と操作選択の時のメッシュ
+	Mesh mesh_;			//人数選択と操作選択の時のメッシュ
 	Mesh readyMesh_;	//準備完了の時のメッシュ
 	
 	//画像ハンドル
 	int* imgPlayerNum_;		//人数選択画像
+	int* imgDisplayNum_;	//ディスプレイ数選択画像
 	int* imgLeftPoint_;		//左向きの矢印画像
 	int* imgRightPoint_;	//右向きの矢印画像
-	int* imgReady_;			//右向きの矢印画像
+	int* imgReady_;			//準備完了画像
 	int* imgRoleNum_;		//役職の画像
 	int* imgDeviceNum_;		//役職の画像
+	int* imgComingSoon_;	//ComingSoonの画像
 
 	//メッシュの頂点座標用（4つの頂点）
 	VECTOR leftTop_;		//左上
@@ -170,6 +179,9 @@ private:
 	//矢印の構造体
 	Point pointL_;		//左
 	Point pointR_;		//右
+
+	//ディスプレイ数
+	int displayNum_;
 
 	//プレイヤー人数
 	int playerNum_;
@@ -193,26 +205,32 @@ private:
 	float interval_;
 
 	//インスタンス
-	SelectScene& selectScene_;
-	std::shared_ptr<SelectPlayer> player_;
+	SelectScene& selectScene_;				//セレクトシーン
+	std::shared_ptr<SelectPlayer> player_;	//セレクトシーン用のプレイヤー
 
+	//カメラ用のターゲット座標
 	VECTOR target_[SceneManager::PLAYER_NUM];
-
-	float lerpTime_;
 
 	//関数-------------------------------------------------------------------------------------
 
-	void Load(void);	//読み込み用
+	//読み込み用
+	void Load(void);	
 
+	//頂点座標初期化
 	void InitVertex(void);
+
+	//頂点座標回転用
 	VECTOR RotateVertex(VECTOR pos, VECTOR center, float angle);
 
 	//状態遷移
+	void ChangeStateDisplay(void);
 	void ChangeStateNumber(void);
 	void ChangeStateOperation(void);
 	void ChangeStateRole(void);
 
 	//更新処理関連-----------------------------------------------
+
+	void DisplayUpdate(void);		//ディスプレイ数選択中の処理
 
 	void NumberUpdate(void);		//人数選択中の処理
 
@@ -221,6 +239,8 @@ private:
 	void RoleUpdate(void);			//役職選択中の処理
 
 	//描画処理関連--------------------------------------------
+
+	void DisplayDraw(void);			//ディスプレイ数選択中の処理
 
 	void NumberDraw(void);			//人数選択中の処理
 

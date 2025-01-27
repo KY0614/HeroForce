@@ -1,10 +1,10 @@
 #include <DxLib.h>
-#include "../Application.h"
+#include "../../Application.h"
 #include "../../Manager/Generic/ResourceManager.h"
 #include "../../Manager/Generic/SceneManager.h"
 #include "../../Manager/GameSystem/TextManager.h"
 #include "../../Manager/Generic/Camera.h"
-#include "../Common/Vector2.h"
+#include "../../Common/Vector2.h"
 #include "LevelupNotice.h"
 
 LevelupNotice::LevelupNotice() 

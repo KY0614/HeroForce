@@ -8,10 +8,13 @@
 SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> player) : selectScene_(select), player_(player)
 {
 	imgPlayerNum_ = nullptr;
+	imgDisplayNum_ = nullptr;
 	imgLeftPoint_ = nullptr;
 	imgRightPoint_ = nullptr;
 	imgReady_ = nullptr;
 	imgRoleNum_ = nullptr;
+	imgDeviceNum_ = nullptr;
+	imgComingSoon_ = nullptr;
 
 	state_ = SelectScene::SELECT::NUMBER;
 
@@ -86,24 +89,25 @@ SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> play
 	rightTop_ = AsoUtility::VECTOR_ZERO;
 	rightBottom_ = AsoUtility::VECTOR_ZERO;
 
-	playerNum_ = 1;
+	displayNum_ = -1;
+	playerNum_ = -1;
 	isPad_ = false;
-	role_ = 0;
+	role_ = -1;
 	isReady_ = false;
 
-	keyPressTime_ = 0.0f;
-	interval_ = 0.0f;
+	keyPressTime_ = -1.0f;
+	interval_ = -1.0f;
 	press_ = false;
-	angle_ = 0.0f;
+	angle_ = -1.0f;
 
 	target_[0] = AsoUtility::VECTOR_ZERO;
 	target_[1] = AsoUtility::VECTOR_ZERO;
 	target_[2] = AsoUtility::VECTOR_ZERO;
 	target_[3] = AsoUtility::VECTOR_ZERO;
 
-	lerpTime_ = 0.0f;
-
 	// 状態管理
+	stateChanges_.emplace(
+		SelectScene::SELECT::DISPLAY, std::bind(&SelectImage::ChangeStateDisplay, this));
 	stateChanges_.emplace(
 		SelectScene::SELECT::NUMBER, std::bind(&SelectImage::ChangeStateNumber, this));
 	stateChanges_.emplace(
@@ -122,12 +126,20 @@ void SelectImage::Init(void)
 
 	InitVertex();
 
+	displayNum_ = 1;
+	playerNum_ = 1;
+	isPad_ = false;
+	role_ = 0;
+	isReady_ = false;
+	keyPressTime_ = 0.0f;
+	interval_ = 0.0f;
+	press_ = false;
+	angle_ = 0.0f;
+
 	target_[0] = SelectScene::DEFAULT_TARGET_POS;
 
-	lerpTime_ = 1.0f;
-
-	//人数選択から
-	ChangeSelect(SelectScene::SELECT::NUMBER);
+	//ディスプレイ数選択から
+	ChangeSelect(SelectScene::SELECT::DISPLAY);
 }
 
 void SelectImage::Update(void)
@@ -140,6 +152,10 @@ void SelectImage::Draw(void)
 {
 	switch (selectScene_.GetSelect())
 	{
+	case SelectScene::SELECT::DISPLAY:
+		DisplayDraw();
+		break;
+
 	case SelectScene::SELECT::NUMBER:
 		NumberDraw();
 		break;
@@ -156,31 +172,6 @@ void SelectImage::Draw(void)
 		break;
 	}
 
-#ifdef DRAW_DEBUG
-	//DrawFormatString(Application::SCREEN_SIZE_X - 100, 0, 0x000000, "L : %d", pointL_.isToggle_);
-	//DrawFormatString(Application::SCREEN_SIZE_X - 100, 20, 0x000000, "R : %d", pointR_.isToggle_);
-	//DrawFormatString(Application::SCREEN_SIZE_X - 100, 40, 0x000000, "num : %d", playerNum_);
-	//DrawFormatString(Application::SCREEN_SIZE_X - 100, 80, 0x000000, "pad : %d", isPad_);
-	//for (int i = 0; i < 4; i++)
-	//{
-	//	DrawFormatString(Application::SCREEN_SIZE_X - 250, 100 + (20 * i), 0x000000,
-	//		"L_mesh : %0.2f,%0.2f,%0.2f", pointL_.mesh_.vertex_[i].pos.x,
-	//		pointL_.mesh_.vertex_[i].pos.y, pointL_.mesh_.vertex_[i].pos.z);
-	//}
-	//auto camera = SceneManager::GetInstance().GetCameras();
-	//DrawFormatString(Application::SCREEN_SIZE_X - 100, 120, 0x000000, "camera : %d", camera.size());
-
-	//球
-	////左下
-	//DrawSphere3D(pointL_.mesh_.vertex_[0].pos, 5.0f, 10, 0xFF0000, 0xFF0000, false);
-	////右下
-	//DrawSphere3D(pointL_.mesh_.vertex_[1].pos, 5.0f, 10, 0x00FF00, 0x00FF00, false);
-	////左上
-	//DrawSphere3D(pointL_.mesh_.vertex_[2].pos, 5.0f, 10, 0x0000FF, 0x0000FF, false);
-	////右上
-	//DrawSphere3D(pointL_.mesh_.vertex_[3].pos, 5.0f, 10, 0x000000, 0x000000, false);
-
-#endif // DRAW_DEBUG
 }
 
 void SelectImage::MoveVertexPos(void)
@@ -202,10 +193,12 @@ void SelectImage::MoveVertexPos(void)
 	//pointR_.mesh_.vertex_[3].pos = { -POINT_LEFT_X + 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 右上
 
 	//600,800用
-	mesh_.vertex_[0].pos = { -55.0f, 100.0f, VERTEX_Z + 12.0f };	//左下
-	mesh_.vertex_[1].pos = { 15.0f, 100.0f, VERTEX_Z + 12.0f };		//右下
-	mesh_.vertex_[2].pos = { -55.0f, 170.0f, VERTEX_Z };			//左上
-	mesh_.vertex_[3].pos = { 15.0f, 170.0f, VERTEX_Z };				//右上
+	mesh_.vertex_[0].pos = { ROLE_MESH_LEFT_X, ROLE_MESH_UNDER_Z, VERTEX_Z + 12.0f };	//左下
+	mesh_.vertex_[1].pos = { ROLE_MESH_RIGHT_X, ROLE_MESH_UNDER_Z, VERTEX_Z + 12.0f };		//右下
+	mesh_.vertex_[2].pos = { ROLE_MESH_LEFT_X, ROLE_MESH_TOP_Z, VERTEX_Z };			//左上
+	mesh_.vertex_[3].pos = { ROLE_MESH_RIGHT_X, ROLE_MESH_TOP_Z, VERTEX_Z };				//右上
+
+	float a;
 
 	pointL_.mesh_.vertex_[0].pos = { POINT_LEFT_X - 25.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 左下
 	pointL_.mesh_.vertex_[1].pos = { POINT_RIGHT_X - 25.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 右下
@@ -216,14 +209,14 @@ void SelectImage::MoveVertexPos(void)
 	pointR_.mesh_.vertex_[1].pos = { -POINT_LEFT_X + 25.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 右下
 	pointR_.mesh_.vertex_[2].pos = { -POINT_RIGHT_X + 25.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 左上
 	pointR_.mesh_.vertex_[3].pos = { -POINT_LEFT_X + 25.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 右上
-
-
 }
 
 void SelectImage::Load(void)
 {
-	//画像
+	//画像の読み込み
 	imgPlayerNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_NUM).handleIds_;
+
+	imgDisplayNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::DISPLAY_NUM).handleIds_;
 
 	imgRightPoint_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::RIGHT_POINT).handleIds_;
 
@@ -234,6 +227,121 @@ void SelectImage::Load(void)
 	imgRoleNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CHARA_PARAMS).handleIds_;
 
 	imgDeviceNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::DEVICE).handleIds_;
+	
+	imgComingSoon_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::COMING_SOON).handleIds_;
+}
+
+void SelectImage::DisplayUpdate(void)
+{
+	DataBank& data = DataBank::GetInstance();
+	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
+
+	//右の矢印がONの時にキーの右に値する入力をし続けると
+	if (pointR_.isToggle_ &&
+		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::RIGHT)
+	{
+		if (!press_)
+		{
+			press_ = true;
+
+			//人数を１追加(中身は1～4に収める)
+			displayNum_ = (displayNum_ % SceneManager::PLAYER_NUM) + 1;
+		}
+
+		//キーが押されている間経過時間を加算していく
+		keyPressTime_ += delta;
+
+		//経過時間がある一定時間経った場合
+		if (keyPressTime_ > SELECT_TIME)
+		{
+			//インターバルを加算していく
+			interval_ += delta;
+
+			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
+			(interval_ > INTERVAL_TIME) ?
+				interval_ = 0.0f, displayNum_ = (displayNum_ % SceneManager::PLAYER_NUM) + 1 : interval_;
+		}
+	}
+	else if (pointR_.isToggle_)
+	{
+		keyPressTime_ = 0.0f;
+		interval_ = INTERVAL_TIME;
+		press_ = false;
+	}
+
+	//左
+	if (pointL_.isToggle_ &&
+		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::LEFT)
+	{
+		if (!press_)
+		{
+			press_ = true;
+
+			//人数を１削除(中身は1～4に収める)
+			displayNum_ = (displayNum_ + 3) % SceneManager::PLAYER_NUM;
+			if (displayNum_ == 0)displayNum_ = 4;
+		}
+
+		//キーが押されている間経過時間を加算していく
+		keyPressTime_ += delta;
+
+		//経過時間がある一定時間経った場合
+		if (keyPressTime_ > SELECT_TIME)
+		{
+			//インターバルを加算していく
+			interval_ += delta;
+
+			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
+			(interval_ > INTERVAL_TIME) ?
+				interval_ = 0.0f, displayNum_ = (displayNum_ + 3) % SceneManager::PLAYER_NUM : interval_;
+			if (displayNum_ == 0)displayNum_ = 4;
+		}
+	}
+	else if (pointL_.isToggle_)
+	{
+		keyPressTime_ = 0.0f;
+		interval_ = INTERVAL_TIME;
+		press_ = false;
+	}
+
+	//スペースキー押下で決定&入力デバイス選択へ
+	if (selectScene_.GetConfig() == SelectScene::KEY_CONFIG::DECIDE)
+	{
+		//プレイヤー人数の設定
+		data.Input(SceneManager::PLAY_MODE::USER, displayNum_);
+
+		//ディスプレイの設定
+		data.Input(DataBank::INFO::DHISPLAY_NUM, displayNum_);
+
+		selectScene_.ChangeSelect(SelectScene::SELECT::NUMBER);
+		ChangeSelect(SelectScene::SELECT::NUMBER);
+	}
+
+	//選択する矢印
+	if (!pointR_.isToggle_ &&
+		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::RIGHT)
+	{
+		pointR_.isToggle_ = true;
+		pointL_.isToggle_ = false;
+	}
+
+	if (!pointL_.isToggle_ &&
+		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::LEFT)
+	{
+		pointR_.isToggle_ = false;
+		pointL_.isToggle_ = true;
+	}
+
+	//UV座標（テクスチャ座標）
+	mesh_.vertex_[0].u = ((float)(displayNum_)-1.0f) / 4.0f;		mesh_.vertex_[0].v = 1.0f;	// 左下
+	mesh_.vertex_[1].u = (float)(displayNum_) / 4.0f;			mesh_.vertex_[1].v = 1.0f;	// 右下
+	mesh_.vertex_[2].u = ((float)(displayNum_)-1.0f) / 4.0f;		mesh_.vertex_[2].v = 0.0f;	// 左上
+	mesh_.vertex_[3].u = (float)(displayNum_) / 4.0f;			mesh_.vertex_[3].v = 0.0f;	// 右上
+
+	pointL_.mesh_.vertex_[0].u = 0.0f;	pointL_.mesh_.vertex_[0].v = 1.0f;	// 左下
+	pointL_.mesh_.vertex_[1].u = 1.0f;	pointL_.mesh_.vertex_[1].v = 1.0f;	// 右下
+	pointL_.mesh_.vertex_[2].u = 0.0f;	pointL_.mesh_.vertex_[2].v = 0.0f;	// 左上
+	pointL_.mesh_.vertex_[3].u = 1.0f;	pointL_.mesh_.vertex_[3].v = 0.0f;	// 右上
 }
 
 void SelectImage::NumberUpdate(void)
@@ -318,7 +426,7 @@ void SelectImage::NumberUpdate(void)
 		for (int i = 1; i <= playerNum_; i++)
 		{
 			//ディスプレイの設定
-			data.Input(DataBank::INFO::DHISPLAY_NUM, i);
+			//data.Input(DataBank::INFO::DHISPLAY_NUM, i);
 			data.Input(DataBank::INFO::USER_NUM, i);
 		}
 
@@ -345,14 +453,14 @@ void SelectImage::NumberUpdate(void)
 			cameras[i]->ChangeMode(Camera::MODE::FIXED_POINT);
 		}
 
-		//if (playerNum_ > 1)
-		//{
-		//	//プレイヤー2以上の場合、2P以上のコントローラーをPAD操作に設定
-		//	for (int num = 2; num <= playerNum_; num++)
-		//	{
-		//		data.Input(SceneManager::CNTL::PAD, num);
-		//	}
-		//}
+		if (playerNum_ > 1)
+		{
+			//プレイヤー2以上の場合、2P以上のコントローラーをPAD操作に設定
+			for (int num = 2; num <= playerNum_; num++)
+			{
+				data.Input(SceneManager::CNTL::PAD, num);
+			}
+		}
 
 		selectScene_.ChangeSelect(SelectScene::SELECT::OPERATION);
 		ChangeSelect(SelectScene::SELECT::OPERATION);
@@ -494,13 +602,18 @@ void SelectImage::RoleUpdate(void)
 
 }
 
+void SelectImage::DisplayDraw(void)
+{
+	mesh_.DrawTwoMesh(*imgDisplayNum_);
+
+	PointsDraw();
+}
+
 void SelectImage::NumberDraw(void)
 {
-
 	mesh_.DrawTwoMesh(*imgPlayerNum_);
 
 	PointsDraw();
-
 }
 
 void SelectImage::OperationDraw(void)
@@ -527,6 +640,12 @@ void SelectImage::RoleDraw(void)
 	}
 
 	PointsDraw();
+
+	//仮表記
+	if (role_ == 2)
+	{
+		readyMesh_.DrawTwoMesh(*imgComingSoon_);
+	}
 }
 
 void SelectImage::PointsDraw(void)
@@ -581,6 +700,7 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 		{
 			isReady_ = false;
 		}
+		//準備完了の時にキャラ選択を操作できないようにする
 		return;
 	}
 
@@ -649,7 +769,8 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 	}
 
 	//スペースキー押下でゲーム画面へ
-	if (input.config_ == SelectScene::KEY_CONFIG::DECIDE)
+	if (role_ != 2	&&
+		input.config_ == SelectScene::KEY_CONFIG::DECIDE)
 	{
 		//役職の設定
 		data.Input(static_cast<SceneManager::ROLE>(role_ + 1), i + 1);
@@ -701,10 +822,10 @@ void SelectImage::InitVertex(void)
 	mesh_.vertex_[2].pos = leftTop_;		// 左上
 	mesh_.vertex_[3].pos = rightTop_;		// 右上
 
-	readyMesh_.vertex_[0].pos = { -80.0f, 70.0f, VERTEX_UNDER_Z };	// 左下
-	readyMesh_.vertex_[1].pos = { 80.0f, 70.0f, VERTEX_UNDER_Z };	// 右下
-	readyMesh_.vertex_[2].pos = { -80.0f, 160.0f, VERTEX_Z };		// 左上
-	readyMesh_.vertex_[3].pos = { 80.0f, 160.0f, VERTEX_Z };		// 右上
+	readyMesh_.vertex_[0].pos = { -80.0f, 70.0f, -408.0f };	// 左下
+	readyMesh_.vertex_[1].pos = { 80.0f, 70.0f, -408.0f };	// 右下
+	readyMesh_.vertex_[2].pos = { -80.0f, 160.0f, -410.0f };		// 左上
+	readyMesh_.vertex_[3].pos = { 80.0f, 160.0f, -410.0f };		// 右上
 
 	pointL_.mesh_.vertex_[0].pos = { POINT_LEFT_X, POINT_UNDER_Y, POINT_TOP_Z };	// 左下
 	pointL_.mesh_.vertex_[1].pos = { POINT_RIGHT_X, POINT_UNDER_Y, POINT_TOP_Z };	// 右下
@@ -746,6 +867,11 @@ VECTOR SelectImage::RotateVertex(VECTOR pos, VECTOR center, float angle)
 	//	vertices_[i].pos.z = Center.z + (-DIS * (cosf(angle_)));
 	//}
 	return AsoUtility::VECTOR_ZERO;
+}
+
+void SelectImage::ChangeStateDisplay(void)
+{
+	stateUpdate_ = std::bind(&SelectImage::DisplayUpdate, this);
 }
 
 void SelectImage::ChangeStateNumber(void)

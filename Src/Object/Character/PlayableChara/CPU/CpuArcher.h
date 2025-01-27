@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../JobManagerBase.h"
+#include "../Object/JobManagerBase.h"
 class CpuArcher :
     public JobManagerBase
 {

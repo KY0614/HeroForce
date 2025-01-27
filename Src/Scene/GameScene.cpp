@@ -210,6 +210,13 @@ void GameScene::Draw(void)
 	{
 		DrawPhase();
 	}
+
+	DataBank& data = DataBank::GetInstance();
+	for (int i = 1; i <= 4; i++)
+	{
+		DrawFormatString(0, 0 + 20 * i, 0x000000, "%d", data.Output(i).cntrol_);
+	}
+	
 }
 
 void GameScene::Release(void)
