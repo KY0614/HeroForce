@@ -27,6 +27,18 @@ void ResourceManager::Init(void)
 void ResourceManager::InitTitle(void)
 {
 	Resource res;
+
+	//スカイドーム
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_SKYDOME + "SkyDome.mv1");
+	resourcesMap_.emplace(SRC::SKY_DOME, res);
+
+	//タイトルロゴ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "TitleLogo.png");
+	resourcesMap_.emplace(SRC::TITLE_LOGO , res);
+
+	//キー指示メッセージ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "PleaseKey.png");
+	resourcesMap_.emplace(SRC::PLEASE_KEY, res);
 }
 
 void ResourceManager::InitSelect(void)
@@ -45,6 +57,22 @@ void ResourceManager::InitSelect(void)
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Left_point.png", 1, 1, 52, 52);
 	resourcesMap_.emplace(SRC::LEFT_POINT, res);
 
+	//準備
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "test.png", 1, 1, 500, 200);
+	resourcesMap_.emplace(SRC::READY, res);
+
+	//役職
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "RoleNum.png", 1, 1, 300, 300);
+	resourcesMap_.emplace(SRC::ROLE, res);
+
+	//デバイス
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Device.png", 1, 1, 300, 300);
+	resourcesMap_.emplace(SRC::DEVICE, res);
+
+	//キャラクターパラメータリスト
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "CharaParams.png", CHARA_PARAM_NUM_X, CHARA_PARAM_NUM_Y, CHARA_PARAM_SIZE_X, CHARA_PARAM_SIZE_Y);
+	resourcesMap_.emplace(SRC::CHARA_PARAMS, res);
+
 	ResourcePlayer();
 	ResourceStage();
 }
@@ -53,12 +81,68 @@ void ResourceManager::InitGame(void)
 {
 	Resource res;
 
-	//レベル通知用
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Level-Up.png");
-	resourcesMap_.emplace(SRC::LEVEL_UP, res);
-
+	//強化選択用UI画像
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "SelectUI.png");
 	resourcesMap_.emplace(SRC::SELECT_UI, res);
+
+	//カーソルまとめ画像(強化選択用)
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Carsors.png", CARSORS_NUM_X, CARSORS_NUM_Y, CARSORS_SIZE, CARSORS_SIZE);
+	resourcesMap_.emplace(SRC::CARSOLS, res);
+
+	//経験値ゲージ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "CircleGage.png");
+	resourcesMap_.emplace(SRC::CIRCLE_GAGE, res);
+
+	//経験値経験値ゲージ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "CircleExpGage.png");
+	resourcesMap_.emplace(SRC::CIRCLE_EXP_GAGE, res);
+
+	//ゲームUI用数字画像
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Numbers.png", NUMBERS_NUM_X,NUMBERS_NUM_Y, NUMBERS_SIZE, NUMBERS_SIZE);
+	resourcesMap_.emplace(SRC::NUMBERS, res);
+
+	//レベル画面用エフェクト
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "LevelUpEffect.png", LV_EFE_NUM_X, LV_EFE_NUM_Y, LV_EFE_SIZE, LV_EFE_SIZE);
+	resourcesMap_.emplace(SRC::LEVEL_SCREEN_EFE, res);
+
+	//レベルアップ背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "LevelUpBack.png");
+	resourcesMap_.emplace(SRC::LEVEL_UP_BACK, res);
+
+	//強化系エフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "LifeUp.efkefc");
+	resourcesMap_.emplace(SRC::LIFE_UP_EFE, res);
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "AttackUp.efkefc");
+	resourcesMap_.emplace(SRC::ATTACK_UP_EFE, res);
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "DefenceUp.efkefc");
+	resourcesMap_.emplace(SRC::DEFENCE_UP_EFE, res);
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "SpeedUp.efkefc");
+	resourcesMap_.emplace(SRC::SPEED_UP_EFE, res);
+
+	//強化UI
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "AttackUp.png");
+	resourcesMap_.emplace(SRC::ATTACK_UP_UI, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "DefenseUp.png");
+	resourcesMap_.emplace(SRC::DEFENCE_UP_UI, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "SpeedUp.png");
+	resourcesMap_.emplace(SRC::SPEED_UP_UI, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "LifeUp.png");
+	resourcesMap_.emplace(SRC::LIFE_UP_UI, res);
+
+	//HP関係UI
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "HpGage.png");
+	resourcesMap_.emplace(SRC::HP_GAGE, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "HpBarPlayer.png");
+	resourcesMap_.emplace(SRC::HP_PLAYER, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "HpBarEnemy.jpg");
+	resourcesMap_.emplace(SRC::HP_ENEMY, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "HpBarCpu.jpg");
+	resourcesMap_.emplace(SRC::HP_CPU, res);
+
+	//時間
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "time.png");
+	resourcesMap_.emplace(SRC::TIME, res);
+
 
 	ResourcePlayer();
 	ResourceEnemy();
@@ -67,11 +151,30 @@ void ResourceManager::InitGame(void)
 	//チキン
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Chicken/Chicken.mv1");
 	resourcesMap_.emplace(SRC::CHICKEN, res);
+
+	//ヘルプ画像
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Help!.png");
+	resourcesMap_.emplace(SRC::HELP, res);
+
+	//ランクリスト
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Ranks.png", RANKS_NUM_X, RANKS_NUM_Y, RANK_SIZE, RANK_SIZE);
+	resourcesMap_.emplace(SRC::RANKS, res);
+
+	//リザルト背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "FazeRezaltBack.jpg");
+	resourcesMap_.emplace(SRC::REZALT_BACK, res);
 }
 
 void ResourceManager::InitResult(void)
 {
 	Resource res;
+	//ランクリスト
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Ranks.png", RANKS_NUM_X, RANKS_NUM_Y, RANK_SIZE, RANK_SIZE);
+	resourcesMap_.emplace(SRC::RANKS, res);
+
+	//リザルト背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "FazeRezaltBack.jpg");
+	resourcesMap_.emplace(SRC::REZALT_BACK, res);
 }
 
 void ResourceManager::InitGameOver(void)
@@ -79,11 +182,37 @@ void ResourceManager::InitGameOver(void)
 	Resource res;
 }
 
+void ResourceManager::InitGameClear(void)
+{
+	Resource res;
+
+	//cong
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Congratulations.png");
+	resourcesMap_.emplace(SRC::CONGRATULATIONS, res);
+
+	//花火
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Fireworks.efkefc");
+	resourcesMap_.emplace(SRC::FIREWORK, res);
+
+	ResourcePlayer();
+	ResourceEnemy();
+	ResourceStage();
+
+	//チキン
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Chicken/Chicken.mv1");
+	resourcesMap_.emplace(SRC::CHICKEN, res);
+
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "To_Title.png");
+	resourcesMap_.emplace(SRC::TO_TITLE, res);
+}
+
 //プレイヤー
 //*************************************************************************************************************
 void ResourceManager::ResourcePlayer(void)
 {
 	Resource res;
+
+	
 
 	//モデル
 // ********************************************************************
@@ -136,109 +265,18 @@ void ResourceManager::ResourceEnemy(void)
 void ResourceManager::ResourceStage(void)
 {
 	Resource res;
+
+	//ステージ
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Stage1.mv1");
+	resourcesMap_.emplace(SRC::STAGE_01, res);
+
+	//装飾
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "Deco1.mv1");
+	resourcesMap_.emplace(SRC::DECO_01, res);
+
 	//スカイドーム
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_SKYDOME + "SkyDome.mv1");
 	resourcesMap_.emplace(SRC::SKY_DOME, res);
-
-	//ステージ[樽]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "barrel.mv1");
-	resourcesMap_.emplace(SRC::STAGE_BARREL, res);
-
-	//ステージ[ベンチ]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "bench.mv1");
-	resourcesMap_.emplace(SRC::STAGE_BENCH, res);
-
-	//ステージ[柵長い]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "fencesLong.mv1");
-	resourcesMap_.emplace(SRC::STAGE_FENCES_LONG, res);
-
-	//ステージ[柵短め]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "fencesShort.mv1");
-	resourcesMap_.emplace(SRC::STAGE_FENCES_SHORT, res);
-
-	//ステージ[地面]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "ground.mv1");
-	resourcesMap_.emplace(SRC::STAGE_GROUND, res);
-
-	//ステージ[家01]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "house01.mv1");
-	resourcesMap_.emplace(SRC::STAGE_HOUSE_01, res);
-
-	//ステージ[家02]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "house02.mv1");
-	resourcesMap_.emplace(SRC::STAGE_HOUSE_02, res);
-
-	//ステージ[家03]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "house03.mv1");
-	resourcesMap_.emplace(SRC::STAGE_HOUSE_03, res);
-
-	//ステージ[家04]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "house04.mv1");
-	resourcesMap_.emplace(SRC::STAGE_HOUSE_04, res);
-
-	//ステージ[家05]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "house05.mv1");
-	resourcesMap_.emplace(SRC::STAGE_HOUSE_05, res);
-
-	//ステージ[物干し01]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "hunger01.mv1");
-	resourcesMap_.emplace(SRC::STAGE_HUNGER_01, res);
-
-	//ステージ[物干し02]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "hunger02.mv1");
-	resourcesMap_.emplace(SRC::STAGE_HUNGER_02, res);
-
-	//ステージ[岩01]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "rock01.mv1");
-	resourcesMap_.emplace(SRC::STAGE_ROCK_01, res);
-
-	//ステージ[岩02]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "rock02.mv1");
-	resourcesMap_.emplace(SRC::STAGE_ROCK_02, res);
-
-	//ステージ[岩03]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "rock03.mv1");
-	resourcesMap_.emplace(SRC::STAGE_ROCK_03, res);
-
-	//ステージ[包袋]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "sack.mv1");
-	resourcesMap_.emplace(SRC::STAGE_SACK, res);
-
-	//ステージ[机]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "table.mv1");
-	resourcesMap_.emplace(SRC::STAGE_TABLE, res);
-
-	//ステージ[木01]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "tree01.mv1");
-	resourcesMap_.emplace(SRC::STAGE_TREE_01, res);
-
-	//ステージ[木02]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "tree02.mv1");
-	resourcesMap_.emplace(SRC::STAGE_TREE_02, res);
-
-	//ステージ[木03]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "tree03.mv1");
-	resourcesMap_.emplace(SRC::STAGE_TREE_03, res);
-
-	//ステージ[木04]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "tree04.mv1");
-	resourcesMap_.emplace(SRC::STAGE_TREE_04, res);
-
-	//ステージ[木05]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "tree05.mv1");
-	resourcesMap_.emplace(SRC::STAGE_TREE_05, res);
-
-	//ステージ[荷車]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "wagon.mv1");
-	resourcesMap_.emplace(SRC::STAGE_WAGON, res);
-
-	//ステージ[井戸]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "well.mv1");
-	resourcesMap_.emplace(SRC::STAGE_WELL, res);
-
-	//ステージ[丸太]
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_STAGE + "wood.mv1");
-	resourcesMap_.emplace(SRC::STAGE_WOOD, res);
 }
 
 void ResourceManager::Release(void)

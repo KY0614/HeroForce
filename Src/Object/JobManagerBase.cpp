@@ -23,6 +23,7 @@ void JobManagerBase::ActionInput( PlayerBase* _player, PlayerDodge* _dodge)
 
 	if (ins.CheckAct(ACT_CNTL::CHANGE_SKILL)) { _player->SkillChange(); }
 
+	
 
 
 	//‰ñ”ð

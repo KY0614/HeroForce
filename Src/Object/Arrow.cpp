@@ -59,6 +59,7 @@ void Arrow::Draw(void)
 {
 	//ƒVƒ‡ƒbƒgó‘Ô‚Ì‚Æ‚«‚É‚Ì‚İ•`‰æ‚·‚é
 	if (state_ == STATE::SHOT)DrawSphere3D(trans_.pos,5.0f,20,0x00ff00,0x00ff00,true);
+
 	/*MV1DrawModel(trans_.modelId)*/
 }
 

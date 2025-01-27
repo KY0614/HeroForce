@@ -1,8 +1,10 @@
 #pragma once
+#include "../Object/Stage/StageManager.h"
 
 class UnitBase;
 class PlayerBase;
 class Enemy;
+class StageManager;
 
 class Collision
 {
@@ -23,6 +25,16 @@ public:
 	/// <returns></returns>
 	const bool IsHitAtk(const UnitBase& _chaser, const UnitBase& _target);
 
+	/// <summary>
+/// 矢の当たり判定
+/// </summary>
+/// <param name="_chaser">攻撃する人</param>
+/// <param name="_target">攻撃される人</param>
+/// <param name="_num">当たり判定する矢の配列番号</param>
+/// <returns></returns>
+	const bool IsHitArrowAtk(PlayerBase* _chaser, const UnitBase& _target, const int _num);
+
+
 	//索敵
 	// 引数は（索敵した人、索敵対象）の順
 	const bool Search(const UnitBase& _chaser, const UnitBase& _target);
@@ -36,7 +48,18 @@ public:
 	/// <returns></returns>
 	const bool Search(const VECTOR _myPos, const VECTOR _targetPos, const float _rangeRadius)const;
 
+	/// <summary>
+	/// ステージモデルとキャラクターの衝突判定
+	/// </summary>
+	/// <param name="_modelId"></param>ステージモデル
+	/// <param name="_pos"></param>キャラクターの座標
+	/// <param name="_radius"></param>キャラクターの半径
+	/// <returns></returns>
+	const bool IsHitUnitStageObject(const int& _modelId, const VECTOR& _pos, const float& _radius)const;
+
+
 private:
+
 	//コンストラクタ＆デストラクタ
 	Collision(void) = default;
 	~Collision(void) = default;
