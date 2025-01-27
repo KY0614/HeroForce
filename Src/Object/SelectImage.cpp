@@ -129,7 +129,7 @@ void SelectImage::Init(void)
 	displayNum_ = 1;
 	playerNum_ = 1;
 	isPad_ = false;
-	role_ = 0;
+	role_ = 1;
 	isReady_ = false;
 	keyPressTime_ = 0.0f;
 	interval_ = 0.0f;
@@ -176,6 +176,7 @@ void SelectImage::Draw(void)
 
 void SelectImage::MoveVertexPos(void)
 {
+	//Lerpで動かしたいなという気持ち
 	//フルスク用
 	//mesh_.vertex_[0].pos = { -70.0f, 100.0f, VERTEX_Z + 12.0f };	//左下
 	//mesh_.vertex_[1].pos = { 0.0f, 100.0f, VERTEX_Z + 12.0f };		//右下
@@ -641,7 +642,7 @@ void SelectImage::RoleDraw(void)
 	PointsDraw();
 
 	//仮表記
-	if (role_ == 2)
+	if (GetRole() == static_cast<int>(SceneManager::ROLE::MAGE))
 	{
 		readyMesh_.DrawTwoMesh(*imgComingSoon_);
 	}
@@ -712,7 +713,9 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 			press_ = true;
 
 			//役職を選択
-			role_ = (role_ + 1) % SceneManager::PLAYER_NUM;
+			//role_ = (role_ + 1) % SceneManager::PLAYER_NUM;
+			//役職を選択
+			role_ = (role_ % SceneManager::PLAYER_NUM) + 1;
 		}
 
 		//キーが押されている間経過時間を加算していく
@@ -744,7 +747,10 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 			press_ = true;
 
 			//役職を選択
-			role_ = (role_ - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM;
+			//role_ = (role_ - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM;
+			//人数を１削除(中身は1～4に収める)
+			role_ = (role_ + 3) % SceneManager::PLAYER_NUM;
+			if (role_ == 0)role_ = SceneManager::PLAYER_NUM;
 		}
 		//キーが押されている間経過時間を加算していく
 		keyPressTime_ += delta;
@@ -768,11 +774,11 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 	}
 
 	//スペースキー押下でゲーム画面へ
-	if (role_ != 2	&&
+	if (role_ != 3	&&
 		input.config_ == SelectScene::KEY_CONFIG::DECIDE)
 	{
 		//役職の設定
-		data.Input(static_cast<SceneManager::ROLE>(role_ + 1), i + 1);
+		data.Input(static_cast<SceneManager::ROLE>(role_ ), i + 1);
 
 		isReady_ = true;
 	}
@@ -793,10 +799,10 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 	}
 
 	//UV座標（テクスチャ座標）
-	mesh_.vertex_[0].u = 0.0f;	mesh_.vertex_[0].v = ((float)(role_)+1.0f) / 4.0f;	// 左下
-	mesh_.vertex_[1].u = 1.0f;	mesh_.vertex_[1].v = ((float)(role_)+1.0f) / 4.0f;	// 右下
-	mesh_.vertex_[2].u = 0.0f;	mesh_.vertex_[2].v = (float)(role_) / 4.0f;			// 左上
-	mesh_.vertex_[3].u = 1.0f;	mesh_.vertex_[3].v = (float)(role_) / 4.0f;			// 右上
+	mesh_.vertex_[0].u = 0.0f;	mesh_.vertex_[0].v = ((float)(role_)) / 4.0f;	// 左下
+	mesh_.vertex_[1].u = 1.0f;	mesh_.vertex_[1].v = ((float)(role_)) / 4.0f;	// 右下
+	mesh_.vertex_[2].u = 0.0f;	mesh_.vertex_[2].v = ((float)(role_)-1.0f) / 4.0f;	// 左上
+	mesh_.vertex_[3].u = 1.0f;	mesh_.vertex_[3].v = ((float)(role_)-1.0f) / 4.0f;	// 右上
 }
 
 void SelectImage::ChangeSelect(const SelectScene::SELECT _state)
@@ -835,7 +841,6 @@ void SelectImage::InitVertex(void)
 	pointR_.mesh_.vertex_[1].pos = { -POINT_LEFT_X, POINT_UNDER_Y, POINT_TOP_Z };	// 右下
 	pointR_.mesh_.vertex_[2].pos = { -POINT_RIGHT_X, POINT_TOP_Y, POINT_UNDER_Z };	// 左上
 	pointR_.mesh_.vertex_[3].pos = { -POINT_LEFT_X, POINT_TOP_Y, POINT_UNDER_Z };	// 右上
-
 }
 
 VECTOR SelectImage::RotateVertex(VECTOR pos, VECTOR center, float angle)
