@@ -200,6 +200,7 @@ void GameScene::Draw(void)
 	{
 		DrawPhase();
 	}
+
 }
 
 void GameScene::Release(void)

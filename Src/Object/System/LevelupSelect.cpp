@@ -1,3 +1,4 @@
+#include <locale>
 #include <DxLib.h>
 #include "../../Application.h"
 #include "../../Manager/Generic/ResourceManager.h"
