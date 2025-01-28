@@ -25,6 +25,10 @@ PlayerBase::PlayerBase(void)
 
 	moveAble_ = true;
 
+	stickDeg_ = -1;
+
+
+
 	for (int i = 0; i < static_cast<int>(ATK_ACT::MAX); i++)
 	{
 		coolTime_[i] = coolTimeMax_[i];
@@ -103,7 +107,12 @@ void PlayerBase::Update(void)
 {
 	//アニメーションの更新
 	Anim();
-
+	if (!IsAlive())
+	{
+		ResetAnim(ANIM::DEATH, SPEED_ANIM);
+		if(stepAnim_)
+		return;
+	}
 #ifdef INPUT_DEBUG_ON
 	InputUpdate();
 #endif // INPUT_DEBUG_ON
@@ -123,6 +132,23 @@ void PlayerBase::Update(void)
 
 	//クールタイム割合の計算
 	CoolTimePerCalc();
+
+	for (int i = 0; i < static_cast<int>(BUFF_TYPE::MAX); i++)
+	{
+		CntDown(buffCnt_[i]);
+		if (buffCnt_[i] > 0.0f)
+		{
+			atkPow_ *= buffPercent_[static_cast<int>(BUFF_TYPE::ATK_BUFF)];
+			def_ *= buffPercent_[static_cast<int>(BUFF_TYPE::DEF_BUFF)];
+			speed_ *= buffPercent_[static_cast<int>(BUFF_TYPE::SPD_BUFF)];
+		}
+		else
+		{
+			buffPercent_[i] = 1.0f;
+			buffCnt_[i] = 0.0f;
+		}
+
+	}
 
 
 #ifdef DEBUG_ON
@@ -362,6 +388,11 @@ void PlayerBase::Reset(void)
 	act_ = ATK_ACT::MAX;
 	//モデルの初期化
 	trans_.Update();
+}
+
+void PlayerBase::BuffPerAdd(BUFF_TYPE _type, float _per)
+{
+	buffPercent_[static_cast<int>(_type)] += _per;
 }
 
 void PlayerBase::SyncActPos(ATK& _atk)

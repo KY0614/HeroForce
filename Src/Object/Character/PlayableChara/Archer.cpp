@@ -47,7 +47,7 @@ void Archer::SetParam(void)
 
 
 	//ステータス関係
-	hpMax_ = MAX_HP;
+	hpMax_ = 0;
 	atkPow_ = POW_ATK;
 	def_ = MAX_DEF;
 	speed_ = SPEED;

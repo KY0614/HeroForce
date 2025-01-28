@@ -57,13 +57,8 @@ public:
     static constexpr float MOVE_SPEED_NORMAL = 5.0f;
     static constexpr float MOVE_SPEED_FAST = 8.0f;
 
-
-
-
     static constexpr float FRAME_DODGE_MAX = 1.0f * CHARACTER_SCALE;
     static constexpr float DODGE_CDT_MAX = 0.5f;
-
-
 
     //プレイヤー自身の当たり判定
     static constexpr VECTOR PLAYER_COL_LOCAL_POS = { 0.0f,100.0f,0.0f };
@@ -96,6 +91,14 @@ public:
     {
         ATTACK
         ,BUFF
+        ,MAX
+    };
+
+    enum class BUFF_TYPE
+    {
+        ATK_BUFF
+        ,DEF_BUFF
+        ,SPD_BUFF
         ,MAX
     };
 
@@ -132,7 +135,7 @@ public:
 
     //役職それぞれのバフ
     virtual void Buff(UnitBase& _target) { return; }
-
+    void BuffPerAdd(BUFF_TYPE _type, float _per);
     //移動関連
      //-------------------------------------
     //移動処理
@@ -288,6 +291,12 @@ protected:
     VECTOR userOnePos_;                                         //ユーザー1追従用の座標   
     VECTOR colPos_;                                             //プレイヤーの当たり判定座標
     float speed_;                                               //キャラクターのステータスとしてのスピード
+
+
+    //バフ関係
+    float buffCnt_[static_cast<int>(BUFF_TYPE::MAX)];                                          //バフのカウンター(攻撃力、防御力、スピード)  
+    float buffPercent_[static_cast<int>(BUFF_TYPE::MAX)];                                      //バフの加算
+
 
     bool isPush_;                                               //長押しスキル用のボタンを押しているかどうか  true:押している
     bool moveAble_;             //移動可能かを返す  true:移動可能
