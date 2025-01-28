@@ -41,6 +41,14 @@ void EnemyManager::Update(void)
 	//¶‘¶‚µ‚Ä‚¢‚é“G‚Ìˆ—
 	for (int i = 0; i < activeNum_; i++)
 	{
+		//€–S”»’è
+		if (!activeEnemys_[i]->IsAlive())
+		{
+			//“Gíœ
+			DeathEnemy(i);
+			break;
+		}
+
 		//activeEnemys_[i]->SetTargetPos(_target);
 		activeEnemys_[i]->Update();
 	}
@@ -236,10 +244,6 @@ void EnemyManager::DeathEnemy(int _num)
 	if (_num == activeNum_)return;
 
 	//‘}“üˆ—
-	//std::move‚Å‚à‚¢‚¢‚©‚àH•ª‚©‚èˆÕ‚¢‚æ‚¤‚É‰º‹L‚Ì‚æ‚¤‚É‚·‚é
-	activeEnemys_[_num] = activeEnemys_[activeNum_];
-
-	//––”ö‚ÌÁ‹
-	activeEnemys_[activeNum_]->Destroy();
-	delete activeEnemys_[activeNum_];
+	//std::move‚Å‚È‚¢‚ÆA––”ö‚ğÁ‹‚µ‚½ê‡ˆÚs‚³‚ê‚½‘¤‚Ìî•ñ‚àÁ‚¦‚é
+	activeEnemys_[_num] = std::move(activeEnemys_[activeNum_]);
 }

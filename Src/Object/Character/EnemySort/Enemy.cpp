@@ -79,7 +79,12 @@ void Enemy::Update(void)
 
 
 	//やられているなら何もしない
-	if (!IsAlive()) { return; }
+	if (!IsAlive()) 
+	{
+		//やられたら死亡アニメーション
+		ResetAnim(ANIM::DEATH, changeSpeedAnim_[ANIM::DEATH]);
+		return;
+	}
 
 	//当たり判定座標の更新
 	colPos_ = VAdd(trans_.pos, localCenterPos_);
@@ -103,16 +108,18 @@ void Enemy::ChangeSearchState(const SEARCH_STATE _searchState)
 void Enemy::Damage(const int _damage, const int _stunPow)
 {
 	//既にやられているなら処理しない
-	if (!IsAlive()) { return; }
+	if (!IsAlive()) 
+	{
+		//やられたら死亡アニメーション
+		ResetAnim(ANIM::DEATH, changeSpeedAnim_[ANIM::DEATH]);
+		return;
+	}
 
 	//ダメージカウント
 	hp_ -= _damage;
 
 	//スタン値カウント
 	stunDef_ += _stunPow;
-
-	//やられたら死亡アニメーション
-	if (!IsAlive()){ ResetAnim(ANIM::DEATH, changeSpeedAnim_[ANIM::DEATH]); }
 }
 
 void Enemy::ChangeState(const STATE _state)
