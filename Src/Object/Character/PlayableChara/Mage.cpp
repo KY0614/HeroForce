@@ -25,7 +25,7 @@ void Mage::SetParam(void)
 		0.0f, AsoUtility::Deg2RadF(180.0f),
 		0.0f
 	);
-
+	ParamLoad(CharacterParamData::UNIT_TYPE::MAGE);
 
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 }

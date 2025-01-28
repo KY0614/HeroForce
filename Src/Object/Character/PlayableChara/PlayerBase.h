@@ -134,7 +134,7 @@ public:
     void Reset(void);
 
     //役職それぞれのバフ
-    virtual void Buff(UnitBase& _target) { return; }
+    virtual void Buff(PlayerBase& _target) { return; }
     void BuffPerAdd(BUFF_TYPE _type, float _per);
     //移動関連
      //-------------------------------------
@@ -251,6 +251,9 @@ public:
     //スピード
     void SetMoveSpeed(const float _speed) { moveSpeed_ = _speed; }
 
+    //バフセッタ
+    void SetBuff(BUFF_TYPE _type, float _per,float _second);
+
 protected:
     //ポインタ
       //回避機能
@@ -293,9 +296,7 @@ protected:
     float speed_;                                               //キャラクターのステータスとしてのスピード
 
 
-    //バフ関係
-    float buffCnt_[static_cast<int>(BUFF_TYPE::MAX)];                                          //バフのカウンター(攻撃力、防御力、スピード)  
-    float buffPercent_[static_cast<int>(BUFF_TYPE::MAX)];                                      //バフの加算
+ 
 
 
     bool isPush_;                                               //長押しスキル用のボタンを押しているかどうか  true:押している
@@ -410,6 +411,11 @@ private:
     //std::vector <ATK>atks_;
 
     std::map<ATK_TYPE, std::vector<ATK>>atks_;
+
+    //バフ関係
+    float buffCnt_[static_cast<int>(BUFF_TYPE::MAX)];                                          //バフのカウンター(攻撃力、防御力、スピード)  
+    float buffPercent_[static_cast<int>(BUFF_TYPE::MAX)];                                      //バフの加算
+    BUFF_TYPE buffType_;                                                                       //バフタイプ変数
 
     //攻撃入力
     virtual void NmlAtkInit(void) = 0;

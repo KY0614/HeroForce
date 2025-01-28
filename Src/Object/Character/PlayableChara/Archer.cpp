@@ -45,9 +45,10 @@ void Archer::SetParam(void)
 	);
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 
+	ParamLoad(CharacterParamData::UNIT_TYPE::ARCHER);
 
 	//ステータス関係
-	hpMax_ = 0;
+	hpMax_ = MAX_HP;
 	atkPow_ = POW_ATK;
 	def_ = MAX_DEF;
 	speed_ = SPEED;
@@ -262,11 +263,11 @@ void Archer::SetIsArrowHit(ATK_TYPE _type, const bool _flg, int _num)
 	arrowAtk_[_type][_num].isHit_ = true;
 }
 
-void Archer::Buff(UnitBase& _target)
+void Archer::Buff(PlayerBase& _target)
 {
-	_target.SetAttack(BUFF);
-	_target.SetDefense(BUFF);
-	_target.SetSpeed(BUFF);
+	_target.SetBuff(BUFF_TYPE::ATK_BUFF, 0.2f, 20.0f);
+	_target.SetBuff(BUFF_TYPE::SPD_BUFF, 0.2f, 20.0f);
+	_target.SetBuff(BUFF_TYPE::DEF_BUFF, 0.2f, 20.0f);
 }
 
 //void Archer::SetIsArrowHit(const bool _flg, int _num)

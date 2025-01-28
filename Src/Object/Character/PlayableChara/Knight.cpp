@@ -25,6 +25,8 @@ void Knight::SetParam(void)
 	def_ = MAX_DEF;
 	speed_ = SPEED;
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
+
+	ParamLoad(CharacterParamData::UNIT_TYPE::KNIGHT);
 }
 
 void Knight::Update(void)

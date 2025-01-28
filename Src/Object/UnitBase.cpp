@@ -282,10 +282,30 @@ void UnitBase::SetHpMax(const float hp)
 	hpMax_ += hp;
 }
 
-
-void UnitBase::ParamLoad()
+void UnitBase::ParamLoad(CharacterParamData::UNIT_TYPE type)
 {
-	//各キャラクターのパラメータのJSON読み込み
+	auto& data = CharacterParamData::GetInstance().GetParamData(type);
+
+	//デフォルトのステータス設定
+	defAtk_ = data.atk_;
+	defDef_ = data.def_;
+	defSpeed_ = data.speed_;
+	defHp_ = data.hp_;
+	radius_ = data.radius_;
+
+	//変化用の設定
+	atkPow_ = defAtk_;
+	def_ = defDef_;
+	moveSpeed_ = defSpeed_;
+	hp_ = defHp_;
+
+	//HPの最大値の設定
+	hpMax_ = defHp_;
+
+	//強化パーセントの初期化
+	atkUpPercent_ = DEFAULT_PERCENT;
+	defUpPercent_ = DEFAULT_PERCENT;
+	speedUpPercent_ = DEFAULT_PERCENT;
 
 }
 

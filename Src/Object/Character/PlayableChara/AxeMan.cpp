@@ -32,6 +32,8 @@ void AxeMan::SetParam(void)
 	def_ = DEF_MAX;
 	speed_ = SPEED;
 
+	ParamLoad(CharacterParamData::UNIT_TYPE::AXEMAN);
+
 	moveAble_ = true;
 
 	//“–‚½‚è”»’è‚Ìİ’è

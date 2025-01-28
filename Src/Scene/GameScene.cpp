@@ -362,13 +362,13 @@ void GameScene::CollisionPlayerArrow(void)
 
 		for (int enemy = 0; enemy < maxCnt; enemy++)
 		{
-			for (int type = 0; type < static_cast<int>(PlayerBase::ATK_TYPE::MAX); type++)
-			{
-				int pArrowCnt = p->GetArrowCnt(type);
+			//for (int type = 0; type < static_cast<int>(PlayerBase::ATK_TYPE::MAX); type++)
+			//{
+				int pArrowCnt = p->GetArrowCnt(static_cast<int>(PlayerBase::ATK_TYPE::ATTACK));
 				for (int arrowCnt = 0; arrowCnt < pArrowCnt; arrowCnt++)
 				{
-					if (p->GetAtks(static_cast<PlayerBase::ATK_TYPE>(type)).empty())continue;
-					auto arrow = p->GetArrowAtk(static_cast<PlayerBase::ATK_TYPE>(type), arrowCnt);
+					if (p->GetAtks(PlayerBase::ATK_TYPE::ATTACK).empty())continue;
+					auto arrow = p->GetArrowAtk(PlayerBase::ATK_TYPE::ATTACK, arrowCnt);
 
 					if (!arrow.IsAttack() || arrow.isHit_)continue;
 					p->SetAtk(arrow);
@@ -381,10 +381,10 @@ void GameScene::CollisionPlayerArrow(void)
 						e->Damage(5, 4);
 						if (!e->IsAlive())DunkEnmCnt_++;
 						//攻撃判定の終了
-						p->SetIsArrowHit(static_cast<PlayerBase::ATK_TYPE>(type), true, arrowCnt);
+						p->SetIsArrowHit(PlayerBase::ATK_TYPE::ATTACK, true, arrowCnt);
 					}
 				}
-			}
+			//}
 		}
 
 		for (int pl = 0; pl < PlayerManager::PLAYER_NUM; pl++)
@@ -392,25 +392,25 @@ void GameScene::CollisionPlayerArrow(void)
 			//当たり判定する者が自分自身だった場合無視する
 			if (i == pl)continue;
 			PlayerBase* p2 = playerMng_->GetPlayer(pl);
-			for (int type = 0; type < static_cast<int>(PlayerBase::ATK_TYPE::MAX); type++)
+			//for (int type = 0; type < static_cast<int>(PlayerBase::ATK_TYPE::MAX); type++)
+			//{
+				//if (type == static_cast<int>(PlayerBase::ATK_TYPE::ATTACK))continue;
+
+			int pArrowCnt = p->GetArrowCnt(static_cast<int>(PlayerBase::ATK_TYPE::BUFF));
+			for (int arrowCnt = 0; arrowCnt < pArrowCnt; arrowCnt++)
 			{
-				if (type == static_cast<int>(PlayerBase::ATK_TYPE::ATTACK))continue;
-					
-				int pArrowCnt = p->GetArrowCnt(static_cast<int>(PlayerBase::ATK_TYPE::BUFF));
-				for (int arrowCnt = 0; arrowCnt < pArrowCnt; arrowCnt++)
+				auto arrow = p->GetArrowAtk(PlayerBase::ATK_TYPE::BUFF, arrowCnt);
+				if (!arrow.IsAttack() || arrow.isHit_)continue;
+				p->SetAtk(arrow);
+				if (col.IsHitAtk(*p, *p2))
 				{
-					auto arrow = p->GetArrowAtk(static_cast<PlayerBase::ATK_TYPE>(type), arrowCnt);
-					if (!arrow.IsAttack() || arrow.isHit_)continue;
-					p->SetAtk(arrow);
-					if (col.IsHitAtk(*p, *p2))
-					{
-						//アーチャーの弓が当たったら当たったプレイヤーの能力を上げる
-						p->Buff(*p2);
-						//攻撃判定の終了
-						p->SetIsArrowHit(static_cast<PlayerBase::ATK_TYPE>(type), true, arrowCnt);
-					}
+					//アーチャーの弓が当たったら当たったプレイヤーの能力を上げる
+					p->Buff(*p2);
+					//攻撃判定の終了
+					p->SetIsArrowHit(PlayerBase::ATK_TYPE::BUFF, true, arrowCnt);
 				}
 			}
+			//}
 		}
 	}
 }

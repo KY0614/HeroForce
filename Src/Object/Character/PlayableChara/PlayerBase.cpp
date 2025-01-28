@@ -101,6 +101,11 @@ void PlayerBase::Init(void)
 	{
 		coolTime_[i] = coolTimeMax_[i];
 	}
+
+	for (int i = 0; i < static_cast<int>(BUFF_TYPE::MAX); i++)
+	{
+		buffPercent_[i] = 1.0f;
+	}
 }
 
 void PlayerBase::Update(void)
@@ -132,6 +137,23 @@ void PlayerBase::Update(void)
 
 	//クールタイム割合の計算
 	CoolTimePerCalc();
+
+
+	//switch (buffType_)
+	//{
+	//case PlayerBase::BUFF_TYPE::ATK_BUFF:
+	//	atkPow_ *= buffPercent_[static_cast<int>(BUFF_TYPE::ATK_BUFF)];
+	//	break;
+	//case PlayerBase::BUFF_TYPE::DEF_BUFF:
+	//	def_ *= buffPercent_[static_cast<int>(BUFF_TYPE::DEF_BUFF)];
+	//	break;
+	//case PlayerBase::BUFF_TYPE::SPD_BUFF:
+	//	speed_ *= buffPercent_[static_cast<int>(BUFF_TYPE::SPD_BUFF)];
+	//	break;
+	//default:
+	//	assert("バフタイプ外です");
+	//	break;
+	//}
 
 	for (int i = 0; i < static_cast<int>(BUFF_TYPE::MAX); i++)
 	{
@@ -367,6 +389,12 @@ void PlayerBase::InitAtk(void)
 	atkStartCnt_ = 0.0f;
 
 	
+}
+
+void PlayerBase::SetBuff(BUFF_TYPE _type, float _per, float _second)
+{
+	buffCnt_[static_cast<int>(_type)] = _second;
+	buffPercent_[static_cast<int>(_type)] += _per;
 }
 
 void PlayerBase::Reset(void)
