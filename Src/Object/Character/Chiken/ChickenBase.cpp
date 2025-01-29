@@ -124,22 +124,7 @@ void ChickenBase::LoadImages()
 void ChickenBase::SetParam()
 {
 	//ステータス設定
-	defAtk_ = DEFAULT_ATK;
-	defDef_ = DEFAULT_DEF;
-	defSpeed_ = DEFAULT_SPEED;
-	hpMax_ = DEFAULT_LIFE;
-
-	atkPow_ = defAtk_;
-	def_ = defDef_;
-	moveSpeed_ = defSpeed_;
-	hp_ = hpMax_;
-
-	atkUpPercent_ = DEFAULT_PERCENT;
-	defUpPercent_ = DEFAULT_PERCENT;
-	speedUpPercent_ = DEFAULT_PERCENT;
-
-	//衝突判定用半径
-	radius_ = RADIUS;
+	ParamLoad(CharacterParamData::UNIT_TYPE::CHICKEN);
 
 	// フェード時間
 	fadeStep_ = TIME_FADE;
@@ -485,6 +470,12 @@ void ChickenBase::DebagDraw()
 	int divNum = 20;
 	int color = 0xff00ff;
 	bool fill = false;
+
+	Vector2 pos = { 0,Application::SCREEN_SIZE_Y -16};
+	DrawFormatString(pos.x, pos.y, 0xffffff, "攻撃力%d", atkPow_);
+	DrawFormatString(pos.x, pos.y -16, 0xffffff, "防御力%d", def_);
+	DrawFormatString(pos.x, pos.y -32, 0xffffff, "スピード%d", moveSpeed_);
+	DrawFormatString(pos.x, pos.y -48, 0xffffff, "体力%d", hp_);
 
 	//当たり判定の描画
 	DrawSphere3D(trans_.pos, radius_, divNum, color, color, fill);

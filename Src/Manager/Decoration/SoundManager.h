@@ -30,6 +30,8 @@ public:
 		GAMEOVER_BGM,
 		GAMECLEAR_SE,
 		GAMECLEAR_BGM,
+		TITLE,
+		SCENE_CHANGE_1,
 	};
 
 	struct SOUND_DATA

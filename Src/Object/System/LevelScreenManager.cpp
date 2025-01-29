@@ -298,8 +298,7 @@ void LevelScreenManager::AddExp(const float value)
 
 void LevelScreenManager::SetGage(const int level)
 {
-	//“G‚ÌŒoŒ±’l—Ê‚ğŒˆ‚ß‚ÄC³—\’è
-	gauge_ = level * CONSTANT_GAGE;
+	gauge_ = ((level * 10) + 100) * CONSTANT_GAGE;
 }
 
 void LevelScreenManager::Reflection(PlayerBase& player, const int playerNum)

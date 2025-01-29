@@ -39,6 +39,15 @@ void ResourceManager::InitTitle(void)
 	//キー指示メッセージ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "PleaseKey.png");
 	resourcesMap_.emplace(SRC::PLEASE_KEY, res);
+
+	//タイトルBGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "TitleBGM.m4a");
+	resourcesMap_.emplace(SRC::TITLE_BGM, res);
+
+	//シーンチェンジ
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "SceneChange.mp3");
+	resourcesMap_.emplace(SRC::SCENE_CHANGE_SE1, res);
+
 }
 
 void ResourceManager::InitSelect(void)

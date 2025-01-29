@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Common\ShaderFade.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\CharacterParamData.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenBase.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenManager.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Other\OverPlayers.cpp" />

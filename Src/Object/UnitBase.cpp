@@ -1,5 +1,6 @@
 #include"../Application.h"
 #include"../Manager/Decoration/SoundManager.h"
+#include"../Manager/GameSystem/CharacterParamData.h"
 #include "../Lib/nlohmann/json.hpp"
 #include"../Utility/AsoUtility.h"
 #include "UnitBase.h"
@@ -320,4 +321,30 @@ void UnitBase::CntDown(float& _count)
 	// 経過時間の取得
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	_count -= deltaTime;
+}
+
+void UnitBase::ParamLoad(CharacterParamData::UNIT_TYPE type)
+{
+	auto& data = CharacterParamData::GetInstance().GetParamData(type);
+
+	//デフォルトのステータス設定
+	defAtk_ = data.atk_;
+	defDef_ = data.def_;
+	defSpeed_ = data.speed_;
+	defHp_ = data.hp_;
+	radius_ = data.radius_;
+
+	//変化用の設定
+	atkPow_ = defAtk_;
+	def_ = defDef_;
+	moveSpeed_ = defSpeed_;
+	hp_ = defHp_;
+
+	//HPの最大値の設定
+	hpMax_ = defHp_;
+
+	//強化パーセントの初期化
+	atkUpPercent_ = DEFAULT_PERCENT;
+	defUpPercent_ = DEFAULT_PERCENT;
+	speedUpPercent_ = DEFAULT_PERCENT;
 }

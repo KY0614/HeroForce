@@ -33,6 +33,7 @@ public:
 		FADE,
 		FADE_TEXTURE,
 		YELLOW_BLINK,
+		COLOR_BLINK,
 		MAX
 	};
 

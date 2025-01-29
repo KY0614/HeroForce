@@ -119,6 +119,7 @@
     <ClCompile Include="Src\Object\System\GameUi\CpuHpBar.cpp" />
     <ClCompile Include="Src\Object\System\GameUi\GamaUIBase.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Other\OverPlayers.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\CharacterParamData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\Character\PlayableChara\PlayerBase.h" />
