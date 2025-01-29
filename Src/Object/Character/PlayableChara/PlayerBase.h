@@ -258,6 +258,9 @@ public:
     //バフした判定セッタ
     void SetIsBuff(const bool _isBuff) { isBuff_ = _isBuff; }
 
+    //ターゲットセッタ
+    void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; } 
+
 protected:
     //ポインタ
       //回避機能
@@ -299,7 +302,8 @@ protected:
     VECTOR colPos_;                                             //プレイヤーの当たり判定座標
     float speed_;                                               //キャラクターのステータスとしてのスピード
 
-
+    //誰をターゲットにするか
+    VECTOR targetPos_;
  
 
 
@@ -327,7 +331,7 @@ protected:
     //*************************************************
     //メンバ関数
     //*************************************************
-    VECTOR GetTargetVec(VECTOR _targetPos);
+    VECTOR GetTargetVec(VECTOR _targetPos,bool _isMove=true);
 
 
 

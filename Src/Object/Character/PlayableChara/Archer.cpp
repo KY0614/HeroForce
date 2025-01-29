@@ -298,6 +298,9 @@ void Archer::AtkFunc(void)
 	{
 		moveAble_ = false;
 		CntUp(atkStartCnt_);
+		VECTOR targetVec = GetTargetVec(targetPos_,false);
+		//‰ñ“]
+		trans_.quaRot = trans_.quaRot.LookRotation(targetVec);
 	}
 	else if (IsFinishAtkStart())
 	{

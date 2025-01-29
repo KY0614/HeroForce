@@ -144,6 +144,7 @@ void GameScene::Update(void)
 	//“G‚Ì”‚ðŽæ“¾
 	int enmCnt = enmMng_->GetActiveNum();
 	float e2pVecSize[EnemyManager::ENEMY_MAX];
+	VECTOR minE2PVec;
 	float min = FLT_MAX;
 	for (int pl = 0; pl < PlayerManager::PLAYER_NUM; pl++)
 	{
@@ -158,6 +159,8 @@ void GameScene::Update(void)
 			if (e2pVecSize[ecnt] < min)
 			{
 				min = e2pVecSize[ecnt];
+				minE2PVec = ePos1;
+				playerMng_->GetPlayer(pl)->SetTargetPos(minE2PVec);
 			}
 		}
 	}

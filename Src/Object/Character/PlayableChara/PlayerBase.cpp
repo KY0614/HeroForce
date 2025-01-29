@@ -340,7 +340,7 @@ void PlayerBase::DrawDebug(void)
 }
 #endif // DEBUG_ON
 
-VECTOR PlayerBase::GetTargetVec(VECTOR _targetPos)
+VECTOR PlayerBase::GetTargetVec(VECTOR _targetPos,bool _isMove)
 {
 	//標的への方向ベクトルを取得						※TODO:ベクトルはSceneGameからもらう
 	VECTOR targetVec = VSub(_targetPos, trans_.pos);
@@ -354,7 +354,8 @@ VECTOR PlayerBase::GetTargetVec(VECTOR _targetPos)
 	//移動量を求める
 	VECTOR ret = VScale(targetVec, moveSpeed_);
 
-	return ret;
+	if (_isMove) { return ret; }
+	else { return targetVec; }
 }
 
 
