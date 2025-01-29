@@ -133,8 +133,44 @@ void GameScene::Update(void)
 	//タイマーが終了したら
 	if (Timer::GetInstance().IsEnd())ChangePhase();
 
+
+
+
+
+
+
+
+	//一番近い敵を探す
+	//敵の数を取得
+	int enmCnt = enmMng_->GetActiveNum();
+	float e2pVecSize[EnemyManager::ENEMY_MAX];
+	float min = FLT_MAX;
+	for (int pl = 0; pl < PlayerManager::PLAYER_NUM; pl++)
+	{
+		VECTOR pPos = playerMng_->GetPlayer(pl)->GetPos();
+		for (int ecnt = 0; ecnt < enmCnt; ecnt++)
+		{
+			VECTOR ePos1 = enmMng_->GetActiveEnemy(ecnt)->GetPos();
+
+			//プレイヤーと敵との距離を求める
+			float e2p = sqrt((ePos1.x - pPos.x) * (ePos1.x - pPos.x) + (ePos1.z - pPos.z) * (ePos1.z - pPos.z));
+			e2pVecSize[ecnt] = e2p;
+			if (e2pVecSize[ecnt] < min)
+			{
+				min = e2pVecSize[ecnt];
+			}
+		}
+	}
 	//プレイヤーの更新
 	playerMng_->Update();
+
+
+
+
+
+
+
+
 
 
 	//敵の更新

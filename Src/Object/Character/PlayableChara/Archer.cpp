@@ -236,23 +236,6 @@ void Archer::CreateAtk(ATK_TYPE _type)
 }
 
 
-//const PlayerBase::ATK Archer::GetArrowAtk(const int i)
-//{
-//	return arrowAtk_[i];
-//}
-//
-//void Archer::SetIsArrowHit(const bool _flg, int _num)
-//{
-//	arrowAtk_[_num].isHit_ = _flg;
-//}
-
-
-
-//const PlayerBase::ATK Archer::GetArrowAtk(const int i)
-//{
-//	return arrowAtk_[i];
-//}
-
 const PlayerBase::ATK Archer::GetArrowAtk(const ATK_TYPE _type, const int i)
 {
 	return arrowAtk_[_type][i];
@@ -269,14 +252,6 @@ void Archer::Buff(PlayerBase& _target)
 	_target.SetBuff(BUFF_TYPE::SPD_BUFF, 0.2f, 20.0f);
 	_target.SetBuff(BUFF_TYPE::DEF_BUFF, 0.2f, 20.0f);
 }
-
-//void Archer::SetIsArrowHit(const bool _flg, int _num)
-//{
-//	arrowAtk_[_num].isHit_ = _flg;
-//}
-
-
-
 
 
 void Archer::Update(void)

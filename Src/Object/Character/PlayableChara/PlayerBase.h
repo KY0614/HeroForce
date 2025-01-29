@@ -153,8 +153,7 @@ public:
     //スキル変更処理
     void SkillChange(void);
 
-    //バフセッタ
-    void SetIsBuff(const bool _isBuff) { isBuff_ = _isBuff; }
+ 
 
     //*****************************************************
     //ゲッタ
@@ -193,6 +192,8 @@ public:
 
     //遠距離武器の個数を獲得
     virtual const int GetArrowCnt(const int _act) { return 0; }
+
+    
 
 
     //**************************************************************
@@ -253,6 +254,9 @@ public:
 
     //バフセッタ
     void SetBuff(BUFF_TYPE _type, float _per,float _second);
+
+    //バフした判定セッタ
+    void SetIsBuff(const bool _isBuff) { isBuff_ = _isBuff; }
 
 protected:
     //ポインタ
