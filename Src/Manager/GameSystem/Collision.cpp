@@ -31,10 +31,6 @@ const bool Collision::IsHitAtk(const UnitBase& _chaser, const UnitBase& _target)
     return AsoUtility::IsHitSpheres(_chaser.GetAtk().pos_, _chaser.GetAtk().radius_, _target.GetPos(), _target.GetRadius());
 }
 
-const bool Collision::IsHitArrowAtk(PlayerBase* _chaser, const UnitBase& _target, const int _num)
-{
-    return AsoUtility::IsHitSpheres(_chaser->GetArrowAtk(_num).pos_, _chaser->GetArrowAtk(_num).radius_, _target.GetPos(), _target.GetRadius());
-}
 
 const bool Collision::Search(const UnitBase& _chaser, const UnitBase& _target)
 {

@@ -95,7 +95,7 @@ void GameScene::Init(void)
 void GameScene::Update(void)
 {
 	//ゲームオーバー判定
-	if(IsGameOver())SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+	//if(IsGameOver())SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 
 	//フェーズリザルト
 	if (isFazeRezult_)
@@ -145,7 +145,7 @@ void GameScene::Update(void)
 	int enmCnt = enmMng_->GetActiveNum();
 	float e2pVecSize[EnemyManager::ENEMY_MAX];
 	VECTOR minE2PVec;
-	float min = FLT_MAX;
+	float min=FLT_MAX;
 	for (int pl = 0; pl < PlayerManager::PLAYER_NUM; pl++)
 	{
 		VECTOR pPos = playerMng_->GetPlayer(pl)->GetPos();

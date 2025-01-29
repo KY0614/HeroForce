@@ -5,6 +5,7 @@
 #include"../../../Manager/Generic/SceneManager.h"
 #include "../../UnitBase.h"
 #include"../../../Manager/Generic/InputManager.h"
+#include"../../../Manager/Decoration/EffectManager.h"
 #include"../PlayerInput.h"
 #include "../../UnitBase.h"
 
@@ -46,6 +47,9 @@ public:
     static constexpr float SPEED_ANIM_RUN = 80.0f;
     static constexpr float SPEED_ANIM_DODGE = 30.0f;
     static constexpr float SPEED_ANIM_ATK = 50.0f;
+
+    //死にアニメーションの止めるカウント
+    static constexpr float DEATH_STEP_ANIM = 22.7;
 
     //攻撃の種類の数
     static constexpr int ATK_TOTAL = 3;
@@ -300,7 +304,7 @@ protected:
     float multiHitInterval_;                                    //多段ヒットのダメージ間隔
     VECTOR userOnePos_;                                         //ユーザー1追従用の座標   
     VECTOR colPos_;                                             //プレイヤーの当たり判定座標
-    float speed_;                                               //キャラクターのステータスとしてのスピード
+   
 
     //誰をターゲットにするか
     VECTOR targetPos_;

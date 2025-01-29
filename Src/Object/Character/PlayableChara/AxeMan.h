@@ -50,11 +50,18 @@ public:
 
     //攻撃威力
     static constexpr float ATK_POW = 7.0f;
-    static constexpr float SKILL_ONE_POW = 50.0f;
+    static constexpr float SKILL_ONE_POW = 25.0f;
+    static constexpr float SKILL_ONE_CHARGE_POW = 50.0f;
     static constexpr float SKILL_TWO_POW = 5.0f;
 
     //溜めモーション
     static constexpr float SKILL_CHARGE_STEPANIM = 16.9f;
+
+    //エフェクトサイズ
+    static constexpr float CHARGE_AXE_EFF_SIZE = 20.0f;
+
+    //エフェクトを最初の1フレームの時に再生させる用のFPS
+    static constexpr float DELTATIME = 1.0f / 60.0f;
 
 
 

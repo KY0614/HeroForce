@@ -47,11 +47,11 @@ void Archer::SetParam(void)
 
 	ParamLoad(CharacterParamData::UNIT_TYPE::ARCHER);
 
-	//ステータス関係
-	hpMax_ = MAX_HP;
-	atkPow_ = POW_ATK;
-	def_ = MAX_DEF;
-	speed_ = SPEED;
+	////ステータス関係
+	//hpMax_ = MAX_HP;
+	//atkPow_ = POW_ATK;
+	//def_ = MAX_DEF;
+	//defSpeed_ = SPEED;
 
 	moveAble_ = true;
 

@@ -25,6 +25,7 @@ void PlAxe::Update(void)
 {
 	//更新
 	obj_->Update();
+	if (!obj_->IsAlive())return;
 
 	//キー入力
 	PlayerDodge* dodge = obj_->GetDodge();

@@ -1,3 +1,4 @@
+#include "./USER/PlAxeMan.h"
 #include "AxeMan.h"
 
 AxeMan::AxeMan(void)
@@ -23,14 +24,22 @@ void AxeMan::SetParam(void)
 		0.0f, AsoUtility::Deg2RadF(180.0f),
 		0.0f
 	);
+	auto& effIns = EffectManager::GetInstance();
+	auto& resIns = ResourceManager::GetInstance();
+	using EFFECT = EffectManager::EFFECT;
+
+	//溜め攻撃エフェクトロード
+	effIns.Add(EFFECT::CHARGE_AXE_HIT, resIns.Load(ResourceManager::SRC::CHARGE_AXE_HIT).handleId_);
+
+
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 
 	//ステータス関係
 	//------------------------------------------
-	hpMax_ = HP_MAX;
-	atkPow_ = POW_ATK;
-	def_ = DEF_MAX;
-	speed_ = SPEED;
+	//hpMax_ = HP_MAX;
+	//atkPow_ = POW_ATK;
+	//def_ = DEF_MAX;
+	//defSpeed_ = SPEED;
 
 	ParamLoad(CharacterParamData::UNIT_TYPE::AXEMAN);
 
@@ -170,7 +179,18 @@ void AxeMan::Skill1Func(void)
 	}
 	else if (atkStartCnt_ >= atkStartTime_[static_cast<int>(skillNo_)])
 	{
+		if (atkStartCnt_ > PlAxe::SKILL_ONE_START_NOCHARGE) { atk_.pow_ = SKILL_ONE_CHARGE_POW; }
 		CntUp(atk_.cnt_);
+		if (atk_.cnt_ <=DELTATIME)
+		{
+			auto& efeIns = EffectManager::GetInstance();
+			efeIns.Play(
+				EffectManager::EFFECT::CHARGE_AXE_HIT,
+				atk_.pos_,
+				Quaternion(),
+				CHARGE_AXE_EFF_SIZE,
+				SoundManager::SOUND::NONE);
+		}
 		if (atk_.IsFinishMotion())
 		{
 			coolTime_[static_cast<int>(ATK_ACT::SKILL1)] = 0.0f;

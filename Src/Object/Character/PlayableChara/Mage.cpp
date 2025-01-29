@@ -11,7 +11,7 @@ void Mage::SetParam(void)
 	hpMax_ = HP_MAX;
 	atkPow_ = POW_ATK;
 	def_ = DEF_MAX;
-	speed_ = SPEED;
+	defSpeed_ = SPEED;
 
 	//ƒ‚ƒfƒ‹
 	trans_.SetModel(

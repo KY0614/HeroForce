@@ -115,7 +115,7 @@ void PlayerBase::Update(void)
 	if (!IsAlive())
 	{
 		ResetAnim(ANIM::DEATH, SPEED_ANIM);
-		if(stepAnim_)
+		if (stepAnim_ >= DEATH_STEP_ANIM) { stepAnim_ = DEATH_STEP_ANIM; }
 		return;
 	}
 #ifdef INPUT_DEBUG_ON
@@ -162,7 +162,7 @@ void PlayerBase::Update(void)
 		{
 			atkPow_ *= buffPercent_[static_cast<int>(BUFF_TYPE::ATK_BUFF)];
 			def_ *= buffPercent_[static_cast<int>(BUFF_TYPE::DEF_BUFF)];
-			speed_ *= buffPercent_[static_cast<int>(BUFF_TYPE::SPD_BUFF)];
+			defSpeed_ *= buffPercent_[static_cast<int>(BUFF_TYPE::SPD_BUFF)];
 		}
 		else
 		{
@@ -199,7 +199,7 @@ void PlayerBase::Move(float _deg, VECTOR _axis)
 	}
 	if (!dodge_->IsDodge() && moveAble_)
 	{
-		moveSpeed_ = speed_;
+		moveSpeed_ = defSpeed_;
 		Turn(_deg, _axis);
 		VECTOR dir = trans_.GetForward();
 		//ˆÚ“®•ûŒü
