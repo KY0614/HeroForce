@@ -14,7 +14,7 @@
 void EnemyManager::Init(void)
 {
 	activeNum_ = 0;
-	for (int i = 0; i < INIT_CREATE_ENEMY; i++)
+	for (int i = 0; i < PHASE_ONE_INIT_CREATE_ENEMY; i++)
 	{
 		//敵の初期生成
 		CreateEnemy();
@@ -73,6 +73,9 @@ void EnemyManager::CollisionStage(const Transform& stageTrans)
 		if (col.IsHitUnitStageObject(stageTrans.modelId, activeEnemys_[i]->GetTransform().pos, activeEnemys_[i]->GetRadius()))
 		{
 			activeEnemys_[i]->SetPrePos();
+
+			//移動補間
+			activeEnemys_[i]->KeepCollStageDistance();
 		}
 	}
 }
@@ -89,6 +92,7 @@ void EnemyManager::CreateEnemy(void)
 	//乱数で種類決める
 	TYPE type;
 	
+	//ゴーレム以外で
 	do
 	{
 		type = static_cast<TYPE>(GetRand(static_cast<int>(TYPE::MAX) - 1));
@@ -120,6 +124,30 @@ void EnemyManager::CreateEnemy(void)
 		return;
 		break;
 	}
+
+	//念のためのエラー回避用
+	if (enm == nullptr)assert("敵の生成で問題がありました。");
+
+	//敵の初期化
+	enm->Init();
+
+	//敵の更新等を掛けるやつをセット
+	activeEnemys_[activeNum_] = enm;
+
+	//カウンタ増加
+	activeNum_++;
+}
+
+void EnemyManager::CreateBoss(void)
+{
+	//敵の生成
+	Enemy* enm = nullptr;
+
+	//生成相対座標
+	VECTOR createLocalPos = createPos_[0];
+
+	//ゴーレムの生成
+	enm = new EneGolem(createLocalPos);
 
 	//念のためのエラー回避用
 	if (enm == nullptr)assert("敵の生成で問題がありました。");
@@ -214,6 +242,10 @@ void EnemyManager::GetRandomPointInCircle(VECTOR _myPos, const int _r, VECTOR& _
 
 bool EnemyManager::IsOverlap(VECTOR& _tPos, float _minDist)
 {
+	//1体も作られていないなら判定しない
+	if (activeNum_ <= 0)
+		return false;
+
 	for (const auto& enemy : activeEnemys_) {
 		if (enemy == nullptr)
 			continue;
@@ -226,6 +258,20 @@ bool EnemyManager::IsOverlap(VECTOR& _tPos, float _minDist)
 		}
 	}
 	return false; // 重なっていない場合
+}
+
+void EnemyManager::DeleteAllEnemy(void)
+{
+	for (auto& enemy : activeEnemys_) {
+		if (enemy == nullptr)
+			continue;
+
+		//敵をすべて削除
+		enemy->Destroy();
+		delete enemy;
+		enemy = nullptr;
+		activeNum_--;
+	}
 }
 
 void EnemyManager::DeathEnemy(int _num)
@@ -244,6 +290,37 @@ void EnemyManager::DeathEnemy(int _num)
 	if (_num == activeNum_)return;
 
 	//挿入処理
-	//std::moveでないと、末尾を消去した場合移行された側の情報も消える
-	activeEnemys_[_num] = std::move(activeEnemys_[activeNum_]);
+	//deleteをすると移行された側の情報も消えるのでnullptr設定のみ　移動方法はstd::moveでもあり
+	activeEnemys_[_num] = activeEnemys_[activeNum_];
+	activeEnemys_[activeNum_] = nullptr;
+	
+}
+
+void EnemyManager::ProcessChangePhase(const int _phase)
+{
+	//敵の削除
+	DeleteAllEnemy();
+
+	//敵作成数
+	int createNum = 0;
+
+	//フェーズによって作成する敵の数を変える
+	if (_phase == 1)
+		createNum = PHASE_ONE_INIT_CREATE_ENEMY;
+	else if (_phase == 2)
+		createNum = PHASE_TWO_INIT_CREATE_ENEMY;
+	else if (_phase == 3)
+	{
+		//ボスの作成
+		CreateBoss();
+		return;
+	}
+	else 
+		return;
+
+	for (int i = 0; i < createNum; i++)
+	{
+		//敵の初期生成
+		CreateEnemy();
+	}
 }

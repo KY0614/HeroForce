@@ -47,7 +47,6 @@ void Enemy::Init(void)
 	isEndAlert_ = false;
 	isEndAllAtkSign_ = false;
 	isEndAllAtk_ = false;
-	isMove_ = false;
 	ChangeSearchState(SEARCH_STATE::CHICKEN_SEARCH);
 
 	//攻撃情報の初期化
@@ -129,6 +128,37 @@ void Enemy::ChangeState(const STATE _state)
 
 	// 各状態遷移の初期処理
 	stateChanges_[state_]();
+}
+
+void Enemy::KeepCollStageDistance(void)
+{
+	//float valXSign = 0;
+	//float valZSign = 0;
+
+	////どの方向に近いのかを計測
+	//valXSign = trans_.pos.x > 0.0f ? 1.0f : -1.0f;
+	//valZSign = trans_.pos.z > 0.0f ? 1.0f : -1.0f;
+
+	//if (fabsf(trans_.pos.x) > fabsf(trans_.pos.z))
+	//{
+	//	preTargetPos_ = VSub(prePos_,{0.0f,0.0f,valZSign * 100});
+	//}
+	//else
+	//{
+	//	preTargetPos_ = VSub(prePos_, { valXSign * 100,0.0f,0.0f});
+	//}
+
+	//ターゲットまでのベクトルを測って、x,zの値が大きい方向に距離をとる
+	VECTOR targetVec = GetMoveVec(trans_.pos, targetPos_);
+
+	if (fabsf(targetVec.x) > fabsf(targetVec.z))
+	{
+		preTargetPos_ = VSub(prePos_, { 0.0f,0.0f,-targetVec.z * 100 });
+	}
+	else
+	{
+		preTargetPos_ = VSub(prePos_, { -targetVec.x * 100,0.0f,0.0f });
+	}
 }
 
 void Enemy::ChangeStateNormal(void)
@@ -244,7 +274,11 @@ void Enemy::UpdateNml(void)
 		ResetAnim(ANIM::RUN, changeSpeedAnim_[ANIM::RUN]);
 	
 	//索敵
-	//if (!isMove_)return;		※のちに消すかも
+
+	//まだ見つけ切れていないなら
+	if (searchState_ == SEARCH_STATE::CHICKEN_SEARCH)
+		//予定している目標に向かう
+		targetPos_ = preTargetPos_;
 
 	//移動処理
 	Move();
@@ -355,7 +389,7 @@ void Enemy::DrawDebug(void)
 	//敵の当たり判定
 	DrawSphere3D(colPos_, radius_, 4, 0xffff00, 0xffff00, false);
 	//敵の索敵判定
-	DrawSphere3D(trans_.pos, searchRange_, 2, isMove_ ? 0xff0000 : 0xffffff, isMove_ ? 0xff0000 : 0xffffff, false);
+	DrawSphere3D(trans_.pos, searchRange_, 2, searchState_ != SEARCH_STATE::CHICKEN_SEARCH ? 0xff0000 : 0xffffff, searchState_ != SEARCH_STATE::CHICKEN_SEARCH ? 0xff0000 : 0xffffff, false);
 	//敵の索敵判定
 	DrawSphere3D(trans_.pos, atkStartRange_, 2, state_ == STATE::ALERT ? 0xff0000 : 0xffffff, state_ == STATE::ALERT ? 0x0000ff : 0xffffff, false);
 }

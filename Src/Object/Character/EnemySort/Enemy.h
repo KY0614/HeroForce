@@ -102,12 +102,6 @@ public:
 
 	void SetAtksIsHit(int _arrayNum, const bool _isHit) { nowSkill_[_arrayNum].isHit_ = _isHit; }
 
-	/// <summary>
-	/// 移動状態を変更
-	/// </summary>
-	/// <param name="_isMove">移動するどうか(true:移動する)</param>
-	void SetIsMove(const bool _isMove) { isMove_ = _isMove; }
-
 	//探索状態を返す
 	SEARCH_STATE GetSearchState(void) { return searchState_; }
 
@@ -116,6 +110,12 @@ public:
 	/// </summary>
 	/// <param name="_searchState">変更する探索状態</param>
 	void ChangeSearchState(const SEARCH_STATE _searchState);
+
+	/// <summary>
+	/// 標的予定対象の座標を変更
+	/// </summary>
+	/// <param name="_preTargetPos">標的予定対象の座標</param>
+	void SetPreTargetPos(const VECTOR _preTargetPos) { preTargetPos_ = _preTargetPos; }
 
 	/// <summary>
 	/// 標的の座標を変更
@@ -138,6 +138,9 @@ public:
 	/// </summary>
 	/// <param name="_state">遷移する状態</param>
 	void ChangeState(const STATE _state);
+
+	//ステージに当たったら距離をとる
+	void KeepCollStageDistance(void);
 
 protected:
 
@@ -181,10 +184,10 @@ protected:
 	VECTOR localCenterPos_;	//敵中央の相対座標
 	VECTOR colPos_;			//敵自身の当たり判定用の相対座標
 
-	bool isMove_;														//移動しているかどうか(true:移動中)
 	SEARCH_STATE searchState_;											//探索判定
 	std::map<SEARCH_STATE, std::function<void(void)>> SearchStateInfo_;	//探索状態による情報更新
 
+	VECTOR preTargetPos_;	//標的予定対象の座標
 	VECTOR targetPos_;		//標的の座標
 
 	float searchRange_;		//索敵範囲

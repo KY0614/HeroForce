@@ -38,10 +38,10 @@ public:
 
 	//範囲関係
 	static constexpr float SEARCH_RANGE = 1000.0f * CHARACTER_SCALE;		//索敵判定の大きさ
-	static constexpr float ATK_START_RANGE = 150.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
+	static constexpr float ATK_START_RANGE = 200.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
 
 	//スキルの当たり判定半径
-	static constexpr float SKILL_ONE_COL_RADIUS = 15.0f;	//スキル１の当たり判定半径
+	static constexpr float SKILL_ONE_COL_RADIUS = 25.0f;	//スキル１の当たり判定半径
 
 	//スキルの攻撃力
 	static constexpr float SKILL_ONE_POW = 20.0f;			//スキル１の攻撃力

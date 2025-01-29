@@ -12,8 +12,13 @@ public:
 	static constexpr int ONETYPE_MAX = 5;
 	//敵の出現最大数
 	static constexpr int ENEMY_MAX = 8;
-	//敵の初期生成数
-	static constexpr int INIT_CREATE_ENEMY = 4;
+
+	//フェーズごとの初期生成数
+	
+	//フェーズ1の敵の初期生成数
+	static constexpr int PHASE_ONE_INIT_CREATE_ENEMY = 4;
+	//フェーズ2の敵の初期生成数
+	static constexpr int PHASE_TWO_INIT_CREATE_ENEMY = 6;
 
 	//敵の出現半径
 	static constexpr float GENELATE_RADIUS = 100.0f;
@@ -59,6 +64,10 @@ public:
 
 	//倒された敵の後処理 _num=倒された敵の配列番号
 	void DeathEnemy(int _num);
+
+	//フェーズ変更
+	void ProcessChangePhase(const int _phase);
+
 private:
 
 	//更新等をかける動きのある敵
@@ -75,6 +84,12 @@ private:
 	
 	//引数の敵をアクティブ状態に
 	void CreateEnemy(void);
+
+	//敵をすべて削除する
+	void DeleteAllEnemy(void);
+
+	//ボスを作成
+	void CreateBoss(void);
 
 	/// <summary>
 	/// 重なっていない座標を取る
