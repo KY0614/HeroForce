@@ -25,11 +25,6 @@ public:
 	static constexpr int ANIM_PRE_MOWDOWN = 7;	//薙ぎ払い準備アニメーション(固有４)
 	static constexpr int ANIM_PRE_SHOUT = 9;	//叫び準備アニメーション(固有５)
 
-	//TODO:のちに作る
-	//static constexpr int ANIM_ENTRY = 74;		//出現アニメーション
-	//static constexpr int ANIM_DAMAGE = 39;	//ダメージアニメーション
-	//static constexpr int ANIM_DEATH = 24;		//やられアニメーション
-
 	//アニメーション速度
 	static constexpr float SPEED_ANIM_IDLE = 60.0f;			//待機アニメーション速度
 	static constexpr float SPEED_ANIM_WALK = 60.0f;			//歩きアニメーション速度
@@ -43,7 +38,7 @@ public:
 	static constexpr float SPEED_ANIM_JUMP = 60.0f;			//ジャンプアニメーション速度
 
 	//モデル関係
-	static constexpr VECTOR  LOCAL_CENTER_POS = { 0.0f,100.0f * CHARACTER_SCALE,0.0f };	//モデルの中心座標への相対座標
+	static constexpr VECTOR  LOCAL_CENTER_POS = { 0.0f,150.0f * CHARACTER_SCALE,0.0f };	//モデルの中心座標への相対座標
 	static constexpr float SCALE = 0.01f;		//モデルの大きさ
 
 	//フレーム(ボーン)番号

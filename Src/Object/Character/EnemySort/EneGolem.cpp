@@ -214,7 +214,7 @@ void EneGolem::Skill_One(void)
 		//エフェクト再生
 		eff.Play(EffectManager::EFFECT::BOSS_PUNCH,
 			MV1GetFramePosition(trans_.modelId, FRAME_R_HAND),
-			Quaternion(),
+			trans_.quaRot,
 			SKILL_ONE_EFF_SIZE,
 			SoundManager::SOUND::NONE);
 
@@ -279,7 +279,7 @@ void EneGolem::Skill_Three(void)
 			//エフェクト再生
 			eff.Play(EffectManager::EFFECT::BOSS_SHOUT,
 				MV1GetFramePosition(trans_.modelId, FRAME_HEAD),
-				Quaternion(),
+				trans_.quaRot,
 				SKILL_ONE_EFF_SIZE,
 				SoundManager::SOUND::NONE);
 
