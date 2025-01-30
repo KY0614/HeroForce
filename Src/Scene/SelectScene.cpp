@@ -13,8 +13,6 @@
 #include "../Object/Stage/SkyDome.h"
 #include "../Object/Character/PlayableChara/Other/SelectPlayer.h"
 #include "../Object/SelectImage.h"
-#include "../Object/Character/PlayableChara/PlayerBase.h"
-#include "../Object/Character/PlayableChara/USER/PlAxeMan.h"
 #include "../Object/Character/PlayableChara/Other/SelectEnemy.h"
 #include "SelectScene.h"
 
@@ -109,12 +107,6 @@ void SelectScene::Init(void)
 
 void SelectScene::Update(void)
 {
-	//キーの設定
-//	KeyConfigSetting();
-
-	//どちらかを操作しているときにもう片方を操作できないように制御
-//	ControllDevice();
-
 	//空を回転
 	skyDome_->Update();
 
@@ -155,8 +147,6 @@ void SelectScene::Draw(void)
 	//デバッグ描画
 	//DrawDebug();
 
-	DrawFormatString(0, 0, 0xFF0000, "role %d", images_[0]->GetRole());
-
 	SetUseLightAngleAttenuation(TRUE);
 }
 
@@ -164,7 +154,12 @@ void SelectScene::Release(void)
 {
 	SceneManager::GetInstance().ResetCameras();
 
-	//image_->Destroy();
+	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+	{
+		images_[i]->Destroy();
+		players_[i]->Destroy();
+		enemys_[i]->Destroy();
+	}
 }
 
 void SelectScene::ChangeStateDisplay(void)
@@ -218,7 +213,6 @@ void SelectScene::OperationUpdate(void)
 	ControllDevice();
 
 	images_[0]->Update();
-	//enemys_[0]->Update();
 	for (int i = 1; i < camera.size();i++)
 	{
 		for (int a = 0; a < SceneManager::PLAYER_NUM; a++) {

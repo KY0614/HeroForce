@@ -189,18 +189,16 @@ void SelectImage::MoveVertexPos(void)
 	//pointL_.mesh_.vertex_[2].pos = { POINT_LEFT_X - 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 左上
 	//pointL_.mesh_.vertex_[3].pos = { POINT_RIGHT_X - 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 右上
 
-	//pointR_.mesh_.vertex_[0].pos = { -POINT_RIGHT_X + 40.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 左下
+	//pointR_.mesh_.vertex_[0].pos = { -POINT_RIGHT_X + 40.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };// 左下
 	//pointR_.mesh_.vertex_[1].pos = { -POINT_LEFT_X + 40.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 右下
-	//pointR_.mesh_.vertex_[2].pos = { -POINT_RIGHT_X + 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 左上
+	//pointR_.mesh_.vertex_[2].pos = { -POINT_RIGHT_X + 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };// 左上
 	//pointR_.mesh_.vertex_[3].pos = { -POINT_LEFT_X + 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 右上
 
 	//600,800用
 	mesh_.vertex_[0].pos = { ROLE_MESH_LEFT_X, ROLE_MESH_UNDER_Z, VERTEX_Z + 12.0f };	//左下
-	mesh_.vertex_[1].pos = { ROLE_MESH_RIGHT_X, ROLE_MESH_UNDER_Z, VERTEX_Z + 12.0f };		//右下
-	mesh_.vertex_[2].pos = { ROLE_MESH_LEFT_X, ROLE_MESH_TOP_Z, VERTEX_Z };			//左上
-	mesh_.vertex_[3].pos = { ROLE_MESH_RIGHT_X, ROLE_MESH_TOP_Z, VERTEX_Z };				//右上
-
-	float a;
+	mesh_.vertex_[1].pos = { ROLE_MESH_RIGHT_X, ROLE_MESH_UNDER_Z, VERTEX_Z + 12.0f };	//右下
+	mesh_.vertex_[2].pos = { ROLE_MESH_LEFT_X, ROLE_MESH_TOP_Z, VERTEX_Z };				//左上
+	mesh_.vertex_[3].pos = { ROLE_MESH_RIGHT_X, ROLE_MESH_TOP_Z, VERTEX_Z };			//右上
 
 	pointL_.mesh_.vertex_[0].pos = { POINT_LEFT_X - 25.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 左下
 	pointL_.mesh_.vertex_[1].pos = { POINT_RIGHT_X - 25.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 右下
@@ -211,6 +209,19 @@ void SelectImage::MoveVertexPos(void)
 	pointR_.mesh_.vertex_[1].pos = { -POINT_LEFT_X + 25.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 右下
 	pointR_.mesh_.vertex_[2].pos = { -POINT_RIGHT_X + 25.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 左上
 	pointR_.mesh_.vertex_[3].pos = { -POINT_LEFT_X + 25.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 右上
+
+	readyMesh_.vertex_[0].pos = { -70.0f, 70.0f, -408.0f };	// 左下
+	readyMesh_.vertex_[1].pos = { 90.0f, 70.0f, -408.0f };	// 右下
+	readyMesh_.vertex_[2].pos = { -70.0f, 160.0f, -410.0f };// 左上
+	readyMesh_.vertex_[3].pos = { 90.0f, 160.0f, -410.0f };	// 右上
+}
+
+void SelectImage::ReductinVertexPos(void)
+{
+	readyMesh_.vertex_[0].pos = { -60.0f, 80.0f, -408.0f };	// 左下
+	readyMesh_.vertex_[1].pos = { 60.0f, 80.0f, -408.0f };	// 右下
+	readyMesh_.vertex_[2].pos = { -60.0f, 150.0f, -410.0f };// 左上
+	readyMesh_.vertex_[3].pos = { 60.0f, 150.0f, -410.0f };	// 右上
 }
 
 void SelectImage::Load(void)
@@ -400,9 +411,9 @@ void SelectImage::DisplayUpdate(void)
 	}
 
 	//UV座標（テクスチャ座標）
-	mesh_.vertex_[0].u = ((float)(displayNum_)-1.0f) / 4.0f;		mesh_.vertex_[0].v = 1.0f;	// 左下
+	mesh_.vertex_[0].u = ((float)(displayNum_)-1.0f) / 4.0f;	mesh_.vertex_[0].v = 1.0f;	// 左下
 	mesh_.vertex_[1].u = (float)(displayNum_) / 4.0f;			mesh_.vertex_[1].v = 1.0f;	// 右下
-	mesh_.vertex_[2].u = ((float)(displayNum_)-1.0f) / 4.0f;		mesh_.vertex_[2].v = 0.0f;	// 左上
+	mesh_.vertex_[2].u = ((float)(displayNum_)-1.0f) / 4.0f;	mesh_.vertex_[2].v = 0.0f;	// 左上
 	mesh_.vertex_[3].u = (float)(displayNum_) / 4.0f;			mesh_.vertex_[3].v = 0.0f;	// 右上
 
 	pointL_.mesh_.vertex_[0].u = 0.0f;	pointL_.mesh_.vertex_[0].v = 1.0f;	// 左下
@@ -695,7 +706,6 @@ void SelectImage::OperationUpdate(void)
 
 void SelectImage::RoleUpdate(void)
 {
-
 }
 
 void SelectImage::DisplayDraw(void)
@@ -740,8 +750,10 @@ void SelectImage::RoleDraw(void)
 	//仮表記
 	if (GetRole() == static_cast<int>(SceneManager::ROLE::MAGE))
 	{
+		ReductinVertexPos();
 		readyMesh_.DrawTwoMesh(*imgComingSoon_);
 	}
+	MoveVertexPos();
 }
 
 void SelectImage::PointsDraw(void)
@@ -945,8 +957,8 @@ void SelectImage::InitVertex(void)
 
 	readyMesh_.vertex_[0].pos = { -80.0f, 70.0f, -408.0f };	// 左下
 	readyMesh_.vertex_[1].pos = { 80.0f, 70.0f, -408.0f };	// 右下
-	readyMesh_.vertex_[2].pos = { -80.0f, 160.0f, -410.0f };		// 左上
-	readyMesh_.vertex_[3].pos = { 80.0f, 160.0f, -410.0f };		// 右上
+	readyMesh_.vertex_[2].pos = { -80.0f, 160.0f, -410.0f };// 左上
+	readyMesh_.vertex_[3].pos = { 80.0f, 160.0f, -410.0f };	// 右上
 
 	pointL_.mesh_.vertex_[0].pos = { POINT_LEFT_X, POINT_UNDER_Y, POINT_TOP_Z };	// 左下
 	pointL_.mesh_.vertex_[1].pos = { POINT_RIGHT_X, POINT_UNDER_Y, POINT_TOP_Z };	// 右下
