@@ -25,25 +25,19 @@ void EneArcher::SetParam(void)
 
 	//モデル読み込み
 	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_ARCHER));
-	arrowMdlId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ARROW);	//※TODO矢のモデル
-	//arrowMdlId_ = 0;
+	arrowMdlId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ARROW);	//矢のモデル
 
 	//※個々で設定する
 	trans_.scl = { CHARACTER_SCALE,CHARACTER_SCALE,CHARACTER_SCALE };
-	radius_ = MY_COL_RADIUS;
 	colPos_ = VAdd(trans_.pos, LOCAL_CENTER_POS);
-	hp_ = HP_MAX;
-	atkPow_ = ATK_POW;
-	def_ = DEF;
-	exp_ = EXP;
 	arrowCnt_ = 0;
 	isShotArrow_ = false;
-	walkSpeed_ = WALK_SPEED;
-	runSpeed_ = RUN_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
-	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
 	atkStartRange_ = ATK_START_RANGE;
+
+	//外部からステータスを取得
+	ParamLoad(CharacterParamData::UNIT_TYPE::E_ARCHER);
 }
 
 void EneArcher::InitAnim(void)

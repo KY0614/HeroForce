@@ -22,6 +22,7 @@ void PlArcher::Init(void)
 void PlArcher::Update(void)
 {
 	obj_->Update();
+	if (!obj_->IsAlive())return;
 	//入力
 	//キー入力
 	PlayerDodge* dodge = obj_->GetDodge();
@@ -43,24 +44,6 @@ void PlArcher::Update(void)
 		SkillTwoInput();
 		break;
 	}
-
-
-	//---------------------------------------------------------
-	//スキル1
-	//---------------------------------------------------------
-
-
-
-
-	//---------------------------------------------------------
-	//スキル2
-	//---------------------------------------------------------
-
-
-
-
-
-	//---------------------------------------------------------
 }
 
 void PlArcher::Draw(void)
@@ -76,6 +59,7 @@ void PlArcher::AtkInput(void)
 {
 	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
+	if ((obj_->GetIsAtk() || obj_->GetIsSkill()))return;
 	if (obj_->GetIsAtk()&&obj_->GetIsCool(PlayerBase::ATK_ACT::ATK))return;
 	if (ins.CheckAct(ACT_CNTL::NMLATK))
 	{
@@ -90,6 +74,7 @@ void PlArcher::SkillOneInput(void)
 	using ATK_ACT = PlayerBase::ATK_ACT;
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	int skillOne = static_cast<int>(ATK_ACT::SKILL1);
+	//if ((obj_->GetIsAtk() || obj_->GetIsSkill()))return;
 	if (obj_->GetIsCool(PlayerBase::ATK_ACT::ATK))return;
 	if (!obj_->GetIsCool(ATK_ACT::SKILL1))
 	{
@@ -122,7 +107,8 @@ void PlArcher::SkillTwoInput(void)
 {
 	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
-	if (obj_->GetIsAtk() && obj_->GetIsCool(PlayerBase::ATK_ACT::ATK))return;
+	if ((obj_->GetIsAtk() || obj_->GetIsSkill()))return;
+	if (obj_->GetIsCool(PlayerBase::ATK_ACT::ATK))return;
 	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN))
 	{
 		SkillTwoInit();

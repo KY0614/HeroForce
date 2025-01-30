@@ -21,6 +21,7 @@ void PlKnight::Init(void)
 void PlKnight::Update(void)
 {
 	obj_->Update();
+	if (!obj_->IsAlive())return;
 	//入力
 		//キー入力
 	PlayerDodge* dodge = obj_->GetDodge();
@@ -64,7 +65,7 @@ void PlKnight::AtkInput(void)
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
 	if(obj_->GetIsCool(PlayerBase::ATK_ACT::ATK))return;
-	if (ins.CheckAct(ACT_CNTL::NMLATK) && !obj_->GetIsAtk())
+	if (ins.CheckAct(ACT_CNTL::NMLATK) && !obj_->GetIsAtk()&&!obj_->GetIsSkill())
 	{
 		float deltaTime = 1.0f / 60.0f;
 		if (obj_->GetIsCool(ATK_ACT::ATK))return;
@@ -91,7 +92,7 @@ void PlKnight::SkillTwoInput(void)
 	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
-	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN))
+	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN) && !obj_->GetIsAtk() && !obj_->GetIsSkill())
 	{
 		//ボタンの押しはじめの時に値初期化
 		SkillTwoInit();

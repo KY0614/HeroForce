@@ -19,6 +19,9 @@ public:
 
     //ガード可能になる残りクールタイム(ガード時間最低1秒確保したいから)
     static constexpr float GUARD_STARTABLE_COOL = 4.0f;
+
+    //ガードエフェクトサイズ
+    static constexpr float GUARD_EFFECT_SIZE = 20.0f;
 #ifdef DEBUG_COOL
     //クールタイム
     static constexpr float ATK_COOLTIME = 1.0f;
@@ -74,7 +77,8 @@ public:
     static constexpr float SKILL_TWO_START = 0.3f;
     static constexpr float FRAME_SKILL2_DURATION = 3.0f;
     static constexpr float FRAME_SKILL2_BACKRASH = 0.0f;
-    static constexpr float COL_SKILL2 = CHARACTER_SCALE * 400.0f;
+    //static constexpr float COL_SKILL2 = CHARACTER_SCALE * 400.0f;
+    static constexpr float COL_SKILL2 = CHARACTER_SCALE * 0.0f;
     static constexpr VECTOR SKILL2_COL_LOCAL_POS = { 0.0f,100.0f,0.0f };
     static constexpr float SKILL_TWO_POW = 0.0f;
 
@@ -125,6 +129,9 @@ public:
     void SetParam(void)override;
     void Update(void)override;
     void Draw(void)override;
+
+
+
 protected:
     //攻撃アクションのパラメータの初期化
     void InitAct(void)override;

@@ -19,22 +19,17 @@ void EneMage::SetParam(void)
 
 	//※個々で設定する
 	trans_.scl = { CHARACTER_SCALE,CHARACTER_SCALE,CHARACTER_SCALE };
-	radius_ = MY_COL_RADIUS;
 	colPos_ = VAdd(trans_.pos, LOCAL_CENTER_POS);
-	hp_ = HP_MAX;
-	atkPow_ = ATK_POW;
-	def_ = DEF;
-	exp_ = EXP;
-	walkSpeed_ = WALK_SPEED;
-	runSpeed_ = RUN_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
-	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
 	atkStartRange_ = ATK_START_RANGE;
 	
 	skillOneShot_ = AsoUtility::VECTOR_ZERO;
 	skillOneDelayCnt_ = 0.0f;
 	skillAllCnt_ = 0.0f;
+
+	//外部からステータスを取得
+	ParamLoad(CharacterParamData::UNIT_TYPE::E_MAGE);
 }
 
 void EneMage::InitAnim(void)
@@ -52,6 +47,15 @@ void EneMage::InitAnim(void)
 
 	//アニメーションリセット
 	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
+}
+
+void EneMage::InitEffect(void)
+{
+	auto& eff = EffectManager::GetInstance();
+	auto& res = ResourceManager::GetInstance();
+
+	eff.Add(EffectManager::EFFECT::STATE_DOWN,
+		res.Load(ResourceManager::SRC::STATE_DOWN_EFE).handleId_);
 }
 
 void EneMage::InitSkill(void)
@@ -88,6 +92,9 @@ void EneMage::Attack(void)
 
 void EneMage::Skill_One(void)
 {
+	//エフェクト
+	auto& eff =	EffectManager::GetInstance();
+
 	//終了判定
 	if (skillAllCnt_ > SKILL_ONE_ALL_TIME)
 	{
@@ -121,6 +128,13 @@ void EneMage::Skill_One(void)
 
 			//生成した攻撃の位置を合わせる
 			thisAtk.pos_ = skillOneShot_;
+
+			//エフェクト再生
+			eff.Play(EffectManager::EFFECT::STATE_DOWN,
+				thisAtk.pos_,
+				Quaternion(),
+				SKILL_ONE_EFF_SIZE,
+				SoundManager::SOUND::NONE);
 		}
 	}
 

@@ -12,6 +12,15 @@ Enemy::Enemy(const VECTOR& _spawnPos)
 void Enemy::Destroy(void)
 {
 	animNum_.clear();
+	stateChanges_.clear();
+	changeSpeedAnim_.clear();
+	skills_.clear();
+	nowSkill_.clear();
+	alertSkills_.clear();
+	changeSkill_.clear();
+	skillPreAnims_.clear();
+	skillAnims_.clear();
+	SearchStateInfo_.clear();
 
 	lastAtk_ = nullptr;
 	delete lastAtk_;
@@ -26,7 +35,7 @@ void Enemy::Init(void)
 	stateChanges_.emplace(STATE::BREAK, std::bind(&Enemy::ChangeStateBreak, this));
 
 	//探索状態管理
-	SearchStateInfo_.emplace(SEARCH_STATE::NOT_FOUND, std::bind(&Enemy::SearchMoveInfo, this));
+	SearchStateInfo_.emplace(SEARCH_STATE::CHICKEN_SEARCH, std::bind(&Enemy::SearchMoveInfo, this));
 	SearchStateInfo_.emplace(SEARCH_STATE::CHICKEN_FOUND, std::bind(&Enemy::FoundMoveInfo, this));
 	SearchStateInfo_.emplace(SEARCH_STATE::PLAYER_FOUND, std::bind(&Enemy::FoundMoveInfo, this));
 
@@ -36,19 +45,25 @@ void Enemy::Init(void)
 	//アニメーション番号の初期化
 	InitAnim();
 
+	//エフェクトの初期化
+	InitEffect();
+
 	//共通の変数の初期化
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::AngleAxis(AsoUtility::Deg2RadF(180.0f), AsoUtility::AXIS_Y);
 	ChangeState(STATE::NORMAL);
 	alertCnt_ = 0.0f;
 	breakCnt_ = 0.0f;
-	stunDef_ = 0;
 	atkAct_ = ATK_ACT::MAX;
 	isEndAlert_ = false;
 	isEndAllAtkSign_ = false;
 	isEndAllAtk_ = false;
-	isMove_ = false;
-	ChangeSearchState(SEARCH_STATE::NOT_FOUND);
+	isColStage_ = false;
+	colStageCnt_ = 0.0f;
+	startCnt_ = 0.0f;
+	targetPos_ = preTargetPos_ = AsoUtility::VECTOR_ZERO;
+	fadeCnt_ = TIME_FADE;
+	ChangeSearchState(SEARCH_STATE::CHICKEN_SEARCH);
 
 	//攻撃情報の初期化
 	InitSkill();
@@ -79,7 +94,15 @@ void Enemy::Update(void)
 
 
 	//やられているなら何もしない
-	if (!IsAlive()) { return; }
+	if (!IsAlive()) 
+	{
+		//フェードカウント
+		if(!IsEndFade())CntDown(fadeCnt_);
+
+		//やられたら死亡アニメーション
+		ResetAnim(ANIM::DEATH, changeSpeedAnim_[ANIM::DEATH]);
+		return;
+	}
 
 	//当たり判定座標の更新
 	colPos_ = VAdd(trans_.pos, localCenterPos_);
@@ -91,6 +114,20 @@ void Enemy::Update(void)
 	trans_.Update();
 }
 
+bool Enemy::IsFinishAnim(const ANIM _anim)
+{
+	//引数が指定されていない　又は　指定されたアニメーション番号と現在のアニメーションが同じ
+	if (_anim == ANIM::NONE || anim_ == _anim)
+	{
+		if (stepAnim_ > animTotalTime_)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void Enemy::ChangeSearchState(const SEARCH_STATE _searchState)
 {
 	//状態遷移
@@ -100,24 +137,21 @@ void Enemy::ChangeSearchState(const SEARCH_STATE _searchState)
 	SearchStateInfo_[searchState_]();
 }
 
-void Enemy::SetTargetPos(const VECTOR _targetPos)
-{
-	targetPos_ = _targetPos;
-}
-
 void Enemy::Damage(const int _damage, const int _stunPow)
 {
 	//既にやられているなら処理しない
-	if (!IsAlive()) { return; }
+	if (!IsAlive()) 
+	{
+		//やられたら死亡アニメーション
+		ResetAnim(ANIM::DEATH, changeSpeedAnim_[ANIM::DEATH]);
+		return;
+	}
 
 	//ダメージカウント
 	hp_ -= _damage;
 
 	//スタン値カウント
-	stunDef_ += _stunPow;
-
-	//やられたら死亡アニメーション
-	if (!IsAlive()){ ResetAnim(ANIM::DEATH, changeSpeedAnim_[ANIM::DEATH]); }
+	//stunDef_ += _stunPow;
 }
 
 void Enemy::ChangeState(const STATE _state)
@@ -127,6 +161,24 @@ void Enemy::ChangeState(const STATE _state)
 
 	// 各状態遷移の初期処理
 	stateChanges_[state_]();
+}
+
+void Enemy::KeepCollStageDistance(void)
+{
+	//ターゲットまでのベクトルを測って、x,zの値が大きい方向に距離をとる
+	VECTOR targetVec = GetMoveVec(trans_.pos, targetPos_);
+
+	if (fabsf(targetVec.x) > fabsf(targetVec.z))
+	{
+		SetPreTargetPos(VSub(prePos_, { 0.0f,0.0f,targetVec.z * KEEP_COL_STAGE_POS }));
+	}
+	else
+	{
+		SetPreTargetPos(VSub(prePos_, { targetVec.x * KEEP_COL_STAGE_POS,0.0f,0.0f }));
+	}
+
+	//ステージに当たった
+	isColStage_ = true;
 }
 
 void Enemy::ChangeStateNormal(void)
@@ -174,6 +226,18 @@ void Enemy::ChangeStateBreak(void)
 	breakCnt_ = 0;
 }
 
+void Enemy::ParamLoad(CharacterParamData::UNIT_TYPE type)
+{
+	//共通
+	UnitBase::ParamLoad(type);
+
+	auto& data = CharacterParamData::GetInstance().GetParamData(type);
+
+	//歩きの速度
+	walkSpeed_ = data.speed_;
+	runSpeed_ = data.speed_ * RUN_SPEED_MULTI;
+}
+
 void Enemy::InitAnim()
 {
 	//共通アニメーション
@@ -186,11 +250,15 @@ void Enemy::InitAnim()
 
 	//アニメーション速度設定
 	changeSpeedAnim_.emplace(ANIM::IDLE, SPEED_ANIM);
-	changeSpeedAnim_.emplace(ANIM::WALK, SPEED_ANIM);
+	changeSpeedAnim_.emplace(ANIM::WALK, SPEED_ANIM_WALK);
 	changeSpeedAnim_.emplace(ANIM::RUN, SPEED_ANIM);
 	changeSpeedAnim_.emplace(ANIM::DAMAGE, SPEED_ANIM);
 	changeSpeedAnim_.emplace(ANIM::DEATH, SPEED_ANIM);
 	changeSpeedAnim_.emplace(ANIM::ENTRY, SPEED_ANIM);
+}
+
+void Enemy::InitEffect(void)
+{
 }
 
 void Enemy::Alert(void)
@@ -235,14 +303,29 @@ void Enemy::UpdateNml(void)
 	if (moveSpeed_ == 0.0)
 		ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
 	//歩きアニメーション
-	else if (moveSpeed_ > 0.0f && searchState_ == SEARCH_STATE::NOT_FOUND)
+	else if (runSpeed_ > moveSpeed_ > 0.0f)
 		ResetAnim(ANIM::WALK, changeSpeedAnim_[ANIM::WALK]);
 	//走りアニメーション
-	else if (moveSpeed_ > 0.0f && searchState_ != SEARCH_STATE::NOT_FOUND)
+	else if (moveSpeed_ >= runSpeed_)
 		ResetAnim(ANIM::RUN, changeSpeedAnim_[ANIM::RUN]);
 	
 	//索敵
-	//if (!isMove_)return;		※のちに消すかも
+
+	//最初のみ
+	if (startCnt_ < START_CNT)CntUp(startCnt_);
+
+	//ステージに当たったなら
+	if (isColStage_)CntUp(colStageCnt_);
+	if (colStageCnt_ >= COL_STAGE_CNT)
+	{
+		isColStage_ = false;
+		colStageCnt_ = 0.0f;
+	}
+
+	//まだ見つけ切れていないなら
+	if (searchState_ == SEARCH_STATE::CHICKEN_SEARCH)
+		//予定している目標に向かう
+		targetPos_ = preTargetPos_;
 
 	//移動処理
 	Move();
@@ -353,7 +436,7 @@ void Enemy::DrawDebug(void)
 	//敵の当たり判定
 	DrawSphere3D(colPos_, radius_, 4, 0xffff00, 0xffff00, false);
 	//敵の索敵判定
-	DrawSphere3D(trans_.pos, searchRange_, 2, isMove_ ? 0xff0000 : 0xffffff, isMove_ ? 0xff0000 : 0xffffff, false);
+	DrawSphere3D(trans_.pos, searchRange_, 2, searchState_ != SEARCH_STATE::CHICKEN_SEARCH ? 0xff0000 : 0xffffff, searchState_ != SEARCH_STATE::CHICKEN_SEARCH ? 0xff0000 : 0xffffff, false);
 	//敵の索敵判定
 	DrawSphere3D(trans_.pos, atkStartRange_, 2, state_ == STATE::ALERT ? 0xff0000 : 0xffffff, state_ == STATE::ALERT ? 0x0000ff : 0xffffff, false);
 }
@@ -375,24 +458,41 @@ void Enemy::Draw(void)
 #ifdef DEBUG_ENEMY
 	
 	//デバッグ
-	//DrawDebug();
+	DrawDebug();
 
 #endif // DEBUG_ENEMY
 
-	//敵モデルの描画
-	MV1DrawModel(trans_.modelId);
-
-	for (auto& nowSkill : nowSkill_)
+	if (IsAlive() || anim_ == ANIM::DEATH && animTotalTime_ >= stepAnim_ && !IsEndFade())
 	{
-		//攻撃の描画
-		if (nowSkill.IsAttack()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
-		else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
-	}
+		if (!IsAlive() && !IsEndFade())
+		{
+			// 時間による色の線形補間
+			float diff = TIME_FADE - fadeCnt_;
+			auto c = AsoUtility::Lerp(FADE_C_FROM, FADE_C_TO, (diff / TIME_FADE));
+			// モデルのマテリアルを取得
+			int num = MV1GetMaterialNum(trans_.modelId);
+			for (int i = 0; i < num; i++)
+			{
+				// モデルのディフューズカラーを変更
+				MV1SetMaterialDifColor(trans_.modelId, i, c);
+			}
+		}
 
-	//攻撃予兆の描画
-	if (state_ == STATE::ALERT)
-	{
-		DrawPolygon3D(alertVertex_, 2, DX_NONE_GRAPH, false);
+		//敵モデルの描画
+		MV1DrawModel(trans_.modelId);
+
+		for (auto& nowSkill : nowSkill_)
+		{
+			//攻撃の描画
+			if (nowSkill.IsAttack()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
+			else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
+		}
+
+		//攻撃予兆の描画
+		if (state_ == STATE::ALERT)
+		{
+			DrawPolygon3D(alertVertex_, 2, DX_NONE_GRAPH, false);
+		}
 	}
 }
 

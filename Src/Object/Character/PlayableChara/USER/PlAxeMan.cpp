@@ -25,6 +25,7 @@ void PlAxe::Update(void)
 {
 	//更新
 	obj_->Update();
+	if (!obj_->IsAlive())return;
 
 	//キー入力
 	PlayerDodge* dodge = obj_->GetDodge();
@@ -79,7 +80,7 @@ void PlAxe::AtkInput(void)
 	using ATK_ACT = PlayerBase::ATK_ACT;
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	if (obj_->GetIsSkill()||obj_->GetIsCool(PlayerBase::ATK_ACT::ATK))return;
-	if (ins.CheckAct(ACT_CNTL::NMLATK) && !obj_->GetIsAtk())
+	if (ins.CheckAct(ACT_CNTL::NMLATK) && !obj_->GetIsAtk()&&!obj_->GetIsSkill())
 	{
 		if (obj_->GetIsCool(ATK_ACT::ATK))return;
 		obj_->ChangeAct(ATK_ACT::ATK);

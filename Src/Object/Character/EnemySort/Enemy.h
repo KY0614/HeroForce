@@ -1,6 +1,8 @@
 #pragma once
 #include<vector>
 #include <functional>
+#include"../../../Manager/Decoration/EffectManager.h"
+#include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Utility/AsoUtility.h"
 #include "../../UnitBase.h"
 
@@ -8,7 +10,7 @@ class Enemy : public UnitBase
 {
 public:
 
-#define DEBUG_ENEMY
+//#define DEBUG_ENEMY
 
 	//移行テストしております
 
@@ -23,6 +25,26 @@ public:
 	static constexpr int ANIM_DAMAGE = 39;	//ダメージアニメーション
 	static constexpr int ANIM_DEATH = 24;	//やられアニメーション
 	static constexpr int ANIM_ENTRY = 74;	//出現アニメーション
+
+	//アニメーション速度
+	static constexpr float SPEED_ANIM_WALK = 60.0f;	//歩きアニメーション速度
+
+	//移動速度
+	static constexpr float RUN_SPEED_MULTI = 1.2f;	//走る速度の倍率
+
+	//補完用
+	static constexpr float KEEP_COL_STAGE_POS = 500.0f;	//ステージ接触時座標補完用
+	static constexpr float COL_STAGE_CNT = 0.3f;		//ステージ接触時補完用カウント
+	
+	static constexpr float START_CNT = 3.0f;			//スタート時補完用カウント
+
+	static constexpr float COL_RADIUS = 50.0f;			//敵生成時の距離用
+
+	//フェード
+	static constexpr float TIME_FADE = 4.0f;							//フェード時間
+	static constexpr COLOR_F FADE_C_FROM = { 1.0f, 1.0f, 1.0f, 1.0f };	//フェード開始色
+	static constexpr COLOR_F FADE_C_TO = { 0.2f, 0.2f, 0.2f, 0.0f };	//フェード終了色
+
 
 	//****************************************************************
 	//列挙型
@@ -41,7 +63,7 @@ public:
 	//敵の探索状態
 	enum class SEARCH_STATE
 	{
-		NOT_FOUND			//誰も見つけていない
+		CHICKEN_SEARCH		//鶏探し中
 		,CHICKEN_FOUND		//追跡中(鶏)
 		,PLAYER_FOUND		//追跡中(プレイヤー)
 		,MAX
@@ -83,7 +105,7 @@ public:
 	virtual const bool IsBreak(void)const = 0;
 
 	//スタン中かどうかを返す
-	const bool IsStun(void)const { return stunDef_ > stunDefMax_; }
+	//const bool IsStun(void)const { return stunDef_ > stunDefMax_; }
 
 	//現在のスキルの全配列を返す
 	const std::vector<ATK> GetAtks(void)const { return nowSkill_; }
@@ -97,11 +119,23 @@ public:
 	//経験値を返す
 	const float GetExp(void)const { return exp_; }
 
+	//現在状態を返す
+	const STATE GetState(void) { return state_; }
+
+	//攻撃情報を設定
+	void SetAtk(const ATK& _atk) { atk_ = _atk; }
+
+	void SetAtksIsHit(int _arrayNum, const bool _isHit) { nowSkill_[_arrayNum].isHit_ = _isHit; }
+
+	//探索状態を返す
+	SEARCH_STATE GetSearchState(void) { return searchState_; }
+
 	/// <summary>
-	/// 移動状態を変更
+	/// アニメーションが終わったかを返す
 	/// </summary>
-	/// <param name="_isMove">移動するどうか(true:移動する)</param>
-	void SetIsMove(const bool _isMove) { isMove_ = _isMove; }
+	/// <param name="_anim">アニメーション番号(指定しなかったらアニメーションが終わってるかのみで判断)</param>
+	/// <returns>(指定された)アニメーションが終わっているか</returns>
+	bool IsFinishAnim(const ANIM _anim = ANIM::NONE);
 
 	/// <summary>
 	/// 探索状態を変更
@@ -110,10 +144,16 @@ public:
 	void ChangeSearchState(const SEARCH_STATE _searchState);
 
 	/// <summary>
+	/// 標的予定対象の座標を変更
+	/// </summary>
+	/// <param name="_preTargetPos">標的予定対象の座標</param>
+	void SetPreTargetPos(const VECTOR _preTargetPos) { if(!isColStage_ && startCnt_ >= START_CNT)preTargetPos_ = _preTargetPos; }
+
+	/// <summary>
 	/// 標的の座標を変更
 	/// </summary>
 	/// <param name="_targetPos">標的の座標</param>
-	void SetTargetPos(const VECTOR _targetPos);
+	void SetTargetPos(const VECTOR _targetPos) { if(!isColStage_ && startCnt_ >= START_CNT)targetPos_ = _targetPos; }
 
 	/// <summary>
 	/// ダメージ
@@ -122,14 +162,17 @@ public:
 	/// <param name="_stunPow">スタン攻撃力</param>
 	void Damage(const int _damage, const int _stunPow);
 
-	//現在状態を返す
-	const STATE GetState(void) { return state_; }
-
 	/// <summary>
 	/// 状態遷移
 	/// </summary>
 	/// <param name="_state">遷移する状態</param>
 	void ChangeState(const STATE _state);
+
+	//ステージに当たったら距離をとる
+	void KeepCollStageDistance(void);
+
+	//フェードが終わったか
+	bool IsEndFade(void) { return fadeCnt_ < 0.0f; }
 
 protected:
 
@@ -172,18 +215,25 @@ protected:
 
 	VECTOR localCenterPos_;	//敵中央の相対座標
 	VECTOR colPos_;			//敵自身の当たり判定用の相対座標
-												//移動量
-	bool isMove_;														//移動しているかどうか(true:移動中)
+
 	SEARCH_STATE searchState_;											//探索判定
 	std::map<SEARCH_STATE, std::function<void(void)>> SearchStateInfo_;	//探索状態による情報更新
 
+	VECTOR preTargetPos_;	//標的予定対象の座標
 	VECTOR targetPos_;		//標的の座標
 
 	float searchRange_;		//索敵範囲
 	float atkStartRange_;	//攻撃開始範囲
 
-	int stunDefMax_;	//気絶防御値の最大値
-	int stunDef_;		//気絶防御値
+	//int stunDefMax_;	//気絶防御値の最大値
+	//int stunDef_;		//気絶防御値
+
+	bool isColStage_;	//ステージに当たったか(true:当たった)
+	float colStageCnt_;	//ステージ接触補完用カウンタ
+
+	float startCnt_;	//スタート補完用カウンタ
+
+	float fadeCnt_;		//フェード用カウンタ
 
 	float exp_;			//経験値
 
@@ -194,8 +244,14 @@ protected:
 	//キャラ固有設定
 	virtual void SetParam(void) = 0;
 
+	//外部関係
+	void ParamLoad(CharacterParamData::UNIT_TYPE type)override;
+
 	//アニメーション関係の初期化
 	virtual void InitAnim(void);
+
+	//エフェクトの初期化
+	virtual void InitEffect(void);
 
 	//スキルの初期化
 	virtual void InitSkill(void) = 0;

@@ -19,12 +19,17 @@ void Knight::SetParam(void)
 		0.0f
 	);
 
-	//ステータス
-	hpMax_ = MAX_HP;
-	atkPow_ = POW_ATK;
-	def_ = MAX_DEF;
-	speed_ = SPEED;
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
+
+	//ステータス
+	ParamLoad(CharacterParamData::UNIT_TYPE::KNIGHT);
+
+	//溜め攻撃エフェクトロード
+	auto& effIns = EffectManager::GetInstance();
+	auto& resIns = ResourceManager::GetInstance();
+	using EFFECT = EffectManager::EFFECT;
+	effIns.Add(EFFECT::GUARD, resIns.Load(ResourceManager::SRC::GUARD).handleId_);
+
 }
 
 void Knight::Update(void)
@@ -87,10 +92,7 @@ void Knight::InitAct(void)
 	atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;
 	atkStartTime_[static_cast<int>(ATK_ACT::SKILL2)] = SKILL_TWO_START;
 
-	//攻撃タイプ
-	atkTypes_[static_cast<int>(ATK_ACT::ATK)] = ATK_TYPE::NORMALATK;
-	atkTypes_[static_cast<int>(ATK_ACT::SKILL1)] = ATK_TYPE::NORMALATK;
-	atkTypes_[static_cast<int>(ATK_ACT::SKILL2)] = ATK_TYPE::CHARGEATK;
+
 
 }
 
@@ -217,10 +219,26 @@ void Knight::Skill2Func(void)
 
 	else if (isSkill_ && IsFinishAtkStart())
 	{
+		EffectManager::GetInstance().Stop(EffectManager::EFFECT::HIT2);
 		CntUp(atk_.cnt_);
 		CntDown(coolTime_[static_cast<int>(SKILL_NUM::TWO)]);
+
+		//最初の1フレームだけの処理
+		if (atk_.cnt_ <= 1.0f / 60.0f)
+		{
+			//スキル２継続中は防御力２倍になる
+			def_ *= 2.0f;
+			auto& efeIns = EffectManager::GetInstance();
+			efeIns.Play(
+				EffectManager::EFFECT::GUARD,
+				atk_.pos_,
+				Quaternion(),
+				GUARD_EFFECT_SIZE,
+				SoundManager::SOUND::NONE);
+		}
+	
 	}
-	//ボタンを押していても残りクールタイムが
+	//ボタンを押していても残りクールタイムが3秒以下だったら
 	else if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] <= SKILL_TWO_START_COOLTIME)
 	{
 		isCool_[static_cast<int>(SKILL_NUM::TWO)] = true;

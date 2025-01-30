@@ -24,21 +24,16 @@ void EneGolem::SetParam(void)
 
 	//※個々で設定する
 	trans_.scl = { SCALE,SCALE,SCALE };
-	radius_ = MY_COL_RADIUS;
 	colPos_ = VAdd(trans_.pos, LOCAL_CENTER_POS);
-	hp_ = HP_MAX;
-	atkPow_ = ATK_POW;
-	def_ = DEF;
-	exp_ = EXP;
-	walkSpeed_ = WALK_SPEED;
-	runSpeed_ = RUN_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
-	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
 	atkStartRange_ = ATK_START_RANGE;
 	skillThreeCnt_ = 0;
 	skillThreeDelayCnt_ = 0.0f;
 	isPreSkillThreeAtk_ = false;
+
+	//外部からステータスを取得
+	ParamLoad(CharacterParamData::UNIT_TYPE::BOSS);
 }
 
 void EneGolem::InitAnim(void)
@@ -75,6 +70,24 @@ void EneGolem::InitAnim(void)
 
 	//アニメーションリセット
 	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
+}
+
+void EneGolem::InitEffect(void)
+{
+	auto& eff = EffectManager::GetInstance();
+	auto& res = ResourceManager::GetInstance();
+
+	//パンチエフェクト
+	eff.Add(EffectManager::EFFECT::BOSS_PUNCH,
+		res.Load(ResourceManager::SRC::BOSS_PUNCH_EFE).handleId_);
+
+	//叫びエフェクト
+	eff.Add(EffectManager::EFFECT::BOSS_SHOUT,
+		res.Load(ResourceManager::SRC::BOSS_SHOUT_EFE).handleId_);
+
+	//叫び(攻撃)エフェクト
+	eff.Add(EffectManager::EFFECT::BOSS_SHOUT_ATK,
+		res.Load(ResourceManager::SRC::BOSS_SHOUT_ATK_EFE).handleId_);
 }
 
 void EneGolem::InitSkill(void)
@@ -115,6 +128,9 @@ void EneGolem::Alert(void)
 
 void EneGolem::AlertSkill_One(void)
 {
+	//エフェクトマネージャー
+	auto& eff = EffectManager::GetInstance();
+
 	//座標
 	VECTOR pos = trans_.pos;
 
@@ -189,6 +205,18 @@ void EneGolem::AlertSkill_Three(void)
 
 void EneGolem::Skill_One(void)
 {
+	//エフェクトマネージャー
+	auto& eff = EffectManager::GetInstance();
+
+	if (stepAnim_ == 20.0f)
+		//エフェクト再生
+		eff.Play(EffectManager::EFFECT::BOSS_PUNCH,
+			MV1GetFramePosition(trans_.modelId, FRAME_R_HAND),
+			Quaternion(),
+			SKILL_ONE_EFF_SIZE,
+			SoundManager::SOUND::NONE);
+
+
 	//攻撃の再生成
 	if (lastAtk_->IsFinishMotion())
 	{
@@ -227,6 +255,9 @@ void EneGolem::Skill_Two(void)
 
 void EneGolem::Skill_Three(void)
 {
+	//エフェクトマネージャー
+	auto& eff = EffectManager::GetInstance();
+
 	//攻撃終了判定
 	if (lastAtk_ == nullptr ? false : lastAtk_->IsFinishMotion()
 		&& skillThreeCnt_ >= SKILL_THREE_MAX_CNT)
@@ -242,6 +273,15 @@ void EneGolem::Skill_Three(void)
 	if (skillThreeDelayCnt_ > SKILL_THREE_DELAY
 		&& skillThreeCnt_ < SKILL_THREE_MAX_CNT)
 	{
+		if(skillThreeCnt_ == 0)
+			//エフェクト再生
+			eff.Play(EffectManager::EFFECT::BOSS_SHOUT,
+				MV1GetFramePosition(trans_.modelId, FRAME_HEAD),
+				Quaternion(),
+				SKILL_ONE_EFF_SIZE,
+				SoundManager::SOUND::NONE);
+
+
 		//間隔カウンタの初期化
 		skillThreeDelayCnt_ = 0.0f;
 
@@ -291,11 +331,15 @@ void EneGolem::ResetAtkJudge(void)
 
 void EneGolem::ChangeStateAtk(void)
 {
+	//エフェクトマネージャー
+	auto& eff = EffectManager::GetInstance();
+
 	//更新処理の中身初期化
 	stateUpdate_ = std::bind(&EneGolem::UpdateAtk, this);
 
 	//最初に攻撃を生成するか
 	if (atkAct_ != ATK_ACT::SKILL_THREE)
+		//攻撃生成
 		lastAtk_ = &createSkill_();
 }
 

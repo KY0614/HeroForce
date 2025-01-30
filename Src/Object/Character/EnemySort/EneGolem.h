@@ -59,20 +59,6 @@ public:
 	static constexpr float ALERT_TIME = 0.8f;	//攻撃の警告時間
 	static constexpr float BREAK_TIME = 0.5f;	//攻撃の休憩時間
 
-	//敵自身の当たり判定半径
-	static constexpr float MY_COL_RADIUS = 300.0f * CHARACTER_SCALE;
-
-	//敵ステータス
-	static constexpr int HP_MAX = 150;			//敵の最大体力
-	static constexpr float ATK_POW = 120.0f;	//敵の攻撃
-	static constexpr float DEF = 100.0f;		//敵の防御
-	static constexpr int STUN_DEF_MAX = 100;	//敵の最大スタン防御値
-	static constexpr float EXP = 300.0f;		//敵の経験値
-
-	//速度関係
-	static constexpr float WALK_SPEED = 2.0f;	//歩きの速度
-	static constexpr float RUN_SPEED = 2.5f;	//走りの速度
-
 	//範囲関係
 	static constexpr float SEARCH_RANGE = 2000.0f * CHARACTER_SCALE;		//索敵判定の大きさ
 	static constexpr float ATK_START_RANGE = 700.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
@@ -95,8 +81,10 @@ public:
 
 	//スキルの警告判定用相対座標
 	static constexpr VECTOR SKILL_ONE_ALERT = { 0.0f,0.0f,210.0f };	//スキル１の警告判定用相対座標
+	//スキルエフェクト
+	static constexpr float SKILL_ONE_EFF_SIZE = 10.0f;				//スキル１エフェクトの大きさ
 
-	
+
 	//スキルの当たり判定半径
 	static constexpr float SKILL_TWO_COL_RADIUS = 50.0f;	//スキル２の当たり判定半径
 	//スキルの攻撃力
@@ -136,12 +124,14 @@ public:
 
 	//スキル３の効果範囲
 	static constexpr float SKILL_THREE_FALL_RADIUS = 500.0f;	//スキル３の隕石の落ちる範囲の半径
-
 	//攻撃生成間隔
 	static constexpr float SKILL_THREE_DELAY = 0.5f;			//スキル３の攻撃生成間隔
-
 	//攻撃回数
 	static constexpr int SKILL_THREE_MAX_CNT = 5;				//スキル３の攻撃回数
+	//スキルエフェクト
+	static constexpr float SKILL_THREE_SHOUT_EFF_SIZE = 10.0f;	//叫びエフェクトの大きさ
+	static constexpr float SKILL_THREE_ATK_EFF_SIZE = 10.0f;	//叫びの攻撃エフェクトの大きさ
+
 
 	//コンストラクタ
 	EneGolem(const VECTOR& _spawnPos);
@@ -165,6 +155,9 @@ private:
 
 	//アニメーション番号の初期化
 	void InitAnim(void)override;
+
+	//エフェクトの初期化
+	void InitEffect(void)override;
 
 	//スキルの初期化
 	void InitSkill(void)override;

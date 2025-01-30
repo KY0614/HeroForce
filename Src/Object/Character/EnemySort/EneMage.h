@@ -22,20 +22,6 @@ public:
 	static constexpr float ALERT_TIME = 1.0f;	//攻撃の警告時間
 	static constexpr float BREAK_TIME = 3.0f;	//攻撃の休憩時間
 
-	//敵自身の当たり判定半径
-	static constexpr float MY_COL_RADIUS = 100.0f * CHARACTER_SCALE;
-
-	//敵ステータス
-	static constexpr int HP_MAX = 140;			//敵の最大体力
-	static constexpr float ATK_POW = 1.0f;		//敵の攻撃
-	static constexpr float DEF = 150.0f;		//敵の防御
-	static constexpr int STUN_DEF_MAX = 100;	//敵の最大スタン防御値
-	static constexpr float EXP = 300.0f;		//敵の経験値
-
-	//速度関係
-	static constexpr float WALK_SPEED = 1.5f;		//歩きの速度
-	static constexpr float RUN_SPEED = 2.5f;		//走りの速度
-
 	//範囲関係
 	static constexpr float SEARCH_RANGE = 2500.0f * CHARACTER_SCALE;		//索敵判定の大きさ
 	static constexpr float ATK_START_RANGE = 1000.0f * CHARACTER_SCALE;		//攻撃開始判定の大きさ
@@ -44,7 +30,7 @@ public:
 	static constexpr float SKILL_ONE_RANGE = 40.0f;			//スキル１の射程
 
 	//スキルの当たり判定半径
-	static constexpr float SKILL_ONE_COL_RADIUS = 30.0f;	//スキル１の当たり判定半径
+	static constexpr float SKILL_ONE_COL_RADIUS = 40.0f;	//スキル１の当たり判定半径
 
 	//スキルの攻撃力
 	static constexpr float SKILL_ONE_POW = 1.0f;			//スキル１の攻撃力
@@ -78,6 +64,9 @@ public:
 		,SKILL_ONE_BACKLASH
 		,0.0f };
 
+	//スキルエフェクト
+	static constexpr float SKILL_ONE_EFF_SIZE = 10.0f;	//スキル１エフェクトの大きさ
+
 	//コンストラクタ
 	EneMage(const VECTOR& _spawnPos);
 
@@ -102,6 +91,9 @@ private:
 
 	//アニメーション番号の初期化
 	void InitAnim(void)override;
+
+	//エフェクトの初期化
+	void InitEffect(void)override;
 
 	//スキルの初期化
 	void InitSkill(void)override;
