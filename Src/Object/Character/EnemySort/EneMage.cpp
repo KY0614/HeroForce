@@ -49,6 +49,15 @@ void EneMage::InitAnim(void)
 	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
 }
 
+void EneMage::InitEffect(void)
+{
+	auto& eff = EffectManager::GetInstance();
+	auto& res = ResourceManager::GetInstance();
+
+	eff.Add(EffectManager::EFFECT::STATE_DOWN,
+		res.Load(ResourceManager::SRC::STATE_DOWN_EFE).handleId_);
+}
+
 void EneMage::InitSkill(void)
 {
 	//ここにスキルの数分格納させる
@@ -83,6 +92,9 @@ void EneMage::Attack(void)
 
 void EneMage::Skill_One(void)
 {
+	//エフェクト
+	auto& eff =	EffectManager::GetInstance();
+
 	//終了判定
 	if (skillAllCnt_ > SKILL_ONE_ALL_TIME)
 	{
@@ -116,6 +128,13 @@ void EneMage::Skill_One(void)
 
 			//生成した攻撃の位置を合わせる
 			thisAtk.pos_ = skillOneShot_;
+
+			//エフェクト再生
+			eff.Play(EffectManager::EFFECT::STATE_DOWN,
+				thisAtk.pos_,
+				Quaternion(),
+				SKILL_ONE_EFF_SIZE,
+				SoundManager::SOUND::NONE);
 		}
 	}
 

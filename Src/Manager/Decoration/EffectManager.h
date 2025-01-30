@@ -23,6 +23,12 @@ public:
 		SPEED_UP,
 		FIREWORK,
 		NONE,
+
+		//Enemy‚ªŽg—p
+		BOSS_BLAST,
+		BOSS_SHOUT,
+		BOSS_SHOUT_ATK,
+		STATE_DOWN,
 	};
 
 

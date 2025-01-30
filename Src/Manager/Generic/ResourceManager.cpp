@@ -145,6 +145,16 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "SpeedUp.efkefc");
 	resourcesMap_.emplace(SRC::SPEED_UP_EFE, res);
 
+	//敵関連のエフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "EnemyEffect/StateDownSpell.efkefc");
+	resourcesMap_.emplace(SRC::STATE_DOWN_EFE, res);
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "EnemyEffect/BossPunch.efkproj");
+	resourcesMap_.emplace(SRC::BOSS_BLAST_EFE, res);
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "EnemyEffect/BossShout.efkefc");
+	resourcesMap_.emplace(SRC::BOSS_SHOUT_EFE, res);
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "EnemyEffect/BossShoutAtk.efkefc");
+	resourcesMap_.emplace(SRC::BOSS_SHOUT_ATK_EFE, res);
+
 	//強化UI
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "AttackUp.png");
 	resourcesMap_.emplace(SRC::ATTACK_UP_UI, res);
@@ -177,6 +187,10 @@ void ResourceManager::InitGame(void)
 	//チキン
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Chicken/Chicken.mv1");
 	resourcesMap_.emplace(SRC::CHICKEN, res);
+
+	//矢
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ARROW + "Arrow.mv1");
+	resourcesMap_.emplace(SRC::ARROW, res);
 
 	//ヘルプ画像
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Help!.png");

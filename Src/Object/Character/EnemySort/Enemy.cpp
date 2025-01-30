@@ -36,6 +36,9 @@ void Enemy::Init(void)
 	//アニメーション番号の初期化
 	InitAnim();
 
+	//エフェクトの初期化
+	InitEffect();
+
 	//共通の変数の初期化
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::AngleAxis(AsoUtility::Deg2RadF(180.0f), AsoUtility::AXIS_Y);
@@ -225,6 +228,10 @@ void Enemy::InitAnim()
 	changeSpeedAnim_.emplace(ANIM::DAMAGE, SPEED_ANIM);
 	changeSpeedAnim_.emplace(ANIM::DEATH, SPEED_ANIM);
 	changeSpeedAnim_.emplace(ANIM::ENTRY, SPEED_ANIM);
+}
+
+void Enemy::InitEffect(void)
+{
 }
 
 void Enemy::Alert(void)
@@ -436,8 +443,8 @@ void Enemy::Draw(void)
 		for (auto& nowSkill : nowSkill_)
 		{
 			//攻撃の描画
-			if (nowSkill.IsAttack()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
-			else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
+			//if (nowSkill.IsAttack()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
+			//else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
 		}
 
 		//攻撃予兆の描画

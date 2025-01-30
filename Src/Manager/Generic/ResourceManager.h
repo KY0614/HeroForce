@@ -52,7 +52,7 @@ public:
 		ENEMY_ARCHER,	//弓使い（敵）
 		ENEMY_AXEMAN,	//斧使い（敵）
 		ENEMY_GOLEM,	//ゴーレム(敵)
-		ARROW,
+		ARROW,			//ARROW
 
 		//ステージ
 		STAGE_01,
@@ -91,6 +91,12 @@ public:
 		DEFENCE_UP_EFE,
 		SPEED_UP_EFE,
 		LIFE_UP_EFE,
+
+		//敵エフェクト
+		BOSS_BLAST_EFE,
+		BOSS_SHOUT_EFE,
+		BOSS_SHOUT_ATK_EFE,
+		STATE_DOWN_EFE,
 
 		//CPU
 		CHICKEN,

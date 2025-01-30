@@ -1,6 +1,8 @@
 #pragma once
 #include<vector>
 #include <functional>
+#include"../../../Manager/Decoration/EffectManager.h"
+#include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Utility/AsoUtility.h"
 #include "../../UnitBase.h"
 
@@ -8,7 +10,7 @@ class Enemy : public UnitBase
 {
 public:
 
-#define DEBUG_ENEMY
+//#define DEBUG_ENEMY
 
 	//移行テストしております
 
@@ -229,6 +231,9 @@ protected:
 
 	//アニメーション関係の初期化
 	virtual void InitAnim(void);
+
+	//エフェクトの初期化
+	virtual void InitEffect(void);
 
 	//スキルの初期化
 	virtual void InitSkill(void) = 0;

@@ -64,6 +64,9 @@ public:
 		,SKILL_ONE_BACKLASH
 		,0.0f };
 
+	//スキルエフェクト
+	static constexpr float SKILL_ONE_EFF_SIZE = 10.0f;	//スキル１エフェクトの大きさ
+
 	//コンストラクタ
 	EneMage(const VECTOR& _spawnPos);
 
@@ -88,6 +91,9 @@ private:
 
 	//アニメーション番号の初期化
 	void InitAnim(void)override;
+
+	//エフェクトの初期化
+	void InitEffect(void)override;
 
 	//スキルの初期化
 	void InitSkill(void)override;

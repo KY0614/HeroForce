@@ -152,6 +152,9 @@ private:
 	//アニメーション番号の初期化
 	void InitAnim(void)override;
 
+	//エフェクトの初期化
+	void InitEffect(void)override;
+
 	//スキルの初期化
 	void InitSkill(void)override;
 
