@@ -304,8 +304,6 @@ void GameScene::CollisionEnemy(void)
 	//敵の総数取得
 	int maxCnt = enmMng_->GetActiveNum();
 
-	bool isPlayerFound = false;
-
 	enmMng_->CollisionStage(stage_->GetTtans());
 
 	//あたり判定(主に索敵)
@@ -316,8 +314,9 @@ void GameScene::CollisionEnemy(void)
 
 		//敵個人の位置と攻撃を取得
 		VECTOR ePos = e->GetPos();
-		UnitBase::ATK eAtk = e->GetAtk();
 
+		//敵個人の索敵判定
+		bool isPlayerFound = false;
 
 		for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
 		{
@@ -326,7 +325,6 @@ void GameScene::CollisionEnemy(void)
 
 			//範囲内に入っているとき
 
-
 			//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
 			if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL) {
 				//状態を変更
@@ -334,9 +332,6 @@ void GameScene::CollisionEnemy(void)
 			}
 
 			if (col.Search(ePos, pPos, e->GetSearchRange())) {
-				//移動を開始
-				e->SetIsMove(true);
-
 				//プレイヤーを狙う
 				e->ChangeSearchState(Enemy::SEARCH_STATE::PLAYER_FOUND);
 				e->SetTargetPos(pPos);
@@ -344,33 +339,37 @@ void GameScene::CollisionEnemy(void)
 				//見つけた
 				isPlayerFound = true;
 			}
-			else if (!isPlayerFound) {
-				//移動を停止
-				e->SetIsMove(false);
-
+			else if (!isPlayerFound && e->GetSearchState() != Enemy::SEARCH_STATE::CHICKEN_FOUND) {
 				//誰も狙っていない
-				e->ChangeSearchState(Enemy::SEARCH_STATE::NOT_FOUND);
-				//e->SetTargetPos(VECTOR{0,0,0});
+				e->ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_SEARCH);
 			}
-
 
 			//攻撃判定
+			for (int a = 0; a < e->GetAtks().size(); a++)
+			{
+				//攻撃情報をセット
+				e->SetAtk(e->GetAtks()[a]);
 
-			//アタック中 && 攻撃判定が終了していないときだけ処理する。それ以外はしないので戻る
-			if (eAtk.IsAttack() && !eAtk.isHit_) {
+				//セットしてきた情報をとってくる
+				UnitBase::ATK eAtk = e->GetAtk();
+
+				//アタック中 && 攻撃判定が終了していないときだけ処理する。それ以外はしないので戻る
+				if (eAtk.IsAttack() && !eAtk.isHit_) {
 
 
-				//攻撃が当たる範囲 && プレイヤーが回避していないとき
-				if (col.IsHitAtk(*e, *p)/* && !p->GetDodge()->IsDodge()*/)
-				{
-					//ダメージ
-					p->SetDamage(e->GetAtkPow(), eAtk.pow_);
-					//使用した攻撃を判定終了に
-					e->SetIsHit(true);
+					//攻撃が当たる範囲 && プレイヤーが回避していないとき
+					if (col.IsHitAtk(*e, *p)/* && !p->GetDodge()->IsDodge()*/)
+					{
+						//ダメージ
+						p->SetDamage(e->GetAtkPow(), eAtk.pow_);
+						//使用した攻撃を判定終了に
+						e->SetAtksIsHit(a, true);
+					}
 				}
 			}
-		}	
+		}
 	}
+
 }
 
 void GameScene::CollisionPlayer(void)
@@ -429,7 +428,7 @@ void GameScene::CollisionChicken(void)
 	for (int i = 0; i < chickenNum; i++) {
 		auto c = chicken_->GetChicken(i);
 		//ニワトリが死んでいたら次へ
- 		if (!c->IsAlive())continue;
+		if (!c->IsAlive())continue;
 
 		//敵の総数取得
 		int maxCnt = enmMng_->GetActiveNum();
@@ -443,16 +442,22 @@ void GameScene::CollisionChicken(void)
 
 			//敵個人の位置と攻撃を取得
 			VECTOR ePos = e->GetPos();
-			UnitBase::ATK eAtk = e->GetAtk();
 
 			//索敵
 			//範囲内に入っているとき
 			if (col.Search(ePos, c->GetPos(), e->GetSearchRange())) {
 				//移動を開始
-				e->SetIsMove(true);
-				//プレイヤーを狙う
+
+				//鶏を狙う
 				e->ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_FOUND);
 				e->SetTargetPos(c->GetPos());
+			}
+			else if (e->GetSearchState() != Enemy::SEARCH_STATE::PLAYER_FOUND) {
+				//移動を開始
+
+				//まだ探し中
+				e->ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_SEARCH);
+				e->SetPreTargetPos(c->GetPos());
 			}
 
 			//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
@@ -461,20 +466,30 @@ void GameScene::CollisionChicken(void)
 				e->ChangeState(Enemy::STATE::ALERT);
 			}
 
-
-			//アタック中 && 攻撃判定が終了していないときだけ処理する。それ以外はしないので戻る
-			if (!(eAtk.IsAttack() && !eAtk.isHit_))continue;
-
-			//攻撃が当たる範囲 && プレイヤーが回避していないとき
-			if (col.IsHitAtk(*e, *c))
+			//攻撃判定
+			for (int a = 0; a < e->GetAtks().size(); a++)
 			{
-				//ダメージ
-				c->SetDamage(1);
-				//使用した攻撃を判定終了に
-				e->SetIsHit(true);
+				//攻撃情報をセット
+				e->SetAtk(e->GetAtks()[a]);
+
+				//セットしてきた情報をとってくる
+				UnitBase::ATK eAtk = e->GetAtk();
+
+				//アタック中 && 攻撃判定が終了していないときだけ処理する。それ以外はしないので戻る
+				if (!(eAtk.IsAttack() && !eAtk.isHit_))continue;
+
+				//攻撃が当たる範囲 && プレイヤーが回避していないとき
+				if (col.IsHitAtk(*e, *c))
+				{
+					//ダメージ
+					c->SetDamage(e->GetAtkPow());
+					//使用した攻撃を判定終了に
+					e->SetAtksIsHit(a, true);
+				}
 			}
 		}
 	}
+
 }
 
 //void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
@@ -629,6 +644,8 @@ void GameScene::FazeResultUpdate(void)
 		if (fazeCnt_ > LAST_FAZE)SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
 
 		level_->AddExp(fazeResult_->GetExp());
+		//敵の入れ替え
+		enmMng_->ProcessChangePhase(fazeCnt_);
 
 		//フェーズリザルトが終了したので明転及びリザルトリセット・タイマー初期化・BGMの再生
 		fader_->SetFade(Fader::STATE::FADE_IN);

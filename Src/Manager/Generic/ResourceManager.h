@@ -175,6 +175,19 @@ public:
 		//エフェクト
 			SMOKE,
 			DAMAGE_EFE,
+			//敵エフェクト
+			BOSS_PUNCH_EFE,
+			BOSS_SHOUT_EFE,
+			BOSS_SHOUT_ATK_EFE,
+			STATE_DOWN_EFE,
+
+			//エフェクト
+			ARROW_RED,		//矢のエフェクト(赤)
+			ARROW_WHITE,	//矢のエフェクト(白)
+
+			CHARGE_AXE_HIT, //アックスの溜めスキル
+			GUARD,			//ガード
+			HIT2,			//プレイヤーから敵への当たりエフェクト
 
 	};
 

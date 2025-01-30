@@ -306,10 +306,9 @@ void UnitBase::SetHpMax(const int hp)
 }
 
 
-void UnitBase::ParamLoad()
+void UnitBase::SetMoveSpeed(const float _speed)
 {
-	//各キャラクターのパラメータのJSON読み込み
-
+	moveSpeed_ = _speed;
 }
 
 //アニメ終了時の動き

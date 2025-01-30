@@ -234,6 +234,17 @@ void ResourceManager::InitGame(void)
 
 
 	ResourcePlayer();
+
+	//敵関連のエフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "EnemyEffect/StateDownSpell.efkefc");
+	resourcesMap_.emplace(SRC::STATE_DOWN_EFE, res);
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "EnemyEffect/BossPunch.efkefc");
+	resourcesMap_.emplace(SRC::BOSS_PUNCH_EFE, res);
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "EnemyEffect/BossShout.efkefc");
+	resourcesMap_.emplace(SRC::BOSS_SHOUT_EFE, res);
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "EnemyEffect/BossShoutAtk.efkefc");
+	resourcesMap_.emplace(SRC::BOSS_SHOUT_ATK_EFE, res);
+
 	ResourceEnemy();
 	ResourceStage();
 
@@ -252,6 +263,11 @@ void ResourceManager::InitGame(void)
 	//リザルト背景
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "FazeRezaltBack.jpg");
 	resourcesMap_.emplace(SRC::REZALT_BACK, res);
+
+	//矢
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ARROW + "Arrow.mv1");
+	resourcesMap_.emplace(SRC::ARROW, res);
+
 }
 
 void ResourceManager::InitResult(void)
@@ -331,7 +347,28 @@ void ResourceManager::ResourcePlayer(void)
 {
 	Resource res;
 
-	
+	// エフェクト
+		// ********************************************************************
+
+		//斧使いのスキル1溜め攻撃
+		res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "fire.efkproj");
+	resourcesMap_.emplace(SRC::CHARGE_AXE_HIT, res);
+
+	//騎士のガード
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Falloff.efkefc");
+	resourcesMap_.emplace(SRC::GUARD, res);
+
+	//アーチャーの矢のエフェクト(赤)
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Spear1.efkproj");
+	resourcesMap_.emplace(SRC::ARROW_RED, res);
+
+	//矢のエフェクト(白)
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Spear2.efkproj");
+	resourcesMap_.emplace(SRC::ARROW_WHITE, res);
+
+	//当たりエフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "hit_eff.efkproj");
+	resourcesMap_.emplace(SRC::HIT2, res);
 
 	//モデル
 // ********************************************************************

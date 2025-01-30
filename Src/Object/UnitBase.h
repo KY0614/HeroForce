@@ -150,8 +150,8 @@ public:
 	virtual void SetSpeed(const float percent);
 	void SetHpMax(const int hp);
 
-	//パラメータ読み込み
-	void ParamLoad();
+
+	virtual void SetMoveSpeed(const float _speed);
 
 protected:
 
@@ -204,7 +204,7 @@ protected:
 	void CntDown(float& _count);
 
 	//パラメータ読み込み
-	void ParamLoad(CharacterParamData::UNIT_TYPE type);
+	virtual void ParamLoad(CharacterParamData::UNIT_TYPE type);
 
 };
 
