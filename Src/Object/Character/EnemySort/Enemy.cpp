@@ -62,7 +62,6 @@ void Enemy::Init(void)
 	colStageCnt_ = 0.0f;
 	startCnt_ = 0.0f;
 	targetPos_ = preTargetPos_ = AsoUtility::VECTOR_ZERO;
-	fadeCnt_ = TIME_FADE;
 	ChangeSearchState(SEARCH_STATE::CHICKEN_SEARCH);
 
 	//攻撃情報の初期化
@@ -96,9 +95,6 @@ void Enemy::Update(void)
 	//やられているなら何もしない
 	if (!IsAlive()) 
 	{
-		//フェードカウント
-		if(!IsEndFade())CntDown(fadeCnt_);
-
 		//やられたら死亡アニメーション
 		ResetAnim(ANIM::DEATH, changeSpeedAnim_[ANIM::DEATH]);
 		return;
@@ -462,22 +458,8 @@ void Enemy::Draw(void)
 
 #endif // DEBUG_ENEMY
 
-	if (IsAlive() || anim_ == ANIM::DEATH && animTotalTime_ >= stepAnim_ && !IsEndFade())
+	if (IsAlive() || anim_ == ANIM::DEATH && animTotalTime_ >= stepAnim_)
 	{
-		if (!IsAlive() && !IsEndFade())
-		{
-			// 時間による色の線形補間
-			float diff = TIME_FADE - fadeCnt_;
-			auto c = AsoUtility::Lerp(FADE_C_FROM, FADE_C_TO, (diff / TIME_FADE));
-			// モデルのマテリアルを取得
-			int num = MV1GetMaterialNum(trans_.modelId);
-			for (int i = 0; i < num; i++)
-			{
-				// モデルのディフューズカラーを変更
-				MV1SetMaterialDifColor(trans_.modelId, i, c);
-			}
-		}
-
 		//敵モデルの描画
 		MV1DrawModel(trans_.modelId);
 

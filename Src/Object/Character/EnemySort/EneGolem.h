@@ -9,11 +9,10 @@ public:
 	//定数(キャラ固有)
 	//****************************************************************
 
-	//TODO:ゴーレムのテクスチャパスを確認すること
-
 	//アニメーション番号(キャラ固有)
 	static constexpr int ANIM_IDLE = 1;		//待機アニメーション
 	static constexpr int ANIM_WALK = 2;		//歩きアニメーション
+	static constexpr int ANIM_KNOCK = 12;	//倒れアニメーション
 	
 	static constexpr int ANIM_PUNCH = 6;		//殴りアニメーション(スキル１)
 	static constexpr int ANIM_MOWDOWN = 8;		//薙ぎ払いアニメーション(スキル２)
@@ -34,6 +33,7 @@ public:
 	//アニメーション速度
 	static constexpr float SPEED_ANIM_IDLE = 60.0f;			//待機アニメーション速度
 	static constexpr float SPEED_ANIM_WALK = 60.0f;			//歩きアニメーション速度
+	static constexpr float SPEED_ANIM_KNOCK = 60.0f;		//倒れアニメーション速度
 	static constexpr float SPEED_ANIM_PUNCH = 60.0f;		//パンチアニメーション速度
 	static constexpr float SPEED_ANIM_PRE_PUNCH = 60.0f;	//パンチ前アニメーション速度
 	static constexpr float SPEED_ANIM_MOWDOWN = 60.0f;		//薙ぎ払いアニメーション速度

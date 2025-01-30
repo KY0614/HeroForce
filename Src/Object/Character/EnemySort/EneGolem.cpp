@@ -44,6 +44,7 @@ void EneGolem::InitAnim(void)
 	animNum_.emplace(ANIM::IDLE, EneGolem::ANIM_IDLE);
 	animNum_.emplace(ANIM::WALK, EneGolem::ANIM_WALK);
 	animNum_.emplace(ANIM::RUN, EneGolem::ANIM_WALK);
+	animNum_.emplace(ANIM::DEATH, EneGolem::ANIM_KNOCK);
 	animNum_.emplace(ANIM::SKILL_1, ANIM_PUNCH);
 	animNum_.emplace(ANIM::SKILL_2, ANIM_MOWDOWN);
 	animNum_.emplace(ANIM::SKILL_3, ANIM_SHOUT);
@@ -58,6 +59,7 @@ void EneGolem::InitAnim(void)
 	changeSpeedAnim_.emplace(ANIM::IDLE, SPEED_ANIM_IDLE);
 	changeSpeedAnim_.emplace(ANIM::WALK, SPEED_ANIM_WALK);
 	changeSpeedAnim_.emplace(ANIM::RUN, SPEED_ANIM_WALK);
+	changeSpeedAnim_.emplace(ANIM::DEATH, SPEED_ANIM_KNOCK);
 	changeSpeedAnim_.emplace(ANIM::SKILL_1, SPEED_ANIM_PUNCH);
 	changeSpeedAnim_.emplace(ANIM::SKILL_2, SPEED_ANIM_MOWDOWN);
 	changeSpeedAnim_.emplace(ANIM::SKILL_3, SPEED_ANIM_SHOUT);

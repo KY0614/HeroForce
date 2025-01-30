@@ -40,8 +40,7 @@ void EnemyManager::Update(void)
 	{
 		//€–S”»’è
 		if (!activeEnemys_[i]->IsAlive() 
-			&& activeEnemys_[i]->IsFinishAnim(Enemy::ANIM::DEATH) 
-			&& activeEnemys_[i]->IsEndFade())
+			&& activeEnemys_[i]->IsFinishAnim(Enemy::ANIM::DEATH))
 		{
 
 			//“Gíœ

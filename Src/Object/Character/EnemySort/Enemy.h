@@ -40,12 +40,6 @@ public:
 
 	static constexpr float COL_RADIUS = 50.0f;			//敵生成時の距離用
 
-	//フェード
-	static constexpr float TIME_FADE = 4.0f;							//フェード時間
-	static constexpr COLOR_F FADE_C_FROM = { 1.0f, 1.0f, 1.0f, 1.0f };	//フェード開始色
-	static constexpr COLOR_F FADE_C_TO = { 0.2f, 0.2f, 0.2f, 0.0f };	//フェード終了色
-
-
 	//****************************************************************
 	//列挙型
 	//****************************************************************
@@ -171,9 +165,6 @@ public:
 	//ステージに当たったら距離をとる
 	void KeepCollStageDistance(void);
 
-	//フェードが終わったか
-	bool IsEndFade(void) { return fadeCnt_ < 0.0f; }
-
 protected:
 
 	//****************************************************************
@@ -232,8 +223,6 @@ protected:
 	float colStageCnt_;	//ステージ接触補完用カウンタ
 
 	float startCnt_;	//スタート補完用カウンタ
-
-	float fadeCnt_;		//フェード用カウンタ
 
 	float exp_;			//経験値
 
