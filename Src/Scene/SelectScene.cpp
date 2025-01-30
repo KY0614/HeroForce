@@ -320,6 +320,11 @@ void SelectScene::MaxUpdate(void)
 void SelectScene::DisplayDraw(void)
 {
 	images_[0]->Draw();
+
+	for (int i = 0; i < SceneManager::GetInstance().GetActiveNum(); i++)
+	{
+		DrawFormatString(0, 0, 0x333333, "%i", i);
+	}
 }
 
 void SelectScene::NumberDraw(void)
@@ -353,6 +358,10 @@ void SelectScene::RoleDraw(void)
 	{
 		players_[i]->Draw();
 	}
+
+	int i = SceneManager::GetInstance().GetNowWindow();
+	DrawFormatString(0, 0, 0x333333, "%i", i);
+
 }
 
 void SelectScene::MaxDraw(void)
