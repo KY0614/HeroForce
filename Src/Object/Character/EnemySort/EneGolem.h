@@ -81,8 +81,10 @@ public:
 
 	//スキルの警告判定用相対座標
 	static constexpr VECTOR SKILL_ONE_ALERT = { 0.0f,0.0f,210.0f };	//スキル１の警告判定用相対座標
+	//スキルエフェクト
+	static constexpr float SKILL_ONE_EFF_SIZE = 10.0f;				//スキル１エフェクトの大きさ
 
-	
+
 	//スキルの当たり判定半径
 	static constexpr float SKILL_TWO_COL_RADIUS = 50.0f;	//スキル２の当たり判定半径
 	//スキルの攻撃力
@@ -122,12 +124,14 @@ public:
 
 	//スキル３の効果範囲
 	static constexpr float SKILL_THREE_FALL_RADIUS = 500.0f;	//スキル３の隕石の落ちる範囲の半径
-
 	//攻撃生成間隔
 	static constexpr float SKILL_THREE_DELAY = 0.5f;			//スキル３の攻撃生成間隔
-
 	//攻撃回数
 	static constexpr int SKILL_THREE_MAX_CNT = 5;				//スキル３の攻撃回数
+	//スキルエフェクト
+	static constexpr float SKILL_THREE_SHOUT_EFF_SIZE = 10.0f;	//叫びエフェクトの大きさ
+	static constexpr float SKILL_THREE_ATK_EFF_SIZE = 10.0f;	//叫びの攻撃エフェクトの大きさ
+
 
 	//コンストラクタ
 	EneGolem(const VECTOR& _spawnPos);

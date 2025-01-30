@@ -112,7 +112,7 @@ void GameScene::Update(void)
 			if(fazeCnt_ >LAST_FAZE)SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
 
 			//敵の入れ替え
-			enmMng_->ProcessChangePhase(3);
+			enmMng_->ProcessChangePhase(fazeCnt_);
 
 			//フェーズリザルトが終了したので明転及びリザルトリセット・タイマー初期化・BGMの再生
 			fader_->SetFade(Fader::STATE::FADE_IN);

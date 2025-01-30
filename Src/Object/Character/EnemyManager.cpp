@@ -14,13 +14,10 @@
 void EnemyManager::Init(void)
 {
 	activeNum_ = 0;
-	for (int i = 0; i < PHASE_ONE_INIT_CREATE_ENEMY; i++)
-	{
-		//“G‚Ì‰Šú¶¬
-		CreateEnemy();
-	}
 
 	createIntCnt_ = 0.0f;
+
+	ProcessChangePhase(1);
 }
 
 void EnemyManager::Update(void)
@@ -42,8 +39,11 @@ void EnemyManager::Update(void)
 	for (int i = 0; i < activeNum_; i++)
 	{
 		//€–S”»’è
-		if (!activeEnemys_[i]->IsAlive())
+		if (!activeEnemys_[i]->IsAlive() 
+			&& activeEnemys_[i]->IsFinishAnim(Enemy::ANIM::DEATH) 
+			&& activeEnemys_[i]->IsEndFade())
 		{
+
 			//“Gíœ
 			DeathEnemy(i);
 			break;
@@ -305,4 +305,4 @@ void EnemyManager::ProcessChangePhase(const int _phase)
 		//“G‚Ì‰Šú¶¬
 		CreateEnemy();
 	}
-}
+ }

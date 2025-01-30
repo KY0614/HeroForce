@@ -25,8 +25,7 @@ void EneArcher::SetParam(void)
 
 	//モデル読み込み
 	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_ARCHER));
-	arrowMdlId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ARROW);	//※TODO矢のモデル
-	//arrowMdlId_ = 0;
+	arrowMdlId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ARROW);	//矢のモデル
 
 	//※個々で設定する
 	trans_.scl = { CHARACTER_SCALE,CHARACTER_SCALE,CHARACTER_SCALE };

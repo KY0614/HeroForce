@@ -12,6 +12,15 @@ Enemy::Enemy(const VECTOR& _spawnPos)
 void Enemy::Destroy(void)
 {
 	animNum_.clear();
+	stateChanges_.clear();
+	changeSpeedAnim_.clear();
+	skills_.clear();
+	nowSkill_.clear();
+	alertSkills_.clear();
+	changeSkill_.clear();
+	skillPreAnims_.clear();
+	skillAnims_.clear();
+	SearchStateInfo_.clear();
 
 	lastAtk_ = nullptr;
 	delete lastAtk_;
@@ -53,6 +62,7 @@ void Enemy::Init(void)
 	colStageCnt_ = 0.0f;
 	startCnt_ = 0.0f;
 	targetPos_ = preTargetPos_ = AsoUtility::VECTOR_ZERO;
+	fadeCnt_ = TIME_FADE;
 	ChangeSearchState(SEARCH_STATE::CHICKEN_SEARCH);
 
 	//攻撃情報の初期化
@@ -86,6 +96,9 @@ void Enemy::Update(void)
 	//やられているなら何もしない
 	if (!IsAlive()) 
 	{
+		//フェードカウント
+		if(!IsEndFade())CntDown(fadeCnt_);
+
 		//やられたら死亡アニメーション
 		ResetAnim(ANIM::DEATH, changeSpeedAnim_[ANIM::DEATH]);
 		return;
@@ -99,6 +112,20 @@ void Enemy::Update(void)
 
 	//モデル制御
 	trans_.Update();
+}
+
+bool Enemy::IsFinishAnim(const ANIM _anim)
+{
+	//引数が指定されていない　又は　指定されたアニメーション番号と現在のアニメーションが同じ
+	if (_anim == ANIM::NONE || anim_ == _anim)
+	{
+		if (stepAnim_ > animTotalTime_)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void Enemy::ChangeSearchState(const SEARCH_STATE _searchState)
@@ -435,16 +462,30 @@ void Enemy::Draw(void)
 
 #endif // DEBUG_ENEMY
 
-	if (IsAlive() || anim_ == ANIM::DEATH && animTotalTime_ >= stepAnim_)
+	if (IsAlive() || anim_ == ANIM::DEATH && animTotalTime_ >= stepAnim_ && !IsEndFade())
 	{
+		if (!IsAlive() && !IsEndFade())
+		{
+			// 時間による色の線形補間
+			float diff = TIME_FADE - fadeCnt_;
+			auto c = AsoUtility::Lerp(FADE_C_FROM, FADE_C_TO, (diff / TIME_FADE));
+			// モデルのマテリアルを取得
+			int num = MV1GetMaterialNum(trans_.modelId);
+			for (int i = 0; i < num; i++)
+			{
+				// モデルのディフューズカラーを変更
+				MV1SetMaterialDifColor(trans_.modelId, i, c);
+			}
+		}
+
 		//敵モデルの描画
 		MV1DrawModel(trans_.modelId);
 
 		for (auto& nowSkill : nowSkill_)
 		{
 			//攻撃の描画
-			//if (nowSkill.IsAttack()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
-			//else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
+			if (nowSkill.IsAttack()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
+			else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
 		}
 
 		//攻撃予兆の描画

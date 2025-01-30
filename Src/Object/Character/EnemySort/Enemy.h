@@ -40,6 +40,12 @@ public:
 
 	static constexpr float COL_RADIUS = 50.0f;			//敵生成時の距離用
 
+	//フェード
+	static constexpr float TIME_FADE = 4.0f;							//フェード時間
+	static constexpr COLOR_F FADE_C_FROM = { 1.0f, 1.0f, 1.0f, 1.0f };	//フェード開始色
+	static constexpr COLOR_F FADE_C_TO = { 0.2f, 0.2f, 0.2f, 0.0f };	//フェード終了色
+
+
 	//****************************************************************
 	//列挙型
 	//****************************************************************
@@ -113,6 +119,9 @@ public:
 	//経験値を返す
 	const float GetExp(void)const { return exp_; }
 
+	//現在状態を返す
+	const STATE GetState(void) { return state_; }
+
 	//攻撃情報を設定
 	void SetAtk(const ATK& _atk) { atk_ = _atk; }
 
@@ -120,6 +129,13 @@ public:
 
 	//探索状態を返す
 	SEARCH_STATE GetSearchState(void) { return searchState_; }
+
+	/// <summary>
+	/// アニメーションが終わったかを返す
+	/// </summary>
+	/// <param name="_anim">アニメーション番号(指定しなかったらアニメーションが終わってるかのみで判断)</param>
+	/// <returns>(指定された)アニメーションが終わっているか</returns>
+	bool IsFinishAnim(const ANIM _anim = ANIM::NONE);
 
 	/// <summary>
 	/// 探索状態を変更
@@ -146,9 +162,6 @@ public:
 	/// <param name="_stunPow">スタン攻撃力</param>
 	void Damage(const int _damage, const int _stunPow);
 
-	//現在状態を返す
-	const STATE GetState(void) { return state_; }
-
 	/// <summary>
 	/// 状態遷移
 	/// </summary>
@@ -157,6 +170,9 @@ public:
 
 	//ステージに当たったら距離をとる
 	void KeepCollStageDistance(void);
+
+	//フェードが終わったか
+	bool IsEndFade(void) { return fadeCnt_ < 0.0f; }
 
 protected:
 
@@ -213,9 +229,11 @@ protected:
 	//int stunDef_;		//気絶防御値
 
 	bool isColStage_;	//ステージに当たったか(true:当たった)
-	float colStageCnt_;		//ステージ接触補完用カウンタ
+	float colStageCnt_;	//ステージ接触補完用カウンタ
 
-	float startCnt_;		//スタート補完用カウンタ
+	float startCnt_;	//スタート補完用カウンタ
+
+	float fadeCnt_;		//フェード用カウンタ
 
 	float exp_;			//経験値
 

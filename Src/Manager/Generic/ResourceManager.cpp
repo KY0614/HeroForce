@@ -148,8 +148,8 @@ void ResourceManager::InitGame(void)
 	//敵関連のエフェクト
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "EnemyEffect/StateDownSpell.efkefc");
 	resourcesMap_.emplace(SRC::STATE_DOWN_EFE, res);
-	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "EnemyEffect/BossPunch.efkproj");
-	resourcesMap_.emplace(SRC::BOSS_BLAST_EFE, res);
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "EnemyEffect/BossPunch.efkefc");
+	resourcesMap_.emplace(SRC::BOSS_PUNCH_EFE, res);
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "EnemyEffect/BossShout.efkefc");
 	resourcesMap_.emplace(SRC::BOSS_SHOUT_EFE, res);
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "EnemyEffect/BossShoutAtk.efkefc");

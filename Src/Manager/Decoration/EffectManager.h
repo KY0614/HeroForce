@@ -25,7 +25,7 @@ public:
 		NONE,
 
 		//Enemy‚ªŽg—p
-		BOSS_BLAST,
+		BOSS_PUNCH,
 		BOSS_SHOUT,
 		BOSS_SHOUT_ATK,
 		STATE_DOWN,
