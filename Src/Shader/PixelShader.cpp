@@ -1,5 +1,3 @@
-#include<DxLib.h>
-#include<string>
 #include "PixelShader.h"
 
 PixelShader* PixelShader::instance_ = nullptr;
@@ -137,7 +135,10 @@ void PixelShader::DrawExtendGraphToShader(const Vector2& pos, const Vector2& siz
 	SetUsePixelShader(ps);
 
 	//シェーダーにテクスチャを転送
-	if (handle != -1)SetUseTextureToShader(0, handle);
+	if (handle != -1)
+	{
+		SetUseTextureToShader(0, handle);
+	}
 
 	//シェーダー用の定数バッファ
 	auto& cBuf = psConstBuf_;
@@ -279,8 +280,12 @@ void PixelShader::InitPS()
 	loadPS(PS_TYPE::COL_TX, "ColorTex.cso");
 	loadPS(PS_TYPE::YELLOW_BLINK, "YellowBlink.cso");
 
+	//fileName = "x64/Debug/YellowBlink.cso";
+	//psMap_.emplace(std::make_pair(PS_TYPE::YELLOW_BLINK, LoadPixelShader(fileName.c_str())));
+
+
 	//fileName = "x64/Debug/ColorTex.cso";
-	psMap_.emplace(std::make_pair(PS_TYPE::COL_TX, LoadPixelShader(fileName.c_str())));
+	//psMap_.emplace(std::make_pair(PS_TYPE::COL_TX, LoadPixelShader(fileName.c_str())));
 }
 
 const int& PixelShader::SearchPS(const PS_TYPE& ps) const

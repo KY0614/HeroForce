@@ -2,7 +2,6 @@
 #include"../Object/UnitBase.h"
 #include"../Object/Character/PlayableChara/PlayerBase.h"
 #include"../Object/Character/EnemySort/Enemy.h"
-#include"../Object/Stage/StageManager.h"
 #include "Collision.h"
 
 Collision* Collision::instance_ = nullptr;
@@ -47,13 +46,14 @@ const bool Collision::Search(const VECTOR _myPos, const VECTOR _targetPos, const
     return _rangeRadius - vecSize > 0;
 }
 
+
 const bool Collision::IsHitUnitStageObject(const int& _modelId, const VECTOR& _pos, const float& _radius) const
 {
     bool ret = false;
 
     //Õ“Ë”»’è
     auto info = MV1CollCheck_Sphere(_modelId, -1, _pos, _radius, -1);
-    if (info.HitNum > 0) 
+    if (info.HitNum > 0)
     {
         ret = true;
     }

@@ -1,7 +1,7 @@
 #pragma once
-#include "../Application.h"
-#include "../Manager/Generic/InputManager.h"
-#include "../Common/Vector2.h"
+#include "../../Application.h"
+#include "../../Manager/Generic/InputManager.h"
+#include "../../Common/Vector2.h"
 
 class Carsor
 {

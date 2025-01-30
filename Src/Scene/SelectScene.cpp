@@ -2,6 +2,7 @@
 #include <math.h>
 #include<algorithm>
 #include "../Application.h"
+#include "../Manager/Decoration/SoundManager.h"
 #include "../Manager/Generic/InputManager.h"
 #include "../Manager/Generic/ResourceManager.h"
 #include "../Manager/Generic/Camera.h"
@@ -60,6 +61,15 @@ SelectScene::~SelectScene(void)
 
 void SelectScene::Init(void)
 {
+	auto& snd = SoundManager::GetInstance();
+
+	//音楽読み込み
+	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::TITLE,
+		res.Load(ResourceManager::SRC::TITLE_BGM).handleId_);
+
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::SCENE_CHANGE_1,
+		res.Load(ResourceManager::SRC::SCENE_CHANGE_SE1).handleId_);
+
 	//スカイドーム
 	skyDome_ = std::make_unique<SkyDome>();
 	skyDome_->Init();

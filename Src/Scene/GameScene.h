@@ -1,7 +1,6 @@
 #pragma once
 #include "SceneBase.h"
 #include"../Common/Fader.h"
-#include"../Object/Stage/StageManager.h"
 #include<vector>
 #include<memory>
 
@@ -26,6 +25,8 @@ public:
 	//定数
 	static constexpr int PHASE_TIME = 180;	//フェーズ切り替えの時間（仮）
 
+	static constexpr int LAST_FAZE = 3;
+
 
 	// コンストラクタ
 	GameScene(void);
@@ -38,6 +39,8 @@ public:
 	void Draw(void) override;
 	void Release(void) override;
 
+	
+
 private:
 
 	//ステージ
@@ -48,10 +51,10 @@ private:
 
 	//フェーダー
 	std::unique_ptr<Fader>fader_;
-
 	//ゲームシーンのフェーズ遷移中判定
 	bool isPhaseChanging_;
 	int phaseCnt_;
+
 
 	//フェーズリザルト
 	std::unique_ptr<FazeResult>fazeResult_;
@@ -65,6 +68,18 @@ private:
 	//敵
 	std::unique_ptr<EnemyManager>enmMng_;
 
+	//倒した敵の総数
+	int dunkEnmCnt_;
+	//フェーズ数カウント
+	int fazeCnt_;
+
+	//フェーズ数通知関連
+	bool isInformFaze_;		//通知中かのtrue/false
+	int informCnt_;			//カウント
+	std::string fazeStr_;	//ファーズ数の文章
+	int missionImg_[2];		//ミッション画像
+
+
 	//チキン
 	std::unique_ptr<ChickenManager> chicken_;
 
@@ -72,13 +87,15 @@ private:
 
 	std::unique_ptr<UnitPositionLoad> unitLoad_;
 
+	//音関連初期化
+	void SoundInit(void);
 
 	//当たり判定（他項目に干渉するもののみ）
 	void Collision(void);
 	void CollisionEnemy(void);	//敵関連の当たり判定
 	void CollisionPlayer(void);	//プレイヤー関連の当たり判定
+	void CollisionChicken(void);//ニワトリあたり判定
 	void CollisionPlayerCPU(PlayerBase& _player,const VECTOR& _pPos);	//プレイヤー(CPU)関連の当たり判定
-	//void CollisionStageUnit();
 
 	//フェード
 	void Fade(void);
@@ -92,6 +109,10 @@ private:
 
 	//強化要素反映
 	void LevelUpReflection();
+
+	//リザルト
+	void FazeResultUpdate(void);
+	void InformFazeNum(void);
 
 	//ゲームオーバー判定
 	bool IsGameOver(void);

@@ -1,8 +1,16 @@
 #include"Enemy.h"
 #include "EneBrig.h"
 
+EneBrig::EneBrig(const VECTOR& _spawnPos) : Enemy(_spawnPos)
+{
+	trans_.pos = _spawnPos;
+}
+
 void EneBrig::SetParam(void)
 {
+	//攻撃警告
+	alertSkills_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneBrig::AlertSkill_One, this));
+
 	//攻撃の遷移
 	changeSkill_.emplace(ATK_ACT::SKILL_ONE, std::bind(&EneBrig::Skill_One, this));
 
@@ -16,7 +24,9 @@ void EneBrig::SetParam(void)
 	hp_ = HP_MAX;
 	atkPow_ = ATK_POW;
 	def_ = DEF;
+	exp_ = EXP;
 	walkSpeed_ = WALK_SPEED;
+	runSpeed_ = RUN_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
 	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
@@ -30,9 +40,11 @@ void EneBrig::InitAnim(void)
 
 	//固有アニメーション初期化
 	animNum_.emplace(ANIM::SKILL_1, ANIM_SKILL_ONE);
+	animNum_.emplace(ANIM::UNIQUE_1, ANIM_PRE_SWING);
 
 	//アニメーション速度設定
 	changeSpeedAnim_.emplace(ANIM::SKILL_1, SPEED_ANIM);
+	changeSpeedAnim_.emplace(ANIM::UNIQUE_1, SPEED_ANIM);
 
 	//アニメーションリセット
 	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
@@ -44,35 +56,61 @@ void EneBrig::InitSkill(void)
 	skills_.emplace(ATK_ACT::SKILL_ONE, SKILL_ONE);
 
 	//ここにスキルの数分アニメーションを格納させる
+	//----------------------------------------------
+
+	//予備動作アニメーション
+	skillPreAnims_.emplace_back(ANIM::UNIQUE_1);
+
+	//動作アニメーション
 	skillAnims_.emplace_back(ANIM::SKILL_1);
+
 
 	//初期スキルを設定しておく
 	RandSkill();
 }
 
-void EneBrig::Attack(void)
+void EneBrig::AlertSkill_One(void)
 {
-	//対応スキル発動
-	processSkill_();
+	//敵の前方
+	VECTOR pos = trans_.GetForward();
+
+	//攻撃範囲
+	pos = VScale(pos, SKILL_ONE_COL_RADIUS);
+
+	//座標合わせ
+	pos = VAdd(trans_.pos, pos);
+
+	//範囲作成
+	CreateAlert(pos, SKILL_ONE_COL_RADIUS * 2, SKILL_ONE_COL_RADIUS * 2);
 }
 
 void EneBrig::Skill_One(void)
 {
-	//前方向
-	VECTOR dir = trans_.quaRot.GetForward();
+	//終了判定
+	if (lastAtk_->IsFinishMotion())
+	{
+		//攻撃終了
+		isEndAllAtk_ = true;
+
+		//処理終了
+		return;
+	}
 
 	for (auto& nowSkill : nowSkill_)
 	{
 		//座標の設定
-		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_ + radius_));
+		nowSkill.pos_ = MV1GetFramePosition(trans_.modelId, FRAME_KNIFE);
 	}
 }
 
-void EneBrig::ChangeStateAlert(void)
+void EneBrig::FinishAnim(void)
 {
-	//更新処理の中身初期化
-	Enemy::ChangeStateAlert();
+	//共通アニメーションの終了処理
+	Enemy::FinishAnim();
 
-	//待機アニメーション
-	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
+	switch (anim_)
+	{
+	case UnitBase::ANIM::UNIQUE_1:
+		break;
+	}
 }

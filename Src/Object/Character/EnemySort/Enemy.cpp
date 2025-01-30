@@ -4,9 +4,17 @@
 #include"../../../Utility/AsoUtility.h"
 #include "Enemy.h"
 
+Enemy::Enemy(const VECTOR& _spawnPos)
+{
+	trans_.pos = _spawnPos;
+}
+
 void Enemy::Destroy(void)
 {
 	animNum_.clear();
+
+	lastAtk_ = nullptr;
+	delete lastAtk_;
 }
 
 void Enemy::Init(void)
@@ -14,8 +22,13 @@ void Enemy::Init(void)
 	//状態管理
 	stateChanges_.emplace(STATE::NORMAL, std::bind(&Enemy::ChangeStateNormal, this));
 	stateChanges_.emplace(STATE::ALERT, std::bind(&Enemy::ChangeStateAlert, this));
-	stateChanges_.emplace(STATE::ATTACK, std::bind(&Enemy::ChangeStateAttack, this));
+	stateChanges_.emplace(STATE::ATTACK, std::bind(&Enemy::ChangeStateAtk, this));
 	stateChanges_.emplace(STATE::BREAK, std::bind(&Enemy::ChangeStateBreak, this));
+
+	//探索状態管理
+	SearchStateInfo_.emplace(SEARCH_STATE::NOT_FOUND, std::bind(&Enemy::SearchMoveInfo, this));
+	SearchStateInfo_.emplace(SEARCH_STATE::CHICKEN_FOUND, std::bind(&Enemy::FoundMoveInfo, this));
+	SearchStateInfo_.emplace(SEARCH_STATE::PLAYER_FOUND, std::bind(&Enemy::FoundMoveInfo, this));
 
 	//キャラ固有設定
 	SetParam();
@@ -24,13 +37,18 @@ void Enemy::Init(void)
 	InitAnim();
 
 	//共通の変数の初期化
-	trans_.pos = AsoUtility::VECTOR_ZERO;
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::AngleAxis(AsoUtility::Deg2RadF(180.0f), AsoUtility::AXIS_Y);
 	ChangeState(STATE::NORMAL);
 	alertCnt_ = 0.0f;
 	breakCnt_ = 0.0f;
 	stunDef_ = 0;
+	atkAct_ = ATK_ACT::MAX;
+	isEndAlert_ = false;
+	isEndAllAtkSign_ = false;
+	isEndAllAtk_ = false;
+	isMove_ = false;
+	ChangeSearchState(SEARCH_STATE::NOT_FOUND);
 
 	//攻撃情報の初期化
 	InitSkill();
@@ -41,20 +59,20 @@ void Enemy::Init(void)
 
 void Enemy::Update(void)
 {
+	//移動前座標
+	prePos_ = trans_.pos;
+
 	//アニメーション
 	Anim();
-
-	//座標バックアップ
-	prePos_ = trans_.pos;
 
 #ifdef DEBUG_ENEMY
 	//入力用
 	InputManager& ins = InputManager::GetInstance();
 
-	if (ins.IsNew(KEY_INPUT_W)) { targetPos_.z+= 3.0f; }
-	if (ins.IsNew(KEY_INPUT_D)) { targetPos_.x+= 3.0f; }
-	if (ins.IsNew(KEY_INPUT_S)) { targetPos_.z-= 3.0f; }
-	if (ins.IsNew(KEY_INPUT_A)) { targetPos_.x-= 3.0f; }
+	//if (ins.IsNew(KEY_INPUT_W)) { targetPos_.z+= 3.0f; }
+	//if (ins.IsNew(KEY_INPUT_D)) { targetPos_.x+= 3.0f; }
+	//if (ins.IsNew(KEY_INPUT_S)) { targetPos_.z-= 3.0f; }
+	//if (ins.IsNew(KEY_INPUT_A)) { targetPos_.x-= 3.0f; }
 
 	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_Q)) { Damage(1, 10); }
 #endif // DEBUG_ENEMY
@@ -73,13 +91,18 @@ void Enemy::Update(void)
 	trans_.Update();
 }
 
-void Enemy::LookTargetVec(void)
+void Enemy::ChangeSearchState(const SEARCH_STATE _searchState)
 {
-	//方向ベクトル取得
-	VECTOR targetVec = GetMovePow2Target();
+	//状態遷移
+	searchState_ = _searchState;
 
-	//向き回転
-	trans_.quaRot = trans_.quaRot.LookRotation(targetVec);
+	//状態による情報更新
+	SearchStateInfo_[searchState_]();
+}
+
+void Enemy::SetTargetPos(const VECTOR _targetPos)
+{
+	targetPos_ = _targetPos;
 }
 
 void Enemy::Damage(const int _damage, const int _stunPow)
@@ -117,18 +140,29 @@ void Enemy::ChangeStateAlert(void)
 	//更新処理の中身初期化
 	stateUpdate_ = std::bind(&Enemy::UpdateAlert, this);
 
+	//予兆範囲を初期化
+	ResetAlertVertex();
+
 	//向きを改めて設定
-	trans_.quaRot = trans_.quaRot.LookRotation(GetMovePow2Target());
+	trans_.quaRot = trans_.quaRot.LookRotation(GetMoveVec(trans_.pos,targetPos_));
+
+	//ランダムで攻撃情報を生成
+	RandSkill();
+
+	//予備動作アニメーション
+	ResetAnim(nowSkillPreAnim_, changeSpeedAnim_[nowSkillPreAnim_]);
 
 	//警告カウンタ初期化
 	alertCnt_ = 0.0f;
-
 }
 
-void Enemy::ChangeStateAttack(void)
+void Enemy::ChangeStateAtk(void)
 {
 	//更新処理の中身初期化
 	stateUpdate_ = std::bind(&Enemy::UpdateAtk, this);
+
+	//攻撃生成
+	lastAtk_ = &createSkill_();
 }
 
 void Enemy::ChangeStateBreak(void)
@@ -159,28 +193,56 @@ void Enemy::InitAnim()
 	changeSpeedAnim_.emplace(ANIM::ENTRY, SPEED_ANIM);
 }
 
+void Enemy::Alert(void)
+{
+	//警告
+	alertNowSkill_();
+
+	//クールダウンカウンタ
+	CntUp(alertCnt_);
+
+	if (!IsAlertTime())isEndAlert_ = true;
+}
+
+void Enemy::Attack(void)
+{
+	//対応スキル発動
+	processSkill_();
+
+	//各攻撃のカウント
+	for (auto& nowSkill : nowSkill_)
+	{
+		//攻撃のカウント
+		CntUp(nowSkill.cnt_);
+	}
+}
+
 void Enemy::UpdateNml(void)
 {
 	//**********************************************************
 	//終了処理
 	//**********************************************************
 
-	/*ゲームシーンにあります*/
+	/*誰かが攻撃範囲に入ったら状態を遷移します*/
+	
+	/*処理はゲームシーンにあります*/
 
 	//**********************************************************
 	//動作処理
 	//**********************************************************
 
 	//待機アニメーション
-	if (moveSpeed_ == 0.0)ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
+	if (moveSpeed_ == 0.0)
+		ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
 	//歩きアニメーション
-	else if (moveSpeed_ > 0.0f)ResetAnim(ANIM::WALK, changeSpeedAnim_[ANIM::WALK]);
-
-	//移動量の初期化
-	moveSpeed_ = 0.0f;
+	else if (moveSpeed_ > 0.0f && searchState_ == SEARCH_STATE::NOT_FOUND)
+		ResetAnim(ANIM::WALK, changeSpeedAnim_[ANIM::WALK]);
+	//走りアニメーション
+	else if (moveSpeed_ > 0.0f && searchState_ != SEARCH_STATE::NOT_FOUND)
+		ResetAnim(ANIM::RUN, changeSpeedAnim_[ANIM::RUN]);
 	
 	//索敵
-	if (!isMove_)return;
+	//if (!isMove_)return;		※のちに消すかも
 
 	//移動処理
 	Move();
@@ -193,10 +255,14 @@ void Enemy::UpdateAlert(void)
 	//**********************************************************
 
 	//警告カウンタが終わったなら攻撃開始
-	if (!IsAlertTime())
-	{
+	if (isEndAlert_)
+	{		
+		//警告終了判定の初期化
+		ResetAlertJudge();
+
 		//攻撃状態に遷移
 		ChangeState(STATE::ATTACK);
+
 		return;
 	}
 
@@ -204,22 +270,22 @@ void Enemy::UpdateAlert(void)
 	//動作処理
 	//**********************************************************
 
-	//クールダウンカウンタ
-	CntUp(alertCnt_);
-
-	//生成が終わってないなら生成する
-	if (nowSkill_.front().IsFinishMotion())
-	{
-		//ランダムで攻撃生成
-		RandSkill();
-	}
+	//警告
+	Alert();
 }
 
 void Enemy::UpdateAtk(void)
 {
+	//**********************************************************
+	//終了処理
+	//**********************************************************
+
 	//攻撃が終わっているなら状態遷移
-	if (nowSkill_.back().IsFinishMotion())
+	if (isEndAllAtk_)
 	{
+		//攻撃終了判定の初期化
+		ResetAtkJudge();
+
 		//休憩状態に遷移
 		ChangeState(STATE::BREAK);
 		return;
@@ -229,17 +295,11 @@ void Enemy::UpdateAtk(void)
 	//動作処理
 	//**********************************************************
 
-	//攻撃アニメーション
-	ResetAnim(nowSkillAnim_, changeSpeedAnim_[nowSkillAnim_]);
-
-	for (auto& nowSkill : nowSkill_)
-	{
-		//攻撃のカウンタ
-		CntUp(nowSkill.cnt_);
-	}
-
 	//攻撃処理
 	Attack();
+
+	//攻撃アニメーション
+	ResetAnim(nowSkillAnim_, changeSpeedAnim_[nowSkillAnim_]);
 }
 
 void Enemy::UpdateBreak(void)
@@ -267,9 +327,8 @@ void Enemy::UpdateBreak(void)
 	CntUp(breakCnt_);
 }
 
-void Enemy::Draw(void)
+void Enemy::DrawDebug(void)
 {
-#ifdef DEBUG_ENEMY
 	//デバッグ
 	DrawFormatString(0, Application::SCREEN_SIZE_Y - 16, 0xffffff, "EnemyHP = %d", hp_);
 	int statePos = Application::SCREEN_SIZE_Y - 32;
@@ -297,8 +356,27 @@ void Enemy::Draw(void)
 	DrawSphere3D(trans_.pos, searchRange_, 2, isMove_ ? 0xff0000 : 0xffffff, isMove_ ? 0xff0000 : 0xffffff, false);
 	//敵の索敵判定
 	DrawSphere3D(trans_.pos, atkStartRange_, 2, state_ == STATE::ALERT ? 0xff0000 : 0xffffff, state_ == STATE::ALERT ? 0x0000ff : 0xffffff, false);
-	//ターゲットの座標
-	DrawSphere3D(targetPos_, 3.0f, 10, 0x0000ff, 0x0000ff, true);
+}
+
+void Enemy::SearchMoveInfo(void)
+{
+	//移動速度更新
+	moveSpeed_ = walkSpeed_;
+}
+
+void Enemy::FoundMoveInfo(void)
+{
+	//移動速度更新
+	moveSpeed_ = runSpeed_;
+}
+
+void Enemy::Draw(void)
+{
+#ifdef DEBUG_ENEMY
+	
+	//デバッグ
+	//DrawDebug();
+
 #endif // DEBUG_ENEMY
 
 	//敵モデルの描画
@@ -310,12 +388,18 @@ void Enemy::Draw(void)
 		if (nowSkill.IsAttack()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
 		else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
 	}
+
+	//攻撃予兆の描画
+	if (state_ == STATE::ALERT)
+	{
+		DrawPolygon3D(alertVertex_, 2, DX_NONE_GRAPH, false);
+	}
 }
 
-const VECTOR Enemy::GetMovePow2Target(void)const
+const VECTOR Enemy::GetMoveVec(const VECTOR _start, const VECTOR _goal, const float _speed)
 {
-	//標的への方向ベクトルを取得						※TODO:targetPosはSceneGameからもらう
-	VECTOR targetVec = VSub(targetPos_, trans_.pos);
+	//標的への方向ベクトルを取得
+	VECTOR targetVec = VSub(_goal, _start);
 
 	//正規化
 	targetVec = VNorm(targetVec);
@@ -324,24 +408,66 @@ const VECTOR Enemy::GetMovePow2Target(void)const
 	targetVec = { targetVec.x,0.0f,targetVec.z };
 
 	//移動量を求める
-	VECTOR ret = VScale(targetVec, moveSpeed_);
+	VECTOR ret = VScale(targetVec, _speed);
 
 	return ret;
 }
 
 void Enemy::Move(void)
 {
-	//移動速度の更新
-	moveSpeed_ = walkSpeed_;
-
-	//方向ベクトル取得
-	VECTOR targetVec = GetMovePow2Target();
+	//移動ベクトル取得
+	VECTOR targetVec = GetMoveVec(trans_.pos, targetPos_, moveSpeed_);
 
 	//向き回転
 	trans_.quaRot = trans_.quaRot.LookRotation(targetVec);
 
 	//移動
 	trans_.pos = VAdd(trans_.pos, targetVec);
+
+	//移動量の初期化
+	moveSpeed_ = 0.0f;
+}
+
+Enemy::ATK& Enemy::CreateSkill(ATK_ACT _atkAct)
+{
+	//**********************************************************
+	//使い終わった攻撃がある場合
+	//**********************************************************
+
+	//使い終わった攻撃に上書き
+	for (auto& nowSkill : nowSkill_)
+	{
+		if (nowSkill.IsFinishMotion())
+		{
+			//スキル上書き
+			nowSkill = skills_[_atkAct];
+			
+			//カウンタの初期化
+			nowSkill.ResetCnt();
+
+			//ヒット判定の初期化
+			nowSkill.isHit_ = false;
+
+			//処理終了
+			return nowSkill;
+		}
+	}
+
+	//**********************************************************
+	//ない場合
+	//**********************************************************
+
+	//ランダムでとってきた攻撃の種類を今から発動するスキルに設定
+	nowSkill_.emplace_back(skills_[_atkAct]);
+
+	//カウンタの初期化
+	nowSkill_.back().ResetCnt();
+
+	//ヒット判定の初期化
+	nowSkill_.back().isHit_ = false;
+
+	//処理終了
+	return nowSkill_.back();
 }
 
 void Enemy::FinishAnim(void)
@@ -365,17 +491,33 @@ void Enemy::FinishAnim(void)
 	}
 }
 
-void Enemy::Skill_One(void)
+void Enemy::ResetAlertJudge(void)
 {
-	//前方向
-	VECTOR dir = trans_.quaRot.GetForward();
+	//終了判定初期化
+	isEndAlert_ = false;
+}
 
-	for (auto& nowSkill : nowSkill_)
+void Enemy::ResetAlertVertex(void)
+{
+	for (auto& ver : alertVertex_)
 	{
-		//座標の設定
-		nowSkill.pos_ = VAdd(colPos_, VScale(dir, nowSkill.radius_ + radius_));
+		ver.pos = AsoUtility::VECTOR_ZERO;
+		ver.u = 0.0f;
+		ver.v = 0.0f;
+		ver.norm = { 0.0f,0.0f,0.0f };
+		ver.dif = GetColorU8(0, 0, 0, 0);
+		ver.spc = GetColorU8(0, 0, 0, 0);
+		ver.su = 0;
+		ver.sv = 0;
 	}
 }
+
+void Enemy::ResetAtkJudge(void)
+{
+	//攻撃終了判定の初期化
+	isEndAllAtk_ = false;
+}
+
 void Enemy::RandSkill(void)
 {
 	//スキルの数
@@ -384,43 +526,71 @@ void Enemy::RandSkill(void)
 	//スキルの数分からランダムを取る
 	int rand = GetRand(size - 1);
 
-	//**********************************************************
-	//使い終わった攻撃がある場合
-	//**********************************************************
-	
-	//使い終わった攻撃に上書き
-	for (auto& nowSkill : nowSkill_)
+	//スキル
+	atkAct_ = static_cast<ATK_ACT>(rand);
+
+	//スキル生成準備
+	SetUpSkill(atkAct_);
+
+	//スキルに対応した予備動作アニメーションの記録
+	nowSkillPreAnim_ = skillPreAnims_[static_cast<int>(atkAct_)];
+
+	//スキルに対応したアニメーションの記録
+	nowSkillAnim_ = skillAnims_[static_cast<int>(atkAct_)];
+
+	//スキル生成
+	createSkill_ = std::bind(&Enemy::CreateSkill, this, atkAct_);
+}
+
+void Enemy::SetUpSkill(ATK_ACT _atkAct)
+{
+	//警告情報をセット
+	alertNowSkill_ = alertSkills_[_atkAct];
+
+	//攻撃情報をセット
+	processSkill_ = changeSkill_[_atkAct];
+}
+
+void Enemy::CreateAlert(const VECTOR& _pos, const float _widthX, const float _widthZ)
+{
+	//半径
+	float radX = _widthX / 2;
+	float radZ = _widthZ / 2;
+
+	alertVertex_[0].pos = { _pos.x + radX,0.0f,_pos.z + radZ };
+	alertVertex_[0].u = _widthX;
+	alertVertex_[0].v = 0.0f;
+
+	alertVertex_[1].pos = { _pos.x - radX,0.0f,_pos.z - radZ };
+	alertVertex_[1].u = 0.0f;
+	alertVertex_[1].v = _widthX;
+
+	alertVertex_[2].pos = { _pos.x - radX,0.0f,_pos.z + radZ };
+	alertVertex_[2].u = 0.0f;
+	alertVertex_[2].v = 0.0f;
+
+	alertVertex_[3].pos = { _pos.x + radX,0.0f,_pos.z + radZ };
+	alertVertex_[3].u = _widthX;
+	alertVertex_[3].v = 0.0f;
+
+	alertVertex_[4].pos = { _pos.x + radX,0.0f,_pos.z - radZ };
+	alertVertex_[4].u = _widthX;
+	alertVertex_[4].v = _widthZ;
+
+	alertVertex_[5].pos = { _pos.x - radX,0.0f,_pos.z - radZ };
+	alertVertex_[5].u = 0.0f;
+	alertVertex_[5].v = _widthZ;
+
+	for (auto& ver : alertVertex_)
 	{
-		if (nowSkill.IsFinishMotion())
-		{
-			//上書き
-			nowSkill = skills_[static_cast<ATK_ACT>(rand)];
-			nowSkillAnim_ = skillAnims_[rand];
-			processSkill_ = changeSkill_[static_cast<ATK_ACT>(rand)];
-			
-			//カウンタの初期化
-			nowSkill.ResetCnt();
-
-			//ヒット判定の初期化
-			nowSkill_.back().isHit_ = false;
-
-			//処理終了
-			return;
-		}
+		ver.pos = VSub(ver.pos, _pos);
+		ver.pos = Quaternion::PosAxis(trans_.quaRot, ver.pos);
+		ver.pos = VAdd(ver.pos, _pos);
+		
+		ver.norm = { 0.0f,0.0f,-1.0f };
+		ver.dif = GetColorU8(255, 0, 0, 100);
+		ver.spc = GetColorU8(0, 0, 0, 0);
+		ver.su = 0;
+		ver.sv = 0;
 	}
-
-	//**********************************************************
-	//ない場合
-	//**********************************************************
-
-	//ランダムでとってきた攻撃の種類を今から発動するスキルに設定
-	nowSkill_.emplace_back(skills_[static_cast<ATK_ACT>(rand)]);
-	nowSkillAnim_ = skillAnims_[rand];
-	processSkill_ = changeSkill_[static_cast<ATK_ACT>(rand)];
-
-	//カウンタの初期化
-	nowSkill_.back().ResetCnt();
-
-	//ヒット判定の初期化
-	nowSkill_.back().isHit_ = false;
 }

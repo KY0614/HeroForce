@@ -4,8 +4,7 @@
 #include "../Object/Common/Transform.h"
 #include "../Object/Stage/SkyDome.h"
 
-class SkyDome;
-class StageManager;
+class SpaceDome;
 
 class TitleScene : public SceneBase
 {
@@ -20,11 +19,14 @@ public:
 	static constexpr int LOGO_POS_X = Application::SCREEN_SIZE_X / 2;
 	static constexpr int LOGO_POS_Y = Application::SCREEN_SIZE_Y / 2 -30;
 
+	//メッセージサイズ
+	static constexpr int MES_SIZE_X = 300;
+	static constexpr int MES_SIZE_Y = 44;
+
 	//メッセージ位置
-	//static constexpr int MES_POS_X = Application::SCREEN_SIZE_X / 2 - 300 / 2;
-	static constexpr int MES_POS_X = Application::SCREEN_SIZE_X / 2;
-	//static constexpr int MES_POS_Y = Application::SCREEN_SIZE_Y - 100 - 44 / 2;
+	static constexpr int MES_POS_X = Application::SCREEN_SIZE_X / 2 - MES_SIZE_X / 2;
 	static constexpr int MES_POS_Y = Application::SCREEN_SIZE_Y - 100;
+
 
 	// コンストラクタ
 	TitleScene(void);
@@ -36,10 +38,10 @@ public:
 	void Release(void) override;
 
 private:
+
 	//更新用ステップ
 	float step_;
 
-	//a
 	// タイトルロゴ
 	int imgLogo_;
 	int imgMes_;

@@ -1,10 +1,8 @@
 #pragma once
-#include "../Object/Stage/StageManager.h"
 
 class UnitBase;
 class PlayerBase;
 class Enemy;
-class StageManager;
 
 class Collision
 {
@@ -47,9 +45,7 @@ public:
 	/// <returns></returns>
 	const bool IsHitUnitStageObject(const int& _modelId, const VECTOR& _pos, const float& _radius)const;
 
-
 private:
-
 	//コンストラクタ＆デストラクタ
 	Collision(void) = default;
 	~Collision(void) = default;

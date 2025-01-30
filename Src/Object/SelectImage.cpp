@@ -434,7 +434,7 @@ void SelectImage::NumberUpdate(void)
 		for (int i = playerNum_ + 1; i <= SceneManager::PLAYER_NUM; i++)
 		{
 			//CPUl”‚ÌÝ’è(CPU‚Í‚Pl‚©‚ç‚Rl)
-			data.Input(SceneManager::PLAY_MODE::CPU, i);
+ 			data.Input(SceneManager::PLAY_MODE::CPU, i);
 			data.Input(SceneManager::ROLE::KNIGHT, i);
 		}
 
@@ -600,6 +600,7 @@ void SelectImage::OperationUpdate(void)
 
 void SelectImage::RoleUpdate(void)
 {
+
 }
 
 void SelectImage::DisplayDraw(void)

@@ -5,8 +5,8 @@
 #include "../../Manager/Decoration/EffectManager.h"
 #include "../../Manager/GameSystem/DataBank.h"
 #include "../../Common/Vector2.h"
-#include "../Common/Fader.h"
-#include "../Common/ShaderFade.h"
+#include "../../Common/Fader.h"
+#include "../../Common/ShaderFade.h"
 #include "LevelupNotice.h"
 #include "LevelupSelect.h"
 
@@ -298,8 +298,7 @@ void LevelScreenManager::AddExp(const float value)
 
 void LevelScreenManager::SetGage(const int level)
 {
-	//敵の経験値量を決めて修正予定
-	gauge_ = level * CONSTANT_GAGE;
+	gauge_ = ((level * 10) + 100) * CONSTANT_GAGE;
 }
 
 void LevelScreenManager::Reflection(PlayerBase& player, const int playerNum)
@@ -310,7 +309,7 @@ void LevelScreenManager::Reflection(PlayerBase& player, const int playerNum)
 	switch (type)
 	{
 	case TYPE::ATTACK:
-		//player.SetAttack(float 3.0f);
+		player.SetAttack(3.0f);
 		//引数の値は上昇%の値
 		//現在のステータスを%で上昇させる
 		EffectManager::GetInstance().Play(
@@ -321,7 +320,7 @@ void LevelScreenManager::Reflection(PlayerBase& player, const int playerNum)
 		break;
 
 	case TYPE::DEFENSE:
-		//player.SetDefense(float 3.0f);
+		player.SetDefense(3.0f);
 		EffectManager::GetInstance().Play(
 			EffectManager::EFFECT::DEFENCE_UP,
 			player.GetPos(),
@@ -330,7 +329,7 @@ void LevelScreenManager::Reflection(PlayerBase& player, const int playerNum)
 		break;
 
 	case TYPE::LIFE:
-		//player.SetMaxLife(float 3.0f);
+		player.SetHpMax(3);
 		EffectManager::GetInstance().Play(
 			EffectManager::EFFECT::LIFE_UP,
 			player.GetPos(),
@@ -340,7 +339,7 @@ void LevelScreenManager::Reflection(PlayerBase& player, const int playerNum)
 		break;
 
 	case TYPE::SPEED:
-		//player.SetSpeed(float 3.0f);
+		player.SetSpeed(3.0f);
 		EffectManager::GetInstance().Play(
 			EffectManager::EFFECT::SPEED_UP,
 			player.GetPos(),

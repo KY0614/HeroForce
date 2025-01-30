@@ -91,5 +91,8 @@ void Timer::ReduceTime(void)
 	}
 
 	//•ª”‚ª‚O–¢–‚Ì‚Æ‚«I—¹ó‘Ô‚É
-	if (minute_ <= TIME_MIN && second_ <= TIME_MIN)isEnd_ = true;
+	if (minute_ <= TIME_MIN && second_ <= TIME_MIN)
+	{
+		isEnd_ = true;
+	}
 }

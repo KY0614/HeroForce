@@ -1,4 +1,6 @@
 #include<cassert>
+#include<random>
+#include"../Manager/Generic/SceneManager.h"
 
 #include"EnemySort/Enemy.h"
 #include"EnemySort/EneArcher.h"
@@ -12,17 +14,34 @@
 void EnemyManager::Init(void)
 {
 	activeNum_ = 0;
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < INIT_CREATE_ENEMY; i++)
 	{
+		//敵の初期生成
 		CreateEnemy();
 	}
+
+	createIntCnt_ = 0.0f;
 }
 
-void EnemyManager::Update(VECTOR _target)
+void EnemyManager::Update(void)
 {
+	//カウンタ
+	createIntCnt_ = createIntCnt_ + SceneManager::GetInstance().GetDeltaTime();
+
+	//敵の生成処理
+	if (createIntCnt_ >= CREATE_INTERVAL)
+	{
+		//間隔カウンタ初期化
+		createIntCnt_ = 0.0f;
+
+		//敵の生成
+		CreateEnemy();
+	}
+
+	//生存している敵の処理
 	for (int i = 0; i < activeNum_; i++)
 	{
-		activeEnemys_[i]->SetTargetPos(_target);
+		//activeEnemys_[i]->SetTargetPos(_target);
 		activeEnemys_[i]->Update();
 	}
 }
@@ -37,6 +56,19 @@ void EnemyManager::Release(void)
 	
 }
 
+void EnemyManager::CollisionStage(const Transform& stageTrans)
+{
+	auto& col = Collision::GetInstance();
+
+	for (int i = 0; i < activeNum_; i++)
+	{
+		if (col.IsHitUnitStageObject(stageTrans.modelId, activeEnemys_[i]->GetTransform().pos, activeEnemys_[i]->GetRadius()))
+		{
+			activeEnemys_[i]->SetPrePos();
+		}
+	}
+}
+
 
 
 void EnemyManager::CreateEnemy(void)
@@ -47,26 +79,34 @@ void EnemyManager::CreateEnemy(void)
 	Enemy* enm = nullptr;
 
 	//乱数で種類決める
-	TYPE type = static_cast<TYPE>(GetRand(static_cast<int>(TYPE::MAX)-1));
+	TYPE type;
+	
+	do
+	{
+		type = static_cast<TYPE>(GetRand(static_cast<int>(TYPE::MAX) - 1));
+	} while (type == TYPE::GOLEM);
+
+	//生成相対座標
+	VECTOR createLocalPos = GetNotOverlappingPos(type);
 
 	//インスタンス生成
 	switch (type)
 	{
 	case EnemyManager::TYPE::ARCHER:
-		enm = new EneArcher();
+		enm = new EneArcher(createLocalPos);
 		break;
 	case EnemyManager::TYPE::AXE:
-		enm = new EneAxe();
+		enm = new EneAxe(createLocalPos);
 		break;
 	case EnemyManager::TYPE::BRIG:
-		enm = new EneBrig();
+		enm = new EneBrig(createLocalPos);
 		break;
 	case EnemyManager::TYPE::GOLEM:
 		//ゴーレムはボスキャラなのでここでは生成しない
 		return;
 		break;
 	case EnemyManager::TYPE::MAGE:
-		enm = new EneMage();
+		enm = new EneMage(createLocalPos);
 		break;
 	default:
 		return;
@@ -86,7 +126,101 @@ void EnemyManager::CreateEnemy(void)
 	activeNum_++;
 }
 
-void EnemyManager::DethEnemy(int _num)
+VECTOR EnemyManager::GetNotOverlappingPos(TYPE _type)
+{
+	//敵の大きさ
+	float eneSize;
+
+	switch (_type)
+	{
+	case EnemyManager::TYPE::ARCHER:
+		eneSize = EneArcher::MY_COL_RADIUS;
+		break;
+	case EnemyManager::TYPE::AXE:
+		eneSize = EneAxe::MY_COL_RADIUS;
+		break;
+	case EnemyManager::TYPE::BRIG:
+		eneSize = EneBrig::MY_COL_RADIUS;
+		break;
+	case EnemyManager::TYPE::MAGE:
+		eneSize = EneMage::MY_COL_RADIUS;
+		break;
+	default:
+		eneSize = ENEMY_DISTANCE;
+		break;
+	}
+
+	//生成判定
+	bool isGenelateEnemy = false;
+
+	//生成座標
+	VECTOR createPos = createPos_[GetRand(createPos_.size() - 1)];
+
+	//生成相対座標
+	VECTOR ret = AsoUtility::VECTOR_ZERO;
+
+	//生成できるまで繰り返す
+	while (!isGenelateEnemy)
+	{
+		//円範囲の中の一点を取る
+		GetRandomPointInCircle(createPos, GENELATE_RADIUS, ret);
+
+		//生成場所が被っていないか
+		if (!IsOverlap(ret, eneSize * 2))
+		{
+			//被っていなかった
+
+			//生成完了
+			isGenelateEnemy = true;
+		}
+	}
+
+	return ret;
+}
+
+void EnemyManager::GetRandomPointInCircle(VECTOR _myPos, const int _r, VECTOR& _tPos)
+{
+	// ランダムエンジンを生成
+	std::random_device rd;
+	std::mt19937 gen(rd());
+
+	//乱数の範囲(0 ～ 2π)
+	std::uniform_real_distribution<> dis(0, 2 * DX_PI_F);
+
+	//乱数の範囲(0 ～ 1)
+	std::uniform_int_distribution<> create(0, createPos_.size() - 1);
+
+	// ランダムな角度theta
+	float theta = dis(gen);
+
+	// ランダムな半径r' (0 ～ r) で、均等に分布するように sqrt を使う
+	float radius = sqrt(static_cast<float>(rand()) / RAND_MAX) * _r;
+
+	// 円内の点を計算
+	_tPos.x = static_cast<int>(_myPos.x + radius * cos(theta));
+	_tPos.z = static_cast<int>(_myPos.z + radius * sin(theta));
+
+	//出現位置の指定しなおし
+	_myPos = createPos_[create(gen)];
+}
+
+bool EnemyManager::IsOverlap(VECTOR& _tPos, float _minDist)
+{
+	for (const auto& enemy : activeEnemys_) {
+		if (enemy == nullptr)
+			continue;
+
+		int dx = _tPos.x - enemy->GetPos().x;
+		int dz = _tPos.z - enemy->GetPos().z;
+		double distance = std::sqrt(dx * dx + dz * dz);
+		if (distance < _minDist) {
+			return true; // 重なっている場合
+		}
+	}
+	return false; // 重なっていない場合
+}
+
+void EnemyManager::DeathEnemy(int _num)
 {
 	//倒された敵の消去
 	activeEnemys_[_num]->Destroy();
@@ -108,19 +242,4 @@ void EnemyManager::DethEnemy(int _num)
 	//末尾の消去
 	activeEnemys_[activeNum_]->Destroy();
 	delete activeEnemys_[activeNum_];
-}
-
-void EnemyManager::CollisionStage(const Transform& stageTrans)
-{
-	auto& col = Collision::GetInstance();
-
-	for (int i = 0; i < activeNum_; i++)
-	{
-		if (col.IsHitUnitStageObject(stageTrans.modelId, activeEnemys_[i]->GetTransform().pos, activeEnemys_[i]->GetRadius()))
-		{
-			activeEnemys_[i]->SetPrePos();
-		}
-	}
-
-
 }

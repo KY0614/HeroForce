@@ -4,7 +4,7 @@ ChickenManager::ChickenManager(
 	std::vector<VECTOR> pos,
 	const Transform& stageTrans,
 	const Transform& playerTrans)
-	: pos_(pos),stageTrans_(stageTrans),playerTrans_(playerTrans)
+	: pos_(pos), stageTrans_(stageTrans), playerTrans_(playerTrans)
 {
 	//‰Šú‰»
 	targetPos_ = AsoUtility::VECTOR_ZERO;
@@ -46,7 +46,7 @@ void ChickenManager::Update()
 		(*it)->Update();
 
 		//Õ“Ë”»’è
-		CollisionStage(stageTrans_,  *it);
+		CollisionStage(stageTrans_, *it);
 
 		// ƒ`ƒLƒ“‚Ìíœ
 		if ((*it)->GetState() == ChickenBase::STATE::END) {
@@ -60,7 +60,6 @@ void ChickenManager::Update()
 
 void ChickenManager::Draw()
 {
-
 	for (auto c : chickens_)
 	{
 		c->Draw();
@@ -82,6 +81,18 @@ void ChickenManager::SetTargetPos(const VECTOR pos)
 	targetPos_ = pos;
 }
 
+const int ChickenManager::GetAliveNum(void) const
+{      
+	int ret = 0;
+
+	for (auto& c:chickens_ ) {
+		if (c->IsAlive())ret++;
+	}
+
+	return ret;
+}
+
+
 void ChickenManager::CollisionStage(const Transform& stageTrans, std::shared_ptr<ChickenBase> cheken)
 {
 
@@ -90,4 +101,14 @@ void ChickenManager::CollisionStage(const Transform& stageTrans, std::shared_ptr
 	{
 		cheken->SetPrePos();
 	}
+}
+
+std::shared_ptr<ChickenBase> ChickenManager::GetChicken(const int _num)
+{
+	return chickens_[_num];
+}
+
+const int ChickenManager::GetChickenAllNum(void) const
+{
+	return static_cast<int>(chickens_.size());
 }

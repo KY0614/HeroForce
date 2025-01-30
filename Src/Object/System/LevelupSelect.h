@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 #include<memory>
-#include "../Common/Vector2.h"
+#include "../../Common/Vector2.h"
 #include "LevelScreenManager.h"
 
 class Carsor;
@@ -22,8 +22,8 @@ public:
 	};
 
 	//強化項目画像サイズ
-	static constexpr int ELE_IMG_SIZE_X = 453;
-	static constexpr int ELE_IMG_SIZE_Y = 340;
+	static constexpr int ELE_IMG_SIZE_X = 340;
+	static constexpr int ELE_IMG_SIZE_Y = 250;
 
 	//選択項目数
 	static constexpr int SELECT_ELEMENT = 4;
@@ -32,12 +32,12 @@ public:
 	static constexpr float SCALE_RATE = 0.01f;
 
 	//拡大最大
-	static constexpr float SCALE_MAX = Application::SCREEN_SIZE_X * 1.5f / Application::DEFA_SCREEN_SIZE_X;
+	static constexpr float SCALE_MAX = 0.7f;//Application::SCREEN_SIZE_X * 1.5f / Application::DEFA_SCREEN_SIZE_X;
 
 	//フォント関連
-	static constexpr int FONT_MES_SIZE = Application::SCREEN_SIZE_X * 72 / Application::DEFA_SCREEN_SIZE_X;
+	static constexpr int FONT_MES_SIZE = 36;//Application::SCREEN_SIZE_X * 72 / Application::DEFA_SCREEN_SIZE_X;
 	static constexpr int FONT_MES_THICK = 5;
-	static constexpr int FONT_EXP_SIZE = Application::SCREEN_SIZE_X * 36 / Application::DEFA_SCREEN_SIZE_X;
+	static constexpr int FONT_EXP_SIZE = 24;//Application::SCREEN_SIZE_X * 36 / Application::DEFA_SCREEN_SIZE_X;
 	static constexpr int FONT_EXP_THICK = 3;
 
 	//メッセージ描画位置
@@ -46,17 +46,17 @@ public:
 
 	//強化要素位置
 	static constexpr int INTERVEL = 100;
-	static constexpr int ELEMENT_POS_LU_X = Application::SCREEN_SIZE_X / 4 + 80;
-	static constexpr int ELEMENT_POS_LU_Y = Application::SCREEN_SIZE_Y / 4 + 60;
+	static constexpr int ELEMENT_POS_LU_X = Application::SCREEN_SIZE_X / 4 + 40;
+	static constexpr int ELEMENT_POS_LU_Y = Application::SCREEN_SIZE_Y / 4 + 70;
 
-	static constexpr int ELEMENT_POS_RU_X = Application::SCREEN_SIZE_X / 4 * 3 - 80;
-	static constexpr int ELEMENT_POS_RU_Y = Application::SCREEN_SIZE_Y / 4 + 60;
+	static constexpr int ELEMENT_POS_RU_X = Application::SCREEN_SIZE_X / 4 * 3 - 40;
+	static constexpr int ELEMENT_POS_RU_Y = Application::SCREEN_SIZE_Y / 4 + 70;
 
-	static constexpr int ELEMENT_POS_LD_X = Application::SCREEN_SIZE_X / 4 + 80;
-	static constexpr int ELEMENT_POS_LD_Y = Application::SCREEN_SIZE_Y / 4 * 3 + 20;
+	static constexpr int ELEMENT_POS_LD_X = Application::SCREEN_SIZE_X / 4 + 40;
+	static constexpr int ELEMENT_POS_LD_Y = Application::SCREEN_SIZE_Y / 4 * 3 + 10;
 
-	static constexpr int ELEMENT_POS_RD_X = Application::SCREEN_SIZE_X / 4 * 3 - 80;
-	static constexpr int ELEMENT_POS_RD_Y = Application::SCREEN_SIZE_Y / 4 * 3 + 20;
+	static constexpr int ELEMENT_POS_RD_X = Application::SCREEN_SIZE_X / 4 * 3 - 40;
+	static constexpr int ELEMENT_POS_RD_Y = Application::SCREEN_SIZE_Y / 4 * 3 + 10;
 
 	LevelupSelect();
 	~LevelupSelect();

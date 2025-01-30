@@ -4,6 +4,7 @@
 #include"../Manager/Generic/ResourceManager.h"
 #include"../Manager/Generic/InputManager.h"
 #include"../Manager/GameSystem/Collision.h"
+#include"../Manager/GameSystem/CharacterParamData.h"
 
 //test
 
@@ -51,6 +52,9 @@ public:
 		ENTRY,		//出現
 		UNIQUE_1,	//固有のやつ①
 		UNIQUE_2,	//固有のやつ②
+		UNIQUE_3,	//固有のやつ③
+		UNIQUE_4,	//固有のやつ④
+		UNIQUE_5,	//固有のやつ⑤
 	};
 
 	//定数
@@ -80,7 +84,7 @@ public:
 
 	//ゲッター各種
 	//生存確認(生存しているとtrue)
-	const bool IsAlive(void)const { return hp_ > 0; };
+	const bool IsAlive(void)const;
 
 	//Transformいただき
 	const Transform& GetTransform(void)const;
@@ -97,6 +101,7 @@ public:
 	const float GetDef(void)const;
 	//攻撃関係
 	const ATK GetAtk(void)const;
+	const float GetCharaPow(void)const { return atkPow_; }
 	//あたり判定
 	const float GetRadius(void)const;
 	//移動前の座標位置
@@ -123,6 +128,7 @@ public:
 	/// <param name="attackerPower"></param>攻撃者の攻撃力
 	/// <param name="skillPower"></param>当てた技の技威力
 	void SetDamage(const int attackerPower, const int skillPower);
+	int GetDamage(void);
 
 	//残量HPの処理(少しずつHpを減らす)
 	void SubHp();
@@ -134,8 +140,8 @@ public:
 	//強化反映
 	void SetAttack(const float percent);
 	void SetDefense(const float percent);
-	void SetSpeed(const float percent);
-	void SetHpMax(const float hp);
+	virtual void SetSpeed(const float percent);
+	void SetHpMax(const int hp);
 
 	//パラメータ読み込み
 	void ParamLoad();
@@ -189,5 +195,9 @@ protected:
 	void CntUp(float& _count);
 	//カウンタ減少
 	void CntDown(float& _count);
+
+	//パラメータ読み込み
+	void ParamLoad(CharacterParamData::UNIT_TYPE type);
+
 };
 

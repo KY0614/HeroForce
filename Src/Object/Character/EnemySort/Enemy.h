@@ -8,7 +8,7 @@ class Enemy : public UnitBase
 {
 public:
 
-//#define DEBUG_ENEMY
+#define DEBUG_ENEMY
 
 	//移行テストしております
 
@@ -38,11 +38,21 @@ public:
 		,MAX
 	};
 
+	//敵の探索状態
+	enum class SEARCH_STATE
+	{
+		NOT_FOUND			//誰も見つけていない
+		,CHICKEN_FOUND		//追跡中(鶏)
+		,PLAYER_FOUND		//追跡中(プレイヤー)
+		,MAX
+	};
+
 	//敵のスキル行動
 	enum class ATK_ACT
 	{
-		SKILL_ONE
-		,SKILL_TWO
+		SKILL_ONE		//スキル1
+		,SKILL_TWO		//スキル2
+		,SKILL_THREE	//スキル3
 		,MAX
 	};
 
@@ -53,12 +63,12 @@ public:
 	//****************************************************************
 
 	//コンストラクタ
-	Enemy() = default;
+	Enemy(const VECTOR& _spawnPos);
 	//デストラクタ
 	~Enemy() = default;
 
 	//解放
-	void Destroy(void)override;
+	virtual void Destroy(void)override;
 
 	//初期化
 	void Init(void)override;
@@ -79,10 +89,13 @@ public:
 	const std::vector<ATK> GetAtks(void)const { return nowSkill_; }
 
 	//索敵範囲を返す
-	const float GetSearchRange(void) { return searchRange_; }
+	const float GetSearchRange(void)const { return searchRange_; }
 
 	//攻撃開始範囲を返す
-	const float GetAtkStartRange(void) { return atkStartRange_; }
+	const float GetAtkStartRange(void)const { return atkStartRange_; }
+
+	//経験値を返す
+	const float GetExp(void)const { return exp_; }
 
 	/// <summary>
 	/// 移動状態を変更
@@ -91,13 +104,16 @@ public:
 	void SetIsMove(const bool _isMove) { isMove_ = _isMove; }
 
 	/// <summary>
+	/// 探索状態を変更
+	/// </summary>
+	/// <param name="_searchState">変更する探索状態</param>
+	void ChangeSearchState(const SEARCH_STATE _searchState);
+
+	/// <summary>
 	/// 標的の座標を変更
 	/// </summary>
 	/// <param name="_targetPos">標的の座標</param>
-	void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; }
-
-	//標的の方向に向く
-	void LookTargetVec(void);
+	void SetTargetPos(const VECTOR _targetPos);
 
 	/// <summary>
 	/// ダメージ
@@ -128,25 +144,38 @@ protected:
 
 	std::map<ANIM, float>changeSpeedAnim_;	//アニメーション速度変更用
 
-	float alertCnt_;			//攻撃の警告時間カウンタ
-	float breakCnt_;			//攻撃の休憩時間カウンタ
+	float alertCnt_;		//攻撃の警告時間カウンタ
+	float breakCnt_;		//攻撃の休憩時間カウンタ
 
 	float walkSpeed_;		//敵ごとの歩く速度
 	float runSpeed_;		//敵ごとの走る速度
 
+	VERTEX3D alertVertex_[6];	//警告用の頂点情報
+
 	std::map<ATK_ACT, ATK> skills_;								//スキルの種類
 	std::vector<ATK> nowSkill_;									//現在のスキル
-	std::function<void(void)>processSkill_;						//スキルの処理
+	std::function<void(void)> alertNowSkill_;					//現在のスキルの警告処理
+	std::function<ATK&(void)> createSkill_;						//スキルの生成
+	std::function<void(void)> processSkill_;					//スキルの処理
+	std::map<ATK_ACT, std::function<void(void)>> alertSkills_;	//スキルごとの警告
 	std::map<ATK_ACT, std::function<void(void)>> changeSkill_;	//スキルの変更用
+	ATK_ACT atkAct_;											//スキルの種別用
+	ATK* lastAtk_;												//最後に生成されたスキル
+	bool isEndAlert_;											//警告が終わったか(true:終了した)
+	bool isEndAllAtkSign_;										//全攻撃予兆が終了したか(true:終了した)
+	bool isEndAllAtk_;											//全攻撃が終了したか(true:終了した)
 
+	std::vector<ANIM> skillPreAnims_;	//スキルに対応した予備アニメーション
 	std::vector<ANIM> skillAnims_;		//スキルに対応したアニメーション
+	ANIM nowSkillPreAnim_;				//現在のスキルの予備アニメーション
 	ANIM nowSkillAnim_;					//現在のスキルアニメーション
 
 	VECTOR localCenterPos_;	//敵中央の相対座標
 	VECTOR colPos_;			//敵自身の当たり判定用の相対座標
-
-	float moveSpeed_;		//移動量
-	bool isMove_;			//移動しているかどうか(true:移動中)
+												//移動量
+	bool isMove_;														//移動しているかどうか(true:移動中)
+	SEARCH_STATE searchState_;											//探索判定
+	std::map<SEARCH_STATE, std::function<void(void)>> SearchStateInfo_;	//探索状態による情報更新
 
 	VECTOR targetPos_;		//標的の座標
 
@@ -155,6 +184,8 @@ protected:
 
 	int stunDefMax_;	//気絶防御値の最大値
 	int stunDef_;		//気絶防御値
+
+	float exp_;			//経験値
 
 	//****************************************************************
 	//メンバ関数
@@ -169,26 +200,62 @@ protected:
 	//スキルの初期化
 	virtual void InitSkill(void) = 0;
 
+	//スキルの前処理
+	virtual void Alert(void);
+
+	//スキル1の警告
+	virtual void AlertSkill_One(void) = 0;
+
 	//敵の攻撃処理
-	virtual void Attack(void) = 0;
+	virtual void Attack(void);
 
 	//スキル1
-	virtual void Skill_One(void);
+	virtual void Skill_One(void) = 0;
 
 	//スキルのランダム生成
 	virtual void RandSkill(void);
 
+	/// <summary>
+	/// スキル生成準備
+	/// </summary>
+	/// <param name="_atkAct">生成するスキル</param>
+	void SetUpSkill(ATK_ACT _atkAct);
+
+	/// <summary>
+	/// 警告範囲を描画する
+	/// </summary>
+	/// <param name="_pos">中心座標</param>
+	/// <param name="_widthX">Xの描画の大きさ</param>
+	/// <param name="_widthZ">Zの描画の大きさ</param>
+	void CreateAlert(const VECTOR& _pos, const float _widthX, const float _widthZ);
+
+	/// <summary>
+	/// スキルの生成
+	/// </summary>
+	/// <param name="_atkAct">生成するスキル</param>
+	/// <returns>生成したスキル</returns>
+	ATK& CreateSkill(ATK_ACT _atkAct);
+
 	//アニメーション終了時の動き
 	virtual void FinishAnim(void)override;
+
+	//攻撃判定の初期化
+	virtual void ResetAlertJudge(void);
+
+	//頂点情報の初期化
+	void ResetAlertVertex(void);
+
+	//攻撃判定の初期化
+	virtual void ResetAtkJudge(void);
 
 	//状態遷移(通常)
 	void ChangeStateNormal(void);
 	//状態遷移(攻撃警告)
-	virtual void ChangeStateAlert(void);
+	void ChangeStateAlert(void);
 	//状態遷移(攻撃)
-	void ChangeStateAttack(void);
+	virtual void ChangeStateAtk(void);
 	//状態遷移(休憩)
-	virtual void ChangeStateBreak(void);
+	void ChangeStateBreak(void);
 
 	//更新(通常)
 	void UpdateNml(void);
@@ -199,14 +266,24 @@ protected:
 	//更新(休憩)
 	virtual void UpdateBreak(void);
 
+	//描画(※デバッグ)
+	virtual void DrawDebug(void);
+
+	//探索状態ごとの情報更新(探索中)
+	void SearchMoveInfo(void);
+
+	//探索状態ごとの情報更新(追跡)
+	void FoundMoveInfo(void);
+
 	/// <summary>
-	/// 標的までのベクトル速度を返す
+	/// とある点からとある点までの移動ベクトルを返す
 	/// </summary>
-	/// <param name=""></param>
-	/// <returns>標的への方向ベクトル</returns>
-	const VECTOR GetMovePow2Target(void)const;
+	/// <param name="_start">狙う側</param>
+	/// <param name="_goal">向かう先</param>
+	/// <param name="_speed">設定速度(未設定だと、方向ベクトルのみを返す)</param>
+	/// <returns>向かう先までの移動ベクトル</returns>
+	const VECTOR GetMoveVec(const VECTOR _start, const VECTOR _goal, const float _speed = 1.0f);
 
 	//移動
 	void Move(void);
 };
-

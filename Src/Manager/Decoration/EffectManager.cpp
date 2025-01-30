@@ -92,10 +92,25 @@ void EffectManager::SyncEffect(const EFFECT& _efc, const VECTOR& _pos, const Qua
 	SetPosPlayingEffekseer3DEffect(effectPlay_[_efc], _pos.x, _pos.y, _pos.z);
 }
 
+bool EffectManager::IsPlayEffect(const EFFECT& _efc)
+{
+	if (effectPlay_[_efc] == -1 || IsEffekseer3DEffectPlaying(effectPlay_[_efc]) == -1)
+	{
+		return true;
+	}
+	return false;
+}
+
 //解放処理
 void EffectManager::Release(void)
 {
 	//配列内の要素を全て消去
 	//元々のデータはリソースマネージャが持っているのでおｋ。
 	effectRes_.clear();
+}
+
+void EffectManager::Destroy(void)
+{
+	Release();
+	delete instance_;
 }

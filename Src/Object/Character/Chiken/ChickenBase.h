@@ -2,6 +2,7 @@
 #include <functional>
 #include <memory>
 #include <map>
+#include "../../../Application.h"
 #include "../../Common/Transform.h"
 #include "../../../Utility/AsoUtility.h"
 #include "../../../Manager/Generic/ResourceManager.h"

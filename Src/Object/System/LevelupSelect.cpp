@@ -1,6 +1,4 @@
 #include <DxLib.h>
-#include <locale>
-#include <codecvt>
 #include "../../Application.h"
 #include "../../Manager/Generic/ResourceManager.h"
 #include "../../Manager/GameSystem/TextManager.h"
@@ -117,12 +115,12 @@ void LevelupSelect::Draw()
 				length = expTexts_[type].length();
 				pos = ele.pos_;
 				pos.x -= length * FONT_EXP_SIZE / 4;
-				pos.y += 150;
+				pos.y += 90;
 
 				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
 				DrawBox(
 					pos.x, pos.y,
-					pos.x + length * FONT_EXP_SIZE / 2.3,
+					pos.x + length * FONT_EXP_SIZE / 2.0f,
 					pos.y + FONT_EXP_SIZE,
 					0x000000, true);
 				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
@@ -271,7 +269,8 @@ void LevelupSelect::CreateFonts()
 	fontMes_ = CreateFontToHandle(
 		text_m.GetFontName(TextManager::FONT_TYPE::LOGO).c_str(),
 		FONT_MES_SIZE,
-		FONT_MES_THICK);
+		FONT_MES_THICK,
+		DX_FONTTYPE_EDGE);
 
 	//説明用テキストフォント
 	fontExp_ =CreateFontToHandle(

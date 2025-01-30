@@ -34,11 +34,20 @@ void ResourceManager::InitTitle(void)
 
 	//タイトルロゴ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "TitleLogo.png");
-	resourcesMap_.emplace(SRC::TITLE_LOGO , res);
+	resourcesMap_.emplace(SRC::TITLE_LOGO, res);
 
 	//キー指示メッセージ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "PleaseKey.png");
 	resourcesMap_.emplace(SRC::PLEASE_KEY, res);
+
+	//タイトルBGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "TitleBGM.m4a");
+	resourcesMap_.emplace(SRC::TITLE_BGM, res);
+
+	//シーンチェンジ
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "SceneChange.mp3");
+	resourcesMap_.emplace(SRC::SCENE_CHANGE_SE1, res);
+
 }
 
 void ResourceManager::InitSelect(void)
@@ -94,6 +103,28 @@ void ResourceManager::InitGame(void)
 {
 	Resource res;
 
+	//BGM
+	//ゲームノーマル
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Game_Nomal.mp3");
+	resourcesMap_.emplace(SRC::GAME_NOMAL_BGM, res);
+	//ゲームボス
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Game_Boss.mp3");
+	resourcesMap_.emplace(SRC::GAME_LAST_BGM, res);
+
+	//効果音
+	//攻撃喰らい
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "hit.mp3");
+	resourcesMap_.emplace(SRC::HIT_SND, res);
+	//死亡(プレイヤー)
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "PlayerDeth.mp3");
+	resourcesMap_.emplace(SRC::PLAYER_DETH_SND, res);
+	//死亡(敵)
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "EnemyDeth.mp3");
+	resourcesMap_.emplace(SRC::ENEMY_DETH_SND, res);
+	//死亡(ニワトリ)
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "ChickenDeth.mp3");
+	resourcesMap_.emplace(SRC::CHICKEN_DETH_SND, res);
+
 	//強化選択用UI画像
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "SelectUI.png");
 	resourcesMap_.emplace(SRC::SELECT_UI, res);
@@ -109,6 +140,15 @@ void ResourceManager::InitGame(void)
 	//経験値経験値ゲージ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "CircleExpGage.png");
 	resourcesMap_.emplace(SRC::CIRCLE_EXP_GAGE, res);
+
+	//ミッション①
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Mission_Nomal.png");
+	resourcesMap_.emplace(SRC::MISSION_NOMAL, res);
+
+	//ミッション②
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Mission_Last.png");
+	resourcesMap_.emplace(SRC::MISSION_LAST, res);
+
 
 	//ゲームUI用数字画像
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Numbers.png", NUMBERS_NUM_X,NUMBERS_NUM_Y, NUMBERS_SIZE, NUMBERS_SIZE);
@@ -193,30 +233,60 @@ void ResourceManager::InitResult(void)
 void ResourceManager::InitGameOver(void)
 {
 	Resource res;
+
+	//ゲームオーバーUI
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "GameOver.png");
+	resourcesMap_.emplace(SRC::GAMEOVER, res);
+
+	//ゲームオーバー背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "GameOverBack.png");
+	resourcesMap_.emplace(SRC::GAMEOVER_BACK, res);
+
+	//タイトル遷移メッセージ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "ChangeTitleMes.png");
+	resourcesMap_.emplace(SRC::CHANGE_TITLE_UI, res);
+
+	//SE
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "GameOverSE.wav");
+	resourcesMap_.emplace(SRC::GAMEOVER_SE, res);
+
+	//BGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "GameOverBGM.mp3");
+	resourcesMap_.emplace(SRC::GAMEOVER_BGM, res);
+
+	ResourcePlayer();
 }
 
 void ResourceManager::InitGameClear(void)
 {
 	Resource res;
 
-	//cong
+	//祝福メッセージ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Congratulations.png");
 	resourcesMap_.emplace(SRC::CONGRATULATIONS, res);
+
+	//タイトル遷移メッセージ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "ChangeTitleMes.png");
+	resourcesMap_.emplace(SRC::CHANGE_TITLE_UI, res);
 
 	//花火
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Fireworks.efkefc");
 	resourcesMap_.emplace(SRC::FIREWORK, res);
 
+	//SE
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "GameClearSE.mp3");
+	resourcesMap_.emplace(SRC::GAMECLEAR_SE, res);
+
+	//BGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "GameClearBGM.mp3");
+	resourcesMap_.emplace(SRC::GAMECLEAR_BGM, res);
+
 	ResourcePlayer();
-	ResourceEnemy();
 	ResourceStage();
 
 	//チキン
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Chicken/Chicken.mv1");
 	resourcesMap_.emplace(SRC::CHICKEN, res);
-
-	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "To_Title.png");
-	resourcesMap_.emplace(SRC::TO_TITLE, res);
 }
 
 //プレイヤー

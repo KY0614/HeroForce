@@ -1,4 +1,6 @@
 #include"../Application.h"
+#include"../Manager/Decoration/SoundManager.h"
+#include"../Manager/GameSystem/CharacterParamData.h"
 #include "../Lib/nlohmann/json.hpp"
 #include"../Utility/AsoUtility.h"
 #include "UnitBase.h"
@@ -36,9 +38,9 @@ UnitBase::UnitBase(void)
 	radius_ = -1.0f;
 	hpMax_ = -1;
 
-	defAtk_ = -1.0f;
-	defDef_ = -1.0f;
-	defSpeed_ = -1.0f;
+	defAtk_ = 1.0f;
+	defDef_ = 1.0f;
+	defSpeed_ = 1.0f;
 	defHp_ = -1;
 
 	atkUpPercent_ = -1.0f;
@@ -64,6 +66,11 @@ void UnitBase::Update(void)
 
 void UnitBase::Draw(void)
 {
+}
+
+const bool UnitBase::IsAlive(void) const
+{
+	return hp_ > 0;
 }
 
 const Transform& UnitBase::GetTransform(void) const
@@ -193,6 +200,14 @@ void UnitBase::SetDamage(const int attackerPower, const int skillPower)
 {
 	//与えるダメージを増やす
 	damage_ += attackerPower * skillPower / defDef_;
+
+	//攻撃を喰らったのでSE再生
+	SoundManager::GetInstance().Play(SoundManager::SOUND::HIT);
+}
+
+int UnitBase::GetDamage(void)
+{
+	return damage_;
 }
 
 void UnitBase::SubHp()
@@ -270,7 +285,7 @@ void UnitBase::SetSpeed(const float percent)
 }
 
 //体力強化
-void UnitBase::SetHpMax(const float hp)
+void UnitBase::SetHpMax(const int hp)
 {
 	hpMax_ += hp;
 }
@@ -306,4 +321,30 @@ void UnitBase::CntDown(float& _count)
 	// 経過時間の取得
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	_count -= deltaTime;
+}
+
+void UnitBase::ParamLoad(CharacterParamData::UNIT_TYPE type)
+{
+	auto& data = CharacterParamData::GetInstance().GetParamData(type);
+
+	//デフォルトのステータス設定
+	defAtk_ = data.atk_;
+	defDef_ = data.def_;
+	defSpeed_ = data.speed_;
+	defHp_ = data.hp_;
+	radius_ = data.radius_;
+
+	//変化用の設定
+	atkPow_ = defAtk_;
+	def_ = defDef_;
+	moveSpeed_ = defSpeed_;
+	hp_ = defHp_;
+
+	//HPの最大値の設定
+	hpMax_ = defHp_;
+
+	//強化パーセントの初期化
+	atkUpPercent_ = DEFAULT_PERCENT;
+	defUpPercent_ = DEFAULT_PERCENT;
+	speedUpPercent_ = DEFAULT_PERCENT;
 }
