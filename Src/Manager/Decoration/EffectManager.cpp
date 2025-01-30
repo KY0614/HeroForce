@@ -108,3 +108,9 @@ void EffectManager::Release(void)
 	//元々のデータはリソースマネージャが持っているのでおｋ。
 	effectRes_.clear();
 }
+
+void EffectManager::Destroy(void)
+{
+	Release();
+	delete instance_;
+}

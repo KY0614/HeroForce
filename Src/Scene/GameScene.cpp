@@ -13,8 +13,10 @@
 #include "../Object/Stage/SkyDome.h"
 #include "../Object/System/LevelScreenManager.h"
 #include "../Object/System/UnitPositionLoad.h"
+#include "../Object/System/InformFaze.h"
 #include "../Manager/GameSystem/DataBank.h"
 #include"../Object/Character/PlayerDodge.h"
+#include "../Object/System/GameUi/PlayerUI.h"
 #include"FazeResult.h"
 #include "GameScene.h"
 
@@ -33,7 +35,7 @@ GameScene::GameScene(void)
 	fazeResult_ = nullptr;
 
 	isPhaseChanging_ = false;
-	fazeCnt_ = 1;
+	fazeCnt_ = 0;
 }
 
 GameScene::~GameScene(void)
@@ -61,6 +63,13 @@ void GameScene::Init(void)
 	//プレイヤー設定
 	playerMng_ = std::make_unique<PlayerManager>();
 	playerMng_->Init();
+	//UI
+	for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
+	{
+		uis_[i] = std::make_unique<PlayerUI>();
+		uis_[i]->Init(*playerMng_->GetPlayer(i), DataBank::GetInstance().Output(i + 1));
+	}
+
 
 	//敵マネージャの生成
 	enmMng_ = std::make_unique<EnemyManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::ENEMY));
@@ -84,11 +93,20 @@ void GameScene::Init(void)
 	//フェーダーの作成
 	fader_ = std::make_unique<Fader>();
 	fader_->Init();
+	isFadeInFinish_ = true;
+
 	//フェーズリザルトの作成
 	fazeResult_ = std::make_unique<FazeResult>();
 	fazeResult_->Init();
 
+	//フェーズ数カウント
+	inform_ = std::make_unique<InformFaze>();
+	SetIsInform(true);
+
+
+	//音声関係設定
 	SoundInit();
+
 
 }
 
@@ -133,21 +151,31 @@ void GameScene::Update(void)
 		Fade();
 		return;
 	}
+	//フェーズ数の知らせ(フェード終了後に更新をかける)
+	if (isInformFaze_&& isFadeInFinish_) {
+		InformFazeNum();
+		return;
+	}
 
-
+	//レベル処理
 	level_->Update();
-
+	//レベルアップ中その他の更新はかけない
 	if (level_->IsLevelUp())return;
 
+	//タイマー更新
 	Timer::GetInstance().Update();
 	//タイマーが終了したら
 	if (Timer::GetInstance().IsEnd())ChangePhase();
-
-
+	
 
 	//プレイヤーの更新
 	playerMng_->Update();
 
+	//UI更新
+	for (int i = 0; i < DataBank::GetInstance().Output(DataBank::INFO::USER_NUM); i++)
+	{
+		uis_[i]->Update(*playerMng_->GetPlayer(i));
+	}
 
 	//敵の更新
 	enmMng_->Update();
@@ -173,10 +201,10 @@ void GameScene::Update(void)
 	//	mng.ChangeScene(SceneManager::SCENE_ID::TITLE);
 	//}
 
-	//if (ins.IsTrgDown(KEY_INPUT_RETURN))
-	//{
-	//	ChangePhase();
-	//}
+	if (ins.IsTrgDown(KEY_INPUT_RETURN))
+	{
+		ChangePhase();
+	}
 
 	if (ins.IsTrgDown(KEY_INPUT_K))
 		playerMng_->GetPlayer(0)->SetDamage(20, 20);
@@ -203,8 +231,19 @@ void GameScene::Draw(void)
 	chicken_->Draw();
 	//レベル
 	level_->Draw();
+
+	//レベルアップ中タイマー及びUIは表示しない
+	if (level_->IsLevelUp())return;
 	//制限時間
 	Timer::GetInstance().Draw();
+	//UIの描画
+	uis_[SceneManager::GetInstance().GetNowWindow()]->Draw();
+
+
+
+	if (isInformFaze_) {
+		inform_->Draw();
+	}
 
 	fader_->Draw();
 
@@ -212,6 +251,7 @@ void GameScene::Draw(void)
 	{
 		DrawPhase();
 	}
+
 }
 
 void GameScene::Release(void)
@@ -222,6 +262,9 @@ void GameScene::Release(void)
 	SceneManager::GetInstance().ResetCameras();
 	SceneManager::GetInstance().ReturnSolo();
 	Timer::GetInstance().Reset();
+
+	if (fazeCnt_ == LAST_FAZE)SoundManager::GetInstance().Stop(SoundManager::SOUND::GAME_LAST);
+	else SoundManager::GetInstance().Stop(SoundManager::SOUND::GAME_NOMAL);
 
 	playerMng_->Release();
 
@@ -238,8 +281,10 @@ void GameScene::SoundInit(void)
 	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::GAME_NOMAL,
 		ResourceManager::GetInstance().Load(ResourceManager::SRC::GAME_NOMAL_BGM).handleId_);
 	//ボス戦
-	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::GAME_NOMAL,
+	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::GAME_LAST,
 		ResourceManager::GetInstance().Load(ResourceManager::SRC::GAME_LAST_BGM).handleId_);
+	//音量設定
+	snd.AdjustVolume(SoundManager::SOUND::GAME_LAST, 150);
 
 	//ゲームシーン開始時はノーマルのBGMを再生
 	snd.Play(SoundManager::SOUND::GAME_NOMAL);
@@ -320,7 +365,7 @@ void GameScene::CollisionEnemy(void)
 			}
 
 			//攻撃判定
-			for (int a = 0 ; a < e->GetAtks().size() ; a++)
+			for (int a = 0; a < e->GetAtks().size(); a++)
 			{
 				//攻撃情報をセット
 				e->SetAtk(e->GetAtks()[a]);
@@ -336,14 +381,15 @@ void GameScene::CollisionEnemy(void)
 					if (col.IsHitAtk(*e, *p)/* && !p->GetDodge()->IsDodge()*/)
 					{
 						//ダメージ
-						p->SetDamage(e->GetCharaPow(), eAtk.pow_);
+						p->SetDamage(e->GetAtkPow(), eAtk.pow_);
 						//使用した攻撃を判定終了に
-						e->SetAtksIsHit(a,true);
+						e->SetAtksIsHit(a, true);
 					}
 				}
 			}
 		}
 	}
+
 }
 
 void GameScene::CollisionPlayer(void)
@@ -377,7 +423,7 @@ void GameScene::CollisionPlayer(void)
 			//当たり判定
 			if (col.IsHitAtk(*p, *e)) {
 				//被弾
-				e->SetDamage(p->GetCharaPow(), pAtk.pow_);
+				e->SetDamage(p->GetAtkPow(), pAtk.pow_);
 				e->Damage(e->GetDamage(), pAtk.pow_);
 
 				//死んだら経験値増加
@@ -402,7 +448,7 @@ void GameScene::CollisionChicken(void)
 	for (int i = 0; i < chickenNum; i++) {
 		auto c = chicken_->GetChicken(i);
 		//ニワトリが死んでいたら次へ
- 		if (!c->IsAlive())continue;
+		if (!c->IsAlive())continue;
 
 		//敵の総数取得
 		int maxCnt = enmMng_->GetActiveNum();
@@ -421,12 +467,12 @@ void GameScene::CollisionChicken(void)
 			//範囲内に入っているとき
 			if (col.Search(ePos, c->GetPos(), e->GetSearchRange())) {
 				//移動を開始
-	
+
 				//鶏を狙う
 				e->ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_FOUND);
 				e->SetTargetPos(c->GetPos());
 			}
-			else if(e->GetSearchState() != Enemy::SEARCH_STATE::PLAYER_FOUND) {
+			else if (e->GetSearchState() != Enemy::SEARCH_STATE::PLAYER_FOUND) {
 				//移動を開始
 
 				//まだ探し中
@@ -456,56 +502,57 @@ void GameScene::CollisionChicken(void)
 				if (col.IsHitAtk(*e, *c))
 				{
 					//ダメージ
-					c->SetDamage(e->GetCharaPow());
+					c->SetDamage(e->GetAtkPow());
 					//使用した攻撃を判定終了に
-					e->SetAtksIsHit(a,true);
+					e->SetAtksIsHit(a, true);
 				}
 			}
 		}
 	}
+
 }
 
-void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
-{
-	////衝突判定マネージャ取得
-	//auto& col = Collision::GetInstance();
-	////敵の総数取得
-	//int maxCnt = enmMng_->GetActiveNum();
-
-	////敵をサーチ初期化
-	//_player.SetisEnemySerch(false);
-
-
-	////敵の個体分行う
-	//for (int i = 0; i < maxCnt; i++)
-	//{
-	//	//敵の取得
-	//	Enemy* e = enmMng_->GetActiveEnemy(i);
-
-	//	//敵が死亡していたら処理しない
-	//	if (!e->IsAlive())continue;
-
-	//	//敵個人の位置と攻撃を取得
-	//	VECTOR ePos = e->GetPos();
-
-	//	//プレイヤー側索敵
-	//	if (col.Search(_pPos, ePos, _player.GetSearchRange())
-	//		&& !_player.GetIsCalledPlayer())
-	//	{
-	//		//敵をサーチしたかを返す
-	//		_player.SetisEnemySerch(true);
-	//		_player.SetTargetPos(ePos);
-	//	}
-
-	//	if (col.Search(_player.GetPos(), ePos, _player.GetAtkStartRange())
-	//		&& _player.GetState() == PlayerBase::CPU_STATE::NORMAL
-	//		&& !_player.GetIsCalledPlayer())
-	//	{
-	//		//状態を変更
-	//		_player.ChangeState(PlayerBase::CPU_STATE::ATTACK);
-	//	}
-	//}
-}
+//void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
+//{
+//	//衝突判定マネージャ取得
+//	auto& col = Collision::GetInstance();
+//	//敵の総数取得
+//	int maxCnt = enmMng_->GetActiveNum();
+//
+//	//敵をサーチ初期化
+//	_player.SetisEnemySerch(false);
+//
+//
+//	//敵の個体分行う
+//	for (int i = 0; i < maxCnt; i++)
+//	{
+//		//敵の取得
+//		Enemy* e = enmMng_->GetActiveEnemy(i);
+//
+//		//敵が死亡していたら処理しない
+//		if (!e->IsAlive())continue;
+//
+//		//敵個人の位置と攻撃を取得
+//		VECTOR ePos = e->GetPos();
+//
+//		//プレイヤー側索敵
+//		if (col.Search(_pPos, ePos, _player.GetSearchRange())
+//			&& !_player.GetIsCalledPlayer())
+//		{
+//			//敵をサーチしたかを返す
+//			_player.SetisEnemySerch(true);
+//			_player.SetTargetPos(ePos);
+//		}
+//
+//		if (col.Search(_player.GetPos(), ePos, _player.GetAtkStartRange())
+//			&& _player.GetState() == PlayerBase::CPU_STATE::NORMAL
+//			&& !_player.GetIsCalledPlayer())
+//		{
+//			//状態を変更
+//			_player.ChangeState(PlayerBase::CPU_STATE::ATTACK);
+//		}
+//	}
+//}
 
 void GameScene::Fade(void)
 {
@@ -519,6 +566,7 @@ void GameScene::Fade(void)
 		{
 			// 明転が終了したら、フェード処理終了
 			fader_->SetFade(Fader::STATE::NONE);
+			isFadeInFinish_ = true;
 			isPhaseChanging_ = false;
 		}
 		break;
@@ -526,6 +574,8 @@ void GameScene::Fade(void)
 		// 暗転中
 		if (fader_->IsEnd())	//暗転終了
 		{
+			
+			isFadeInFinish_ = false;
 			//ここの処理をフェーズ遷移がわかりやすいようなやつ始動に変える。
 			// 暗転から明転へ
 			//ある程度完全暗転の時間を用意
@@ -600,6 +650,56 @@ void GameScene::LevelUpReflection()
 	for (int i = 0; i < plNum; i++)
 	{
 		level_->Reflection(*playerMng_->GetPlayer(i), i);
+	}
+}
+
+void GameScene::FazeResultUpdate(void)
+{
+	fazeResult_->Update();
+
+	//リザルトが終了したとき
+	if (fazeResult_->IsEnd())
+	{
+		//カウント後最終フェーズ数より大きくなったらクリアシーンへ
+		if (fazeCnt_ > LAST_FAZE)SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
+
+		level_->AddExp(fazeResult_->GetExp());
+		//敵の入れ替え
+		enmMng_->ProcessChangePhase(fazeCnt_);
+
+		//フェーズリザルトが終了したので明転及びリザルトリセット・タイマー初期化・BGMの再生
+		fader_->SetFade(Fader::STATE::FADE_IN);
+		Timer::GetInstance().Reset();
+		fazeResult_->Reset();
+		isFazeRezult_ = false;
+		//通知機能をONに
+		SetIsInform(true);
+
+		if (fazeCnt_ <= LAST_FAZE)
+		{
+			if (fazeCnt_ == LAST_FAZE)SoundManager::GetInstance().Play(SoundManager::SOUND::GAME_LAST);
+			else SoundManager::GetInstance().Play(SoundManager::SOUND::GAME_NOMAL);
+		}
+	}
+}
+
+void GameScene::InformFazeNum(void)
+{
+	//知らせ更新
+	if (!inform_->Update()) {
+		SetIsInform(false);
+	}
+
+	//知らせ関係の描画処理やる
+}
+
+void GameScene::SetIsInform(const bool _flag)
+{
+	isInformFaze_ = _flag;
+	if (_flag == true)
+	{
+		fazeCnt_++;		//true=フェーズ数更新時のためカウントを増加
+		inform_->SetFazeCnt(fazeCnt_);
 	}
 }
 

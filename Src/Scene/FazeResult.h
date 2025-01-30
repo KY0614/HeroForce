@@ -77,6 +77,8 @@ public:
     //リザルト情報セット
     void SetResult(void);
 
+    float GetExp(void);
+
 private:
 
     //ステート

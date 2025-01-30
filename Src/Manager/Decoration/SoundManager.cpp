@@ -47,6 +47,7 @@ void SoundManager::Play(const SOUND _sound)
 {
 	//元データがないときは警告
 	if (sounds_.find(_sound) == sounds_.end())assert("設定していない音声を再生しようとしています。");
+
 	//再生処理
 	PlaySoundMem(sounds_[_sound].data, sounds_[_sound].playMode);
 }
@@ -78,4 +79,10 @@ void SoundManager::AdjustVolume(const SOUND _sound, const int _persent)
 	//元データがないときは警告
 	if (sounds_.find(_sound) == sounds_.end())assert("設定していない音声を設定しようとしています。");
 	ChangeVolumeSoundMem(255 * _persent / 100, sounds_[_sound].data);
+}
+
+void SoundManager::Destroy(void)
+{
+	Release();
+	delete instance_;
 }

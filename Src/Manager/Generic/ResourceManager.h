@@ -34,11 +34,28 @@ public:
 	static constexpr int RANKS_NUM_Y = 1;
 	static constexpr int RANK_SIZE = 300;
 
+	//煙
+	static constexpr int SMOKE_NUM_X = 16;
+	static constexpr int SMOKE_NUM_Y = 1;
+	static constexpr int SMOKE_SIZE_X = 1024 / SMOKE_NUM_X;
+	static constexpr int SMOKE_SIZE_Y = 77 / SMOKE_NUM_Y;
+
+	//アイコン
+	static constexpr int CHARA_ICON_NUM_X = 4;
+	static constexpr int CHARA_ICON_NUM_Y = 1;
+	static constexpr int CHARA_ICON_SIZE = 128;
+
+	//キャラネーム
+	static constexpr int NAME_NUM_X = 1;
+	static constexpr int NAME_NUM_Y = 4;
+	static constexpr int NAME_SIZE_X = 150 / NAME_NUM_X;
+	static constexpr int NAME_SIZE_Y = 180 / NAME_NUM_Y;
+
+
 	// リソース名
 	enum class SRC
 	{
 		TITLE,
-		GAMEOVER,
 		RESTART,
 		NEXT,
 		//モデル
@@ -61,6 +78,14 @@ public:
 		//ゲームクリア
 		CONGRATULATIONS,
 		FIREWORK,
+		GAMECLEAR_SE,
+		GAMECLEAR_BGM,
+
+		//ゲームオーバー
+		GAMEOVER,
+		GAMEOVER_SE,
+		GAMEOVER_BGM,
+		GAMEOVER_BACK,
 
 		//UI
 		HP_PLAYER,
@@ -74,6 +99,9 @@ public:
 		TO_TITLE,
 		START,
 		TIME,
+		MISSION_NOMAL,
+		MISSION_LAST,
+		CHANGE_TITLE_UI,
 
 		//レベル通知用
 		LEVEL_UP,
@@ -81,6 +109,14 @@ public:
 		CARSOLS,
 		LEVEL_SCREEN_EFE,
 		LEVEL_UP_BACK,
+		CHARA_ICONS,
+		HP_BOSS,
+		HP_BOSS_GAGE,
+		NUMBERS2,
+		PARAM_UI,
+		ROLE_NAMES,
+		TIMER_BACK,
+
 
 		//強化
 		ATTACK_UP_UI,
@@ -104,10 +140,12 @@ public:
 
 		//選択画面用
 		PLAYER_NUM,		//人数選択
+		DISPLAY_NUM,	//人数選択
 		RIGHT_POINT,	//右矢印
 		LEFT_POINT,		//左矢印
 		READY,			//準備
 		DEVICE,			//デバイス
+		COMING_SOON,	//ComingSoon
 
 		//タイトル画面
 		TITLE_LOGO,
@@ -130,12 +168,33 @@ public:
 		//BGM
 		GAME_NOMAL_BGM,
 		GAME_LAST_BGM,
+		TITLE_BGM,
+		
 
 		//効果音
 		HIT_SND,
 		PLAYER_DETH_SND,
 		ENEMY_DETH_SND,
 		CHICKEN_DETH_SND,
+		SCENE_CHANGE_SE1,
+
+		//エフェクト
+			SMOKE,
+			DAMAGE_EFE,
+			//敵エフェクト
+			BOSS_PUNCH_EFE,
+			BOSS_SHOUT_EFE,
+			BOSS_SHOUT_ATK_EFE,
+			STATE_DOWN_EFE,
+
+			//エフェクト
+			ARROW_RED,		//矢のエフェクト(赤)
+			ARROW_WHITE,	//矢のエフェクト(白)
+
+			CHARGE_AXE_HIT, //アックスの溜めスキル
+			GUARD,			//ガード
+			HIT2,			//プレイヤーから敵への当たりエフェクト
+
 	};
 
 	// 明示的にインステンスを生成する

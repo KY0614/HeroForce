@@ -1,8 +1,8 @@
 #include <DxLib.h>
 #include <memory>
 #include <fstream>
-#include "../Utility/AsoUtility.h"
-#include "../Manager/Generic/ResourceManager.h"
+#include "../../Utility/AsoUtility.h"
+#include "../../Manager/Generic/ResourceManager.h"
 
 #include "StageObject.h"
 

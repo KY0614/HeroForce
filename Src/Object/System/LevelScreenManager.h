@@ -37,12 +37,16 @@ public:
 
 	//初期レベル
 	static constexpr int DEFAULT_LEVEL = 1;
+
+	//
+	static constexpr float EXP_SPEED = 5.0f;
 	
 	//ゲージ最大値
-	static constexpr float CONSTANT_GAGE = 120.0f;
+	static constexpr float CONSTANT_GAGE = 1000.f;
 
 	//ゲージUI拡大率
-	static constexpr float GAGE_SCALE_RATE = Application::SCREEN_SIZE_X * 1.8f / Application::DEFA_SCREEN_SIZE_X;
+	static constexpr float GAGE_SCALE_RATE = 1.0f;
+	static constexpr float NUM_SCALE_RATE = 0.75f;
 
 	//ゲージ画像サイズ
 	static constexpr int GAGE_IMG_SIZE = 128 * GAGE_SCALE_RATE;
@@ -57,7 +61,7 @@ public:
 	static constexpr int TYPE_MAX = static_cast<int>(TYPE::MAX);
 
 	//エフェクトサイズ
-	static constexpr float EFFECT_SCALE = 20.0f;
+	static constexpr float EFFECT_SCALE = 30.0f;
 
 	//ゲージ座標
 	static constexpr int GAGE_POS_X = 20;
@@ -178,4 +182,5 @@ private:
 	//デバッグ機能
 	void DebagUpdate();
 	void DebagDraw();
+
 };

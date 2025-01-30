@@ -65,19 +65,109 @@
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Scene\TitleScene.cpp" />
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
+    <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
+    <ClCompile Include="Src\Object\System\LevelScreenManager.cpp" />
+    <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
+    <ClCompile Include="Src\Object\System\Carsor.cpp" />
+    <ClCompile Include="Src\Object\System\LevelupNotice.cpp" />
+    <ClCompile Include="Src\Object\System\LevelupSelect.cpp" />
+    <ClCompile Include="Src\Common\ImageFader.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneAxe.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\TextManager.cpp" />
+    <ClCompile Include="Src\Object\System\UnitPositionLoad.cpp" />
+    <ClCompile Include="Src\Object\Character\Chiken\ChickenBase.cpp" />
+    <ClCompile Include="Src\Object\Character\Chiken\ChickenManager.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneArcher.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneBrig.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneGolem.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemySort\EneMage.cpp" />
+    <ClCompile Include="Src\Object\System\GameUi\GamaUIBase.cpp" />
+    <ClCompile Include="Src\Object\System\GameUi\CpuHpBar.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\SoundManager.cpp" />
+    <ClCompile Include="Src\Scene\GameOverScene.cpp" />
+    <ClCompile Include="Src\Scene\FazeResult.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\Timer.cpp" />
+    <ClCompile Include="Src\Object\Character\EnemyManager.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\PlayerCpu.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerManager.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuAxe.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuArcher.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuKnight.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuMage.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\AxeMan.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Archer.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Knight.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Mage.cpp" />
+    <ClCompile Include="Src\Object\JobManagerBase.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
+    <ClCompile Include="Src\Object\SelectImage.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
+    <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
     <ClCompile Include="Src\Shader\PixelShader.cpp" />
     <ClCompile Include="Src\Scene\GameClearScene.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ClearChicken.cpp" />
     <ClCompile Include="Src\Common\ShaderFade.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerDodge.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayerInput.cpp" />
+    <ClCompile Include="Src\Object\Character\Chiken\ClearChicken.cpp" />
+    <ClCompile Include="Src\Scene\GameClearScene.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Other\SelectEnemy.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Other\ClearPlayers.cpp" />
     <ClCompile Include="Src\Object\System\GameUi\CpuHpBar.cpp" />
     <ClCompile Include="Src\Object\System\GameUi\GamaUIBase.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Other\OverPlayers.cpp" />
+    <ClCompile Include="Src\Manager\GameSystem\CharacterParamData.cpp" />
+    <ClCompile Include="Src\Object\System\InformFaze.cpp" />
+    <ClCompile Include="Src\Object\System\GameUi\PlayerUI.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\Application.h" />
-    <ClInclude Include="Src\Common\Fader.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\PlayerBase.h" />
+    <ClCompile Include="Src\Application.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Common\Fader.cpp">
+      <Filter>ソース ファイル\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Scene\SceneBase.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Scene\TitleScene.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utility\AsoUtility.cpp">
+      <Filter>ソース ファイル\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Common\Vector2.cpp">
+      <Filter>ソース ファイル\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Common\Quaternion.cpp">
+      <Filter>ソース ファイル\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Common\Transform.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Common\IntVector3.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Scene\GameScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\UnitBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Object\Arrow.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClInclude Include="Src\Object\Stage\StageObject.h" />
+    <ClInclude Include="Src\Object\Stage\SkyDome.h" />
+    <ClInclude Include="Src\Object\System\Carsor.h" />
+    <ClInclude Include="Src\Object\System\LevelupNotice.h" />
     <ClInclude Include="Src\Common\ImageFader.h" />
     <ClInclude Include="Src\Common\IntVector3.h" />
     <ClInclude Include="Src\Common\Quaternion.h" />
@@ -149,5 +239,19 @@
     <ClInclude Include="Src\Object\Character\PlayableChara\Other\ClearPlayers.h" />
     <ClInclude Include="Src\Object\System\GameUi\CpuHpBar.h" />
     <ClInclude Include="Src\Object\System\GameUi\GamaUIBase.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Other\SelectEnemy.h" />
+    <ClInclude Include="Src\Manager\GameSystem\CharacterParamData.h" />
+    <ClInclude Include="Src\Application.h" />
+    <ClInclude Include="Src\Common\Fader.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Other\OverPlayers.h" />
+    <ClInclude Include="Src\Object\System\InformFaze.h" />
+    <ClInclude Include="Src\Object\System\GameUi\PlayerUI.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Src\Shader\HLSL\ColorTex.hlsl" />
+    <FxCompile Include="Src\Shader\HLSL\Fade.hlsl" />
+    <FxCompile Include="Src\Shader\HLSL\FadeTextrure.hlsl" />
+    <FxCompile Include="Src\Shader\HLSL\YellowBlink.hlsl" />
+    <FxCompile Include="Src\Shader\HLSL\Texture.hlsl" />
   </ItemGroup>
 </Project>

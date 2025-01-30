@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneBase.h"
 #include"../Common/Fader.h"
+#include"../Object/Character/PlayerManager.h"
 #include<vector>
 #include<memory>
 
@@ -15,6 +16,9 @@ class LevelScreenManager;
 class UnitPositionLoad;
 class ChickenManager;
 class FazeResult;
+class InformFaze;
+class PlayerUI;
+
 
 class GameScene : public SceneBase
 {
@@ -51,6 +55,8 @@ private:
 
 	//フェーダー
 	std::unique_ptr<Fader>fader_;
+	bool isFadeInFinish_;
+
 	//ゲームシーンのフェーズ遷移中判定
 	bool isPhaseChanging_;
 	int phaseCnt_;
@@ -63,7 +69,7 @@ private:
 
 	//プレイヤー
 	std::unique_ptr<PlayerManager>playerMng_;
-
+	std::unique_ptr<PlayerUI> uis_[PlayerManager::PLAYER_NUM];
 
 	//敵
 	std::unique_ptr<EnemyManager>enmMng_;
@@ -72,6 +78,10 @@ private:
 	int dunkEnmCnt_;
 	//フェーズ数カウント
 	int fazeCnt_;
+
+	//フェーズ数通知関連
+	bool isInformFaze_;		//通知中かのtrue/false
+	std::unique_ptr<InformFaze>inform_;
 
 	//チキン
 	std::unique_ptr<ChickenManager> chicken_;
@@ -88,7 +98,7 @@ private:
 	void CollisionEnemy(void);	//敵関連の当たり判定
 	void CollisionPlayer(void);	//プレイヤー関連の当たり判定
 	void CollisionChicken(void);//ニワトリあたり判定
-	void CollisionPlayerCPU(PlayerBase& _player,const VECTOR& _pPos);	//プレイヤー(CPU)関連の当たり判定
+	//void CollisionPlayerCPU(PlayerBase& _player,const VECTOR& _pPos);	//プレイヤー(CPU)関連の当たり判定
 
 	//フェード
 	void Fade(void);
@@ -102,6 +112,12 @@ private:
 
 	//強化要素反映
 	void LevelUpReflection();
+
+	//リザルト
+	void FazeResultUpdate(void);
+	void InformFazeNum(void);
+
+	void SetIsInform(const bool _flag);	//フェーズ数表示するかどうかのフラグ
 
 	//ゲームオーバー判定
 	bool IsGameOver(void);

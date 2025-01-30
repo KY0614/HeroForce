@@ -3,6 +3,7 @@
 #include "../Application.h"
 #include "../Utility/AsoUtility.h"
 #include "../Manager/Decoration/EffectManager.h"
+#include "../Manager/Decoration/SoundManager.h"
 #include "../Manager/Generic/ResourceManager.h"
 #include "../Manager/Generic/SceneManager.h"
 #include "../Manager/Generic/InputManager.h"
@@ -18,6 +19,13 @@ class ClearPlayers;
 class GameClearScene : public SceneBase
 {
 public:
+
+	//状態
+	enum class STATE
+	{
+		HAPPY,		//つかの間の喜び
+		DISPLAY,	//メッセージの表示
+	};
 
 	//チキン生成数
 	static constexpr int CHICKEN_CREATES = 4;
@@ -41,6 +49,13 @@ public:
 	//エフェクトサイズ
 	static constexpr float EFFECT_SIZE = 20.0f;
 
+	//アルファ値最大
+	static constexpr int ALPHA_MAX = 255;
+	static constexpr int ALPHA_MIN = 130;
+
+	//状態遷移秒数
+	static constexpr float CHANGE_SECOND = 2.0f;
+
 	GameClearScene();
 	~GameClearScene() = default;
 
@@ -53,6 +68,16 @@ private:
 
 	//画像
 	int imgMes_;
+	
+	//更新用
+	float step_;
+
+	//アルファ値
+	float alpha_;
+	float alphaAdd_;
+
+	//状態
+	STATE state_;
 
 	//スカイドーム
 	std::unique_ptr<SkyDome> sky_;
@@ -60,6 +85,20 @@ private:
 	std::unique_ptr<ClearPlayers> player_;
 	std::unique_ptr<StageManager> stage_;
 
-	void DebagPlay();
+	// 状態管理(状態遷移時初期処理)
+	std::map<STATE, std::function<void(void)>> stateChanges_;
 
+	// 状態管理
+	std::function<void(void)> stateUpdate_;	//更新
+
+	//状態変更
+	void ChangeState(const STATE state);
+	void ChangeStateHappy();
+	void ChangeStateDisplay();
+
+	//各種更新処理
+	void UpdateHappy(void);
+	void UpdateDisplay(void);
+
+	void DebagPlay();
 };

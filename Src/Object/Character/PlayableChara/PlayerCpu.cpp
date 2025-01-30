@@ -93,7 +93,7 @@ void PlayerCpu::CpuStateUpdate(void)
 void PlayerCpu::CpuMove(VECTOR _targetPos)
 {
 	//移動速度の更新
-	moveSpeed_ = SPEED_MOVE * calledMoveSpeed_;
+	speed_ = SPEED_MOVE * calledMoveSpeed_;
 	isMove_ = true;
 
 	//方向ベクトル取得
@@ -156,7 +156,7 @@ void PlayerCpu::CpuNmlUpdate(void)
 	if (!isMove_ && !dodge_->IsDodge() && !IsAtkAction())
 	{
 		ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
-		moveSpeed_ = 0.0f;
+		speed_ = 0.0f;
 	}
 	//歩きアニメーション
 	else
@@ -165,7 +165,7 @@ void PlayerCpu::CpuNmlUpdate(void)
 	}
 
 	//移動量の初期化
-	moveSpeed_ = 0.0f;
+	speed_ = 0.0f;
 
 	//preAtk_ = ATK_ACT::MAX;
 

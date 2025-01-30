@@ -13,6 +13,7 @@
 #include"../Manager/GameSystem/CharacterParamData.h"
 #include"../Manager/GameSystem/Collision.h"
 #include"../Manager/GameSystem/DataBank.h"
+#include"../Manager/GameSystem/CharacterParamData.h"
 #include"../Manager/Decoration/EffectManager.h"
 #include"../Manager/Decoration/SoundManager.h"
 #include"../Shader/PixelShader.h"
@@ -47,6 +48,8 @@ void SceneManager::Init(void)
 	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;
 
+	CharacterParamData::CreateInstance();
+
 	fader_ = std::make_unique<Fader>();
 	fader_->Init();
 
@@ -72,6 +75,7 @@ void SceneManager::Init(void)
 	//メインウィンドウを追加
 	subWindowH_.push_back(NULL);
 	activeWindowNum_ = 1;	//メインをアクティブにするので初期値１
+	nowWindowNum_ = 0;
 }
 
 void SceneManager::Init3D(void)
@@ -158,7 +162,8 @@ void SceneManager::Draw(void)
 
 		// Effekseerにより再生中のエフェクトを更新する。
 		UpdateEffekseer3D();
-
+		//現在のウィンドウ数セット
+		SetNowWindow(cnt);
 
 		//ゲーム内容描画
 		// 描画
@@ -190,8 +195,8 @@ void SceneManager::Destroy(void)
 	}
 
 	DataBank::GetInstance().Destroy();
-	EffectManager::GetInstance().Release();
-	SoundManager::GetInstance().Release();
+	EffectManager::GetInstance().Destroy();
+	SoundManager::GetInstance().Destroy();
 	PixelShader::GetInstance().Destroy();
 
 	delete instance_;
@@ -341,6 +346,8 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 
 	// リソースの解放
 	resM.Release();
+	EffectManager::GetInstance().Release();
+	SoundManager::GetInstance().Release();
 
 	// シーンを変更する
 	sceneId_ = sceneId;
@@ -422,6 +429,11 @@ void SceneManager::Fade(void)
 	}
 }
 
+void SceneManager::SetNowWindow(const int _num)
+{
+	nowWindowNum_ = _num;
+}
+
 //ウィンドウのサイズ及び位置設定
 void SceneManager::SetWindowPram(void)
 {
@@ -488,4 +500,9 @@ void SceneManager::SetWindowPram(void)
 			posX = 0;
 		}
 	}
+}
+
+const int SceneManager::GetNowWindow(void) const
+{
+	return nowWindowNum_;
 }

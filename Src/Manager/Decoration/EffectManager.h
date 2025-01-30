@@ -17,18 +17,29 @@ public:
 	enum class EFFECT
 	{
 		//使用するエフェクトを羅列
+		NONE,
 		LIFE_UP,
 		ATTACK_UP,
 		DEFENCE_UP,
 		SPEED_UP,
 		FIREWORK,
-		NONE,
-
+		DAMAGE,
 		//Enemyが使用
 		BOSS_PUNCH,
 		BOSS_SHOUT,
 		BOSS_SHOUT_ATK,
 		STATE_DOWN,
+
+		//KNIGHT
+		GUARD,
+		HIT2,	//敵へ当たった時のエフェクト
+
+		//AXE
+		CHARGE_AXE_HIT,
+
+		//ARCHER
+		ARROW_RED,		//矢のエフェクト(赤)
+		ARROW_WHITE,	//矢のエフェクト(白)
 	};
 
 
@@ -79,6 +90,9 @@ public:
 
 	//解放処理
 	void Release(void);
+
+	//消去処理
+	void Destroy(void);
 
 private:
 	//インスタンス用

@@ -1,5 +1,5 @@
 #include <DxLib.h>
-#include "../Application.h"
+#include "../../Application.h"
 #include "Resource.h"
 #include "ResourceManager.h"
 
@@ -39,6 +39,15 @@ void ResourceManager::InitTitle(void)
 	//キー指示メッセージ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "PleaseKey.png");
 	resourcesMap_.emplace(SRC::PLEASE_KEY, res);
+
+	//タイトルBGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "TitleBGM.m4a");
+	resourcesMap_.emplace(SRC::TITLE_BGM, res);
+
+	//シーンチェンジ
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "SceneChange.mp3");
+	resourcesMap_.emplace(SRC::SCENE_CHANGE_SE1, res);
+
 }
 
 void ResourceManager::InitSelect(void)
@@ -48,6 +57,10 @@ void ResourceManager::InitSelect(void)
 	//人数選択画像
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "PlayerNumber.png", 4, 1, 300, 300);
 	resourcesMap_.emplace(SRC::PLAYER_NUM, res);
+	
+	//画面数選択画像
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "DisPlayNumber.png", 4, 1, 300, 300);
+	resourcesMap_.emplace(SRC::DISPLAY_NUM, res);
 
 	//右矢印
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Right_point.png", 1, 1, 52, 52);
@@ -58,7 +71,7 @@ void ResourceManager::InitSelect(void)
 	resourcesMap_.emplace(SRC::LEFT_POINT, res);
 
 	//準備
-	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "test.png", 1, 1, 500, 200);
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Ready.png", 1, 1, 500, 200);
 	resourcesMap_.emplace(SRC::READY, res);
 
 	//役職
@@ -69,6 +82,10 @@ void ResourceManager::InitSelect(void)
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Device.png", 1, 1, 300, 300);
 	resourcesMap_.emplace(SRC::DEVICE, res);
 
+	//ComingSoon
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Coming Soon.png", 1, 1, 410, 200);
+	resourcesMap_.emplace(SRC::COMING_SOON, res);
+
 	//キャラクターパラメータリスト
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "CharaParams.png", CHARA_PARAM_NUM_X, CHARA_PARAM_NUM_Y, CHARA_PARAM_SIZE_X, CHARA_PARAM_SIZE_Y);
 	resourcesMap_.emplace(SRC::CHARA_PARAMS, res);
@@ -78,12 +95,49 @@ void ResourceManager::InitSelect(void)
 	resourcesMap_.emplace(SRC::CHICKEN, res);
 
 	ResourcePlayer();
+	ResourceEnemy();
 	ResourceStage();
 }
 
 void ResourceManager::InitGame(void)
 {
 	Resource res;
+
+	//煙エフェクト
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Smokes.png", SMOKE_NUM_X, SMOKE_NUM_Y, SMOKE_SIZE_X, SMOKE_SIZE_Y);
+	resourcesMap_.emplace(SRC::SMOKE, res);
+
+	//ダメージエフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Damage.efkefc");
+	resourcesMap_.emplace(SRC::DAMAGE_EFE, res);
+
+	//ゲームUI用数字画像2
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Numbers2.png", NUMBERS_NUM_X, NUMBERS_NUM_Y, NUMBERS_SIZE, NUMBERS_SIZE);
+	resourcesMap_.emplace(SRC::NUMBERS2, res);
+
+	//パラメーターUI
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "ParamUI.png");
+	resourcesMap_.emplace(SRC::PARAM_UI, res);
+
+	//ボスHP
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "BossHpBar.png");
+	resourcesMap_.emplace(SRC::HP_BOSS, res);
+
+	//ボスHPBar
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "BossHpGage.png");
+	resourcesMap_.emplace(SRC::HP_BOSS_GAGE, res);
+
+	//キャラアイコン
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "CharaIcons.png", CHARA_ICON_NUM_X, CHARA_ICON_NUM_Y, CHARA_ICON_SIZE, CHARA_ICON_SIZE);
+	resourcesMap_.emplace(SRC::CHARA_ICONS, res);
+
+	//キャラ名前
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "RoleNames.png", NAME_NUM_X, NAME_NUM_Y, NAME_SIZE_X, NAME_SIZE_Y);
+	resourcesMap_.emplace(SRC::ROLE_NAMES, res);
+
+	//タイマー背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "TimerBack.png");
+	resourcesMap_.emplace(SRC::TIMER_BACK, res);
 
 	//BGM
 	//ゲームノーマル
@@ -122,6 +176,15 @@ void ResourceManager::InitGame(void)
 	//経験値経験値ゲージ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "CircleExpGage.png");
 	resourcesMap_.emplace(SRC::CIRCLE_EXP_GAGE, res);
+
+	//ミッション①
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Mission_Nomal.png");
+	resourcesMap_.emplace(SRC::MISSION_NOMAL, res);
+
+	//ミッション②
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Mission_Last.png");
+	resourcesMap_.emplace(SRC::MISSION_LAST, res);
+
 
 	//ゲームUI用数字画像
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Numbers.png", NUMBERS_NUM_X,NUMBERS_NUM_Y, NUMBERS_SIZE, NUMBERS_SIZE);
@@ -181,6 +244,17 @@ void ResourceManager::InitGame(void)
 
 
 	ResourcePlayer();
+
+	//敵関連のエフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "EnemyEffect/StateDownSpell.efkefc");
+	resourcesMap_.emplace(SRC::STATE_DOWN_EFE, res);
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "EnemyEffect/BossPunch.efkefc");
+	resourcesMap_.emplace(SRC::BOSS_PUNCH_EFE, res);
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "EnemyEffect/BossShout.efkefc");
+	resourcesMap_.emplace(SRC::BOSS_SHOUT_EFE, res);
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "EnemyEffect/BossShoutAtk.efkefc");
+	resourcesMap_.emplace(SRC::BOSS_SHOUT_ATK_EFE, res);
+
 	ResourceEnemy();
 	ResourceStage();
 
@@ -203,6 +277,11 @@ void ResourceManager::InitGame(void)
 	//リザルト背景
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "FazeRezaltBack.jpg");
 	resourcesMap_.emplace(SRC::REZALT_BACK, res);
+
+	//矢
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ARROW + "Arrow.mv1");
+	resourcesMap_.emplace(SRC::ARROW, res);
+
 }
 
 void ResourceManager::InitResult(void)
@@ -220,22 +299,55 @@ void ResourceManager::InitResult(void)
 void ResourceManager::InitGameOver(void)
 {
 	Resource res;
+
+	//ゲームオーバーUI
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "GameOver.png");
+	resourcesMap_.emplace(SRC::GAMEOVER, res);
+
+	//ゲームオーバー背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "GameOverBack.png");
+	resourcesMap_.emplace(SRC::GAMEOVER_BACK, res);
+
+	//タイトル遷移メッセージ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "ChangeTitleMes.png");
+	resourcesMap_.emplace(SRC::CHANGE_TITLE_UI, res);
+
+	//SE
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "GameOverSE.wav");
+	resourcesMap_.emplace(SRC::GAMEOVER_SE, res);
+
+	//BGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "GameOverBGM.mp3");
+	resourcesMap_.emplace(SRC::GAMEOVER_BGM, res);
+
+	ResourcePlayer();
 }
 
 void ResourceManager::InitGameClear(void)
 {
 	Resource res;
 
-	//cong
+	//祝福メッセージ
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Congratulations.png");
 	resourcesMap_.emplace(SRC::CONGRATULATIONS, res);
+
+	//タイトル遷移メッセージ
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "ChangeTitleMes.png");
+	resourcesMap_.emplace(SRC::CHANGE_TITLE_UI, res);
 
 	//花火
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Fireworks.efkefc");
 	resourcesMap_.emplace(SRC::FIREWORK, res);
 
+	//SE
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "GameClearSE.mp3");
+	resourcesMap_.emplace(SRC::GAMECLEAR_SE, res);
+
+	//BGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "GameClearBGM.mp3");
+	resourcesMap_.emplace(SRC::GAMECLEAR_BGM, res);
+
 	ResourcePlayer();
-	ResourceEnemy();
 	ResourceStage();
 
 	//チキン
@@ -249,7 +361,28 @@ void ResourceManager::ResourcePlayer(void)
 {
 	Resource res;
 
-	
+	// エフェクト
+		// ********************************************************************
+
+		//斧使いのスキル1溜め攻撃
+		res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "fire.efkproj");
+	resourcesMap_.emplace(SRC::CHARGE_AXE_HIT, res);
+
+	//騎士のガード
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Falloff.efkefc");
+	resourcesMap_.emplace(SRC::GUARD, res);
+
+	//アーチャーの矢のエフェクト(赤)
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Spear1.efkproj");
+	resourcesMap_.emplace(SRC::ARROW_RED, res);
+
+	//矢のエフェクト(白)
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Spear2.efkproj");
+	resourcesMap_.emplace(SRC::ARROW_WHITE, res);
+
+	//当たりエフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "hit_eff.efkproj");
+	resourcesMap_.emplace(SRC::HIT2, res);
 
 	//モデル
 // ********************************************************************
