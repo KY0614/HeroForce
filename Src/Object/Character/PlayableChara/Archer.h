@@ -73,6 +73,8 @@ public:
 
 
     static constexpr float SKILL2_CHANGE_ANIM_TIME = 0.25f;
+   // static constexpr float SKILL2_BUFF_TIME = 20.0f;
+    static constexpr float SKILL2_BUFF_TIME = 3.0f;
 
 
     //-----------------------------------------------------------
@@ -98,6 +100,7 @@ public:
     static constexpr float RELOAD_TIME = 5.0f;	//矢のリロード時間
     static constexpr float ARROW_SPEED = 10.0f;	//矢のとぶスピード
 
+ 
 
     Archer(void);
     ~Archer(void) = default;

@@ -4,11 +4,10 @@ class AxeMan :
     public PlayerBase
 {
 public:
-    //ステータス
-    static constexpr float POW_ATK = 160.0f;
-    static constexpr int DEF_MAX = 110;
-    static constexpr int HP_MAX = 265;
-    static constexpr float SPEED = PlayerBase::MOVE_SPEED_SLOW;
+#ifdef DEBUG_ON
+    void DrawDebug(void)override;
+#endif // DEBUG_ON
+
 #ifdef DEBUG_COOL
     //クールタイム
     static constexpr float ATK_COOLTIME = 1.0f;
@@ -21,6 +20,11 @@ public:
     static constexpr float SKILL_TWO_COOLTIME = 5.0f;
 #endif // DEBUG_COOL
 
+    //ステータス
+    static constexpr float POW_ATK = 160.0f;
+    static constexpr int DEF_MAX = 110;
+    static constexpr int HP_MAX = 265;
+    static constexpr float SPEED = PlayerBase::MOVE_SPEED_SLOW;
 
     //攻撃発生の時間
     static constexpr float ATK_START = 0.2f;
@@ -97,6 +101,8 @@ protected:
     void Skill2Func(void)override;
     void InitAct(void)override;
     void InitSkill(ATK_ACT _act);
+
+    void Draw(void)override;
 
     //固有アニメーション番号の初期化
     void InitCharaAnim(void)override;

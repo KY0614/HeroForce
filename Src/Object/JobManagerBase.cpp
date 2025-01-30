@@ -19,7 +19,7 @@ void JobManagerBase::ActionInput( PlayerBase* _player, PlayerDodge* _dodge)
 		_player->Move(ins.GetMoveDeg(), AsoUtility::AXIS_Y);
 	}
 	//動いてないときはスピード0にする
-	else { obj_->SetMoveSpeed(0.0f); }
+	else { obj_->SetSpeed(0.0f); }
 
 	if (ins.CheckAct(ACT_CNTL::CHANGE_SKILL)) { _player->SkillChange(); }
 

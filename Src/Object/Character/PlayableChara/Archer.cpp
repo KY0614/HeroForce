@@ -8,7 +8,8 @@
 #ifdef DEBUG_ON
 void Archer::DrawDebug(void)
 {
-	DrawFormatString(0, 0, 0x000000, "arrowCnt(%d,%d)", arrowCnt_[0], arrowCnt_[1]);
+	DrawFormatString(0, 32, 0x000000, "arrowCnt(%d,%d)", arrowCnt_[0], arrowCnt_[1]);
+	DrawSphere3D(trans_.pos, ARCHER_SEARCH_RANGE, 4, 0x0, 0xff0000, false);
 	size_t arrowSize = arrow_.size();
 	for (int i = 0; i < static_cast<int>(ATK_TYPE::MAX); i++)
 	{
@@ -248,9 +249,13 @@ void Archer::SetIsArrowHit(ATK_TYPE _type, const bool _flg, int _num)
 
 void Archer::Buff(PlayerBase& _target)
 {
-	_target.SetBuff(BUFF_TYPE::ATK_BUFF, 0.2f, 20.0f);
-	_target.SetBuff(BUFF_TYPE::SPD_BUFF, 0.2f, 20.0f);
-	_target.SetBuff(BUFF_TYPE::DEF_BUFF, 0.2f, 20.0f);
+	//ëOÇÃèÓïÒÇäiî[Ç∑ÇÈ
+	_target.SetPreStatus();
+
+	//ÉoÉtèÓïÒÇÉZÉbÉg
+	_target.SetBuff(BUFF_TYPE::ATK_BUFF, 0.2f, SKILL2_BUFF_TIME);
+	_target.SetBuff(BUFF_TYPE::SPD_BUFF, 0.2f, SKILL2_BUFF_TIME);
+	_target.SetBuff(BUFF_TYPE::DEF_BUFF, 0.2f, SKILL2_BUFF_TIME);
 }
 
 
@@ -276,7 +281,6 @@ void Archer::Draw(void)
 	PlayerBase::Draw();
 
 #ifdef DEBUG_ON
-	//DrawFormatString(300, 100, 0xffffff, "arrowSize(%d)", arrowSize);
 	DrawDebug();
 #endif // DEBUG_ON
 }
@@ -298,9 +302,12 @@ void Archer::AtkFunc(void)
 	{
 		moveAble_ = false;
 		CntUp(atkStartCnt_);
-		VECTOR targetVec = GetTargetVec(targetPos_,false);
-		//âÒì]
-		trans_.quaRot = trans_.quaRot.LookRotation(targetVec);
+		if (isSerchArcher_)
+		{
+			VECTOR targetVec = GetTargetVec(targetPos_, false);
+			//âÒì]
+			trans_.quaRot = trans_.quaRot.LookRotation(targetVec);
+		}
 	}
 	else if (IsFinishAtkStart())
 	{

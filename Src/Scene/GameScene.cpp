@@ -133,47 +133,8 @@ void GameScene::Update(void)
 	//タイマーが終了したら
 	if (Timer::GetInstance().IsEnd())ChangePhase();
 
-
-
-
-
-
-
-
-	//一番近い敵を探す
-	//敵の数を取得
-	int enmCnt = enmMng_->GetActiveNum();
-	float e2pVecSize[EnemyManager::ENEMY_MAX];
-	VECTOR minE2PVec;
-	float min=FLT_MAX;
-	for (int pl = 0; pl < PlayerManager::PLAYER_NUM; pl++)
-	{
-		VECTOR pPos = playerMng_->GetPlayer(pl)->GetPos();
-		for (int ecnt = 0; ecnt < enmCnt; ecnt++)
-		{
-			VECTOR ePos1 = enmMng_->GetActiveEnemy(ecnt)->GetPos();
-
-			//プレイヤーと敵との距離を求める
-			float e2p = sqrt((ePos1.x - pPos.x) * (ePos1.x - pPos.x) + (ePos1.z - pPos.z) * (ePos1.z - pPos.z));
-			e2pVecSize[ecnt] = e2p;
-			if (e2pVecSize[ecnt] < min)
-			{
-				min = e2pVecSize[ecnt];
-				minE2PVec = ePos1;
-				playerMng_->GetPlayer(pl)->SetTargetPos(minE2PVec);
-			}
-		}
-	}
 	//プレイヤーの更新
 	playerMng_->Update();
-
-
-
-
-
-
-
-
 
 
 	//敵の更新
@@ -260,8 +221,12 @@ void GameScene::Collision(void)
 
 	CollisionEnemy();
 	CollisionPlayer();
-	CollisionPlayerArrow();
 
+	//変更箇所
+	//------------------
+	CollisionPlayerArrow();
+	CollisionPlayerSerch();
+	//------------------
 }
 
 //敵関係の当たり判定
@@ -352,8 +317,6 @@ void GameScene::CollisionPlayer(void)
 		auto pPos = p->GetPos();
 		auto pAtk = p->GetAtk();
 
-		//int pArrowCnt = p->GetArrowCnt();
-
 		//プレイヤーがCPUの時だけサーチしたい
 		//if (p->GetPlayMode() == SceneManager::PLAY_MODE::CPU)CollisionPlayerCPU(*p, pPos);
 
@@ -401,39 +364,37 @@ void GameScene::CollisionPlayerArrow(void)
 
 		for (int enemy = 0; enemy < maxCnt; enemy++)
 		{
-			//for (int type = 0; type < static_cast<int>(PlayerBase::ATK_TYPE::MAX); type++)
-			//{
-				int pArrowCnt = p->GetArrowCnt(static_cast<int>(PlayerBase::ATK_TYPE::ATTACK));
-				for (int arrowCnt = 0; arrowCnt < pArrowCnt; arrowCnt++)
-				{
-					if (p->GetAtks(PlayerBase::ATK_TYPE::ATTACK).empty())continue;
-					auto arrow = p->GetArrowAtk(PlayerBase::ATK_TYPE::ATTACK, arrowCnt);
+			int pArrowCnt = p->GetArrowCnt(static_cast<int>(PlayerBase::ATK_TYPE::ATTACK));
+			for (int arrowCnt = 0; arrowCnt < pArrowCnt; arrowCnt++)
+			{
+				if (p->GetAtks(PlayerBase::ATK_TYPE::ATTACK).empty())continue;
+				auto arrow = p->GetArrowAtk(PlayerBase::ATK_TYPE::ATTACK, arrowCnt);
 
-					if (!arrow.IsAttack() || arrow.isHit_)continue;
-					p->SetAtk(arrow);
-					//敵の取得
-					Enemy* e = enmMng_->GetActiveEnemy(enemy);
-					//当たり判定
-					//if (col.IsHitArrowAtk(p, *e, arrowCnt)) {
-					if (col.IsHitAtk(*p, *e)) {
-						//被弾
-						e->Damage(5, 4);
-						if (!e->IsAlive())DunkEnmCnt_++;
-						//攻撃判定の終了
-						p->SetIsArrowHit(PlayerBase::ATK_TYPE::ATTACK, true, arrowCnt);
-					}
+				if (!arrow.IsAttack() || arrow.isHit_)continue;
+				p->SetAtk(arrow);
+				//敵の取得
+				Enemy* e = enmMng_->GetActiveEnemy(enemy);
+				//当たり判定
+				//if (col.IsHitArrowAtk(p, *e, arrowCnt)) {
+				if (col.IsHitAtk(*p, *e)) {
+					//被弾
+					e->Damage(5, 4);
+					if (!e->IsAlive())DunkEnmCnt_++;
+					//攻撃判定の終了
+					p->SetIsArrowHit(PlayerBase::ATK_TYPE::ATTACK, true, arrowCnt);
 				}
-			//}
+			}
+			
 		}
 
+
+		//アーチャーのバフ矢が当たったらバフをかける
 		for (int pl = 0; pl < PlayerManager::PLAYER_NUM; pl++)
 		{
 			//当たり判定する者が自分自身だった場合無視する
 			if (i == pl)continue;
 			PlayerBase* p2 = playerMng_->GetPlayer(pl);
-			//for (int type = 0; type < static_cast<int>(PlayerBase::ATK_TYPE::MAX); type++)
-			//{
-				//if (type == static_cast<int>(PlayerBase::ATK_TYPE::ATTACK))continue;
+
 
 			int pArrowCnt = p->GetArrowCnt(static_cast<int>(PlayerBase::ATK_TYPE::BUFF));
 			for (int arrowCnt = 0; arrowCnt < pArrowCnt; arrowCnt++)
@@ -441,15 +402,55 @@ void GameScene::CollisionPlayerArrow(void)
 				auto arrow = p->GetArrowAtk(PlayerBase::ATK_TYPE::BUFF, arrowCnt);
 				if (!arrow.IsAttack() || arrow.isHit_)continue;
 				p->SetAtk(arrow);
-				if (col.IsHitAtk(*p, *p2))
+				if (col.IsHitAtk(*p, *p2)&&!p2->GetIsBuff())
 				{
 					//アーチャーの弓が当たったら当たったプレイヤーの能力を上げる
 					p->Buff(*p2);
+					p2->SetIsBuff(true);
 					//攻撃判定の終了
 					p->SetIsArrowHit(PlayerBase::ATK_TYPE::BUFF, true, arrowCnt);
+
 				}
 			}
-			//}
+
+		}
+	}
+}
+
+void GameScene::CollisionPlayerSerch(void)
+{
+	//一番近い敵を探す
+	//敵の数を取得
+	int enmCnt = enmMng_->GetActiveNum();
+	float e2pVecSize[EnemyManager::ENEMY_MAX];
+	VECTOR minE2PVec;
+	float min = FLT_MAX;
+	auto& col = Collision::GetInstance();
+	for (int pl = 0; pl < PlayerManager::PLAYER_NUM; pl++)
+	{
+		VECTOR pPos = playerMng_->GetPlayer(pl)->GetPos();
+		for (int ecnt = 0; ecnt < enmCnt; ecnt++)
+		{
+			VECTOR ePos1 = enmMng_->GetActiveEnemy(ecnt)->GetPos();
+
+			//プレイヤーと敵との距離を求める
+			float e2p = sqrt((ePos1.x - pPos.x) * (ePos1.x - pPos.x) + (ePos1.z - pPos.z) * (ePos1.z - pPos.z));
+			e2pVecSize[ecnt] = e2p;
+			if (e2pVecSize[ecnt] < min)
+			{
+				min = e2pVecSize[ecnt];
+				minE2PVec = ePos1;
+				playerMng_->GetPlayer(pl)->SetTargetPos(minE2PVec);
+				if (col.Search(pPos, ePos1, PlayerBase::ARCHER_SEARCH_RANGE))
+				{
+					playerMng_->GetPlayer(pl)->SetIsSerchArcher(true);
+				}
+				else
+				{
+					playerMng_->GetPlayer(pl)->SetIsSerchArcher(false);
+				}
+
+			}
 		}
 	}
 }

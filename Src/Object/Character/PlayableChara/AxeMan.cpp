@@ -1,5 +1,13 @@
 #include "./USER/PlAxeMan.h"
 #include "AxeMan.h"
+#ifdef DEBUG_ON
+void AxeMan::DrawDebug(void)
+{
+	DrawFormatString(0, 0, 0x000000, "atkPos(%f)", atkPow_);
+}
+
+#endif // DEBUG_ON
+
 
 AxeMan::AxeMan(void)
 {
@@ -84,6 +92,16 @@ void AxeMan::InitSkill(ATK_ACT _act)
 	CntUp(atkStartCnt_);
 	moveAble_ = false;
 	isSkill_ = true;
+}
+
+void AxeMan::Draw(void)
+{
+	PlayerBase::Draw();
+#ifdef DEBUG_ON
+	DrawDebug();
+#endif // DEBUG_ON
+
+	
 }
 
 void AxeMan::InitCharaAnim(void)

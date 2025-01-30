@@ -118,6 +118,8 @@ void Knight::AtkFunc(void)
 			CntUp(atk_.cnt_);
 			//クールタイムの初期化
 			coolTime_[static_cast<int>(act_)] = 0.0f;
+
+			
 		}
 		else //if(atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
 		{

@@ -70,6 +70,9 @@ public:
     //自身の当たり判定半径
     static constexpr float MY_COL_RADIUS = 66.0f * CHARACTER_SCALE;
 
+    //アーチャーの索敵(敵に矢を向ける範囲)
+    static constexpr float ARCHER_SEARCH_RANGE = CHARACTER_SCALE * 1300.0f;
+
     //*************************************************
     // 列挙型
     //*************************************************
@@ -137,8 +140,8 @@ public:
     //リセット
     void Reset(void);
 
-    //役職それぞれのバフ
-    virtual void Buff(PlayerBase& _target) { return; }
+    //役職それぞれのバフ(使わない役職もあるためスタブ)
+    virtual void Buff(PlayerBase& _target) {}
     void BuffPerAdd(BUFF_TYPE _type, float _per);
     //移動関連
      //-------------------------------------
@@ -149,7 +152,7 @@ public:
     void Turn(float _deg, VECTOR _axis);
 
     //動いてるかどうか
-    bool IsMove(void) { return moveSpeed_ > 0.0f; }
+    bool IsMove(void) { return speed_ > 0.0f; }
 
     //スキル使用可能かどうか
     bool IsSkillable(void);
@@ -165,7 +168,7 @@ public:
     //クール中
     const bool GetIsCool(ATK_ACT _act) { return isCool_[static_cast<int>(_act)]; }
 
-    //ツールタイム
+    //クールタイム
     const float GetCoolTime(ATK_ACT _act) { return coolTime_[static_cast<int>(_act)]; }
 
     //現在の使いたいスキル
@@ -187,7 +190,10 @@ public:
     PlayerDodge* GetDodge(void) { return dodge_; }
 
     //クールタイム割合のゲッタ
-    float* GetCoolTimePer(void) { return coolTimePer_; }
+    const float* GetCoolTimePer(void) { return coolTimePer_; }
+
+    //バフされているかゲッタ
+    const bool GetIsBuff(void) { return isBuff_; }
 
     //矢などの遠距離武器のゲッタ(KnightとArcherで使う)
     virtual const ATK GetArrowAtk(const int i) { return ATK(); }
@@ -248,19 +254,26 @@ public:
     //クールタイムセッタ
     void SetCoolTime(const float coolTime, ATK_ACT _act) { coolTime_[static_cast<int>(_act)] = coolTime; }
 
+    //アーチャーのサーチセッタ
+    void SetIsSerchArcher(const bool _isSerch) { isSerchArcher_ = _isSerch; }
+
     //その他
     //------------------------------------------------------------------------------------
     //アニメーションステップ
     void SetStepAnim(const float _stepAnim) { stepAnim_ = _stepAnim; }
 
     //スピード
-    void SetMoveSpeed(const float _speed) { moveSpeed_ = _speed; }
+    void SetSpeed(const float _speed) { speed_ = _speed; }
 
     //バフセッタ
     void SetBuff(BUFF_TYPE _type, float _per,float _second);
 
+    //前のステータス情報をセットする
+    void SetPreStatus(void);
+
     //バフした判定セッタ
     void SetIsBuff(const bool _isBuff) { isBuff_ = _isBuff; }
+    void SetIsBuff(PlayerBase& _player, const bool _isBuff) { _player.SetIsBuff(_isBuff); }
 
     //ターゲットセッタ
     void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; } 
@@ -304,10 +317,14 @@ protected:
     float multiHitInterval_;                                    //多段ヒットのダメージ間隔
     VECTOR userOnePos_;                                         //ユーザー1追従用の座標   
     VECTOR colPos_;                                             //プレイヤーの当たり判定座標
-   
+    bool isSerchArcher_;                                              //アーチャーの射程圏内に入ったかどうか
+    float speed_;                                               //プレイヤーのスピード(ステータスではなく1フレームに動くもの)
+
+
 
     //誰をターゲットにするか
     VECTOR targetPos_;
+
  
 
 
@@ -427,7 +444,18 @@ private:
     //バフ関係
     float buffCnt_[static_cast<int>(BUFF_TYPE::MAX)];                                          //バフのカウンター(攻撃力、防御力、スピード)  
     float buffPercent_[static_cast<int>(BUFF_TYPE::MAX)];                                      //バフの加算
-    BUFF_TYPE buffType_;                                                                       //バフタイプ変数
+    BUFF_TYPE buffType_;                                   
+    bool isBuffing_;                                                                             //バフ中かどうか
+
+    float bufAtk_;          //バフ後の攻撃力
+    float bufDef_;           //バフ後の防御力
+    float bufSpd_;           //バフ後のスピード
+
+    float preAtk_;          //バフ後の攻撃力
+    float preDef_;           //バフ後の防御力
+    float preSpd_;           //バフ後のスピード
+
+
 
     //攻撃入力
     virtual void NmlAtkInit(void) = 0;
