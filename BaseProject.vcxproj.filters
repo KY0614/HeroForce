@@ -120,6 +120,7 @@
     <ClCompile Include="Src\Object\System\GameUi\GamaUIBase.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Other\OverPlayers.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\CharacterParamData.cpp" />
+    <ClCompile Include="Src\Object\System\InformFaze.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\Character\PlayableChara\PlayerBase.h" />
@@ -242,6 +243,7 @@
     <ClInclude Include="Src\Application.h" />
     <ClInclude Include="Src\Common\Fader.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Other\OverPlayers.h" />
+    <ClInclude Include="Src\Object\System\InformFaze.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\HLSL\ColorTex.hlsl" />
