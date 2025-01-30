@@ -126,7 +126,7 @@ public:
     void SetIsArrowHit(ATK_TYPE _type, const bool _flg, int _num)override;
 
     //バフ
-    void Buff(UnitBase& _target)override;
+    void Buff(PlayerBase& _target)override;
 
     //ヒットのセッタ
     //void SetIsArrowHit(const bool _flg, ATK _atk)override { _atk.isHit_ = _flg; }

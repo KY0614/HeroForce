@@ -20,11 +20,13 @@ void Knight::SetParam(void)
 	);
 
 	//ステータス
-	hpMax_ = MAX_HP;
-	atkPow_ = POW_ATK;
-	def_ = MAX_DEF;
-	speed_ = SPEED;
+	//hpMax_ = MAX_HP;
+	//atkPow_ = POW_ATK;
+	//def_ = MAX_DEF;
+	//defSpeed_ = SPEED;
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
+
+	ParamLoad(CharacterParamData::UNIT_TYPE::KNIGHT);
 }
 
 void Knight::Update(void)

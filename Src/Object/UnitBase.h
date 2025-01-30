@@ -4,6 +4,7 @@
 #include"../Manager/Generic/ResourceManager.h"
 #include"../Manager/Generic/InputManager.h"
 #include"../Manager/GameSystem/Collision.h"
+#include"../Manager/GameSystem/CharacterParamData.h"
 
 //test
 
@@ -137,7 +138,7 @@ public:
 	void SetHpMax(const float hp);
 
 	//パラメータ読み込み
-	void ParamLoad();
+	void ParamLoad(CharacterParamData::UNIT_TYPE type);
 
 protected:
 

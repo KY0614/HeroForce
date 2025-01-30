@@ -21,6 +21,7 @@ void PlKnight::Init(void)
 void PlKnight::Update(void)
 {
 	obj_->Update();
+	if (!obj_->IsAlive())return;
 	//“ü—Í
 		//ƒL[“ü—Í
 	PlayerDodge* dodge = obj_->GetDodge();

@@ -97,8 +97,7 @@ private:
     //休憩カウント
     float breakCnt_;
 
-    //誰をターゲットにするか
-    VECTOR targetPos_;
+
 
     //前について行ってたターゲットの保存用
     VECTOR preTargetPos_;

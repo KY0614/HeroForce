@@ -22,6 +22,17 @@ public:
 		DEFENCE_UP,
 		SPEED_UP,
 		FIREWORK,
+
+		HIT,
+
+		//KNIGHT
+		GUARD,
+
+		//AXE
+		CHARGE_AXE_HIT,
+
+		//ARCHER
+
 		NONE,
 	};
 

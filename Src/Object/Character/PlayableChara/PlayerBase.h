@@ -5,6 +5,7 @@
 #include"../../../Manager/Generic/SceneManager.h"
 #include "../../UnitBase.h"
 #include"../../../Manager/Generic/InputManager.h"
+#include"../../../Manager/Decoration/EffectManager.h"
 #include"../PlayerInput.h"
 #include "../../UnitBase.h"
 
@@ -46,6 +47,9 @@ public:
     static constexpr float SPEED_ANIM_RUN = 80.0f;
     static constexpr float SPEED_ANIM_DODGE = 30.0f;
     static constexpr float SPEED_ANIM_ATK = 50.0f;
+
+    //死にアニメーションの止めるカウント
+    static constexpr float DEATH_STEP_ANIM = 22.7;
 
     //攻撃の種類の数
     static constexpr int ATK_TOTAL = 3;
@@ -134,7 +138,7 @@ public:
     void Reset(void);
 
     //役職それぞれのバフ
-    virtual void Buff(UnitBase& _target) { return; }
+    virtual void Buff(PlayerBase& _target) { return; }
     void BuffPerAdd(BUFF_TYPE _type, float _per);
     //移動関連
      //-------------------------------------
@@ -153,8 +157,7 @@ public:
     //スキル変更処理
     void SkillChange(void);
 
-    //バフセッタ
-    void SetIsBuff(const bool _isBuff) { isBuff_ = _isBuff; }
+ 
 
     //*****************************************************
     //ゲッタ
@@ -193,6 +196,8 @@ public:
 
     //遠距離武器の個数を獲得
     virtual const int GetArrowCnt(const int _act) { return 0; }
+
+    
 
 
     //**************************************************************
@@ -251,6 +256,15 @@ public:
     //スピード
     void SetMoveSpeed(const float _speed) { moveSpeed_ = _speed; }
 
+    //バフセッタ
+    void SetBuff(BUFF_TYPE _type, float _per,float _second);
+
+    //バフした判定セッタ
+    void SetIsBuff(const bool _isBuff) { isBuff_ = _isBuff; }
+
+    //ターゲットセッタ
+    void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; } 
+
 protected:
     //ポインタ
       //回避機能
@@ -290,12 +304,11 @@ protected:
     float multiHitInterval_;                                    //多段ヒットのダメージ間隔
     VECTOR userOnePos_;                                         //ユーザー1追従用の座標   
     VECTOR colPos_;                                             //プレイヤーの当たり判定座標
-    float speed_;                                               //キャラクターのステータスとしてのスピード
+   
 
-
-    //バフ関係
-    float buffCnt_[static_cast<int>(BUFF_TYPE::MAX)];                                          //バフのカウンター(攻撃力、防御力、スピード)  
-    float buffPercent_[static_cast<int>(BUFF_TYPE::MAX)];                                      //バフの加算
+    //誰をターゲットにするか
+    VECTOR targetPos_;
+ 
 
 
     bool isPush_;                                               //長押しスキル用のボタンを押しているかどうか  true:押している
@@ -322,7 +335,7 @@ protected:
     //*************************************************
     //メンバ関数
     //*************************************************
-    VECTOR GetTargetVec(VECTOR _targetPos);
+    VECTOR GetTargetVec(VECTOR _targetPos,bool _isMove=true);
 
 
 
@@ -410,6 +423,11 @@ private:
     //std::vector <ATK>atks_;
 
     std::map<ATK_TYPE, std::vector<ATK>>atks_;
+
+    //バフ関係
+    float buffCnt_[static_cast<int>(BUFF_TYPE::MAX)];                                          //バフのカウンター(攻撃力、防御力、スピード)  
+    float buffPercent_[static_cast<int>(BUFF_TYPE::MAX)];                                      //バフの加算
+    BUFF_TYPE buffType_;                                                                       //バフタイプ変数
 
     //攻撃入力
     virtual void NmlAtkInit(void) = 0;

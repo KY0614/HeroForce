@@ -101,6 +101,11 @@ void PlayerBase::Init(void)
 	{
 		coolTime_[i] = coolTimeMax_[i];
 	}
+
+	for (int i = 0; i < static_cast<int>(BUFF_TYPE::MAX); i++)
+	{
+		buffPercent_[i] = 1.0f;
+	}
 }
 
 void PlayerBase::Update(void)
@@ -110,7 +115,7 @@ void PlayerBase::Update(void)
 	if (!IsAlive())
 	{
 		ResetAnim(ANIM::DEATH, SPEED_ANIM);
-		if(stepAnim_)
+		if (stepAnim_ >= DEATH_STEP_ANIM) { stepAnim_ = DEATH_STEP_ANIM; }
 		return;
 	}
 #ifdef INPUT_DEBUG_ON
@@ -133,6 +138,23 @@ void PlayerBase::Update(void)
 	//クールタイム割合の計算
 	CoolTimePerCalc();
 
+
+	//switch (buffType_)
+	//{
+	//case PlayerBase::BUFF_TYPE::ATK_BUFF:
+	//	atkPow_ *= buffPercent_[static_cast<int>(BUFF_TYPE::ATK_BUFF)];
+	//	break;
+	//case PlayerBase::BUFF_TYPE::DEF_BUFF:
+	//	def_ *= buffPercent_[static_cast<int>(BUFF_TYPE::DEF_BUFF)];
+	//	break;
+	//case PlayerBase::BUFF_TYPE::SPD_BUFF:
+	//	speed_ *= buffPercent_[static_cast<int>(BUFF_TYPE::SPD_BUFF)];
+	//	break;
+	//default:
+	//	assert("バフタイプ外です");
+	//	break;
+	//}
+
 	for (int i = 0; i < static_cast<int>(BUFF_TYPE::MAX); i++)
 	{
 		CntDown(buffCnt_[i]);
@@ -140,7 +162,7 @@ void PlayerBase::Update(void)
 		{
 			atkPow_ *= buffPercent_[static_cast<int>(BUFF_TYPE::ATK_BUFF)];
 			def_ *= buffPercent_[static_cast<int>(BUFF_TYPE::DEF_BUFF)];
-			speed_ *= buffPercent_[static_cast<int>(BUFF_TYPE::SPD_BUFF)];
+			defSpeed_ *= buffPercent_[static_cast<int>(BUFF_TYPE::SPD_BUFF)];
 		}
 		else
 		{
@@ -177,7 +199,7 @@ void PlayerBase::Move(float _deg, VECTOR _axis)
 	}
 	if (!dodge_->IsDodge() && moveAble_)
 	{
-		moveSpeed_ = speed_;
+		moveSpeed_ = defSpeed_;
 		Turn(_deg, _axis);
 		VECTOR dir = trans_.GetForward();
 		//移動方向
@@ -318,7 +340,7 @@ void PlayerBase::DrawDebug(void)
 }
 #endif // DEBUG_ON
 
-VECTOR PlayerBase::GetTargetVec(VECTOR _targetPos)
+VECTOR PlayerBase::GetTargetVec(VECTOR _targetPos,bool _isMove)
 {
 	//標的への方向ベクトルを取得						※TODO:ベクトルはSceneGameからもらう
 	VECTOR targetVec = VSub(_targetPos, trans_.pos);
@@ -332,7 +354,8 @@ VECTOR PlayerBase::GetTargetVec(VECTOR _targetPos)
 	//移動量を求める
 	VECTOR ret = VScale(targetVec, moveSpeed_);
 
-	return ret;
+	if (_isMove) { return ret; }
+	else { return targetVec; }
 }
 
 
@@ -367,6 +390,12 @@ void PlayerBase::InitAtk(void)
 	atkStartCnt_ = 0.0f;
 
 	
+}
+
+void PlayerBase::SetBuff(BUFF_TYPE _type, float _per, float _second)
+{
+	buffCnt_[static_cast<int>(_type)] = _second;
+	buffPercent_[static_cast<int>(_type)] += _per;
 }
 
 void PlayerBase::Reset(void)

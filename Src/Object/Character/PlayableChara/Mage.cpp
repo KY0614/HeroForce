@@ -11,7 +11,7 @@ void Mage::SetParam(void)
 	hpMax_ = HP_MAX;
 	atkPow_ = POW_ATK;
 	def_ = DEF_MAX;
-	speed_ = SPEED;
+	defSpeed_ = SPEED;
 
 	//ƒ‚ƒfƒ‹
 	trans_.SetModel(
@@ -25,7 +25,7 @@ void Mage::SetParam(void)
 		0.0f, AsoUtility::Deg2RadF(180.0f),
 		0.0f
 	);
-
+	ParamLoad(CharacterParamData::UNIT_TYPE::MAGE);
 
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 }

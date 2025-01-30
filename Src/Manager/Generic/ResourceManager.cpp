@@ -215,8 +215,8 @@ void ResourceManager::ResourcePlayer(void)
 	
 
 	//モデル
-// ********************************************************************
-//魔法使い（プレイヤー）
+	// ********************************************************************
+	//魔法使い（プレイヤー）
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_PLAYER + "Mage.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_MAGE, res);
 
@@ -231,6 +231,18 @@ void ResourceManager::ResourcePlayer(void)
 	//斧使い（プレイヤー）
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_PLAYER + "Axeman.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_AXEMAN, res);
+
+	//エフェクト
+	// ********************************************************************
+
+	//斧使いのスキル1溜め攻撃
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "fire.efkproj");
+	resourcesMap_.emplace(SRC::CHARGE_AXE_HIT, res);
+
+	//騎士のガード
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Falloff.efkefc");
+	resourcesMap_.emplace(SRC::GUARD, res);
+
 }
 
 //敵

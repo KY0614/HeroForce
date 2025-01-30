@@ -47,6 +47,12 @@ public:
 		PLAYER_KNIGHT,	//騎士（プレイヤー）
 		PLAYER_ARCHER,	//弓使い（プレイヤー）
 		PLAYER_AXEMAN,	//斧使い（プレイヤー）
+
+		//エフェクト
+		CHARGE_AXE_HIT, //アックスの溜めスキル
+		GUARD,			//ガード
+
+
 		ENEMY_MAGE,		//魔法使い（敵）
 		ENEMY_BRIGANT,	//山賊（敵）
 		ENEMY_ARCHER,	//弓使い（敵）

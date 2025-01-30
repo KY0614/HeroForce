@@ -45,12 +45,13 @@ void Archer::SetParam(void)
 	);
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 
+	ParamLoad(CharacterParamData::UNIT_TYPE::ARCHER);
 
-	//ステータス関係
-	hpMax_ = 0;
-	atkPow_ = POW_ATK;
-	def_ = MAX_DEF;
-	speed_ = SPEED;
+	////ステータス関係
+	//hpMax_ = MAX_HP;
+	//atkPow_ = POW_ATK;
+	//def_ = MAX_DEF;
+	//defSpeed_ = SPEED;
 
 	moveAble_ = true;
 
@@ -235,23 +236,6 @@ void Archer::CreateAtk(ATK_TYPE _type)
 }
 
 
-//const PlayerBase::ATK Archer::GetArrowAtk(const int i)
-//{
-//	return arrowAtk_[i];
-//}
-//
-//void Archer::SetIsArrowHit(const bool _flg, int _num)
-//{
-//	arrowAtk_[_num].isHit_ = _flg;
-//}
-
-
-
-//const PlayerBase::ATK Archer::GetArrowAtk(const int i)
-//{
-//	return arrowAtk_[i];
-//}
-
 const PlayerBase::ATK Archer::GetArrowAtk(const ATK_TYPE _type, const int i)
 {
 	return arrowAtk_[_type][i];
@@ -262,20 +246,12 @@ void Archer::SetIsArrowHit(ATK_TYPE _type, const bool _flg, int _num)
 	arrowAtk_[_type][_num].isHit_ = true;
 }
 
-void Archer::Buff(UnitBase& _target)
+void Archer::Buff(PlayerBase& _target)
 {
-	_target.SetAttack(BUFF);
-	_target.SetDefense(BUFF);
-	_target.SetSpeed(BUFF);
+	_target.SetBuff(BUFF_TYPE::ATK_BUFF, 0.2f, 20.0f);
+	_target.SetBuff(BUFF_TYPE::SPD_BUFF, 0.2f, 20.0f);
+	_target.SetBuff(BUFF_TYPE::DEF_BUFF, 0.2f, 20.0f);
 }
-
-//void Archer::SetIsArrowHit(const bool _flg, int _num)
-//{
-//	arrowAtk_[_num].isHit_ = _flg;
-//}
-
-
-
 
 
 void Archer::Update(void)
@@ -322,6 +298,9 @@ void Archer::AtkFunc(void)
 	{
 		moveAble_ = false;
 		CntUp(atkStartCnt_);
+		VECTOR targetVec = GetTargetVec(targetPos_,false);
+		//回転
+		trans_.quaRot = trans_.quaRot.LookRotation(targetVec);
 	}
 	else if (IsFinishAtkStart())
 	{

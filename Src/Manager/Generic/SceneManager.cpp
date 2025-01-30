@@ -15,6 +15,7 @@
 #include"../Manager/Decoration/EffectManager.h"
 #include"../Manager/Decoration/SoundManager.h"
 #include"../Shader/PixelShader.h"
+#include"../Manager/GameSystem/CharacterParamData.h"
 #include "SceneManager.h"
 
 SceneManager* SceneManager::instance_ = nullptr;
@@ -41,6 +42,7 @@ void SceneManager::Init(void)
 	EffectManager::CreateInstance();
 	SoundManager::CreateInstance();
 	PixelShader::CreateInstance();
+	CharacterParamData::CreateInstance();
 
 	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;

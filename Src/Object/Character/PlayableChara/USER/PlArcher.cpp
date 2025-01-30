@@ -22,6 +22,7 @@ void PlArcher::Init(void)
 void PlArcher::Update(void)
 {
 	obj_->Update();
+	if (!obj_->IsAlive())return;
 	//“ü—Í
 	//ƒL[“ü—Í
 	PlayerDodge* dodge = obj_->GetDodge();
