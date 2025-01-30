@@ -94,7 +94,7 @@ void LevelScreenManager::ChangeStateEnd()
 void LevelScreenManager::UpdateNone(void)
 {
 	//デバッグ処理(Bで経験値を得る)
-	DebagUpdate();
+	//DebagUpdate();
 
 	//経験値の確認
 	CheckExp();
@@ -214,7 +214,7 @@ void LevelScreenManager::DrawLevelUI()
 
 	//現在レベル
 	if (nowLevel_ < 10) {	//1桁の場合
-		DrawRotaGraph(pos.x, pos.y, GAGE_SCALE_RATE, 0.0f, imgNumbers_[nowLevel_], true, false);
+		DrawRotaGraph(pos.x, pos.y, NUM_SCALE_RATE, 0.0f, imgNumbers_[nowLevel_], true, false);
 	}
 	else {	//2桁の場合
 		int leftNum = nowLevel_ / 10;
@@ -222,12 +222,12 @@ void LevelScreenManager::DrawLevelUI()
 
 		//左数字
 		Vector2 leftPos = pos;
-		leftPos.x -= 64 / 1.5;
-		DrawRotaGraph(leftPos.x, leftPos.y, GAGE_SCALE_RATE, 0.0f, imgNumbers_[leftNum], true, false);
+		leftPos.x -= 64 / 1.8;
+		DrawRotaGraph(leftPos.x, leftPos.y, NUM_SCALE_RATE, 0.0f, imgNumbers_[leftNum], true, false);
 		//右数字
 		Vector2 rightPos = pos;
-		rightPos.x += 32 * 1.5f;
-		DrawRotaGraph(rightPos.x, rightPos.y, GAGE_SCALE_RATE, 0.0f, imgNumbers_[rightNum], true, false);
+		rightPos.x += 32 * 1.2f;
+		DrawRotaGraph(rightPos.x, rightPos.y, NUM_SCALE_RATE, 0.0f, imgNumbers_[rightNum], true, false);
 	}
 }
 
@@ -298,7 +298,7 @@ void LevelScreenManager::AddExp(const float value)
 
 void LevelScreenManager::SetGage(const int level)
 {
-	gauge_ = ((level * 10) + 100) * CONSTANT_GAGE;
+	gauge_ = CONSTANT_GAGE * (1.0f + (level / 10));
 }
 
 void LevelScreenManager::Reflection(PlayerBase& player, const int playerNum)
@@ -360,8 +360,8 @@ void LevelScreenManager::CheckExp()
 	//経験値を1ずつ増やす
 	if (restExp_ > 0)
 	{
-		restExp_--;
-		exp_++;
+		restExp_-= EXP_SPEED;
+		exp_+= EXP_SPEED;
 	}
 
 	//経験値が次のレベル条件まで達したら
@@ -486,4 +486,5 @@ void LevelScreenManager::DebagDraw()
 	pos = { 0,32 };
 	DrawFormatString
 	(pos.x, pos.y, 0xffffff, "現在のステート%d", static_cast<int>(state_));
+
 }

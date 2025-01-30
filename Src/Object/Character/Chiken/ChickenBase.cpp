@@ -10,6 +10,12 @@ ChickenBase::ChickenBase()
 	targetPos_ = AsoUtility::VECTOR_ZERO;
 	isHelp_ = false;
 	isHelpCnt_ = -1;
+	smokeNum_ = -1;
+	smokeStep_ = -1.0f;
+	efeSpeed_ = -1.0f;
+
+	int i = -1;
+	imgSmoke_ = &i;
 
 	// 状態管理
 	stateChanges_.emplace(STATE::NONE, std::bind(&ChickenBase::ChangeStateNone, this));
@@ -117,8 +123,17 @@ void ChickenBase::ModelSet()
 
 void ChickenBase::LoadImages()
 {
+	auto& res = ResourceManager::GetInstance();
+
 	//ヘルプ画像
-	imgHelp_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::HELP).handleId_;
+	imgHelp_ = res.Load(ResourceManager::SRC::HELP).handleId_;
+
+	//スモーク画像
+	imgSmoke_ = res.Load(ResourceManager::SRC::SMOKE).handleIds_;
+
+	//エフェクト追加
+	EffectManager::GetInstance().Add(EffectManager::EFFECT::DAMAGE, 
+		res.Load(ResourceManager::SRC::DAMAGE_EFE).handleId_);
 }
 
 void ChickenBase::SetParam()
@@ -132,6 +147,11 @@ void ChickenBase::SetParam()
 	//画像表示
 	isHelp_ = false; 
 	isHelpCnt_ = 0;
+
+	//煙エフェクト
+	smokeNum_ = 0;
+	smokeStep_ =0.0f;
+	efeSpeed_ = SMOKE_SPEED;
 	
 	//生存時の行動をランダムで決める
 	aliveState_ = static_cast<ALIVE_MOVE>(GetRand(ALIVE_MOVE_MAX - 1));
@@ -208,6 +228,16 @@ void ChickenBase::ChangeStateDamage()
 
 	//画像表示
 	SetIsHelp();
+
+	//エフェクト再生
+	VECTOR localPos = { GetRand(50),GetRand(50),GetRand(0) };
+	VECTOR pos = VAdd(trans_.pos, localPos);
+	EffectManager::GetInstance().Play(
+		EffectManager::EFFECT::DAMAGE,
+		pos,
+		Quaternion(),
+		DAMAGE_EFE_SCALE,
+		SoundManager::SOUND::NONE);
 }
 
 void ChickenBase::ChangeStateDeath()
@@ -264,10 +294,19 @@ void ChickenBase::UpdateDamage()
 }
 
 void ChickenBase::UpdateDeath()
-{
-	fadeStep_ -= SceneManager::GetInstance().GetDeltaTime();
+{	
+	//ステップ更新
+	float value = SceneManager::GetInstance().GetDeltaTime();
+	fadeStep_ -= value;
+
 	if (fadeStep_ < 0.0f)
 	{
+		//エフェクトアニメーション番号
+		smokeStep_ += value;
+		smokeNum_ = static_cast<int>(smokeStep_ * efeSpeed_);
+		if (smokeNum_ >= SMOKE_NUM) {
+			ChangeState(STATE::END);
+		}
 		return;
 	}
 
@@ -318,6 +357,18 @@ void ChickenBase::DrawDeath()
 
 	//HPUI表示
 	hpUi_->Draw();
+
+	//煙エフェクト2D
+	if (fadeStep_ < 0.0f) {
+		VECTOR pos = VAdd(trans_.pos, LOCAL_SMOKE_POS);
+		DrawBillboard3D(
+			pos,
+			0.5f, 0.5f,
+			SMOKE_SCALE,
+			0.0f,
+			imgSmoke_[smokeNum_],
+			true);
+	}
 }
 
 void ChickenBase::DrawEnd()
@@ -408,7 +459,6 @@ void ChickenBase::FinishAnim(void)
 		break;
 
 	case UnitBase::ANIM::DEATH:
-		ChangeState(STATE::END);
 		break;
 	}
 }

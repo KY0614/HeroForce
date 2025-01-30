@@ -16,6 +16,7 @@
 #include "../Object/System/InformFaze.h"
 #include "../Manager/GameSystem/DataBank.h"
 #include"../Object/Character/PlayerDodge.h"
+#include "../Object/System/GameUi/PlayerUI.h"
 #include"FazeResult.h"
 #include "GameScene.h"
 
@@ -62,6 +63,13 @@ void GameScene::Init(void)
 	//プレイヤー設定
 	playerMng_ = std::make_unique<PlayerManager>();
 	playerMng_->Init();
+	//UI
+	for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
+	{
+		uis_[i] = std::make_unique<PlayerUI>();
+		uis_[i]->Init(*playerMng_->GetPlayer(i), DataBank::GetInstance().Output(i + 1));
+	}
+
 
 	//敵マネージャの生成
 	enmMng_ = std::make_unique<EnemyManager>(unitLoad_->GetPos(UnitPositionLoad::UNIT_TYPE::ENEMY));
@@ -99,6 +107,7 @@ void GameScene::Init(void)
 	//音声関係設定
 	SoundInit();
 
+
 }
 
 void GameScene::Update(void)
@@ -132,16 +141,21 @@ void GameScene::Update(void)
 	level_->Update();
 	//レベルアップ中その他の更新はかけない
 	if (level_->IsLevelUp())return;
+
 	//タイマー更新
 	Timer::GetInstance().Update();
 	//タイマーが終了したら
 	if (Timer::GetInstance().IsEnd())ChangePhase();
-
-
+	
 
 	//プレイヤーの更新
 	playerMng_->Update();
 
+	//UI更新
+	for (int i = 0; i < DataBank::GetInstance().Output(DataBank::INFO::USER_NUM); i++)
+	{
+		uis_[i]->Update(*playerMng_->GetPlayer(i));
+	}
 
 	//敵の更新
 	enmMng_->Update();
@@ -197,8 +211,14 @@ void GameScene::Draw(void)
 	chicken_->Draw();
 	//レベル
 	level_->Draw();
+
+	//レベルアップ中タイマー及びUIは表示しない
+	if (level_->IsLevelUp())return;
 	//制限時間
 	Timer::GetInstance().Draw();
+	//UIの描画
+	uis_[SceneManager::GetInstance().GetNowWindow()]->Draw();
+
 
 
 	if (isInformFaze_) {
@@ -344,7 +364,7 @@ void GameScene::CollisionEnemy(void)
 				if (col.IsHitAtk(*e, *p)/* && !p->GetDodge()->IsDodge()*/)
 				{
 					//ダメージ
-					p->SetDamage(e->GetCharaPow(), eAtk.pow_);
+					p->SetDamage(e->GetAtkPow(), eAtk.pow_);
 					//使用した攻撃を判定終了に
 					e->SetIsHit(true);
 				}
@@ -384,7 +404,7 @@ void GameScene::CollisionPlayer(void)
 			//当たり判定
 			if (col.IsHitAtk(*p, *e)) {
 				//被弾
-				e->SetDamage(p->GetCharaPow(), pAtk.pow_);
+				e->SetDamage(p->GetAtkPow(), pAtk.pow_);
 				e->Damage(e->GetDamage(), pAtk.pow_);
 
 				//死んだら経験値増加
@@ -608,6 +628,7 @@ void GameScene::FazeResultUpdate(void)
 		//カウント後最終フェーズ数より大きくなったらクリアシーンへ
 		if (fazeCnt_ > LAST_FAZE)SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
 
+		level_->AddExp(fazeResult_->GetExp());
 
 		//フェーズリザルトが終了したので明転及びリザルトリセット・タイマー初期化・BGMの再生
 		fader_->SetFade(Fader::STATE::FADE_IN);

@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneBase.h"
 #include"../Common/Fader.h"
+#include"../Object/Character/PlayerManager.h"
 #include<vector>
 #include<memory>
 
@@ -16,6 +17,8 @@ class UnitPositionLoad;
 class ChickenManager;
 class FazeResult;
 class InformFaze;
+class PlayerUI;
+
 
 class GameScene : public SceneBase
 {
@@ -66,7 +69,7 @@ private:
 
 	//ÉvÉåÉCÉÑÅ[
 	std::unique_ptr<PlayerManager>playerMng_;
-
+	std::unique_ptr<PlayerUI> uis_[PlayerManager::PLAYER_NUM];
 
 	//ìG
 	std::unique_ptr<EnemyManager>enmMng_;

@@ -115,6 +115,21 @@ const UnitBase::ATK UnitBase::GetAtk(void) const
 	return atk_;
 }
 
+const float UnitBase::GetAtkPow(void) const
+{
+	return atkPow_;
+}
+
+const int UnitBase::GetHp(void) const
+{
+	return hp_;
+}
+
+const int UnitBase::GetHpMax(void) const
+{
+	return hpMax_;
+}
+
 const float UnitBase::GetRadius(void) const
 {
 	return radius_;

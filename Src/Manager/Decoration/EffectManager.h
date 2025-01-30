@@ -17,12 +17,13 @@ public:
 	enum class EFFECT
 	{
 		//使用するエフェクトを羅列
+		NONE,
 		LIFE_UP,
 		ATTACK_UP,
 		DEFENCE_UP,
 		SPEED_UP,
 		FIREWORK,
-		NONE,
+		DAMAGE,
 	};
 
 

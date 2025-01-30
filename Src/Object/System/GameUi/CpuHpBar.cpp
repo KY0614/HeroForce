@@ -1,5 +1,6 @@
 #include "CpuHpBar.h"
 #include "../../../Manager/Generic/ResourceManager.h"
+#include "../../../Manager/GameSystem/CharacterParamData.h"
 #include "../../Character/Chiken/ChickenBase.h"
 
 CpuHpBar::CpuHpBar()
@@ -41,7 +42,7 @@ void CpuHpBar::Draw()
 		false);
 
 	//デバッグ関連変数
-	int hpMax = ChickenBase::DEFAULT_LIFE;
+	int hpMax = CharacterParamData::GetInstance().GetParamData(CharacterParamData::UNIT_TYPE::CHICKEN).hp_;
 	float divSize = SIZE.x * 2 / hpMax;
 	pos = VAdd(pos, LOCAL_HPBAR_POS);
 

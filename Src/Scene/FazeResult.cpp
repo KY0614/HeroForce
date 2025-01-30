@@ -148,6 +148,11 @@ void FazeResult::SetResult(void)
 
 }
 
+float FazeResult::GetExp(void)
+{
+	return afterExp_;
+}
+
 float FazeResult::GetBonusExp(const RANK _rank) const
 {
 	float exp = exp_;

@@ -103,6 +103,42 @@ void ResourceManager::InitGame(void)
 {
 	Resource res;
 
+	//煙エフェクト
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Smokes.png", SMOKE_NUM_X, SMOKE_NUM_Y, SMOKE_SIZE_X, SMOKE_SIZE_Y);
+	resourcesMap_.emplace(SRC::SMOKE, res);
+
+	//ダメージエフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Damage.efkefc");
+	resourcesMap_.emplace(SRC::DAMAGE_EFE, res);
+
+	//ゲームUI用数字画像2
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Numbers2.png", NUMBERS_NUM_X, NUMBERS_NUM_Y, NUMBERS_SIZE, NUMBERS_SIZE);
+	resourcesMap_.emplace(SRC::NUMBERS2, res);
+
+	//パラメーターUI
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "ParamUI.png");
+	resourcesMap_.emplace(SRC::PARAM_UI, res);
+
+	//ボスHP
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "BossHpBar.png");
+	resourcesMap_.emplace(SRC::HP_BOSS, res);
+
+	//ボスHPBar
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "BossHpGage.png");
+	resourcesMap_.emplace(SRC::HP_BOSS_GAGE, res);
+
+	//キャラアイコン
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "CharaIcons.png", CHARA_ICON_NUM_X, CHARA_ICON_NUM_Y, CHARA_ICON_SIZE, CHARA_ICON_SIZE);
+	resourcesMap_.emplace(SRC::CHARA_ICONS, res);
+
+	//キャラ名前
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "RoleNames.png", NAME_NUM_X, NAME_NUM_Y, NAME_SIZE_X, NAME_SIZE_Y);
+	resourcesMap_.emplace(SRC::ROLE_NAMES, res);
+
+	//タイマー背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "TimerBack.png");
+	resourcesMap_.emplace(SRC::TIMER_BACK, res);
+
 	//BGM
 	//ゲームノーマル
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "Game_Nomal.mp3");

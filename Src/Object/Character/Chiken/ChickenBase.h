@@ -5,9 +5,12 @@
 #include "../../../Application.h"
 #include "../../Common/Transform.h"
 #include "../../../Utility/AsoUtility.h"
+#include "../../../Manager/Decoration/EffectManager.h"
+#include "../../../Manager/Decoration/SoundManager.h"
 #include "../../../Manager/Generic/ResourceManager.h"
 #include "../../../Manager/Generic/SceneManager.h"
 #include "../../../Manager/Generic/InputManager.h"
+#include "../../../Manager/Generic/SceneManager.h"
 #include "../../System/GameUi/CpuHpBar.h"
 #include "../../UnitBase.h"
 
@@ -76,6 +79,21 @@ public:
 	//HP描画
 	static constexpr VECTOR LOCAL_HP_POS = { 0, 120, 0 };
 
+	//煙ローカル座標
+	static constexpr VECTOR LOCAL_SMOKE_POS = { 0,40,0 };
+
+	//煙スピード
+	static constexpr float SMOKE_SPEED = 20.0f;
+
+	//煙サイズ
+	static constexpr float SMOKE_SCALE = 100.0f;
+
+	//煙アニメーション数
+	static constexpr int SMOKE_NUM = ResourceManager::SMOKE_NUM_X * ResourceManager::SMOKE_NUM_Y;
+
+	//ダメージエフェクト
+	static constexpr float DAMAGE_EFE_SCALE = 30.0f;
+
 	ChickenBase();
 	~ChickenBase();
 
@@ -99,9 +117,10 @@ protected:
 
 	//画像
 	int imgHelp_;
+	int* imgSmoke_;
 
 	//移動スピード
-	float moveSpeed_;
+	//float moveSpeed_;
 
 	//フェード用ステップ
 	float fadeStep_;
@@ -118,6 +137,11 @@ protected:
 
 	//生存時の状態
 	ALIVE_MOVE aliveState_;
+
+	//煙アニメーション
+	int smokeNum_;
+	float smokeStep_;
+	float efeSpeed_;
 	
 	// 状態管理(状態遷移時初期処理)
 	std::map<STATE, std::function<void(void)>> stateChanges_;

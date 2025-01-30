@@ -34,6 +34,24 @@ public:
 	static constexpr int RANKS_NUM_Y = 1;
 	static constexpr int RANK_SIZE = 300;
 
+	//煙
+	static constexpr int SMOKE_NUM_X = 16;
+	static constexpr int SMOKE_NUM_Y = 1;
+	static constexpr int SMOKE_SIZE_X = 1024 / SMOKE_NUM_X;
+	static constexpr int SMOKE_SIZE_Y = 77 / SMOKE_NUM_Y;
+
+	//アイコン
+	static constexpr int CHARA_ICON_NUM_X = 4;
+	static constexpr int CHARA_ICON_NUM_Y = 1;
+	static constexpr int CHARA_ICON_SIZE = 128;
+
+	//キャラネーム
+	static constexpr int NAME_NUM_X = 1;
+	static constexpr int NAME_NUM_Y = 4;
+	static constexpr int NAME_SIZE_X = 150 / NAME_NUM_X;
+	static constexpr int NAME_SIZE_Y = 180 / NAME_NUM_Y;
+
+
 	// リソース名
 	enum class SRC
 	{
@@ -91,6 +109,14 @@ public:
 		CARSOLS,
 		LEVEL_SCREEN_EFE,
 		LEVEL_UP_BACK,
+		CHARA_ICONS,
+		HP_BOSS,
+		HP_BOSS_GAGE,
+		NUMBERS2,
+		PARAM_UI,
+		ROLE_NAMES,
+		TIMER_BACK,
+
 
 		//強化
 		ATTACK_UP_UI,
@@ -145,6 +171,11 @@ public:
 		ENEMY_DETH_SND,
 		CHICKEN_DETH_SND,
 		SCENE_CHANGE_SE1,
+
+		//エフェクト
+			SMOKE,
+			DAMAGE_EFE,
+
 	};
 
 	// 明示的にインステンスを生成する

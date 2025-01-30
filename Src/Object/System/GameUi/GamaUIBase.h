@@ -16,10 +16,18 @@ public:
 	//HPバー種類量
 	static constexpr int HP_BAR_MAX = static_cast<int>(HPBAR_TYPE::MAX);
 
+	//HPバーサイズ
+	static constexpr int HP_BAR_SIZE_X = 60;
+	static constexpr int HP_BAR_SIZE_Y = 17;
+
+	//HPゲージサイズ
+	static constexpr int HP_GAGE_SIZE_X = 120;
+	static constexpr int HP_GAGE_SIZE_Y = 45;
+
 	GamaUIBase();
 	~GamaUIBase();
 
-	void Init();
+	virtual void Init();
 	virtual void Update();
 	virtual void Draw();
 
