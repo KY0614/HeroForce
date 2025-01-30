@@ -22,20 +22,6 @@ public:
 	static constexpr float ALERT_TIME = 0.4f;	//UŒ‚‚ÌŒxŠÔ
 	static constexpr float BREAK_TIME = 0.8f;	//UŒ‚‚Ì‹xŒeŠÔ
 
-	//“G©g‚Ì“–‚½‚è”»’è”¼Œa
-	static constexpr float MY_COL_RADIUS = 100.0f * CHARACTER_SCALE;
-
-	//“GƒXƒe[ƒ^ƒX
-	static constexpr int HP_MAX = 150;			//“G‚ÌÅ‘å‘Ì—Í
-	static constexpr float ATK_POW = 120.0f;	//“G‚ÌUŒ‚
-	static constexpr float DEF = 100.0f;		//“G‚Ì–hŒä
-	static constexpr int STUN_DEF_MAX = 100;	//“G‚ÌÅ‘åƒXƒ^ƒ“–hŒä’l
-	static constexpr float EXP = 300.0f;		//“G‚ÌŒoŒ±’l
-
-	//‘¬“xŠÖŒW
-	static constexpr float WALK_SPEED = 2.5f;	//•à‚«‚Ì‘¬“x
-	static constexpr float RUN_SPEED = 4.0f;	//‘–‚è‚Ì‘¬“x
-
 	//”ÍˆÍŠÖŒW
 	static constexpr float SEARCH_RANGE = 1000.0f * CHARACTER_SCALE;		//õ“G”»’è‚Ì‘å‚«‚³
 	static constexpr float ATK_START_RANGE = 200.0f * CHARACTER_SCALE;		//UŒ‚ŠJn”»’è‚Ì‘å‚«‚³

@@ -111,6 +111,8 @@ void GameScene::Update(void)
 			//カウント後最終フェーズ数より大きくなったらクリアシーンへ
 			if(fazeCnt_ >LAST_FAZE)SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
 
+			//敵の入れ替え
+			enmMng_->ProcessChangePhase(3);
 
 			//フェーズリザルトが終了したので明転及びリザルトリセット・タイマー初期化・BGMの再生
 			fader_->SetFade(Fader::STATE::FADE_IN);
@@ -305,9 +307,6 @@ void GameScene::CollisionEnemy(void)
 			}
 
 			if (col.Search(ePos, pPos, e->GetSearchRange())) {
-				//移動を開始
-				e->SetIsMove(true);
-
 				//プレイヤーを狙う
 				e->ChangeSearchState(Enemy::SEARCH_STATE::PLAYER_FOUND);
 				e->SetTargetPos(pPos);
@@ -315,13 +314,9 @@ void GameScene::CollisionEnemy(void)
 				//見つけた
 				isPlayerFound = true;
 			}
-			else if (!isPlayerFound) {
-				//移動を停止
-				e->SetIsMove(false);
-
+			else if (!isPlayerFound && e->GetSearchState() != Enemy::SEARCH_STATE::CHICKEN_FOUND) {
 				//誰も狙っていない
-				if(e->GetSearchState() == Enemy::SEARCH_STATE::PLAYER_FOUND)
-					e->ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_SEARCH);
+				e->ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_SEARCH);
 			}
 
 			//攻撃判定
@@ -424,19 +419,19 @@ void GameScene::CollisionChicken(void)
 
 			//索敵
 			//範囲内に入っているとき
-			if (col.Search(ePos, c->GetPos(), e->GetSearchRange()) && e->GetSearchState() != Enemy::SEARCH_STATE::CHICKEN_SEARCH) {
+			if (col.Search(ePos, c->GetPos(), e->GetSearchRange())) {
 				//移動を開始
-				e->SetIsMove(true);
+	
 				//鶏を狙う
 				e->ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_FOUND);
 				e->SetTargetPos(c->GetPos());
 			}
 			else if(e->GetSearchState() != Enemy::SEARCH_STATE::PLAYER_FOUND) {
 				//移動を開始
-				e->SetIsMove(true);
+
 				//まだ探し中
 				e->ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_SEARCH);
-				e->SetTargetPos(chicken_->GetChicken(0)->GetPos());
+				e->SetPreTargetPos(c->GetPos());
 			}
 
 			//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始

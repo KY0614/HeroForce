@@ -91,12 +91,8 @@ private:
 	//ボスを作成
 	void CreateBoss(void);
 
-	/// <summary>
-	/// 重なっていない座標を取る
-	/// </summary>
-	/// <param name="_type">敵のタイプ</param>
-	/// <returns>重なっていない座標</returns>
-	VECTOR GetNotOverlappingPos(TYPE _type);
+	//重なっていない座標を取る
+	VECTOR GetNotOverlappingPos(void);
 
 	/// <summary>
 	/// 円範囲のランダム一点を取る

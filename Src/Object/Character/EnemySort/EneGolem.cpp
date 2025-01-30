@@ -24,21 +24,16 @@ void EneGolem::SetParam(void)
 
 	//※個々で設定する
 	trans_.scl = { SCALE,SCALE,SCALE };
-	radius_ = MY_COL_RADIUS;
 	colPos_ = VAdd(trans_.pos, LOCAL_CENTER_POS);
-	hp_ = HP_MAX;
-	atkPow_ = ATK_POW;
-	def_ = DEF;
-	exp_ = EXP;
-	walkSpeed_ = WALK_SPEED;
-	runSpeed_ = RUN_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
-	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
 	atkStartRange_ = ATK_START_RANGE;
 	skillThreeCnt_ = 0;
 	skillThreeDelayCnt_ = 0.0f;
 	isPreSkillThreeAtk_ = false;
+
+	//外部からステータスを取得
+	ParamLoad(CharacterParamData::UNIT_TYPE::BOSS);
 }
 
 void EneGolem::InitAnim(void)

@@ -99,7 +99,7 @@ void EnemyManager::CreateEnemy(void)
 	} while (type == TYPE::GOLEM);
 
 	//生成相対座標
-	VECTOR createLocalPos = GetNotOverlappingPos(type);
+	VECTOR createLocalPos = GetNotOverlappingPos();
 
 	//インスタンス生成
 	switch (type)
@@ -144,7 +144,7 @@ void EnemyManager::CreateBoss(void)
 	Enemy* enm = nullptr;
 
 	//生成相対座標
-	VECTOR createLocalPos = createPos_[0];
+	VECTOR createLocalPos = createPos_[1];
 
 	//ゴーレムの生成
 	enm = new EneGolem(createLocalPos);
@@ -162,29 +162,11 @@ void EnemyManager::CreateBoss(void)
 	activeNum_++;
 }
 
-VECTOR EnemyManager::GetNotOverlappingPos(TYPE _type)
+VECTOR EnemyManager::GetNotOverlappingPos(void)
 {
 	//敵の大きさ
 	float eneSize;
-
-	switch (_type)
-	{
-	case EnemyManager::TYPE::ARCHER:
-		eneSize = EneArcher::MY_COL_RADIUS;
-		break;
-	case EnemyManager::TYPE::AXE:
-		eneSize = EneAxe::MY_COL_RADIUS;
-		break;
-	case EnemyManager::TYPE::BRIG:
-		eneSize = EneBrig::MY_COL_RADIUS;
-		break;
-	case EnemyManager::TYPE::MAGE:
-		eneSize = EneMage::MY_COL_RADIUS;
-		break;
-	default:
-		eneSize = ENEMY_DISTANCE;
-		break;
-	}
+	eneSize = Enemy::COL_RADIUS;
 
 	//生成判定
 	bool isGenelateEnemy = false;

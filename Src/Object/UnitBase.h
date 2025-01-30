@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include"Common/Transform.h"
 #include<unordered_map>
+#include"../Manager//GameSystem/CharacterParamData.h"
 #include"../Manager/Generic/ResourceManager.h"
 #include"../Manager/Generic/InputManager.h"
 #include"../Manager/GameSystem/Collision.h"
@@ -142,9 +143,6 @@ public:
 	void SetSpeed(const float percent);
 	void SetHpMax(const int hp);
 
-	//パラメータ読み込み
-	void ParamLoad();
-
 protected:
 
 	//各キャラクターのデフォルトのパラメーター
@@ -194,5 +192,7 @@ protected:
 	void CntUp(float& _count);
 	//カウンタ減少
 	void CntDown(float& _count);
+	//パラメータ読み込み
+	virtual void ParamLoad(CharacterParamData::UNIT_TYPE type);
 };
 

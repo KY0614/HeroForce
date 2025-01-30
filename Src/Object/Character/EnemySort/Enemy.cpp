@@ -42,11 +42,14 @@ void Enemy::Init(void)
 	ChangeState(STATE::NORMAL);
 	alertCnt_ = 0.0f;
 	breakCnt_ = 0.0f;
-	stunDef_ = 0;
 	atkAct_ = ATK_ACT::MAX;
 	isEndAlert_ = false;
 	isEndAllAtkSign_ = false;
 	isEndAllAtk_ = false;
+	isColStage_ = false;
+	colStageCnt_ = 0.0f;
+	startCnt_ = 0.0f;
+	targetPos_ = preTargetPos_ = AsoUtility::VECTOR_ZERO;
 	ChangeSearchState(SEARCH_STATE::CHICKEN_SEARCH);
 
 	//攻撃情報の初期化
@@ -118,7 +121,7 @@ void Enemy::Damage(const int _damage, const int _stunPow)
 	hp_ -= _damage;
 
 	//スタン値カウント
-	stunDef_ += _stunPow;
+	//stunDef_ += _stunPow;
 }
 
 void Enemy::ChangeState(const STATE _state)
@@ -132,33 +135,20 @@ void Enemy::ChangeState(const STATE _state)
 
 void Enemy::KeepCollStageDistance(void)
 {
-	//float valXSign = 0;
-	//float valZSign = 0;
-
-	////どの方向に近いのかを計測
-	//valXSign = trans_.pos.x > 0.0f ? 1.0f : -1.0f;
-	//valZSign = trans_.pos.z > 0.0f ? 1.0f : -1.0f;
-
-	//if (fabsf(trans_.pos.x) > fabsf(trans_.pos.z))
-	//{
-	//	preTargetPos_ = VSub(prePos_,{0.0f,0.0f,valZSign * 100});
-	//}
-	//else
-	//{
-	//	preTargetPos_ = VSub(prePos_, { valXSign * 100,0.0f,0.0f});
-	//}
-
 	//ターゲットまでのベクトルを測って、x,zの値が大きい方向に距離をとる
 	VECTOR targetVec = GetMoveVec(trans_.pos, targetPos_);
 
 	if (fabsf(targetVec.x) > fabsf(targetVec.z))
 	{
-		preTargetPos_ = VSub(prePos_, { 0.0f,0.0f,-targetVec.z * 100 });
+		SetPreTargetPos(VSub(prePos_, { 0.0f,0.0f,targetVec.z * KEEP_COL_STAGE_POS }));
 	}
 	else
 	{
-		preTargetPos_ = VSub(prePos_, { -targetVec.x * 100,0.0f,0.0f });
+		SetPreTargetPos(VSub(prePos_, { targetVec.x * KEEP_COL_STAGE_POS,0.0f,0.0f }));
 	}
+
+	//ステージに当たった
+	isColStage_ = true;
 }
 
 void Enemy::ChangeStateNormal(void)
@@ -206,6 +196,18 @@ void Enemy::ChangeStateBreak(void)
 	breakCnt_ = 0;
 }
 
+void Enemy::ParamLoad(CharacterParamData::UNIT_TYPE type)
+{
+	//共通
+	UnitBase::ParamLoad(type);
+
+	auto& data = CharacterParamData::GetInstance().GetParamData(type);
+
+	//歩きの速度
+	walkSpeed_ = data.speed_;
+	runSpeed_ = data.speed_ * RUN_SPEED_MULTI;
+}
+
 void Enemy::InitAnim()
 {
 	//共通アニメーション
@@ -218,7 +220,7 @@ void Enemy::InitAnim()
 
 	//アニメーション速度設定
 	changeSpeedAnim_.emplace(ANIM::IDLE, SPEED_ANIM);
-	changeSpeedAnim_.emplace(ANIM::WALK, SPEED_ANIM);
+	changeSpeedAnim_.emplace(ANIM::WALK, SPEED_ANIM_WALK);
 	changeSpeedAnim_.emplace(ANIM::RUN, SPEED_ANIM);
 	changeSpeedAnim_.emplace(ANIM::DAMAGE, SPEED_ANIM);
 	changeSpeedAnim_.emplace(ANIM::DEATH, SPEED_ANIM);
@@ -274,6 +276,17 @@ void Enemy::UpdateNml(void)
 		ResetAnim(ANIM::RUN, changeSpeedAnim_[ANIM::RUN]);
 	
 	//索敵
+
+	//最初のみ
+	if (startCnt_ < START_CNT)CntUp(startCnt_);
+
+	//ステージに当たったなら
+	if (isColStage_)CntUp(colStageCnt_);
+	if (colStageCnt_ >= COL_STAGE_CNT)
+	{
+		isColStage_ = false;
+		colStageCnt_ = 0.0f;
+	}
 
 	//まだ見つけ切れていないなら
 	if (searchState_ == SEARCH_STATE::CHICKEN_SEARCH)

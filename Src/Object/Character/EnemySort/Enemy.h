@@ -24,6 +24,20 @@ public:
 	static constexpr int ANIM_DEATH = 24;	//やられアニメーション
 	static constexpr int ANIM_ENTRY = 74;	//出現アニメーション
 
+	//アニメーション速度
+	static constexpr float SPEED_ANIM_WALK = 60.0f;	//歩きアニメーション速度
+
+	//移動速度
+	static constexpr float RUN_SPEED_MULTI = 1.2f;	//走る速度の倍率
+
+	//補完用
+	static constexpr float KEEP_COL_STAGE_POS = 500.0f;	//ステージ接触時座標補完用
+	static constexpr float COL_STAGE_CNT = 0.3f;		//ステージ接触時補完用カウント
+	
+	static constexpr float START_CNT = 3.0f;			//スタート時補完用カウント
+
+	static constexpr float COL_RADIUS = 50.0f;			//敵生成時の距離用
+
 	//****************************************************************
 	//列挙型
 	//****************************************************************
@@ -83,7 +97,7 @@ public:
 	virtual const bool IsBreak(void)const = 0;
 
 	//スタン中かどうかを返す
-	const bool IsStun(void)const { return stunDef_ > stunDefMax_; }
+	//const bool IsStun(void)const { return stunDef_ > stunDefMax_; }
 
 	//現在のスキルの全配列を返す
 	const std::vector<ATK> GetAtks(void)const { return nowSkill_; }
@@ -115,13 +129,13 @@ public:
 	/// 標的予定対象の座標を変更
 	/// </summary>
 	/// <param name="_preTargetPos">標的予定対象の座標</param>
-	void SetPreTargetPos(const VECTOR _preTargetPos) { preTargetPos_ = _preTargetPos; }
+	void SetPreTargetPos(const VECTOR _preTargetPos) { if(!isColStage_ && startCnt_ >= START_CNT)preTargetPos_ = _preTargetPos; }
 
 	/// <summary>
 	/// 標的の座標を変更
 	/// </summary>
 	/// <param name="_targetPos">標的の座標</param>
-	void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; }
+	void SetTargetPos(const VECTOR _targetPos) { if(!isColStage_ && startCnt_ >= START_CNT)targetPos_ = _targetPos; }
 
 	/// <summary>
 	/// ダメージ
@@ -193,8 +207,13 @@ protected:
 	float searchRange_;		//索敵範囲
 	float atkStartRange_;	//攻撃開始範囲
 
-	int stunDefMax_;	//気絶防御値の最大値
-	int stunDef_;		//気絶防御値
+	//int stunDefMax_;	//気絶防御値の最大値
+	//int stunDef_;		//気絶防御値
+
+	bool isColStage_;	//ステージに当たったか(true:当たった)
+	float colStageCnt_;		//ステージ接触補完用カウンタ
+
+	float startCnt_;		//スタート補完用カウンタ
 
 	float exp_;			//経験値
 
@@ -204,6 +223,9 @@ protected:
 
 	//キャラ固有設定
 	virtual void SetParam(void) = 0;
+
+	//外部関係
+	void ParamLoad(CharacterParamData::UNIT_TYPE type)override;
 
 	//アニメーション関係の初期化
 	virtual void InitAnim(void);

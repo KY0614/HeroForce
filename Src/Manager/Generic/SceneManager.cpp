@@ -10,6 +10,7 @@
 #include "../Scene/GameClearScene.h"
 #include "ResourceManager.h"
 #include "Camera.h"
+#include"../Manager/GameSystem/CharacterParamData.h"
 #include"../Manager/GameSystem/Collision.h"
 #include"../Manager/GameSystem/DataBank.h"
 #include"../Manager/Decoration/EffectManager.h"
@@ -41,6 +42,7 @@ void SceneManager::Init(void)
 	EffectManager::CreateInstance();
 	SoundManager::CreateInstance();
 	PixelShader::CreateInstance();
+	CharacterParamData::CreateInstance();
 
 	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;
