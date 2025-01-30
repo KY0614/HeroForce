@@ -67,7 +67,8 @@ void SelectScene::Init(void)
 	//音楽読み込み
 	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::SELECT,
 		res.Load(ResourceManager::SRC::SELECT_BGM).handleId_);
-
+	//音量調節
+	snd.AdjustVolume(SoundManager::SOUND::SELECT, 128);
 	//音楽再生
 	snd.Play(SoundManager::SOUND::SELECT);
 
@@ -153,6 +154,8 @@ void SelectScene::Draw(void)
 	}
 	//デバッグ描画
 	//DrawDebug();
+
+	DrawFormatString(0, 0, 0xFF0000, "role %d", images_[0]->GetRole());
 
 	SetUseLightAngleAttenuation(TRUE);
 }

@@ -90,11 +90,29 @@ void ResourceManager::InitSelect(void)
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "CharaParams.png", CHARA_PARAM_NUM_X, CHARA_PARAM_NUM_Y, CHARA_PARAM_SIZE_X, CHARA_PARAM_SIZE_Y);
 	resourcesMap_.emplace(SRC::CHARA_PARAMS, res);
 
+	//チキン
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Chicken/Chicken.mv1");
+	resourcesMap_.emplace(SRC::CHICKEN, res);
+
 	//BGM
-	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "SelectScene.mp3");
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "SelectBGM.mp3");
 	resourcesMap_.emplace(SRC::SELECT_BGM, res);
 
+	//準備完了
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "SceneChange.mp3");
+	resourcesMap_.emplace(SRC::SCENE_CHANGE_SE1, res);
 
+	//キャンセル
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "Select_Cancel.mp3");
+	resourcesMap_.emplace(SRC::CANCEL_SELECT, res);
+
+	//選択変更
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "Change_Object.mp3");
+	resourcesMap_.emplace(SRC::CHANGE_SELECT, res);
+
+	//選択決定
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "Select_Decide.mp3");
+	resourcesMap_.emplace(SRC::DECIDE_SELECT, res);
 
 	ResourcePlayer();
 	ResourceEnemy();

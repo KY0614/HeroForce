@@ -1,3 +1,4 @@
+#include "../Manager/Decoration/SoundManager.h"
 #include "../Manager/Generic/ResourceManager.h"
 #include "../Manager/Generic/InputManager.h"
 #include "../Manager/GameSystem/DataBank.h"
@@ -230,12 +231,63 @@ void SelectImage::Load(void)
 	imgDeviceNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::DEVICE).handleIds_;
 	
 	imgComingSoon_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::COMING_SOON).handleIds_;
+
+	auto& snd = SoundManager::GetInstance();
+	auto& res = ResourceManager::GetInstance();
+
+	//SE読み込み
+
+	//準備完了
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::SCENE_CHANGE_1,
+		res.Load(ResourceManager::SRC::SCENE_CHANGE_SE1).handleId_);
+	int ret = res.Load(ResourceManager::SRC::SCENE_CHANGE_SE1).handleId_;
+	if (ret == -1)
+	{
+		return;
+	}
+	//音量調節
+	snd.AdjustVolume(SoundManager::SOUND::SCENE_CHANGE_1, 256);
+
+	//キャンセル
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::CANCEL_SELECT,
+		res.Load(ResourceManager::SRC::CANCEL_SELECT).handleId_);
+	ret = res.Load(ResourceManager::SRC::CANCEL_SELECT).handleId_;
+	if (ret == -1)
+	{
+		return;
+	}
+	//音量調節
+	snd.AdjustVolume(SoundManager::SOUND::CANCEL_SELECT, 256);
+
+	//選択変更
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::CHANGE_SELECT,
+		res.Load(ResourceManager::SRC::CHANGE_SELECT).handleId_);
+	 ret = res.Load(ResourceManager::SRC::CHANGE_SELECT).handleId_;
+	if (ret == -1)
+	{
+		return;
+	}
+	//音量調節
+	snd.AdjustVolume(SoundManager::SOUND::CHANGE_SELECT, 70);
+
+	//選択決定
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::DECIDE_SELECT,
+		res.Load(ResourceManager::SRC::DECIDE_SELECT).handleId_);
+	ret = res.Load(ResourceManager::SRC::DECIDE_SELECT).handleId_;
+	if (ret == -1)
+	{
+		return;
+	}
+	//音量調節
+	snd.AdjustVolume(SoundManager::SOUND::DECIDE_SELECT, 80);
 }
 
 void SelectImage::DisplayUpdate(void)
 {
 	DataBank& data = DataBank::GetInstance();
 	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
+	auto& snd = SoundManager::GetInstance();
+	bool sound = false;
 
 	//右の矢印がONの時にキーの右に値する入力をし続けると
 	if (pointR_.isToggle_ &&
@@ -243,6 +295,7 @@ void SelectImage::DisplayUpdate(void)
 	{
 		if (!press_)
 		{
+			snd.Play(SoundManager::SOUND::CHANGE_SELECT);
 			press_ = true;
 
 			//人数を１追加(中身は1～4に収める)
@@ -258,9 +311,13 @@ void SelectImage::DisplayUpdate(void)
 			//インターバルを加算していく
 			interval_ += delta;
 
-			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
-			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, displayNum_ = (displayNum_ % SceneManager::PLAYER_NUM) + 1 : interval_;
+			//インターバル1秒ごとに数を１ずつ増やしていく
+			if (interval_ > INTERVAL_TIME)
+			{
+				interval_ = 0.0f;
+				displayNum_ = (displayNum_ % SceneManager::PLAYER_NUM) + 1;
+				(!sound) ? snd.Play(SoundManager::SOUND::CHANGE_SELECT), sound != sound : sound;
+			}
 		}
 	}
 	else if (pointR_.isToggle_)
@@ -276,11 +333,12 @@ void SelectImage::DisplayUpdate(void)
 	{
 		if (!press_)
 		{
+			snd.Play(SoundManager::SOUND::CHANGE_SELECT);
 			press_ = true;
 
 			//人数を１削除(中身は1～4に収める)
 			displayNum_ = (displayNum_ + 3) % SceneManager::PLAYER_NUM;
-			if (displayNum_ == 0)displayNum_ = 4;
+			if (displayNum_ == 0)displayNum_ = SceneManager::PLAYER_NUM;
 		}
 
 		//キーが押されている間経過時間を加算していく
@@ -292,10 +350,16 @@ void SelectImage::DisplayUpdate(void)
 			//インターバルを加算していく
 			interval_ += delta;
 
-			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
-			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, displayNum_ = (displayNum_ + 3) % SceneManager::PLAYER_NUM : interval_;
-			if (displayNum_ == 0)displayNum_ = 4;
+			//インターバル1秒ごとに数を１ずつ減らしていく
+			if (interval_ > INTERVAL_TIME)
+			{
+				interval_ = 0.0f;
+
+				displayNum_ = (displayNum_ + 3) % SceneManager::PLAYER_NUM;
+				if (displayNum_ == 0)displayNum_ = SceneManager::PLAYER_NUM;
+				(!sound) ? snd.Play(SoundManager::SOUND::CHANGE_SELECT), sound != sound : sound;
+
+			}
 		}
 	}
 	else if (pointL_.isToggle_)
@@ -308,6 +372,8 @@ void SelectImage::DisplayUpdate(void)
 	//スペースキー押下で決定&入力デバイス選択へ
 	if (selectScene_.GetConfig() == SelectScene::KEY_CONFIG::DECIDE)
 	{
+		snd.Play(SoundManager::SOUND::DECIDE_SELECT);
+
 		//プレイヤー人数の設定
 		data.Input(SceneManager::PLAY_MODE::USER, displayNum_);
 
@@ -349,6 +415,8 @@ void SelectImage::NumberUpdate(void)
 {
 	DataBank& data = DataBank::GetInstance();
 	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
+	auto& snd = SoundManager::GetInstance();
+	bool sound = false;
 
 	//右の矢印がONの時にキーの右に値する入力をし続けると
 	if (pointR_.isToggle_ &&
@@ -356,6 +424,8 @@ void SelectImage::NumberUpdate(void)
 	{
 		if (!press_)
 		{
+			snd.Play(SoundManager::SOUND::CHANGE_SELECT);
+
 			press_ = true;
 
 			//人数を１追加(中身は1～4に収める)
@@ -372,8 +442,12 @@ void SelectImage::NumberUpdate(void)
 			interval_ += delta;
 
 			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
-			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, playerNum_ = (playerNum_ % SceneManager::PLAYER_NUM) + 1 : interval_;
+			if (interval_ > INTERVAL_TIME)
+			{
+				interval_ = 0.0f;
+				playerNum_ = (playerNum_ % SceneManager::PLAYER_NUM) + 1 ;
+				(!sound) ? snd.Play(SoundManager::SOUND::CHANGE_SELECT), sound != sound : sound;
+			}
 		}
 	}
 	else if (pointR_.isToggle_)
@@ -389,11 +463,12 @@ void SelectImage::NumberUpdate(void)
 	{
 		if (!press_)
 		{
+			snd.Play(SoundManager::SOUND::CHANGE_SELECT);
 			press_ = true;
 
 			//人数を１削除(中身は1～4に収める)
 			playerNum_ = (playerNum_ + 3) % SceneManager::PLAYER_NUM;
-			if (playerNum_ == 0)playerNum_ = 4;
+			if (playerNum_ == 0)playerNum_ = SceneManager::PLAYER_NUM;
 		}
 
 		//キーが押されている間経過時間を加算していく
@@ -406,9 +481,13 @@ void SelectImage::NumberUpdate(void)
 			interval_ += delta;
 
 			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
-			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, playerNum_ = (playerNum_ + 3) % SceneManager::PLAYER_NUM : interval_;
-			if (playerNum_ == 0)playerNum_ = 4;
+			if (interval_ > INTERVAL_TIME)
+			{
+				interval_ = 0.0f;
+				playerNum_ = (playerNum_ + 3) % SceneManager::PLAYER_NUM;
+				if (playerNum_ == 0)playerNum_ = SceneManager::PLAYER_NUM;
+				(!sound) ? snd.Play(SoundManager::SOUND::CHANGE_SELECT), sound != sound : sound;
+			}
 		}
 	}
 	else if (pointL_.isToggle_)
@@ -421,6 +500,8 @@ void SelectImage::NumberUpdate(void)
 	//スペースキー押下で決定&入力デバイス選択へ
 	if (selectScene_.GetConfig() == SelectScene::KEY_CONFIG::DECIDE)
 	{
+		snd.Play(SoundManager::SOUND::DECIDE_SELECT);
+
 		//プレイヤー人数の設定
 		data.Input(SceneManager::PLAY_MODE::USER, playerNum_);
 		
@@ -498,6 +579,8 @@ void SelectImage::OperationUpdate(void)
 {
 	DataBank& data = DataBank::GetInstance();
 	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
+	auto& snd = SoundManager::GetInstance();
+	bool sound = false;
 
 	//右の矢印がONの時にキーの右に値する入力をし続けると
 	if (pointR_.isToggle_ &&
@@ -505,6 +588,7 @@ void SelectImage::OperationUpdate(void)
 	{
 		if (!press_)
 		{
+			snd.Play(SoundManager::SOUND::CHANGE_SELECT);
 			press_ = true;
 
 			//キーを押した際に選択しているものを反転(2種類しかないので)
@@ -519,9 +603,13 @@ void SelectImage::OperationUpdate(void)
 			//インターバルを加算していく
 			interval_ += delta;
 
-			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
-			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, isPad_ = !isPad_ : interval_;
+			//インターバル1秒ごとに数を１ずつ増やしていく
+			if (interval_ > INTERVAL_TIME)
+			{
+				interval_ = 0.0f;
+				isPad_ = !isPad_;
+				(!sound) ? snd.Play(SoundManager::SOUND::CHANGE_SELECT), sound != sound : sound;
+			}
 		}
 	}
 	else if (pointR_.isToggle_)
@@ -537,6 +625,7 @@ void SelectImage::OperationUpdate(void)
 	{
 		if (!press_)
 		{
+			snd.Play(SoundManager::SOUND::CHANGE_SELECT);
 			press_ = true;
 
 			//キーを押した際に選択しているものを反転(2種類しかないので)
@@ -552,8 +641,12 @@ void SelectImage::OperationUpdate(void)
 			interval_ += delta;
 
 			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
-			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, isPad_ = !isPad_ : interval_;
+			if (interval_ > INTERVAL_TIME)
+			{
+				interval_ = 0.0f;
+				isPad_ = !isPad_;
+				(!sound) ? snd.Play(SoundManager::SOUND::CHANGE_SELECT), sound != sound : sound;
+			}
 		}
 	}
 	else if (pointL_.isToggle_)
@@ -566,6 +659,8 @@ void SelectImage::OperationUpdate(void)
 	//スペースキー押下で決定&役職選択へ
 	if (selectScene_.GetConfig() == SelectScene::KEY_CONFIG::DECIDE)
 	{
+		snd.Play(SoundManager::SOUND::DECIDE_SELECT);
+
 		//1Pの操作の設定
 		(isPad_) ? data.Input(SceneManager::CNTL::PAD, 1) : data.Input(SceneManager::CNTL::KEYBOARD, 1);
 		(isPad_) ? selectScene_.Set1PDevice(SceneManager::CNTL::PAD) : selectScene_.Set1PDevice(SceneManager::CNTL::KEYBOARD);
@@ -694,11 +789,16 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 {
 	DataBank& data = DataBank::GetInstance();
 	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
+	auto& snd = SoundManager::GetInstance();
+	bool sound = false;
 
 	if (isReady_ == true)
 	{
 		if (input.config_ == SelectScene::KEY_CONFIG::CANCEL)
 		{
+			//キャンセル音
+ 			snd.Play(SoundManager::SOUND::CANCEL_SELECT);
+
 			isReady_ = false;
 		}
 		//準備完了の時にキャラ選択を操作できないようにする
@@ -711,10 +811,11 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 	{
 		if (!press_)
 		{
+			//選択変更音
+			snd.Play(SoundManager::SOUND::CHANGE_SELECT);
+
 			press_ = true;
 
-			//役職を選択
-			//role_ = (role_ + 1) % SceneManager::PLAYER_NUM;
 			//役職を選択
 			role_ = (role_ % SceneManager::PLAYER_NUM) + 1;
 		}
@@ -729,8 +830,12 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 			interval_ += delta;
 
 			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
-			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, role_ = (role_ + 1) % SceneManager::PLAYER_NUM : interval_;
+			if (interval_ > INTERVAL_TIME)
+			{
+				interval_ = 0.0f;
+				role_ = (role_ % SceneManager::PLAYER_NUM) + 1;
+				(!sound) ? snd.Play(SoundManager::SOUND::CHANGE_SELECT), sound != sound: sound;
+			} 
 		}
 	}
 	else if (pointR_.isToggle_)
@@ -740,16 +845,18 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 		press_ = false;
 	}
 
+	//左
 	if (pointL_.isToggle_ &&
 		input.config_ == SelectScene::KEY_CONFIG::LEFT)
 	{
 		if (!press_)
 		{
+			//選択変更音
+			snd.Play(SoundManager::SOUND::CHANGE_SELECT);
+
 			press_ = true;
 
 			//役職を選択
-			//role_ = (role_ - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM;
-			//人数を１削除(中身は1～4に収める)
 			role_ = (role_ + 3) % SceneManager::PLAYER_NUM;
 			if (role_ == 0)role_ = SceneManager::PLAYER_NUM;
 		}
@@ -763,8 +870,13 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 			interval_ += delta;
 
 			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
-			(interval_ > INTERVAL_TIME) ?
-				interval_ = 0.0f, role_ = (role_ - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM : interval_;
+			if (interval_ > INTERVAL_TIME)
+			{
+				interval_ = 0.0f;
+				role_ = (role_ + 3) % SceneManager::PLAYER_NUM;
+				if (role_ == 0)role_ = SceneManager::PLAYER_NUM;
+				(!sound) ? snd.Play(SoundManager::SOUND::CHANGE_SELECT), sound != sound : sound;
+			}
 		}
 	}
 	else if (pointL_.isToggle_)
@@ -774,10 +886,13 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 		press_ = false;
 	}
 
-	//スペースキー押下でゲーム画面へ
+	//スペースキー押下役職決定
 	if (role_ != 3	&&
 		input.config_ == SelectScene::KEY_CONFIG::DECIDE)
 	{
+		//決定音
+		snd.Play(SoundManager::SOUND::SCENE_CHANGE_1);
+
 		//役職の設定
 		data.Input(static_cast<SceneManager::ROLE>(role_ ), i + 1);
 
