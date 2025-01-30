@@ -62,13 +62,14 @@ SelectScene::~SelectScene(void)
 void SelectScene::Init(void)
 {
 	auto& snd = SoundManager::GetInstance();
+	auto& res = ResourceManager::GetInstance();
 
 	//音楽読み込み
-	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::TITLE,
-		res.Load(ResourceManager::SRC::TITLE_BGM).handleId_);
+	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::SELECT,
+		res.Load(ResourceManager::SRC::SELECT_BGM).handleId_);
 
-	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::SCENE_CHANGE_1,
-		res.Load(ResourceManager::SRC::SCENE_CHANGE_SE1).handleId_);
+	//音楽再生
+	snd.Play(SoundManager::SOUND::SELECT);
 
 	//スカイドーム
 	skyDome_ = std::make_unique<SkyDome>();

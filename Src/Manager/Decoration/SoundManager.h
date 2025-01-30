@@ -32,6 +32,8 @@ public:
 		GAMECLEAR_BGM,
 		TITLE,
 		SCENE_CHANGE_1,
+		SELECT,
+		CHANGE_OBJECT,
 	};
 
 	struct SOUND_DATA

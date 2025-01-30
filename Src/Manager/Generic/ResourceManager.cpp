@@ -90,9 +90,11 @@ void ResourceManager::InitSelect(void)
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "CharaParams.png", CHARA_PARAM_NUM_X, CHARA_PARAM_NUM_Y, CHARA_PARAM_SIZE_X, CHARA_PARAM_SIZE_Y);
 	resourcesMap_.emplace(SRC::CHARA_PARAMS, res);
 
-	//ƒ`ƒLƒ“
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Chicken/Chicken.mv1");
-	resourcesMap_.emplace(SRC::CHICKEN, res);
+	//BGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "SelectScene.mp3");
+	resourcesMap_.emplace(SRC::SELECT_BGM, res);
+
+
 
 	ResourcePlayer();
 	ResourceEnemy();
