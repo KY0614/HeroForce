@@ -139,6 +139,9 @@ void EnemyManager::CreateEnemy(void)
 
 void EnemyManager::CreateBoss(void)
 {
+	//“G‚ªÅ‘å”‚¢‚½‚ç¶¬ˆ—‚ğs‚í‚È‚¢
+	if (activeNum_ >= ENEMY_MAX)return;
+
 	//“G‚Ì¶¬
 	Enemy* enm = nullptr;
 

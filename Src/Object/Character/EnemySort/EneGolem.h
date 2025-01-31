@@ -38,7 +38,7 @@ public:
 	static constexpr float SPEED_ANIM_JUMP = 60.0f;			//ジャンプアニメーション速度
 
 	//モデル関係
-	static constexpr VECTOR  LOCAL_CENTER_POS = { 0.0f,150.0f * CHARACTER_SCALE,0.0f };	//モデルの中心座標への相対座標
+	static constexpr VECTOR  LOCAL_CENTER_POS = { 0.0f,200.0f * CHARACTER_SCALE,0.0f };	//モデルの中心座標への相対座標
 	static constexpr float SCALE = 0.01f;		//モデルの大きさ
 
 	//フレーム(ボーン)番号

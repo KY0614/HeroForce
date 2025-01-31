@@ -430,7 +430,7 @@ void Enemy::DrawDebug(void)
 		break;
 	}
 	//“G‚Ì“–‚½‚è”»’è
-	DrawSphere3D(colPos_, radius_, 4, 0xffff00, 0xffff00, false);
+	DrawSphere3D(trans_.pos, radius_, 4, 0xffff00, 0xffff00, false);
 	//“G‚Ìõ“G”»’è
 	DrawSphere3D(trans_.pos, searchRange_, 2, searchState_ != SEARCH_STATE::CHICKEN_SEARCH ? 0xff0000 : 0xffffff, searchState_ != SEARCH_STATE::CHICKEN_SEARCH ? 0xff0000 : 0xffffff, false);
 	//“G‚Ìõ“G”»’è
