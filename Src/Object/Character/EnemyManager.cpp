@@ -161,30 +161,6 @@ void EnemyManager::CreateBoss(void)
 	activeNum_++;
 }
 
-void EnemyManager::CreateBoss(void)
-{
-	//敵の生成
-	Enemy* enm = nullptr;
-
-	//生成相対座標
-	VECTOR createLocalPos = createPos_[1];
-
-	//ゴーレムの生成
-	enm = new EneGolem(createLocalPos);
-
-	//念のためのエラー回避用
-	if (enm == nullptr)assert("敵の生成で問題がありました。");
-
-	//敵の初期化
-	enm->Init();
-
-	//敵の更新等を掛けるやつをセット
-	activeEnemys_[activeNum_] = enm;
-
-	//カウンタ増加
-	activeNum_++;
-}
-
 VECTOR EnemyManager::GetNotOverlappingPos(void)
 {
 	//敵の大きさ
