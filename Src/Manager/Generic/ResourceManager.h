@@ -108,12 +108,17 @@ public:
 
 		//選択画面用
 		PLAYER_NUM,		//人数選択
-		DISPLAY_NUM,	//人数選択
+		DISPLAY_NUM,	//ディスプレイ数選択
 		RIGHT_POINT,	//右矢印
 		LEFT_POINT,		//左矢印
 		READY,			//準備
 		DEVICE,			//デバイス
 		COMING_SOON,	//ComingSoon
+		PLAYER_IMG,	
+		DISPLAY_IMG,	
+		OPERATION_IMG,	
+		ROLE_IMG,	
+		WAIT_IMG,	
 
 		//タイトル画面
 		TITLE_LOGO,

@@ -70,6 +70,13 @@ void SelectScene::Init(void)
 	//音楽再生
 	snd.Play(SoundManager::SOUND::SELECT);
 
+	//画像の読み込み
+	imgPlayer_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_IMG).handleId_;
+ 	imgDisplay_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::DISPLAY_IMG).handleId_;
+	imgOperation_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::OPERATION_IMG).handleId_;
+	imgRole_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::ROLE_IMG).handleId_;
+	imgWait_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::WAIT_IMG).handleId_;
+
 	//スカイドーム
 	skyDome_ = std::make_unique<SkyDome>();
 	skyDome_->Init();
@@ -321,15 +328,13 @@ void SelectScene::DisplayDraw(void)
 {
 	images_[0]->Draw();
 
-	for (int i = 0; i < SceneManager::GetInstance().GetActiveNum(); i++)
-	{
-		DrawFormatString(0, 0, 0x333333, "%i", i);
-	}
+	DrawRotaGraph(Application::SCREEN_SIZE_X/2, 60,1.0f, 0.0f, imgDisplay_, true);
 }
 
 void SelectScene::NumberDraw(void)
 {
 	images_[0]->Draw();
+	DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 60, 1.0f, 0.0f, imgPlayer_, true);
 }
 
 void SelectScene::OperationDraw(void)
@@ -341,6 +346,14 @@ void SelectScene::OperationDraw(void)
 	for (int i = 1; i < camera.size(); i++)
 	{
 		enemys_[i]->Draw();
+	}
+
+	if (SceneManager::GetInstance().GetNowWindow() < 1)
+	{ 
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 60, 1.0f, 0.0f, imgOperation_, true); 
+	}
+	else{
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 150, 1.0f, 0.0f, imgWait_, true); 
 	}
 }
 
@@ -359,9 +372,10 @@ void SelectScene::RoleDraw(void)
 		players_[i]->Draw();
 	}
 
-	int i = SceneManager::GetInstance().GetNowWindow();
-	DrawFormatString(0, 0, 0x333333, "%i", i);
-
+	if (SceneManager::GetInstance().GetNowWindow() > -1)
+	{
+		DrawRotaGraph(Application::SCREEN_SIZE_X - 200, 90, 1.0f, 0.0f, imgRole_, true);
+	}
 }
 
 void SelectScene::MaxDraw(void)

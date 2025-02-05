@@ -750,10 +750,9 @@ void SelectImage::RoleDraw(void)
 	//‰¼•\‹L
 	if (GetRole() == static_cast<int>(SceneManager::ROLE::MAGE))
 	{
-		ReductinVertexPos();
+		
 		readyMesh_.DrawTwoMesh(*imgComingSoon_);
 	}
-	MoveVertexPos();
 }
 
 void SelectImage::PointsDraw(void)
@@ -1019,6 +1018,7 @@ void SelectImage::ChangeStateOperation(void)
 void SelectImage::ChangeStateRole(void)
 {
 	MoveVertexPos();
+	ReductinVertexPos();
 	stateUpdate_ = std::bind(&SelectImage::RoleUpdate, this);
 }
 

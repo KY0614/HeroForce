@@ -447,15 +447,31 @@ void SceneManager::SetWindowPram(void)
 	int posX = 0;
 	int posY = 0;
 
+	//変更前↓
+	//int displayNum = DataBank::GetInstance().Output(DataBank::INFO::DHISPLAY_NUM);
+
+
+	//int sizeX = DISPLAY_X /** displayNum*/;
+	//int sizeY = DISPLAY_Y;
+
+	//if (activeWindowNum_ != 1)sizeX /= 2;
+	//if (activeWindowNum_ > 2)sizeY /= 2;
 
 	int displayNum = DataBank::GetInstance().Output(DataBank::INFO::DHISPLAY_NUM);
+	int userNum = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
 
+	int r = 1;
+	//ディスプレイが余っているとき
+	if (displayNum > userNum) r = userNum;
+	else r = displayNum;
 
-	int sizeX = DISPLAY_X /** displayNum*/;
+	
+	int sizeX = DISPLAY_X * r;
 	int sizeY = DISPLAY_Y;
 
-	if (activeWindowNum_ != 1)sizeX /= 2;
-	if (activeWindowNum_ > 2)sizeY /= 2;
+	if (activeWindowNum_ != displayNum)sizeX /= 2;
+	if (activeWindowNum_ > displayNum)sizeY /= 2;
+	if (sizeX > DISPLAY_X)sizeX = DISPLAY_X;
 
 	////生成するウィンドウの数よりディスプレイの方が多い場合
 	//if(displayNum>activeWindowNum_)

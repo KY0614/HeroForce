@@ -74,10 +74,6 @@ void ResourceManager::InitSelect(void)
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Ready.png", 1, 1, 500, 200);
 	resourcesMap_.emplace(SRC::READY, res);
 
-	//役職
-	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "RoleNum.png", 1, 1, 300, 300);
-	resourcesMap_.emplace(SRC::ROLE, res);
-
 	//デバイス
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Device.png", 1, 1, 300, 300);
 	resourcesMap_.emplace(SRC::DEVICE, res);
@@ -113,6 +109,23 @@ void ResourceManager::InitSelect(void)
 	//選択決定
 	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "Select_Decide.mp3");
 	resourcesMap_.emplace(SRC::DECIDE_SELECT, res);
+
+	//説明用画像
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Display_Select.png");
+	resourcesMap_.emplace(SRC::DISPLAY_IMG, res);
+	//説明用画像
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Player_Select.png");
+	resourcesMap_.emplace(SRC::PLAYER_IMG, res);
+	//説明用画像
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Operation_Select.png");
+	resourcesMap_.emplace(SRC::OPERATION_IMG, res);
+	//説明用画像
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Role_Select.png");
+	resourcesMap_.emplace(SRC::ROLE_IMG, res);
+	//説明用画像
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Waiting.png");
+	resourcesMap_.emplace(SRC::WAIT_IMG, res);
+
 
 	ResourcePlayer();
 	ResourceEnemy();
