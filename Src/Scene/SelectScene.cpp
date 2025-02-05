@@ -374,7 +374,7 @@ void SelectScene::RoleDraw(void)
 
 	if (SceneManager::GetInstance().GetNowWindow() > -1)
 	{
-		DrawRotaGraph(Application::SCREEN_SIZE_X - 200, 90, 1.0f, 0.0f, imgRole_, true);
+		DrawRotaGraph(Application::SCREEN_SIZE_X - 180, 100, 1.0f, 0.0f, imgRole_, true);
 	}
 }
 
