@@ -1,5 +1,6 @@
 #include<DxLib.h>
 #include<cassert>
+#include"../Manager/Decoration/SoundManager.h"
 #include"../Manager/Generic/InputManager.h"
 #include"../Manager/Generic/ResourceManager.h"
 #include"../Manager/Generic/SceneManager.h"
@@ -18,6 +19,7 @@ FazeResult::FazeResult(void)
 	int i = -1;
 	imgRank_ = &i;
 	state_ = STATE::NOMAL;
+	isPlay_ = false;
 }
 FazeResult::~FazeResult(void)
 {
@@ -29,7 +31,7 @@ void FazeResult::Init(void)
 	rankImg_[static_cast<int>(RANK::A)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::RANK_A).handleId_;
 	rankImg_[static_cast<int>(RANK::B)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::RANK_B).handleId_;
 	rankImg_[static_cast<int>(RANK::C)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::RANK_C).handleId_;
-	backImg_= ResourceManager::GetInstance().Load(ResourceManager::SRC::RESULT).handleId_;
+	backImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::RESULT).handleId_;
 
 	rank_ = RANK::S;
 	isEnd_ = false;
@@ -52,12 +54,19 @@ void FazeResult::Init(void)
 		FONT_HEAD_SIZE,
 		0);
 
+	SoundManager::GetInstance().Add(SoundManager::TYPE::SE,
+		SoundManager::SOUND::FAZE_REZALT,
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::FAZE_REZALT_SE).handleId_);
+
 	SetResult();
 }
 
 void FazeResult::Update(void)
 {
+	if (!isPlay_) { SoundManager::GetInstance().Play(SoundManager::SOUND::FAZE_REZALT); isPlay_ = true; }
+
 	ChangeRank();
+	step_++;
 }
 
 void FazeResult::Draw(void)
@@ -75,7 +84,7 @@ void FazeResult::Draw(void)
 	std::string mes = "%dフェーズ終了";
 	//テキストの描画
 	DrawFormatStringToHandle(
-		HEAD_TEXT_POS_X, 
+		HEAD_TEXT_POS_X,
 		HEAD_TEXT_POS_Y - mes.length() * FONT_HEAD_SIZE / 2,
 		0xffffff,
 		font_,
@@ -130,6 +139,7 @@ void FazeResult::Release(void)
 void FazeResult::Reset(void)
 {
 	isEnd_ = false;
+	isPlay_ = false;
 }
 
 void FazeResult::SetLast(void)
@@ -142,6 +152,14 @@ void FazeResult::SetResult(void)
 	//リザルト情報
 	dunkEnm_ = DataBank::GetInstance().Output(DataBank::INFO::FAZE_DUNK_ENEMY);
 	aliveChicken_ = DataBank::GetInstance().Output(DataBank::INFO::ALIVE_CHICKEN);
+	//ランクの決定
+	JudgeRank();
+
+}
+
+float FazeResult::GetExp(void)
+{
+	return afterExp_;
 }
 
 float FazeResult::GetBonusExp(const RANK _rank) const
@@ -181,7 +199,26 @@ void FazeResult::ChangeRank(void)
 	if (ins.IsTrgDown(KEY_INPUT_C))rank_ = RANK::C;
 
 	//フェーズの終了
-	if (ins.IsTrgDown(KEY_INPUT_SPACE))isEnd_ = true;
+	if (ins.IsTrgDown(KEY_INPUT_SPACE)||ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1,InputManager::JOYPAD_BTN::RIGHT))isEnd_ = true;
 
 	afterExp_ = GetBonusExp(rank_);
+}
+
+void FazeResult::JudgeRank(void)
+{
+	int value = (aliveChicken_ * CHICKEN_VALUE) + (dunkEnm_ * ENEMY_VALUE);
+	rank_ = RANK::C;
+
+	if (value >= RANK_S_BORDER) {
+		rank_ = RANK::S;
+		return;
+	}
+	if (value >= RANK_A_BORDER) {
+		rank_ = RANK::A;
+		return;
+	}
+	if (value >= RANK_B_BORDER) {
+		rank_ = RANK::B;
+		return;
+	}
 }

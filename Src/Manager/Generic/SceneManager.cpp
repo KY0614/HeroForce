@@ -8,12 +8,16 @@
 #include "../Scene/GameScene.h"
 #include "../Scene/GameOverScene.h"
 #include "../Scene/GameClearScene.h"
+#include "../Scene/ExplanScene.h"
 #include "ResourceManager.h"
 #include "Camera.h"
 #include"../Manager/GameSystem/Collision.h"
 #include"../Manager/GameSystem/DataBank.h"
+#include"../Manager/GameSystem/CharacterParamData.h"
 #include"../Manager/Decoration/EffectManager.h"
 #include"../Manager/Decoration/SoundManager.h"
+#include"../Manager/GameSystem/Timer.h"
+#include"../Shader/PixelShader.h"
 #include "SceneManager.h"
 
 SceneManager* SceneManager::instance_ = nullptr;
@@ -39,9 +43,12 @@ void SceneManager::Init(void)
 	DataBank::CreateInstance();
 	EffectManager::CreateInstance();
 	SoundManager::CreateInstance();
+	PixelShader::CreateInstance();
 
 	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;
+
+	CharacterParamData::CreateInstance();
 
 	fader_ = std::make_unique<Fader>();
 	fader_->Init();
@@ -68,6 +75,7 @@ void SceneManager::Init(void)
 	//メインウィンドウを追加
 	subWindowH_.push_back(NULL);
 	activeWindowNum_ = 1;	//メインをアクティブにするので初期値１
+	nowWindowNum_ = 0;
 }
 
 void SceneManager::Init3D(void)
@@ -86,10 +94,18 @@ void SceneManager::Init3D(void)
 	SetUseBackCulling(true);
 
 	// ライトの設定
-	SetUseLighting(false);
+	SetUseLighting(true);
 
 	// 正面から斜め下に向かったライト
 	ChangeLightTypeDir({ 0.00f, -1.00f, 1.00f });
+
+	// ライトの設定
+	//ChangeLightTypeDir({ 0.3f, -0.7f, 0.8f });
+
+	// フォグ設定
+	SetFogEnable(true);
+	SetFogColor(5, 5, 5);
+	SetFogStartEnd(10000.0f, 20000.0f);
 
 }
 
@@ -146,7 +162,8 @@ void SceneManager::Draw(void)
 
 		// Effekseerにより再生中のエフェクトを更新する。
 		UpdateEffekseer3D();
-
+		//現在のウィンドウ数セット
+		SetNowWindow(cnt);
 
 		//ゲーム内容描画
 		// 描画
@@ -178,8 +195,10 @@ void SceneManager::Destroy(void)
 	}
 
 	DataBank::GetInstance().Destroy();
-	EffectManager::GetInstance().Release();
-	SoundManager::GetInstance().Release();
+	EffectManager::GetInstance().Destroy();
+	SoundManager::GetInstance().Destroy();
+	PixelShader::GetInstance().Destroy();
+	Timer::GetInstance().Destroy();
 
 	delete instance_;
 }
@@ -328,6 +347,8 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 
 	// リソースの解放
 	resM.Release();
+	EffectManager::GetInstance().Release();
+	SoundManager::GetInstance().Release();
 
 	// シーンを変更する
 	sceneId_ = sceneId;
@@ -349,11 +370,14 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	
 	case SCENE_ID::SELECT:
 		scene_ = new SelectScene();
-		resM.InitSelect();
+   		resM.InitSelect();
 		break;	
 	
 	case SCENE_ID::GAME:
 		//ウィンドウの設定
+
+		
+
 		RedySubWindow();
 		scene_ = new GameScene();
 		resM.InitGame();
@@ -364,9 +388,14 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 		resM.InitGameOver();
 		break;
 
-	case SCENE_ID::GAMECLEAR :
+	case SCENE_ID::GAMECLEAR:
 		scene_ = new GameClearScene();
 		resM.InitGameClear();
+		break;
+
+	case SCENE_ID::EXP:
+		scene_ = new ExplanScene();
+		resM.InitExplan();
 		break;
 	}
 
@@ -406,6 +435,11 @@ void SceneManager::Fade(void)
 	}
 }
 
+void SceneManager::SetNowWindow(const int _num)
+{
+	nowWindowNum_ = _num;
+}
+
 //ウィンドウのサイズ及び位置設定
 void SceneManager::SetWindowPram(void)
 {
@@ -421,11 +455,22 @@ void SceneManager::SetWindowPram(void)
 	int posX = 0;
 	int posY = 0;
 
-	int sizeX = DISPLAY_X;
+
+	int displayNum = DataBank::GetInstance().Output(DataBank::INFO::DHISPLAY_NUM);
+	int userNum = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
+
+	int r = 1;
+	//ディスプレイが余っているとき
+	if (displayNum > userNum) r = userNum;
+	else r = displayNum;
+
+
+	int sizeX = DISPLAY_X * r;
 	int sizeY = DISPLAY_Y;
 
-	if (activeWindowNum_ != 1)sizeX /= 2;
-	if (activeWindowNum_ > 2)sizeY /= 2;
+	if (activeWindowNum_ != displayNum)sizeX /= 2;
+	if (activeWindowNum_ > displayNum)sizeY /= 2;
+	if (sizeX > DISPLAY_X)sizeX = DISPLAY_X;
 
 	for (HWND hwnd : subWindowH_)
 	{
@@ -436,6 +481,7 @@ void SceneManager::SetWindowPram(void)
 		if (cnt == 1)
 		{
 			SetWindowSize(sizeX - 15, sizeY - 30);
+			//SetWindowSizeExtendRate(0.95, 0.95);
 			SetWindowPosition(posX, posY);
 		}
 		else
@@ -451,4 +497,9 @@ void SceneManager::SetWindowPram(void)
 			posX = 0;
 		}
 	}
+}
+
+const int SceneManager::GetNowWindow(void) const
+{
+	return nowWindowNum_;
 }

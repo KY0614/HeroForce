@@ -5,11 +5,13 @@
 #include"../../../Manager/Generic/SceneManager.h"
 #include "../../UnitBase.h"
 #include"../../../Manager/Generic/InputManager.h"
+#include"../../../Manager/Decoration/EffectManager.h"
+#include"../PlayerManager.h"
 #include"../PlayerInput.h"
 #include "../../UnitBase.h"
 
 //デバッグ
-#define DEBUG_ON
+//#define DEBUG_ON
 //#define INPUT_DEBUG_ON
 //#define DEBUG_COOL
 class PlayerDodge;
@@ -24,12 +26,14 @@ public:
     unsigned int color_skl1_;
     unsigned int color_skl2_;
 
-#endif // DEBUG_ON
-    //デバッグ用
-
-
     //デバッグ用関数
     virtual void DrawDebug(void);
+
+#endif // DEBUG_ON
+    //デバッグ用
+      //エフェクトを最初の1フレームの時に再生させる用のFPS
+    static constexpr float DELTATIME = 1.0f / 60.0f;
+
 
     //各アニメーション番号
     static constexpr int T_POSE_NUM = 64;
@@ -46,27 +50,42 @@ public:
     static constexpr float SPEED_ANIM_DODGE = 30.0f;
     static constexpr float SPEED_ANIM_ATK = 50.0f;
 
+    //死にアニメーションの止めるカウント
+    static constexpr float DEATH_STEP_ANIM = 22.7;
+
     //攻撃の種類の数
     static constexpr int ATK_TOTAL = 3;
 
     // 移動スピード
     static constexpr float SPEED_MOVE = 5.0f;
-    static constexpr float SPEED_DEG = 5.0f;
     static constexpr float SPEED_DODGE = 15.0f;
-   
-
-
+    static constexpr float MOVE_SPEED_SLOW = 3.0f;
+    static constexpr float MOVE_SPEED_NORMAL = 5.0f;
+    static constexpr float MOVE_SPEED_FAST = 8.0f;
 
     static constexpr float FRAME_DODGE_MAX = 1.0f * CHARACTER_SCALE;
     static constexpr float DODGE_CDT_MAX = 0.5f;
-
-
 
     //プレイヤー自身の当たり判定
     static constexpr VECTOR PLAYER_COL_LOCAL_POS = { 0.0f,100.0f,0.0f };
 
     //自身の当たり判定半径
     static constexpr float MY_COL_RADIUS = 66.0f * CHARACTER_SCALE;
+
+    //アーチャーの索敵(敵に矢を向ける範囲)
+    static constexpr float ARCHER_SEARCH_RANGE = CHARACTER_SCALE * 1300.0f;
+
+    //フェーズ変わるときにプレイヤーが死んでた時のhp回復
+    static constexpr float CHANGEFAZE_RECOVERY_PER = 0.2f;
+
+    //プレイヤーの初期座標
+    static constexpr VECTOR PLAYER1_POS = { -200.0f,0.0F,0.0f };
+    static constexpr VECTOR PLAYER2_POS = { -100.0f,0.0F,0.0f };
+    static constexpr VECTOR PLAYER3_POS = { 0.0F,0.0F,0.0f };
+    static constexpr VECTOR PLAYER4_POS = { 100.0F,0.0F,0.0f };
+
+    //音量
+    static constexpr int SKILL_CHANGE_SE_VOL = 80;
 
     //*************************************************
     // 列挙型
@@ -89,8 +108,37 @@ public:
         , MAX
     };
 
-    //PlayerBase(const InputManager::JOYPAD_NO _padNum) :padNum_(_padNum) {}
-    //PlayerBase(const SceneManager::CNTL _cntl) :cntl_(_cntl) {}
+    enum class ATK_TYPE
+    {
+        ATTACK
+        ,BUFF
+        ,MAX
+    };
+
+    enum class STATUSBUFF_TYPE
+    {
+        ATK_BUFF
+        ,DEF_BUFF
+        ,SPD_BUFF
+        ,MAX
+    };
+
+    //バフするスキル
+    enum class SKILL_BUFF
+    {
+        BUFF_ARROW  //アーチャーのスキル2
+        ,GUARD      //ナイトのガード
+        ,MAX
+    };
+
+    struct BUFF
+    {
+        float cnt;
+        float percent[static_cast<int>(STATUSBUFF_TYPE::MAX)];
+        bool isBuff;            //バフしたかどうか(バフの重ね掛けを防ぐ)
+        bool isBuffing;         //バフ中かどうか  (毎フレームバフするのを防ぐ)
+    };
+
     PlayerBase(void);
     ~PlayerBase(void) = default;
     void Destroy(void)override;
@@ -100,23 +148,31 @@ public:
     virtual void Draw(void)override;
 
 
+    /// <summary>
+    /// 矢の当たり判定
+    /// </summary>
+    /// <param name="_chaser">攻撃する人</param>
+    /// <param name="_target">攻撃される人</param>
+    /// <param name="_num">当たり判定する矢の配列番号</param>
+    /// <returns></returns>
+    virtual const bool IsHitArrowAtk(const PlayerBase& _chaser, const UnitBase& _target, const int _num) { return false; }
 
+    //動的配列のATKを返す
+    //virtual std::vector<ATK>GetAtks(void) { return atks_; }
 
+    virtual std::vector<ATK> GetAtks(ATK_TYPE _type) { return atks_[_type]; }
 
-    //コントローラー変更用関数
-    void ChangeControll(SceneManager::CNTL _cntl);
+    virtual void SetIsArrowHit(ATK_TYPE _type, const bool _flg, int _num){ atks_[_type][_num].isHit_ = _flg; }
 
-    //回避関連
-   //---------------------------------------
-    const bool IsDodge(void)const { return 0.0f < dodgeCnt_ && dodgeCnt_ < FRAME_DODGE_MAX; }
-
-    //-------------------------------------------------------------
-    //ダメージ関数
+     //ダメージ関数
     void Damage(void);
 
     //リセット
     void Reset(void);
 
+    //役職それぞれのバフ(使わない役職もあるためスタブ)
+    virtual void Buff(PlayerBase& _target) {}
+    void BuffPerAdd(STATUSBUFF_TYPE _type, float _per);
     //移動関連
      //-------------------------------------
     //移動処理
@@ -126,12 +182,16 @@ public:
     void Turn(float _deg, VECTOR _axis);
 
     //動いてるかどうか
-    bool IsMove(void) { return moveSpeed_ > 0.0f; }
+    bool IsMove(void) { return speed_ > 0.0f; }
 
     //スキル使用可能かどうか
-    bool IsSkillable(void) { return !IsAtkAction() && !IsDodge(); }
+    bool IsSkillable(void);
+
     //スキル変更処理
     void SkillChange(void);
+
+    //バフ更新
+    void BuffUpdate(void);
 
     //*****************************************************
     //ゲッタ
@@ -139,17 +199,17 @@ public:
     //クール中
     const bool GetIsCool(ATK_ACT _act) { return isCool_[static_cast<int>(_act)]; }
 
-    //ツールタイム
+    //クールタイム
     const float GetCoolTime(ATK_ACT _act) { return coolTime_[static_cast<int>(_act)]; }
 
     //現在の使いたいスキル
     const ATK_ACT GetSkillNo(void) { return skillNo_; }
 
     //攻撃中判定
-    const bool GetIsAtk(void){ return isAtk_; }
+    const bool GetIsAtk(void) { return isAtk_; }
 
     //スキル中判定
-    const bool GetIsSkill(void){ return isSkill_; }
+    const bool GetIsSkill(void) { return isSkill_; }
 
     //前隙
     const float GetAtkStartCnt(void) { return atkStartCnt_; }
@@ -159,6 +219,30 @@ public:
 
     //回避
     PlayerDodge* GetDodge(void) { return dodge_; }
+
+    //クールタイム割合のゲッタ
+    const float* GetCoolTimePer(void) { return coolTimePer_; }
+
+    //バフされているかゲッタ
+    //const bool GetIsBuff(void) { return isBuff_; }
+
+    const bool GetIsBuff(SKILL_BUFF _skill) { return buffs_[_skill].isBuff; }
+
+    //矢などの遠距離武器のゲッタ(KnightとArcherで使う)
+    virtual const ATK GetArrowAtk(const int i) { return ATK(); }
+    virtual const ATK GetArrowAtk(const ATK_TYPE _act, const int i) { return ATK(); }
+
+
+    //遠距離武器の個数を獲得
+    virtual const int GetArrowCnt(const int _act) { return 0; }
+
+    //攻撃力ゲッタ
+    float GetAtkPow(void) { return atkPow_; }
+
+    SceneManager::ROLE GetRole(void) { return role_; }
+
+    VECTOR GetInitPos(int _num) { return initPos_[_num]; }
+    
 
 
     //**************************************************************
@@ -209,44 +293,71 @@ public:
     //クールタイムセッタ
     void SetCoolTime(const float coolTime, ATK_ACT _act) { coolTime_[static_cast<int>(_act)] = coolTime; }
 
+    //アーチャーのサーチセッタ
+    void SetIsSerchArcher(const bool _isSerch) { isSerchArcher_ = _isSerch; }
+
     //その他
     //------------------------------------------------------------------------------------
     //アニメーションステップ
     void SetStepAnim(const float _stepAnim) { stepAnim_ = _stepAnim; }
 
     //スピード
-    void SetMoveSpeed(const float _speed) { moveSpeed_ = _speed; }
+    void SetSpeed(const float _speed) { speed_ = _speed; }
+
+    //バフセッタ(時間制限付き)
+    //void SetBuff(STATUSBUFF_TYPE _type, float _per,float _second);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="_type"></param>
+    /// <param name="_skill"></param>
+    /// <param name="_per"></param>
+    /// <param name="_second"></param>
+    void SetBuff(STATUSBUFF_TYPE _type,SKILL_BUFF _skill, float _per,float _second);
+
+    //時間制限なし
+    //void SetBuff(STATUSBUFF_TYPE _type, float _per);
+
+    //前のステータス情報をセットする
+    void SetPreStatus(void);
+
+    //バフした判定セッタ
+    //void SetIsBuff(const bool _isBuff) { isBuff_ = _isBuff; }
+
+    /// <summary>
+    /// バフしたかセッタ
+    /// </summary>
+    /// <param name="_isBuff">true:バフした</param>
+    /// <param name="_skill">バフしたスキルは何か</param>
+    void SetIsBuff(SKILL_BUFF _skill,const bool _isBuff) { buffs_[_skill].isBuff = _isBuff; }
+
+    void SetIsBuff(PlayerBase& _player,SKILL_BUFF _skill, const bool _isBuff) { _player.SetIsBuff(_skill, _isBuff); }
 
 
+    //ターゲットセッタ
+    void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; } 
 
-
-
-
-
+ 
 
 protected:
+    //ポインタ
+      //回避機能
+    PlayerDodge* dodge_;
+
     //*************************************************
     // 列挙型
     //*************************************************
-
-
-
-    enum class ATK_TYPE
-    {
-        NORMALATK
-        , CHARGEATK
-    };
     struct PlayerAtk
     {
         ATK_ACT act_;
         float atkStartCnt_;
         ATK atk_;
-        float coolCnt_;
         float CoolTime_[static_cast<int>(ATK_ACT::MAX)];
+        float CoolTimeMax_[static_cast<int>(ATK_ACT::MAX)];                //クールタイム最大
         std::map<ATK_ACT, ATK>atkMax_;
-        float coolTimeMax_[static_cast<int>(ATK_ACT::MAX)];             //クールタイム最大
         float atkStartTime_[static_cast<int>(ATK_ACT::MAX)];            //攻撃発生時間
-        bool IsAtkStart(void){ return 0.0f < atkStartCnt_ && atkStartCnt_ <= atkStartTime_[static_cast<int>(act_)]; }
+        bool IsAtkStart(void) { return 0.0f < atkStartCnt_ && atkStartCnt_ <= atkStartTime_[static_cast<int>(act_)]; }
     };
 
 
@@ -263,20 +374,30 @@ protected:
     std::map<ATK_TYPE, std::function<void(void)>>changeAtkType_;//攻撃タイプ変更
     std::function<void(void)>atkTypeUpdate_;                    //攻撃タイプごとのアップデート
     ATK_TYPE atkType_;                                          //タイプ変数
-    float moveSpeed_;                                           //移動スピード
     float coolTime_[static_cast<int>(ATK_ACT::MAX)];            //それぞれのクールタイムカウント
     bool isCool_[static_cast<int>(ATK_ACT::MAX)];               //それぞれの攻撃使い終わりを格納する
     float multiHitInterval_;                                    //多段ヒットのダメージ間隔
     VECTOR userOnePos_;                                         //ユーザー1追従用の座標   
     VECTOR colPos_;                                             //プレイヤーの当たり判定座標
+    bool isSerchArcher_;                                              //アーチャーの射程圏内に入ったかどうか
+    float speed_;                                               //プレイヤーのスピード(ステータスではなく1フレームに動くもの)
+
+
+
+    //誰をターゲットにするか
+    VECTOR targetPos_;
+
+ 
+
 
     bool isPush_;                                               //長押しスキル用のボタンを押しているかどうか  true:押している
     bool moveAble_;             //移動可能かを返す  true:移動可能
     bool isAtk_;                                                 //通常攻撃開始したかどうか
     bool isSkill_;                                                 //スキル開始したかどうか
+    bool isBuff_;                                               //バフかそうでないか     true：バフである
 
 
- 
+
 
     //それぞれの最大値セット用(攻撃の座標はローカル座標で設定してます)
     std::map<ATK_ACT, ATK>atkMax_;
@@ -289,29 +410,11 @@ protected:
     int leftStickY_;            //パッドのスティックのY角度
     float stickDeg_;            //パッドのスティックの角度
 
-   //回避系
-    float dodgeCnt_;            //ドッジカウント
-    float dodgeCdt_;            //ドッジの後隙
 
- 
     //*************************************************
     //メンバ関数
     //*************************************************
-    VECTOR GetTargetVec(VECTOR _targetPos);
-
-
-    ////プレイヤーがCPUかUSERか判別
-    //SceneManager::PLAY_MODE mode_;
-    ////モード変更しないけどデバッグしやすいようにする
-    //std::map < SceneManager::PLAY_MODE, std::function<void(void)>>changeMode_;
-    //std::function<void(void)>modeUpdate_;       //モードごとの処理
-
-    std::map<SceneManager::CNTL, std::function<void(void)>>changeNmlActControll_;       //通常スキル
-    std::function<void(void)>nmlActUpdate_;                                             //通常スキル更新
-     //チャージ攻撃
-    std::map<SceneManager::CNTL, std::function<void(void)>>changeChargeActCntl_;       //コントローラーごとのスキル変更
-    std::function<void(void)>chargeActUpdate_;
-
+    VECTOR GetTargetVec(VECTOR _targetPos,bool _isMove=true);
 
 
 
@@ -324,42 +427,21 @@ protected:
     //それぞれのアクションの初期化
     virtual void InitAct(void);
 
-    //ほぼガード用
-    virtual void ResetGuardCnt(void);
-
-
+    //スキル変更時の初期化
     void ChangeNmlAtk(void);
     void ChangeSkillOne(void);
     void ChangeSkillTwo(void);
-
-
-
- 
 
     //USER関係
     //------------------------------------------------
     //ユーザーがいるときの更新
     void UserUpdate(void);
 
-    ////デバッグしやすいようにチェンジ作る
-    //void ChangeMode(SceneManager::PLAY_MODE _mode);
-    //void ChangeUser(void);
-    //void ChangeCpu(void);
-
-    //操作系（キーボード)
-    void KeyBoardControl(void);
-
-    //ゲームパッド
-    void GamePad(void);
-
-
-    SceneManager::CNTL cntl_;
-    std::map < SceneManager::CNTL, std::function<void(void)>> changeCntl_;//コントローラー変更用
-    std::function<void(void)> cntlUpdate_;                                 //それぞれの更新
+    SceneManager::ROLE role_;
 
     ATK_ACT skillNo_;     //スキル変更用
 
- 
+
     //プレイヤー(CPUとユーザー)共通処理
     //--------------------------------------------------
     //攻撃処理
@@ -369,41 +451,11 @@ protected:
     //スキル2
     virtual void Skill2Func(void) = 0;
 
-    //各アクションの共通処理
-    void Action(void);
-
-    //チャージなしの攻撃
-    void NmlAct(void);
-    //チャージなし攻撃(キーボード)
-    void NmlActKeyBoard(void);
-    //チャージなし攻撃(パッド)
-    void NmlActPad(void);
-
-    //変更(キーボードとゲームパッド)
-    void ChangeNmlActControll(void);
-    void ChangeNmlActKeyBoard(void);
-    void ChangeNmlActPad(void);
-
-
-
-  
- 
-
-    //コントローラー変更
-    void ChangeGamePad(void);
-    //キーボード変更
-    void ChangeKeyBoard(void);
-
-
     //攻撃座標の同期
     void SyncActPos(ATK& _atk);
 
     //スキルごとの操作更新
     void ChangeSkillControll(ATK_ACT _skill);
-
-
-
- 
 
     //攻撃
     //-------------------------------------
@@ -411,7 +463,7 @@ protected:
     const bool IsAtkAction(void)const { return IsAtkStart() || atk_.IsAttack() || atk_.IsBacklash(); }
 
     //攻撃可能かどうか(true:可能)
-    const bool IsAtkable(void)const { return!IsAtkAction() && !IsDodge(); }
+    const bool IsAtkable(void)const;
 
 
     //回避関連
@@ -419,13 +471,7 @@ protected:
     //回避可能か
     //回避中かどうか
 
-    const bool IsDodgeable(void)const { return !IsDodge() && !IsAtkAction() && !IsCoolDodge(); }
-    //クールタイム中かどうか
-    const bool IsCoolDodge(void)const { return dodgeCdt_ < DODGE_CDT_MAX; }
-
-    //ドッジカウント初期化
-    void ResetDodgeFrame(void) { dodgeCnt_ = 0.0f; }
-
+    const bool IsDodgeable(void)const;
 
     //スキル
     //virtual void Skill(void);
@@ -439,38 +485,50 @@ protected:
             || atk_.IsBacklash();
     }
 
-
-
-    //とりあえずランダムに攻撃を決める
-    void RandAct(void);
-
     //クールタイムのカウント
     void CoolTimeCnt(void);
 
-  
-
 private:
-
-    //std::map<ACT_CNTL, std::function<void(void)>>changeActCntl_;        //アクションごとに返すボタンを変更
-    //std::function<bool(void)>actCntlUpdate_;
-
-    //回避機能
-    PlayerDodge* dodge_;
+    //メンバ変数
+    float coolTimePer_[static_cast<int>(ATK_ACT::MAX)];
 
 #ifdef DEBUG_INPUT
 
     //******************************************************************************************
 #endif // DEBUG_ON
-    
+
     //アクションの発動条件
     void ProcessAct(void);
+    void CoolTimePerCalc(void);
+    //std::vector <ATK>atks_;
 
- 
+    std::map<ATK_TYPE, std::vector<ATK>>atks_;
+
+    std::map<SKILL_BUFF, BUFF>buffs_;
+    std::map<STATUSBUFF_TYPE, float>buffpers_;
+
+    //バフ関係
+    float buffCnt_[static_cast<int>(STATUSBUFF_TYPE::MAX)];                                          //バフのカウンター(攻撃力、防御力、スピード)  
+    float buffPercent_[static_cast<int>(STATUSBUFF_TYPE::MAX)];                                      //バフの加算
+    STATUSBUFF_TYPE buffType_;                                   
+    bool isBuffing_;                                                                             //バフ中かどうか
+
+    float bufAtk_;          //バフ後の攻撃力
+    float bufDef_;           //バフ後の防御力
+    float bufSpd_;           //バフ後のスピード
+
+    float preAtkPow_;          //バフ後の攻撃力
+    float preDef_;           //バフ後の防御力
+    float preSpd_;           //バフ後のスピード
+
+    VECTOR initPos_[PlayerManager::PLAYER_NUM];     //プレイヤーたちの初期座標を格納
+
+
 
     //攻撃入力
-    virtual void NmlAtkInit(void);
+    virtual void NmlAtkInit(void) = 0;
     //スキル入力
-    virtual void SkillOneInit(void);
-    virtual void SkillTwoInit(void);
+    virtual void SkillOneInit(void) = 0;
+    virtual void SkillTwoInit(void) = 0;
 
 };

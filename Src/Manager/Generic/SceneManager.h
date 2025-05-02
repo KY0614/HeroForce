@@ -3,10 +3,9 @@
 #include<windows.h>
 #include<vector>
 #include<memory>
-
-#include"../Application.h"
+#include"../../Application.h"
 #include"Camera.h"
-#include"../Common/Fader.h"
+#include"../../Common/Fader.h"
 
 class SceneBase;
 class Fader;
@@ -28,6 +27,7 @@ public:
 		GAME,
 		GAMECLEAR,
 		GAMEOVER,
+		EXP,
 	};
 
 	//コントローラ系統
@@ -110,6 +110,9 @@ public:
 	//上記のセッター
 	void SetActiveNum(const int _num) { activeWindowNum_ = _num; }
 
+	//現在描画中のウィンドウの番号を取得
+	const int GetNowWindow(void)const;
+
 private:
 	// 静的インスタンス
 	static SceneManager* instance_;
@@ -117,6 +120,7 @@ private:
 	//ウィンドウ関係
 	std::vector<HWND> subWindowH_;	//ウィンドウハンドルの全体管理(動的配列)
 	int activeWindowNum_;			//使用するウィンドウの数
+	int nowWindowNum_;				//現在のウィンドウ
 
 	SCENE_ID sceneId_;				//現在のシーン状態
 	SCENE_ID waitSceneId_;			//次のシーン
@@ -154,4 +158,6 @@ private:
 	// フェード
 	void Fade(void);
 
+	//現在何番目のウィンドウかをセット
+	void SetNowWindow(const int _num);
 };

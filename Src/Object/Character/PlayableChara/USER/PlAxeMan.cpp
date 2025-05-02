@@ -19,12 +19,15 @@ void PlAxe::Init(void)
 	//オブジェクトの作成
 	obj_ = new AxeMan();
 	obj_->Init();
+	SetInitPos(playerNum_);
+	
 }
 
 void PlAxe::Update(void)
 {
 	//更新
 	obj_->Update();
+	if (!obj_->IsAlive())return;
 
 	//キー入力
 	PlayerDodge* dodge = obj_->GetDodge();
@@ -55,7 +58,9 @@ void PlAxe::Draw(void)
 
 void PlAxe::Release(void)
 {
-	
+	obj_->Destroy();
+	delete obj_;
+	obj_ = nullptr;
 }
 
 void PlAxe::InitSkill(PlayerBase::ATK_ACT _act)
@@ -78,8 +83,8 @@ void PlAxe::AtkInput(void)
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
-	if (obj_->GetIsSkill())return;
-	if (ins.CheckAct(ACT_CNTL::NMLATK) && !obj_->GetIsAtk())
+	if (obj_->GetIsSkill()||obj_->GetIsCool(PlayerBase::ATK_ACT::ATK))return;
+	if (ins.CheckAct(ACT_CNTL::NMLATK) && !obj_->GetIsAtk()&&!obj_->GetIsSkill())
 	{
 		if (obj_->GetIsCool(ATK_ACT::ATK))return;
 		obj_->ChangeAct(ATK_ACT::ATK);
@@ -96,6 +101,7 @@ void PlAxe::SkillOneInput(void)
 	using ATK_ACT = PlayerBase::ATK_ACT;
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	int skillOne = static_cast<int>(ATK_ACT::SKILL1);
+	if(obj_->GetIsCool(PlayerBase::ATK_ACT::ATK))return;
 	if (!obj_->GetIsCool(ATK_ACT::SKILL1))
 	{
 		if (ins.CheckAct(ACT_CNTL::SKILL_DOWN) && !obj_->IsAtkStart())
@@ -129,7 +135,7 @@ void PlAxe::SkillTwoInput(void)
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
-	int skillOne = static_cast<int>(ATK_ACT::SKILL1);
+	if (obj_->GetIsCool(PlayerBase::ATK_ACT::SKILL2))return;
 	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN))
 	{
 		InitSkill(ATK_ACT::SKILL2);

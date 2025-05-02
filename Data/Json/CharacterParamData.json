@@ -1,0 +1,142 @@
+{
+    "Archer": [
+      {
+        "attack": 90.0,
+        "defense": 90.0,
+        "hp": 235,
+        "radius": 20.0,
+        "skill1": 8,
+        "skill2": 15,
+        "skill3": 20,
+        "skill4": -1,
+        "speed": 6.0,
+        "exp": -1
+      }
+    ],
+    "Axeman": [
+      {
+        "attack": 160.0,
+        "defense": 110.0,
+        "hp": 265,
+        "radius": 20.0,
+        "skill1": 12,
+        "skill2": 50,
+        "skill3": 8,
+        "skill4": -1,
+        "speed": 4.0,
+        "exp": -1
+      }
+    ],
+    "Chicken": [
+      {
+        "attack": 0.0,
+        "defense": 50.0,
+        "hp": 300,
+        "radius": 50.0,
+        "skill1": -1,
+        "skill2": -1,
+        "skill3": -1,
+        "skill4": -1,
+        "speed": 3.0,
+        "exp": -1
+      }
+    ],
+    "EnemyArcher": [
+      {
+        "attack": 140.0,
+        "defense": 120.0,
+        "hp": 130,
+        "radius": 30.0,
+        "skill1": 15,
+        "skill2": -1,
+        "skill3": -1,
+        "skill4": -1,
+        "speed": 3.0,
+        "exp": 300
+      }
+    ],
+    "EnemyAxeman": [
+      {
+        "attack": 145.0,
+        "defense": 120.0,
+        "hp": 170,
+        "radius": 30.0,
+        "skill1": 30,
+        "skill2": -1,
+        "skill3": -1,
+        "skill4": -1,
+        "speed": 3.0,
+        "exp": 300
+      }
+    ],
+    "EnemyBoss": [
+      {
+        "attack": 180.0,
+        "defense": 150.0,
+        "hp": 700,
+        "radius": 80.0,
+        "skill1": 12,
+        "skill2": 20,
+        "skill3": 15,
+        "skill4": 30,
+        "speed": 2.0,
+        "exp": 0
+      }
+    ],
+    "EnemyKnight": [
+      {
+        "attack": 120.0,
+        "defense": 100.0,
+        "hp": 150,
+        "radius": 30.0,
+        "skill1": 20,
+        "skill2": -1,
+        "skill3": -1,
+        "skill4": -1,
+        "speed": 3.0,
+        "exp": 300
+      }
+    ],
+    "EnemyMage": [
+      {
+        "attack": 100.0,
+        "defense": 150.0,
+        "hp": 140,
+        "radius": 30.0,
+        "skill1": 20,
+        "skill2": -1,
+        "skill3": -1,
+        "skill4": -1,
+        "speed": 3.0,
+        "exp": 300
+      }
+    ],
+    "Knight": [
+        {
+            "attack": 120.0,
+            "defense": 150.0,
+            "hp": 250,
+            "radius": 20.0,
+            "skill1": 7,
+            "skill2": 30,
+            "skill3": 0,
+            "skill4": -1,
+            "speed": 5.0,
+            "exp" :  -1
+        }
+    ],
+    "Mage": [
+      {
+        "attack": 100.0,
+        "defense": 120.0,
+        "hp": 270,
+        "radius": 20.0,
+        "skill1": 8,
+        "skill2": 5,
+        "skill3": 20,
+        "skill4": -1,
+        "speed": 5.0,
+        "exp": -1
+      }
+    ]
+}

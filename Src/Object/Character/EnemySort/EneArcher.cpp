@@ -25,24 +25,19 @@ void EneArcher::SetParam(void)
 
 	//モデル読み込み
 	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_ARCHER));
-	arrowMdlId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ARROW);	//※TODO矢のモデル
-	//arrowMdlId_ = 0;
+	arrowMdlId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ARROW);	//矢のモデル
 
 	//※個々で設定する
 	trans_.scl = { CHARACTER_SCALE,CHARACTER_SCALE,CHARACTER_SCALE };
-	radius_ = MY_COL_RADIUS;
 	colPos_ = VAdd(trans_.pos, LOCAL_CENTER_POS);
-	hp_ = HP_MAX;
-	atkPow_ = ATK_POW;
-	def_ = DEF;
-	exp_ = EXP;
 	arrowCnt_ = 0;
 	isShotArrow_ = false;
-	walkSpeed_ = WALK_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
-	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
 	atkStartRange_ = ATK_START_RANGE;
+
+	//外部からステータスを取得
+	ParamLoad(CharacterParamData::UNIT_TYPE::E_ARCHER);
 }
 
 void EneArcher::InitAnim(void)
@@ -85,6 +80,17 @@ void EneArcher::InitSkill(void)
 
 void EneArcher::AlertSkill_One(void)
 {
+	//敵の前方
+	VECTOR pos = trans_.GetForward();
+
+	//攻撃範囲
+	pos = VScale(pos, SKILL_ONE_COL_RADIUS);
+
+	//座標合わせ
+	pos = VAdd(trans_.pos, VScale(pos, ARROW_SPEED * SKILL_ONE_DURATION));
+
+	//範囲作成
+	CreateAlert(pos, SKILL_ONE_COL_RADIUS * 2, SKILL_ONE_COL_RADIUS * 2 * ARROW_SPEED * SKILL_ONE_DURATION);
 }
 
 void EneArcher::Skill_One(void)
@@ -201,9 +207,6 @@ void EneArcher::ChangeStateAtk(void)
 {
 	//更新処理の中身初期化
 	stateUpdate_ = std::bind(&EneArcher::UpdateAtk, this);
-
-	//向きを改めて設定
-	trans_.quaRot = trans_.quaRot.LookRotation(GetTargetVec());
 }
 
 void EneArcher::Update(void)

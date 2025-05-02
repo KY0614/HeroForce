@@ -6,6 +6,16 @@ EneMage::EneMage(const VECTOR& _spawnPos) : Enemy(_spawnPos)
 	trans_.pos = _spawnPos;
 }
 
+void EneMage::Destroy(void)
+{
+	auto& eff = EffectManager::GetInstance();
+
+	//共通
+	Enemy::Destroy();
+
+	eff.Stop(EffectManager::EFFECT::STATE_DOWN);
+}
+
 void EneMage::SetParam(void)
 {
 	//攻撃警告
@@ -19,21 +29,17 @@ void EneMage::SetParam(void)
 
 	//※個々で設定する
 	trans_.scl = { CHARACTER_SCALE,CHARACTER_SCALE,CHARACTER_SCALE };
-	radius_ = MY_COL_RADIUS;
 	colPos_ = VAdd(trans_.pos, LOCAL_CENTER_POS);
-	hp_ = HP_MAX;
-	atkPow_ = ATK_POW;
-	def_ = DEF;
-	exp_ = EXP;
-	walkSpeed_ = WALK_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
-	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
 	atkStartRange_ = ATK_START_RANGE;
 	
 	skillOneShot_ = AsoUtility::VECTOR_ZERO;
 	skillOneDelayCnt_ = 0.0f;
 	skillAllCnt_ = 0.0f;
+
+	//外部からステータスを取得
+	ParamLoad(CharacterParamData::UNIT_TYPE::E_MAGE);
 }
 
 void EneMage::InitAnim(void)
@@ -51,6 +57,15 @@ void EneMage::InitAnim(void)
 
 	//アニメーションリセット
 	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
+}
+
+void EneMage::InitEffect(void)
+{
+	auto& eff = EffectManager::GetInstance();
+	auto& res = ResourceManager::GetInstance();
+
+	eff.Add(EffectManager::EFFECT::STATE_DOWN,
+		res.Load(ResourceManager::SRC::STATE_DOWN_EFE).handleId_);
 }
 
 void EneMage::InitSkill(void)
@@ -87,6 +102,9 @@ void EneMage::Attack(void)
 
 void EneMage::Skill_One(void)
 {
+	//エフェクト
+	auto& eff =	EffectManager::GetInstance();
+
 	//終了判定
 	if (skillAllCnt_ > SKILL_ONE_ALL_TIME)
 	{
@@ -101,7 +119,7 @@ void EneMage::Skill_One(void)
 	if (skillOneShotCnt_ < SKILL_ONE_MAX_CNT)
 	{
 		//座標の設定
-		skillOneShot_ = VAdd(skillOneShot_, GetTargetVec(skillOneShot_, SKILL_ONE_SPEED));
+		skillOneShot_ = VAdd(skillOneShot_, GetMoveVec(skillOneShot_, targetPos_,SKILL_ONE_SPEED));
 
 		//スキル１の発生間隔
 		if (skillOneDelayCnt_ >= SKILL_ONE_SHOT_DELAY)
@@ -120,6 +138,13 @@ void EneMage::Skill_One(void)
 
 			//生成した攻撃の位置を合わせる
 			thisAtk.pos_ = skillOneShot_;
+
+			//エフェクト再生
+			eff.Play(EffectManager::EFFECT::STATE_DOWN,
+				thisAtk.pos_,
+				Quaternion(),
+				SKILL_ONE_EFF_SIZE,
+				SoundManager::SOUND::NONE);
 		}
 	}
 
@@ -130,7 +155,8 @@ void EneMage::Skill_One(void)
 void EneMage::DrawDebug(void)
 {
 	Enemy::DrawDebug();
-	DrawSphere3D(skillOneShot_, 25.0f, 20, 0xf0f0f0, 0xf0f0f0, true);
+	
+	if(!isEndAllAtk_)DrawSphere3D(skillOneShot_, 25.0f, 20, 0xf0f0f0, 0xf0f0f0, true);
 }
 
 void EneMage::FinishAnim(void)
@@ -168,7 +194,7 @@ void EneMage::ChangeStateAtk(void)
 	stateUpdate_ = std::bind(&EneMage::UpdateAtk, this);
 
 	//向きを改めて設定
-	trans_.quaRot = trans_.quaRot.LookRotation(GetTargetVec());
+	trans_.quaRot = trans_.quaRot.LookRotation(GetMoveVec(trans_.pos, targetPos_));
 
 	//座標の初期設定
 	skillOneShot_ = MV1GetFramePosition(trans_.modelId, FRAME_ROD);

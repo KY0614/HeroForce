@@ -1,4 +1,6 @@
 #include"../Application.h"
+#include"../Manager/Decoration/SoundManager.h"
+#include"../Manager/GameSystem/CharacterParamData.h"
 #include "../Lib/nlohmann/json.hpp"
 #include"../Utility/AsoUtility.h"
 #include "UnitBase.h"
@@ -36,9 +38,9 @@ UnitBase::UnitBase(void)
 	radius_ = -1.0f;
 	hpMax_ = -1;
 
-	defAtk_ = -1.0f;
-	defDef_ = -1.0f;
-	defSpeed_ = -1.0f;
+	defAtk_ = 1.0f;
+	defDef_ = 1.0f;
+	defSpeed_ = 1.0f;
 	defHp_ = -1;
 
 	atkUpPercent_ = -1.0f;
@@ -64,6 +66,11 @@ void UnitBase::Update(void)
 
 void UnitBase::Draw(void)
 {
+}
+
+const bool UnitBase::IsAlive(void) const
+{
+	return hp_ > 0;
 }
 
 const Transform& UnitBase::GetTransform(void) const
@@ -106,6 +113,21 @@ const float UnitBase::GetDef(void) const
 const UnitBase::ATK UnitBase::GetAtk(void) const
 {
 	return atk_;
+}
+
+const float UnitBase::GetAtkPow(void) const
+{
+	return atkPow_;
+}
+
+const int UnitBase::GetHp(void) const
+{
+	return hp_;
+}
+
+const int UnitBase::GetHpMax(void) const
+{
+	return hpMax_;
 }
 
 const float UnitBase::GetRadius(void) const
@@ -191,8 +213,16 @@ void UnitBase::SetIsHit(const bool _flag)
 
 void UnitBase::SetDamage(const int attackerPower, const int skillPower)
 {
-	//与えるダメージを増やす
+	//与えるダメージを増やす(ここdefDefになってるから間違ってる可能性あり)
 	damage_ += attackerPower * skillPower / defDef_;
+
+	//攻撃を喰らったのでSE再生
+	SoundManager::GetInstance().Play(SoundManager::SOUND::HIT);
+}
+
+int UnitBase::GetDamage(void)
+{
+	return damage_;
 }
 
 void UnitBase::SubHp()
@@ -234,8 +264,7 @@ void UnitBase::ResetAnimArray(const ANIM _anim, const float _speed, int i)
 
 float UnitBase::GetAnimArrayTime(int i)
 {
-	//float ret = MV1GetAttachAnimTime(transArray_[i].modelId, animArray_[i]);
-	float ret = static_cast<float>(animArrayTotalTime_[i]);
+	float ret = MV1GetAttachAnimTime(transArray_[i].modelId, animArray_[i]);
 	return ret;
 }
 //座標の設定
@@ -253,34 +282,33 @@ void UnitBase::SetPrePos(void)
 void UnitBase::SetAttack(const float percent)
 {
 	atkUpPercent_ += percent;			//強化％上昇
-	atkPow_ = defAtk_ * atkUpPercent_;	//攻撃力を上昇
+	atkPow_ = defAtk_ * (atkUpPercent_ / DEFAULT_PERCENT);	//攻撃力を上昇
 }
  
 //防御力の強化
 void UnitBase::SetDefense(const float percent)
 {
 	defUpPercent_ += percent;
-	def_ = defDef_ * defUpPercent_;
+	def_ = defDef_ * (defUpPercent_ / DEFAULT_PERCENT);
 }
 
 //移動速度
 void UnitBase::SetSpeed(const float percent)
 {
 	speedUpPercent_ += percent;
-	moveSpeed_ = defSpeed_ * speedUpPercent_;
+	moveSpeed_ = defSpeed_ * (speedUpPercent_ / DEFAULT_PERCENT);
 }
 
 //体力強化
-void UnitBase::SetHpMax(const float hp)
+void UnitBase::SetHpMax(const int hp)
 {
 	hpMax_ += hp;
 }
 
 
-void UnitBase::ParamLoad()
+void UnitBase::SetMoveSpeed(const float _speed)
 {
-	//各キャラクターのパラメータのJSON読み込み
-
+	moveSpeed_ = _speed;
 }
 
 //アニメ終了時の動き
@@ -307,4 +335,30 @@ void UnitBase::CntDown(float& _count)
 	// 経過時間の取得
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	_count -= deltaTime;
+}
+
+void UnitBase::ParamLoad(CharacterParamData::UNIT_TYPE type)
+{
+	auto& data = CharacterParamData::GetInstance().GetParamData(type);
+
+	//デフォルトのステータス設定
+	defAtk_ = data.atk_;
+	defDef_ = data.def_;
+	defSpeed_ = data.speed_;
+	defHp_ = data.hp_;
+	radius_ = data.radius_;
+
+	//変化用の設定
+	atkPow_ = defAtk_;
+	def_ = defDef_;
+	moveSpeed_ = defSpeed_;
+	hp_ = defHp_;
+
+	//HPの最大値の設定
+	hpMax_ = defHp_;
+
+	//強化パーセントの初期化
+	atkUpPercent_ = DEFAULT_PERCENT;
+	defUpPercent_ = DEFAULT_PERCENT;
+	speedUpPercent_ = DEFAULT_PERCENT;
 }

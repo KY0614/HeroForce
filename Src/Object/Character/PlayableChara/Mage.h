@@ -8,6 +8,7 @@ public:
     static constexpr float POW_ATK = 100.0f;
     static constexpr int DEF_MAX = 120;
     static constexpr int HP_MAX = 270;
+    static constexpr float SPEED = PlayerBase::MOVE_SPEED_NORMAL;
     Mage(void);
     ~Mage(void) = default;
     void SetParam(void)override;
@@ -16,5 +17,11 @@ protected:
     void AtkFunc(void)override;
     void Skill1Func(void)override;
     void Skill2Func(void)override;
+
+    //UŒ‚“ü—Í
+    void NmlAtkInit(void)override;
+    //ƒXƒLƒ‹“ü—Í
+    void SkillOneInit(void)override;
+    void SkillTwoInit(void)override;
 };
 

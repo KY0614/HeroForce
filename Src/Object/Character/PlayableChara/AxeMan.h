@@ -4,10 +4,9 @@ class AxeMan :
     public PlayerBase
 {
 public:
-    //ステータス
-    static constexpr float POW_ATK = 160.0f;
-    static constexpr int DEF_MAX = 110;
-    static constexpr int HP_MAX = 265;
+#ifdef DEBUG_ON
+    void DrawDebug(void)override;
+#endif // DEBUG_ON
 
 #ifdef DEBUG_COOL
     //クールタイム
@@ -16,11 +15,16 @@ public:
     static constexpr float SKILL_TWO_COOLTIME = 1.0f;
 #else // DEBUG_COOL
     //クールタイム
-    static constexpr float ATK_COOLTIME = 2.0f;
-    static constexpr float SKILL_ONE_COOLTIME = 10.0f;
-    static constexpr float SKILL_TWO_COOLTIME = 5.0f;
+    static constexpr float ATK_COOLTIME = 1.5f;
+    static constexpr float SKILL_ONE_COOLTIME = 6.0f;
+    static constexpr float SKILL_TWO_COOLTIME = 3.5f;
 #endif // DEBUG_COOL
 
+    //ステータス
+    static constexpr float POW_ATK = 160.0f;
+    static constexpr int DEF_MAX = 110;
+    static constexpr int HP_MAX = 265;
+    static constexpr float SPEED = PlayerBase::MOVE_SPEED_SLOW;
 
     //攻撃発生の時間
     static constexpr float ATK_START = 0.2f;
@@ -49,17 +53,26 @@ public:
     static constexpr float COL_SKILL2 = CHARACTER_SCALE * 200.0f;
 
     //攻撃威力
-    static constexpr float ATK_POW = 7.0f;
-    static constexpr float SKILL_ONE_POW = 50.0f;
-    static constexpr float SKILL_TWO_POW = 5.0f;
+    static constexpr float NMLATK_POW = 12.0f;
+    static constexpr float SKILL_ONE_POW = 25.0f;
+    static constexpr float SKILL_ONE_CHARGE_POW = 50.0f;
+    static constexpr float SKILL_TWO_POW = 8.0f;
 
     //溜めモーション
     static constexpr float SKILL_CHARGE_STEPANIM = 16.9f;
 
+    //エフェクトサイズ
+    //----------------------------------------------------
+    //スキル２攻撃の瞬間
+    static constexpr float CHARGE_AXE_EFF_SIZE = 20.0f;
+
+    //スキルチャージ
+    static constexpr float CHARGE_SKILL_EFF_SIZE = 50.0f;
+
 
 
     //通常攻撃の最大値
-    static constexpr ATK ATK_MAX{ ATK_COL_LOCAL_POS,COL_ATK,ATK_POW,FRAME_ATK_DURATION,FRAME_ATK_BACKRASH,0.0f,false };
+    static constexpr ATK ATK_MAX{ ATK_COL_LOCAL_POS,COL_ATK,NMLATK_POW,FRAME_ATK_DURATION,FRAME_ATK_BACKRASH,0.0f,false };
 
     //スキル１
     static constexpr ATK SKILL_ONE_MAX{ SKILL1_COL_LOCAL_POS ,COL_SKILL1 ,SKILL_ONE_POW,FRAME_SKILL1_DURATION ,FRAME_SKILL1_BACKRASH ,0.0f,false };
@@ -91,11 +104,15 @@ protected:
     void InitAct(void)override;
     void InitSkill(ATK_ACT _act);
 
+    void Draw(void)override;
+
     //固有アニメーション番号の初期化
     void InitCharaAnim(void)override;
 
     //void ChargeAct(void)override;
-
+    //攻撃入力
+    void NmlAtkInit(void)override;
+    //スキル入力
     void SkillOneInit(void)override;
     void SkillTwoInit(void)override;
     //void ResetParam(ATK_ACT _act)override;

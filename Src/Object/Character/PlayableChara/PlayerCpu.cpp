@@ -1,4 +1,5 @@
 //#include"../Manager/Collision.h"
+#include"../PlayerDodge.h"
 #include "PlayerCpu.h"
 
 PlayerCpu::PlayerCpu(void)
@@ -14,6 +15,7 @@ void PlayerCpu::SetParam(void)
 
 void PlayerCpu::Update(void)
 {
+	PlayerBase::Update();
 	//各状態の更新
 	CpuStateUpdate();
 	auto& ins = InputManager::GetInstance();
@@ -48,6 +50,39 @@ void PlayerCpu::Update(void)
 		SetTargetPos(userOnePos_);
 	}
 
+
+
+#ifdef DEBUG_ON
+	{
+		auto& ins = InputManager::GetInstance();
+		const float SPEED = 5.0f;
+		if (ins.IsNew(KEY_INPUT_W)) { userOnePos_.z += SPEED; }
+		if (ins.IsNew(KEY_INPUT_D)) { userOnePos_.x += SPEED; }
+		if (ins.IsNew(KEY_INPUT_S)) { userOnePos_.z -= SPEED; }
+		if (ins.IsNew(KEY_INPUT_A)) { userOnePos_.x -= SPEED; }
+
+
+
+		// 左スティックの横軸
+		leftStickX_ = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLX;
+
+		//縦軸
+		leftStickY_ = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLY;
+		auto stickRad = static_cast<float>(atan2(static_cast<double>(leftStickY_), static_cast<double>(leftStickX_)));
+		stickDeg_ = static_cast<float>(AsoUtility::DegIn360(AsoUtility::Rad2DegF(stickRad) + 90.0f));
+		//前
+		if (leftStickY_ < -1) { userOnePos_.z += SPEED; }
+		//右
+		else if (leftStickX_ > 1) { userOnePos_.x += SPEED; }
+		//下
+		else if (leftStickY_ > 1) { userOnePos_.z -= SPEED; }
+		//左
+		else if (leftStickX_ < -1) { userOnePos_.x -= SPEED; }
+
+	}
+
+#endif // DEBUG_ON
+
 }
 
 void PlayerCpu::CpuStateUpdate(void)
@@ -59,7 +94,7 @@ void PlayerCpu::CpuStateUpdate(void)
 void PlayerCpu::CpuMove(VECTOR _targetPos)
 {
 	//移動速度の更新
-	moveSpeed_ = SPEED_MOVE * calledMoveSpeed_;
+	speed_ = SPEED_MOVE * calledMoveSpeed_;
 	isMove_ = true;
 
 	//方向ベクトル取得
@@ -119,10 +154,10 @@ void PlayerCpu::CpuNmlUpdate(void)
 
 	//待機アニメーション
 	//停止状態の時のアニメーション
-	if (!isMove_ && !IsDodge() && !IsAtkAction())
+	if (!isMove_ && !dodge_->IsDodge() && !IsAtkAction())
 	{
 		ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
-		moveSpeed_ = 0.0f;
+		speed_ = 0.0f;
 	}
 	//歩きアニメーション
 	else
@@ -131,7 +166,7 @@ void PlayerCpu::CpuNmlUpdate(void)
 	}
 
 	//移動量の初期化
-	moveSpeed_ = 0.0f;
+	speed_ = 0.0f;
 
 	//preAtk_ = ATK_ACT::MAX;
 

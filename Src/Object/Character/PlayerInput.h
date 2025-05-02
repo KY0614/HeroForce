@@ -82,8 +82,5 @@ private:
     float leftStickY_;
     float stickDeg_;            //パッドのスティックの角度
     float moveDeg_;             //移動方向
-    //PlayerBase* player_;
-    //InputManager::JOYPAD_NO padNum_;
-    //SceneManager::CNTL cntl_;
 };
 

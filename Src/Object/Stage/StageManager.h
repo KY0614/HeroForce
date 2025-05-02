@@ -26,6 +26,7 @@ public:
 
 	//初期位置
 	static constexpr VECTOR DEFAULT_POS = { 0.0f,-120.0f,0.0f };
+	
 	// ステージモデル数
 	static constexpr int MODELS = static_cast<int>(MODEL_TYPE::MAX);
 
@@ -44,13 +45,15 @@ public:
 	virtual void Draw(void);	//描画
 
 	//ゲッター
-	const Transform& GetTtans() const { return trans_[static_cast<int>(MODEL_TYPE::STAGE)]; }
+	const Transform &GetTtans() const{ return trans_[static_cast<int>(MODEL_TYPE::STAGE)]; }	
 
 protected:
 
 	//トランスフォーム
 	Transform trans_[MODELS];
+	
 	//デバッグ用描画
 	void DebugDraw();
 
 };
+

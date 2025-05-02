@@ -81,6 +81,18 @@ void ChickenManager::SetTargetPos(const VECTOR pos)
 	targetPos_ = pos;
 }
 
+const int ChickenManager::GetAliveNum(void) const
+{      
+	int ret = 0;
+
+	for (auto& c:chickens_ ) {
+		if (c->IsAlive())ret++;
+	}
+
+	return ret;
+}
+
+
 void ChickenManager::CollisionStage(const Transform& stageTrans, std::shared_ptr<ChickenBase> cheken)
 {
 
@@ -91,13 +103,12 @@ void ChickenManager::CollisionStage(const Transform& stageTrans, std::shared_ptr
 	}
 }
 
-const int ChickenManager::GetAliveNum(void) const
+std::shared_ptr<ChickenBase> ChickenManager::GetChicken(const int _num)
 {
-	int ret = 0;
+	return chickens_[_num];
+}
 
-	for (auto it = chickens_.begin(); it != chickens_.end(); ) {
-		if ((*it)->IsAlive())ret++;
-	}
-
-	return ret;
+const int ChickenManager::GetChickenAllNum(void) const
+{
+	return static_cast<int>(chickens_.size());
 }

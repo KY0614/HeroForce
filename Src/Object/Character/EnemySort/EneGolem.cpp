@@ -7,6 +7,18 @@ EneGolem::EneGolem(const VECTOR& _spawnPos) : Enemy(_spawnPos)
 	trans_.pos = _spawnPos;
 }
 
+void EneGolem::Destroy(void)
+{
+	auto& eff = EffectManager::GetInstance();
+
+	//共通
+	Enemy::Destroy();
+
+	//eff.Stop(EffectManager::EFFECT::BOSS_PUNCH);
+	eff.Stop(EffectManager::EFFECT::BOSS_SHOUT);
+	eff.Stop(EffectManager::EFFECT::BOSS_SHOUT_ATK);
+}
+
 void EneGolem::SetParam(void)
 {
 	//攻撃警告
@@ -24,19 +36,16 @@ void EneGolem::SetParam(void)
 
 	//※個々で設定する
 	trans_.scl = { SCALE,SCALE,SCALE };
-	radius_ = MY_COL_RADIUS;
 	colPos_ = VAdd(trans_.pos, LOCAL_CENTER_POS);
-	hp_ = HP_MAX;
-	atkPow_ = ATK_POW;
-	def_ = DEF;
-	exp_ = EXP;
-	walkSpeed_ = WALK_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
-	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
 	atkStartRange_ = ATK_START_RANGE;
 	skillThreeCnt_ = 0;
 	skillThreeDelayCnt_ = 0.0f;
+	isPreSkillThreeAtk_ = false;
+
+	//外部からステータスを取得
+	ParamLoad(CharacterParamData::UNIT_TYPE::BOSS);
 }
 
 void EneGolem::InitAnim(void)
@@ -46,6 +55,8 @@ void EneGolem::InitAnim(void)
 	//固有アニメーション初期化
 	animNum_.emplace(ANIM::IDLE, EneGolem::ANIM_IDLE);
 	animNum_.emplace(ANIM::WALK, EneGolem::ANIM_WALK);
+	animNum_.emplace(ANIM::RUN, EneGolem::ANIM_WALK);
+	animNum_.emplace(ANIM::DEATH, EneGolem::ANIM_KNOCK);
 	animNum_.emplace(ANIM::SKILL_1, ANIM_PUNCH);
 	animNum_.emplace(ANIM::SKILL_2, ANIM_MOWDOWN);
 	animNum_.emplace(ANIM::SKILL_3, ANIM_SHOUT);
@@ -59,6 +70,8 @@ void EneGolem::InitAnim(void)
 	//アニメーション速度設定
 	changeSpeedAnim_.emplace(ANIM::IDLE, SPEED_ANIM_IDLE);
 	changeSpeedAnim_.emplace(ANIM::WALK, SPEED_ANIM_WALK);
+	changeSpeedAnim_.emplace(ANIM::RUN, SPEED_ANIM_WALK);
+	changeSpeedAnim_.emplace(ANIM::DEATH, SPEED_ANIM_KNOCK);
 	changeSpeedAnim_.emplace(ANIM::SKILL_1, SPEED_ANIM_PUNCH);
 	changeSpeedAnim_.emplace(ANIM::SKILL_2, SPEED_ANIM_MOWDOWN);
 	changeSpeedAnim_.emplace(ANIM::SKILL_3, SPEED_ANIM_SHOUT);
@@ -71,6 +84,24 @@ void EneGolem::InitAnim(void)
 
 	//アニメーションリセット
 	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
+}
+
+void EneGolem::InitEffect(void)
+{
+	auto& eff = EffectManager::GetInstance();
+	auto& res = ResourceManager::GetInstance();
+
+	//パンチエフェクト
+	//eff.Add(EffectManager::EFFECT::BOSS_PUNCH,
+	//	res.Load(ResourceManager::SRC::BOSS_PUNCH_EFE).handleId_);
+
+	//叫びエフェクト
+	eff.Add(EffectManager::EFFECT::BOSS_SHOUT,
+		res.Load(ResourceManager::SRC::BOSS_SHOUT_EFE).handleId_);
+
+	//叫び(攻撃)エフェクト
+	eff.Add(EffectManager::EFFECT::BOSS_SHOUT_ATK,
+		res.Load(ResourceManager::SRC::BOSS_SHOUT_ATK_EFE).handleId_);
 }
 
 void EneGolem::InitSkill(void)
@@ -97,20 +128,109 @@ void EneGolem::InitSkill(void)
 	RandSkill();
 }
 
+void EneGolem::Alert(void)
+{
+	//警告
+	alertNowSkill_();
+
+	//クールダウンカウンタ
+	CntUp(alertCnt_);
+
+	//スキル３以外は通常通り
+	if (!IsAlertTime() && atkAct_ != ATK_ACT::SKILL_THREE)isEndAlert_ = true;
+}
+
 void EneGolem::AlertSkill_One(void)
 {
+	//エフェクトマネージャー
+	auto& eff = EffectManager::GetInstance();
+
+	//座標
+	VECTOR pos = trans_.pos;
+
+	//相対座標合わせ
+	pos = VAdd(pos, Quaternion::PosAxis(trans_.quaRot, SKILL_ONE_ALERT));
+
+	//範囲作成
+	CreateAlert(pos, SKILL_ONE_COL_RADIUS * 2, SKILL_ONE_COL_RADIUS * 2);
 }
 
 void EneGolem::AlertSkill_Two(void)
 {
+	//座標
+	VECTOR pos = trans_.pos;
+
+	//相対座標合わせ
+	pos = VAdd(pos, Quaternion::PosAxis(trans_.quaRot, SKILL_TWO_ALERT));
+
+	//範囲作成
+	CreateAlert(pos, SKILL_TWO_COL_RADIUS * 2 + SKILL_TWO_ALERT_RANGE_X, SKILL_TWO_COL_RADIUS * 2);
 }
 
 void EneGolem::AlertSkill_Three(void)
 {
+	//攻撃の数分予兆発生
+	if (skillThreeCnt_ >= SKILL_THREE_MAX_CNT
+		&& skillThreeDelayCnt_ >= SKILL_THREE_DELAY)
+	{
+		//生成終了
+		isEndAlert_ = true;
+
+		//処理終了
+		return;
+	}
+
+	if (skillThreeDelayCnt_ < SKILL_THREE_DELAY)
+	{
+		//カウント
+		CntUp(skillThreeDelayCnt_);
+
+		return;
+	}
+	
+	//攻撃生成できたかの判定
+	bool isGenelateAttack = false;
+
+	//生成できるまで繰り返す
+	while (!isGenelateAttack)
+	{
+		//円範囲の中の一点を取る
+		GetRandomPointInCircle(trans_.pos, SKILL_THREE_FALL_RADIUS, skillThreePreAtk_[skillThreeCnt_].pos_);
+
+		if (!IsOverlap(skillThreePreAtk_[skillThreeCnt_], SKILL_THREE_COL_RADIUS * 2))
+		{
+			//生成完了
+			isGenelateAttack = true;
+		}
+	}
+
+	//生成された判定用
+	CntUp(skillThreePreAtk_[skillThreeCnt_].cnt_);
+
+	//範囲作成
+	CreateAlert(skillThreePreAtk_[skillThreeCnt_].pos_, SKILL_THREE_COL_RADIUS * 2, SKILL_THREE_COL_RADIUS * 2);
+
+	//初期化
+	skillThreeDelayCnt_ = 0.0f;
+
+	//カウント
+	skillThreeCnt_++;
 }
 
 void EneGolem::Skill_One(void)
 {
+	//エフェクトマネージャー
+	auto& eff = EffectManager::GetInstance();
+
+	//if (stepAnim_ == 20.0f)
+		//エフェクト再生
+		/*eff.Play(EffectManager::EFFECT::BOSS_PUNCH,
+			MV1GetFramePosition(trans_.modelId, FRAME_R_HAND),
+			trans_.quaRot,
+			SKILL_ONE_EFF_SIZE,
+			SoundManager::SOUND::NONE);*/
+
+
 	//攻撃の再生成
 	if (lastAtk_->IsFinishMotion())
 	{
@@ -149,7 +269,8 @@ void EneGolem::Skill_Two(void)
 
 void EneGolem::Skill_Three(void)
 {
-	//TODO:最初を修正
+	//エフェクトマネージャー
+	auto& eff = EffectManager::GetInstance();
 
 	//攻撃終了判定
 	if (lastAtk_ == nullptr ? false : lastAtk_->IsFinishMotion()
@@ -166,14 +287,17 @@ void EneGolem::Skill_Three(void)
 	if (skillThreeDelayCnt_ > SKILL_THREE_DELAY
 		&& skillThreeCnt_ < SKILL_THREE_MAX_CNT)
 	{
+		if(skillThreeCnt_ == 0)
+			//エフェクト再生
+			eff.Play(EffectManager::EFFECT::BOSS_SHOUT,
+				MV1GetFramePosition(trans_.modelId, FRAME_HEAD),
+				trans_.quaRot,
+				SKILL_ONE_EFF_SIZE,
+				SoundManager::SOUND::NONE);
+
+
 		//間隔カウンタの初期化
 		skillThreeDelayCnt_ = 0.0f;
-
-		//攻撃生成できたかの判定
-		bool isGenelateAttack = false;
-
-		//カウンタ増加
-		skillThreeCnt_++;
 
 		//スキル生成
 		ATK& thisAtk = createSkill_();
@@ -181,22 +305,37 @@ void EneGolem::Skill_Three(void)
 		//最後に生成された攻撃を格納
 		lastAtk_ = &thisAtk;
 
-		//生成できるまで繰り返す
-		while (!isGenelateAttack)
-		{
-			//円範囲の中の一点を取る
-			GetRandomPointInCircle(trans_.pos, SKILL_THREE_FALL_RADIUS, thisAtk.pos_);
+		//保持していた座標情報をもとにセット
+		thisAtk.pos_ = skillThreePreAtk_[skillThreeCnt_].pos_;
 
-			if (!IsOverlap(thisAtk, SKILL_THREE_COL_RADIUS * 2))
-			{
-				//生成完了
-				isGenelateAttack = true;
-			}
-		}
+		//エフェクトの再生
+		eff.Play(EffectManager::EFFECT::BOSS_SHOUT_ATK,
+			thisAtk.pos_,
+			trans_.quaRot,
+			SKILL_THREE_ATK_EFF_SIZE,
+			SoundManager::SOUND::NONE);
+
+		//カウンタ増加
+		skillThreeCnt_++;
 	}
 
 	//間隔カウンタ
 	CntUp(skillThreeDelayCnt_);
+}
+
+void EneGolem::ResetAlertJudge(void)
+{
+	//共通
+	Enemy::ResetAlertJudge();
+
+	//スキル３の生成カウンタ初期化
+	skillThreeCnt_ = 0;
+
+	//スキル３の生成間隔カウンタ初期化
+	skillThreeDelayCnt_ = 0.0f;
+
+	//スキル３の発生予兆生成判定初期化
+	isPreSkillThreeAtk_ = false;
 }
 
 void EneGolem::ResetAtkJudge(void)
@@ -213,11 +352,15 @@ void EneGolem::ResetAtkJudge(void)
 
 void EneGolem::ChangeStateAtk(void)
 {
+	//エフェクトマネージャー
+	auto& eff = EffectManager::GetInstance();
+
 	//更新処理の中身初期化
 	stateUpdate_ = std::bind(&EneGolem::UpdateAtk, this);
 
 	//最初に攻撃を生成するか
 	if (atkAct_ != ATK_ACT::SKILL_THREE)
+		//攻撃生成
 		lastAtk_ = &createSkill_();
 }
 
@@ -246,7 +389,7 @@ void EneGolem::GetRandomPointInCircle(const VECTOR _myPos, const int _r, VECTOR&
 
 bool EneGolem::IsOverlap(ATK& _thisAtk, float _minDist)
 {
-	for (const auto& atk : nowSkill_) {
+	for (const auto& atk : skillThreePreAtk_) {
 		//自分自身とは判定しない
 		if (atk.cnt_ == _thisAtk.cnt_)
 			continue;

@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneBase.h"
 #include"../Common/Fader.h"
+#include"../Object/Character/PlayerManager.h"
 #include<vector>
 #include<memory>
 
@@ -15,6 +16,9 @@ class LevelScreenManager;
 class UnitPositionLoad;
 class ChickenManager;
 class FazeResult;
+class InformFaze;
+class PlayerUI;
+
 
 class GameScene : public SceneBase
 {
@@ -27,6 +31,10 @@ public:
 
 	static constexpr int LAST_FAZE = 3;
 
+	//ヒットエフェクトサイズ
+	static constexpr float HIT_EFFECT_SIZE = 20.0f;
+	//バフアローのヒットエフェクトサイズ
+	static constexpr float BUFF_ARROW_EFFECT_SIZE = 40.0f;
 
 	// コンストラクタ
 	GameScene(void);
@@ -39,10 +47,9 @@ public:
 	void Draw(void) override;
 	void Release(void) override;
 
-private:
+	
 
-	//フェーズ数カウント
-	int fazeCnt_;
+private:
 
 	//ステージ
 	std::unique_ptr<StageManager> stage_;
@@ -52,6 +59,8 @@ private:
 
 	//フェーダー
 	std::unique_ptr<Fader>fader_;
+	bool isFadeInFinish_;
+
 	//ゲームシーンのフェーズ遷移中判定
 	bool isPhaseChanging_;
 	int phaseCnt_;
@@ -64,11 +73,17 @@ private:
 
 	//プレイヤー
 	std::unique_ptr<PlayerManager>playerMng_;
-
+	std::unique_ptr<PlayerUI> uis_[PlayerManager::PLAYER_NUM];
 
 	//敵
 	std::unique_ptr<EnemyManager>enmMng_;
-	int dunkEnmCnt_;
+
+	//フェーズ数カウント
+	int fazeCnt_;
+
+	//フェーズ数通知関連
+	bool isInformFaze_;		//通知中かのtrue/false
+	std::unique_ptr<InformFaze>inform_;
 
 	//チキン
 	std::unique_ptr<ChickenManager> chicken_;
@@ -77,12 +92,18 @@ private:
 
 	std::unique_ptr<UnitPositionLoad> unitLoad_;
 
+	//音関連初期化
+	void SoundInit(void);
 
 	//当たり判定（他項目に干渉するもののみ）
 	void Collision(void);
 	void CollisionEnemy(void);	//敵関連の当たり判定
 	void CollisionPlayer(void);	//プレイヤー関連の当たり判定
-	void CollisionPlayerCPU(PlayerBase& _player,const VECTOR& _pPos);	//プレイヤー(CPU)関連の当たり判定
+	void CollisionChicken(void);//ニワトリあたり判定
+	//void CollisionPlayerCPU(PlayerBase& _player,const VECTOR& _pPos);	//プレイヤー(CPU)関連の当たり判定
+
+	void CollisionPlayerArrow(int _p1Num);	//遠距離関係の当たり判定
+	void CollisionPlayerSerch(int _p1Num);	//アーチャー用の攻撃ターゲット取得可能
 
 	//フェード
 	void Fade(void);
@@ -96,6 +117,12 @@ private:
 
 	//強化要素反映
 	void LevelUpReflection();
+
+	//リザルト
+	void FazeResultUpdate(void);
+	void InformFazeNum(void);
+
+	void SetIsInform(const bool _flag);	//フェーズ数表示するかどうかのフラグ
 
 	//ゲームオーバー判定
 	bool IsGameOver(void);

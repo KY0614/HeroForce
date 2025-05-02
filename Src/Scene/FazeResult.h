@@ -41,12 +41,20 @@ public:
     static constexpr int RANK_POS_X = Application::SCREEN_SIZE_X - ResourceManager::RANK_SIZE / 2;
     static constexpr int RANK_POS_Y = Application::SCREEN_SIZE_Y - ResourceManager::RANK_SIZE / 2;
 
-    
+    //評価値関係
+    static constexpr int CHICKEN_VALUE = 10;    //ニワトリ生存の評価値(一匹分)
+    static constexpr int ENEMY_VALUE = 5;       //敵を倒したときの価値(一体分)
+
+    static constexpr int RANK_S_BORDER = 170;
+    static constexpr int RANK_A_BORDER = 140;
+    static constexpr int RANK_B_BORDER = 100;
+
+
     enum class RANK {
-        S,
-        A,
-        B,
         C,
+        B,
+        A,
+        S,
         MAX
     };
 
@@ -68,6 +76,8 @@ public:
 
     //リザルト情報セット
     void SetResult(void);
+
+    float GetExp(void);
 
 private:
 
@@ -96,11 +106,15 @@ private:
     float afterExp_;//計算後の経験値
     RANK rank_; //ランク
     bool isEnd_;//終了しているか
-    
+
+    bool isPlay_;
+
     //経験値の倍率を計算したものを取得
     float GetBonusExp(const RANK _rank)const;
 
     //ランクの変更(デバッグ用)
     void ChangeRank(void);
-};
 
+    //ランクの決定
+    void JudgeRank(void);
+};

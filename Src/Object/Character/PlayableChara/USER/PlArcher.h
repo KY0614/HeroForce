@@ -7,6 +7,10 @@
 class PlArcher :public JobManagerBase
 {
 public:
+	//定数
+	static constexpr float SKILL_ONE_START_NOCHARGE = 0.2;
+
+
 	PlArcher(const SceneManager::CNTL _cntl);
 	PlArcher(const InputManager::JOYPAD_NO _padNum);
 	~PlArcher(void) = default;
@@ -27,4 +31,10 @@ private:
 
 	//通常攻撃初期化
 	void AtkInit(void);
+
+	//スキル1初期化
+	void SkillOneInit(void);
+
+	//スキル2初期化
+	void SkillTwoInit(void);
 };

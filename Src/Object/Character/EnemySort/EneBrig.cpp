@@ -19,17 +19,13 @@ void EneBrig::SetParam(void)
 
 	//※個々で設定する
 	trans_.scl = { CHARACTER_SCALE,CHARACTER_SCALE,CHARACTER_SCALE };
-	radius_ = MY_COL_RADIUS;
 	colPos_ = VAdd(trans_.pos, LOCAL_CENTER_POS);
-	hp_ = HP_MAX;
-	atkPow_ = ATK_POW;
-	def_ = DEF;
-	exp_ = EXP;
-	walkSpeed_ = WALK_SPEED;
 	localCenterPos_ = LOCAL_CENTER_POS;
-	stunDefMax_ = STUN_DEF_MAX;
 	searchRange_ = SEARCH_RANGE;
 	atkStartRange_ = ATK_START_RANGE;
+
+	//外部からステータスを取得
+	ParamLoad(CharacterParamData::UNIT_TYPE::E_KNIGHT);
 }
 
 void EneBrig::InitAnim(void)
@@ -70,6 +66,17 @@ void EneBrig::InitSkill(void)
 
 void EneBrig::AlertSkill_One(void)
 {
+	//敵の前方
+	VECTOR pos = trans_.GetForward();
+
+	//攻撃範囲
+	pos = VScale(pos, SKILL_ONE_COL_RADIUS);
+
+	//座標合わせ
+	pos = VAdd(trans_.pos, pos);
+
+	//範囲作成
+	CreateAlert(pos, SKILL_ONE_COL_RADIUS * 2, SKILL_ONE_COL_RADIUS * 2);
 }
 
 void EneBrig::Skill_One(void)

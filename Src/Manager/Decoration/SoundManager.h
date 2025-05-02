@@ -20,6 +20,31 @@ public:
 	enum class SOUND {
 		//ここに使用する音楽や効果音などを羅列
 		NONE,
+		GAME_NOMAL,
+		GAME_LAST,
+		DETH_PLAYER,
+		DETH_ENEMY,
+		DETH_CHICKEN,
+		HIT,
+		GAMEOVER_SE,
+		GAMEOVER_BGM,
+		GAMECLEAR_SE,
+		GAMECLEAR_BGM,
+		TITLE,
+		SCENE_CHANGE_1,
+		LEVEL_UP,
+		CARSOL,
+		EXPLAN_SWITCH,
+		SELECT,
+		CHANGE_SELECT,
+		CANCEL_SELECT,
+		DECIDE_SELECT,
+		FAZE_REZALT,
+		POWER_UP,
+		
+		//プレイヤー
+		SKILL_CHANGE,	//スキル切り替え音
+		SKILL,MISS,		//スキル打てないとき
 	};
 
 	struct SOUND_DATA
@@ -64,6 +89,8 @@ public:
 	/// <param name="_sound">音声</param>
 	/// <param name="_persent">調整割合(0%～100%)</param>
 	void AdjustVolume(const SOUND _sound, const int _persent);
+
+	void Destroy(void);
 private:
 	//インスタンス用
 	static SoundManager* instance_;

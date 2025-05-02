@@ -1,4 +1,13 @@
+#include "./USER/PlAxeMan.h"
 #include "AxeMan.h"
+#ifdef DEBUG_ON
+void AxeMan::DrawDebug(void)
+{
+	DrawFormatString(0, 0, 0x000000, "atkPos(%f)", atkPow_);
+}
+
+#endif // DEBUG_ON
+
 
 AxeMan::AxeMan(void)
 {
@@ -23,13 +32,28 @@ void AxeMan::SetParam(void)
 		0.0f, AsoUtility::Deg2RadF(180.0f),
 		0.0f
 	);
+	auto& effIns = EffectManager::GetInstance();
+	auto& resIns = ResourceManager::GetInstance();
+	using EFFECT = EffectManager::EFFECT;
+
+	//溜め攻撃エフェクトロード
+	EffectManager::GetInstance().Add(EFFECT::CHARGE_AXE_HIT, 
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::CHARGE_AXE_HIT).handleId_);
+
+	//スキルチャージ(ロードするとなぜかエフェクトが出なくなるから念のためコメントアウト)
+	EffectManager::GetInstance().Add(EFFECT::CHARGE_SKILL,
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::CHARGE_SKILL).handleId_);
+
+
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 
 	//ステータス関係
-	//------------------------------------------
-	hp_ = HP_MAX;
-	atkPow_ = POW_ATK;
-	def_ = DEF_MAX;
+	ParamLoad(CharacterParamData::UNIT_TYPE::AXEMAN);
+
+	//役職の割り当て
+	role_ = SceneManager::ROLE::AXEMAN;
+
+	
 
 	moveAble_ = true;
 
@@ -60,10 +84,7 @@ void AxeMan::InitAct(void)
 	atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;
 	atkStartTime_[static_cast<int>(ATK_ACT::SKILL2)] = SKILL_TWO_START;
 
-	//攻撃タイプ
-	atkTypes_[static_cast<int>(ATK_ACT::ATK)] = ATK_TYPE::NORMALATK;
-	atkTypes_[static_cast<int>(ATK_ACT::SKILL1)] = ATK_TYPE::CHARGEATK;
-	atkTypes_[static_cast<int>(ATK_ACT::SKILL2)] = ATK_TYPE::NORMALATK;
+
 }
 
 void AxeMan::InitSkill(ATK_ACT _act)
@@ -77,6 +98,16 @@ void AxeMan::InitSkill(ATK_ACT _act)
 	isSkill_ = true;
 }
 
+void AxeMan::Draw(void)
+{
+	PlayerBase::Draw();
+#ifdef DEBUG_ON
+	DrawDebug();
+#endif // DEBUG_ON
+
+	
+}
+
 void AxeMan::InitCharaAnim(void)
 {
 	animNum_.emplace(ANIM::UNIQUE_1, ATK_NUM);
@@ -85,34 +116,18 @@ void AxeMan::InitCharaAnim(void)
 	animNum_.emplace(ANIM::SKILL_2, SKILL_TWO_NUM);
 }
 
-//void AxeMan::ChargeAct(void)
-//{
-//
-//}
+void AxeMan::NmlAtkInit(void)
+{
+}
 
 void AxeMan::SkillOneInit(void)
 {
-	//if (!IsAtkAction() && !isCool_[static_cast<int>(skillNo_)])
-	//{
-	//	//スキルごとにアニメーションを決めて、カウント開始
-	//	ChangeAct(static_cast<ATK_ACT>(skillNo_));
-	//	ResetParam(atk_);
-	//	CntUp(atkStartCnt_);
-	//	moveAble_ = false;
-	//}
 
 }
 
 void AxeMan::SkillTwoInit(void)
 {
-	if (!IsAtkAction() && !isCool_[static_cast<int>(skillNo_)])
-	{
-		////スキルごとにアニメーションを決めて、カウント開始
-		//ChangeAct(static_cast<ATK_ACT>(skillNo_));
-		//ResetParam(atk_);
-		//CntUp(atkStartCnt_);
-		//moveAble_ = false;
-	}
+	
 }
 
 void AxeMan::AtkFunc(void)
@@ -146,18 +161,23 @@ void AxeMan::AtkFunc(void)
 
 void AxeMan::Skill1Func(void)
 {
-	//入力
-	//--------------------------------------------------------------
-
-
-
-
+	auto& efeIns = EffectManager::GetInstance();
 	if (isCool_[static_cast<int>(skillNo_)])
 	{
 		return;
 	}
 	if (0.0f < atkStartCnt_ && atkStartCnt_ < atkStartTime_[static_cast<int>(act_)])
 	{
+		if (atkStartCnt_ <= DELTATIME)
+		{
+			EffectManager::GetInstance().Play(
+				EffectManager::EFFECT::CHARGE_SKILL,
+				trans_.pos,
+				Quaternion(),
+				CHARGE_SKILL_EFF_SIZE,
+				SoundManager::SOUND::NONE);
+		}
+
 		CntUp(atkStartCnt_);
 		if (stepAnim_ >= SKILL_CHARGE_STEPANIM)
 		{
@@ -166,10 +186,23 @@ void AxeMan::Skill1Func(void)
 	}
 	else if (atkStartCnt_ >= atkStartTime_[static_cast<int>(skillNo_)])
 	{
+		if (atkStartCnt_ > PlAxe::SKILL_ONE_START_NOCHARGE) { atk_.pow_ = SKILL_ONE_CHARGE_POW; }
+		
 		CntUp(atk_.cnt_);
+		if (atk_.cnt_ <=DELTATIME)
+		{
+			EffectManager::GetInstance().Play(
+				EffectManager::EFFECT::CHARGE_AXE_HIT,
+				atk_.pos_,
+				Quaternion(),
+				CHARGE_AXE_EFF_SIZE,
+				SoundManager::SOUND::NONE);
+		}
 		if (atk_.IsFinishMotion())
 		{
 			coolTime_[static_cast<int>(ATK_ACT::SKILL1)] = 0.0f;
+
+			//efeIns.Stop(EffectManager::EFFECT::CHARGE_SKILL);
 
 			//スキル終わったら攻撃発生時間の最大時間をセットする
 			atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;

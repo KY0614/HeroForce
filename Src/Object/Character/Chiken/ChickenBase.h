@@ -2,12 +2,19 @@
 #include <functional>
 #include <memory>
 #include <map>
+#include "../../../Application.h"
 #include "../../Common/Transform.h"
 #include "../../../Utility/AsoUtility.h"
+#include "../../../Manager/Decoration/EffectManager.h"
+#include "../../../Manager/Decoration/SoundManager.h"
 #include "../../../Manager/Generic/ResourceManager.h"
 #include "../../../Manager/Generic/SceneManager.h"
 #include "../../../Manager/Generic/InputManager.h"
+#include "../../../Manager/Generic/SceneManager.h"
+#include "../../System/GameUi/CpuHpBar.h"
 #include "../../UnitBase.h"
+
+class CpuHpBar;
 
 class ChickenBase : public UnitBase
 {
@@ -63,38 +70,61 @@ public:
 	static constexpr COLOR_F FADE_C_FROM = { 1.0f, 1.0f, 1.0f, 1.0f };
 	static constexpr COLOR_F FADE_C_TO = { 0.8f, 0.1f, 0.1f, 0.0f };
 
+	//HELP画像表示時間
+	static constexpr int IS_HELP_CNT = 3 * Application::DEFAULT_FPS;
+
+	//HELP相対位置
+	static constexpr VECTOR LOCAL_HELP_POS = { 0,180,0 };
+
+	//HP描画
+	static constexpr VECTOR LOCAL_HP_POS = { 0, 120, 0 };
+
+	//煙ローカル座標
+	static constexpr VECTOR LOCAL_SMOKE_POS = { 0,40,0 };
+
+	//煙スピード
+	static constexpr float SMOKE_SPEED = 20.0f;
+
+	//煙サイズ
+	static constexpr float SMOKE_SCALE = 100.0f;
+
+	//煙アニメーション数
+	static constexpr int SMOKE_NUM = ResourceManager::SMOKE_NUM_X * ResourceManager::SMOKE_NUM_Y;
+
+	//ダメージエフェクト
+	static constexpr float DAMAGE_EFE_SCALE = 30.0f;
+
 	ChickenBase();
 	~ChickenBase();
 
-	void Create(VECTOR& pos);	//生成位置とターゲットのトランスフォームをもらう
-	void Update(void)override;
+	virtual void Create(VECTOR& pos);	//生成位置とターゲットのトランスフォームをもらう
+	virtual void Update(void)override;
 	void Draw(void)override;
 	
-	//モデル設定
-	void ModelSet();
-
-	//パラメーターの設定
-	virtual void SetParam();
-
-	//アニメーション番号の初期化
-	virtual void InitAnimNum(void);
+	//画像表示の設定
+	void SetIsHelp();
 
 	//ターゲットの座標設定
 	void SetTarget(const VECTOR pos);
 
-	//ダメージを与える
-	void SetDamage(const int damage);
-
-	//状態を得る
-	const STATE GetState(void) const{ return state_; }
+	//状態を返す
+	STATE GetState() const;
 
 protected:
 
+	//画像
+	int imgHelp_;
+	int* imgSmoke_;
+
 	//移動スピード
-	float moveSpeed_;
+	//float moveSpeed_;
 
 	//フェード用ステップ
 	float fadeStep_;
+
+	//画像の表示
+	bool isHelp_;
+	int isHelpCnt_;
 
 	//ターゲット用情報
 	VECTOR targetPos_;
@@ -104,6 +134,11 @@ protected:
 
 	//生存時の状態
 	ALIVE_MOVE aliveState_;
+
+	//煙アニメーション
+	int smokeNum_;
+	float smokeStep_;
+	float efeSpeed_;
 	
 	// 状態管理(状態遷移時初期処理)
 	std::map<STATE, std::function<void(void)>> stateChanges_;
@@ -119,12 +154,31 @@ protected:
 	// 生存時状態管理
 	std::function<void(void)> stateAliveUpdate_;
 
+	//UIインスタンス生成
+	std::unique_ptr<CpuHpBar> hpUi_;
+
+	//モデル設定
+	void ModelSet();
+
+	//画像読み込み
+	void LoadImages();
+
+	//パラメーターの設定
+	virtual void SetParam();
+
+	//アニメーション番号の初期化
+	virtual void InitAnimNum(void);
+
+	//UI設定
+	void SetUiParam();
+
 	//状態変更
 	void ChangeState(STATE state);
 	void ChangeStateNone();
 	void ChangeStateAlive();
 	void ChangeStateDamage();
 	void ChangeStateDeath();
+	void ChangeStateEnd();
 
 	void ChangeAliveState(ALIVE_MOVE state);
 	void ChangeAliveIdle();
@@ -136,12 +190,14 @@ protected:
 	void UpdateAlive();
 	void UpdateDamage();
 	void UpdateDeath();
+	void UpdateEnd();
 
 	//状態別描画
 	void DrawNone();
 	void DrawAlive();
 	void DrawDamage();
 	void DrawDeath();
+	void DrawEnd();
 
 	//生存状態での状態別更新
 	void AliveIdle();
@@ -153,6 +209,12 @@ protected:
 
 	//アニメーションの終了処理
 	void FinishAnim() override;
+
+	//画像の表示確認
+	void CheckIsHelp();
+
+	//ヘルプ描画
+	void DrawHelp();
 
 	//デバッグ
 	void DebagUpdate();
