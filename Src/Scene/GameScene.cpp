@@ -181,8 +181,8 @@ void GameScene::Update(void)
 	}
 
 	
-
-	chicken_->SetTargetPos(playerMng_->GetPlayer(0)->GetPos());
+	//チキンの更新
+	//chicken_->SetTargetPos(playerMng_->GetPlayer(0)->GetPos());
 	chicken_->Update();
 
 	for (int i = 0; i < DataBank::GetInstance().Output(DataBank::INFO::USER_NUM); i++)

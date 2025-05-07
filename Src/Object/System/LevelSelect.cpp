@@ -4,10 +4,11 @@
 #include "../../Manager/Generic/ResourceManager.h"
 #include "../../Manager/GameSystem/TextManager.h"
 #include "../../Manager/GameSystem/DataBank.h"
-#include "LevelupSelect.h"
-#include "Carsor.h"
+#include "LevelScreenManager.h"
+#include "LevelSelect.h"
 
-LevelupSelect::LevelupSelect()
+
+LevelSelect::LevelSelect()
 {
 	fontMes_ = -1;
 	fontExp_ = -1;
@@ -19,7 +20,7 @@ LevelupSelect::LevelupSelect()
 
 	//カーソル画像初期化
 	int value = -1;
-	imgCarsors_ = &value;
+	imgCursors_ = &value;
 
 	//画像
 	for (int i = 0; i < LevelScreenManager::TYPE_MAX; i++) {
@@ -27,17 +28,13 @@ LevelupSelect::LevelupSelect()
 	}
 
 	// 状態管理
-	stateChanges_.emplace(STATE::NONE, std::bind(&LevelupSelect::ChangeStateNone, this));
-	stateChanges_.emplace(STATE::EXPANSION, std::bind(&LevelupSelect::ChangeStateExpansion, this));
-	stateChanges_.emplace(STATE::SELECT, std::bind(&LevelupSelect::ChangeStateSelect, this));
-	stateChanges_.emplace(STATE::FIN, std::bind(&LevelupSelect::ChangeStateFin, this));
+	stateChanges_.emplace(STATE::NONE, std::bind(&LevelSelect::ChangeStateNone, this));
+	stateChanges_.emplace(STATE::EXPANSION, std::bind(&LevelSelect::ChangeStateExpansion, this));
+	stateChanges_.emplace(STATE::SELECT, std::bind(&LevelSelect::ChangeStateSelect, this));
+	stateChanges_.emplace(STATE::FIN, std::bind(&LevelSelect::ChangeStateFin, this));
 }
 
-LevelupSelect::~LevelupSelect()
-{
-}
-
-void LevelupSelect::Init()
+void LevelSelect::Init()
 {
 	//仮プレイヤー人数
 	plNum_ = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
@@ -50,12 +47,12 @@ void LevelupSelect::Init()
 	ele_.resize(element_);
 
 	//カーソルの初期化
-	carsors_.resize(plNum_);
-	for (int i = 0; i < carsors_.size(); i++)
+	cursors_.resize(plNum_);
+	for (int i = 0; i < cursors_.size(); i++)
 	{
-		carsors_[i] = std::make_unique<Carsor>();
-		carsors_[i]->Init(i, imgCarsors_[i]);
-		carsors_[i]->SetContllorKey(
+		cursors_[i] = std::make_unique<Cursor>();
+		cursors_[i]->Init(i, imgCursors_[i]);
+		cursors_[i]->SetControllKey(
 			KEY_INPUT_RIGHT,
 			KEY_INPUT_LEFT,
 			KEY_INPUT_UP,
@@ -73,12 +70,12 @@ void LevelupSelect::Init()
 	CreateFonts();
 }
 
-void LevelupSelect::Update()
+void LevelSelect::Update()
 {
 	stateUpdate_();
 }
 
-void LevelupSelect::Draw()
+void LevelSelect::Draw()
 {
 	//テキスト用変数
 	int color = 0;
@@ -111,17 +108,16 @@ void LevelupSelect::Draw()
 			if (ele.isText_) {
 
 				//テキスト描画
-				int pow = 30;
 				color = 0xffffff;
-				length = expTexts_[type].length();
+				length = static_cast<int>(expTexts_[type].length());
 				pos = ele.pos_;
-				pos.x -= length * FONT_EXP_SIZE / 4;
-				pos.y += 90;
+				pos.x -= length * FONT_EXP_SIZE / TextManager::CENTER_TEXT_H;
+				pos.y += TEXT_OFFSET_POS_Y;
 
-				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, BACK_ALPHA);
 				DrawBox(
 					pos.x, pos.y,
-					pos.x + length * FONT_EXP_SIZE / 2.0f,
+					pos.x + length * FONT_EXP_SIZE / 2,
 					pos.y + FONT_EXP_SIZE,
 					0x000000, true);
 				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
@@ -131,14 +127,14 @@ void LevelupSelect::Draw()
 					color,
 					fontExp_,
 					expTexts_[type].c_str(),
-					pow);
+					POW);
 			}
 		}
 	}
 
 	//テキスト用変数
 	color = 0xffffff;
-	length = mesText_.length() / 2;
+	length = static_cast<int>(mesText_.length() / 2);
 	pos = { MES_TEXT_POS_X,MES_TEXT_POS_Y };
 	pos.x -= length * FONT_MES_SIZE / 2;
 
@@ -151,23 +147,23 @@ void LevelupSelect::Draw()
 
 	if (state_ == STATE::SELECT)
 	{
-		for (int i = 0; i < carsors_.size(); i++)
+		for (int i = 0; i < cursors_.size(); i++)
 		{
-			carsors_[i]->Draw();
+			cursors_[i]->Draw();
 		}
 	}
 }
 
-void LevelupSelect::Release()
+void LevelSelect::Release()
 {
 	DeleteFontToHandle(fontExp_);
 	DeleteFontToHandle(fontMes_);
 }
 
-void LevelupSelect::Reset()
+void LevelSelect::Reset()
 {
 	//初期状態の設定
-	ChangeState(LevelupSelect::STATE::NONE);
+	ChangeState(LevelSelect::STATE::NONE);
 
 	//強化要素の種類
 	ele_[static_cast<int>(LevelScreenManager::TYPE::ATTACK)].type_ = LevelScreenManager::TYPE::ATTACK;
@@ -181,9 +177,6 @@ void LevelupSelect::Reset()
 		//初期拡大値
 		ele_[i].scl_ = 0.00f;
 
-		//強化要素の種類
-		//ele_[i].type_ = GetRandType();
-
 		//サイズ
 		ele_[i].size_ = { static_cast<int>(ELE_IMG_SIZE_X * SCALE_MAX),
 			static_cast<int>(ELE_IMG_SIZE_Y * SCALE_MAX) };
@@ -193,9 +186,9 @@ void LevelupSelect::Reset()
 	}
 
 	//カーソル初期化
-	for (int i = 0; i < carsors_.size(); i++)
+	for (int i = 0; i < cursors_.size(); i++)
 	{
-		carsors_[i]->Reset();
+		cursors_[i]->Reset();
 	}
 
 	//各プレイヤーごとの強化要素初期化
@@ -205,7 +198,7 @@ void LevelupSelect::Reset()
 	}
 }
 
-void LevelupSelect::Load()
+void LevelSelect::Load()
 {
 	//画像
 	auto& res = ResourceManager::GetInstance();
@@ -214,7 +207,7 @@ void LevelupSelect::Load()
 	imgSelects_[static_cast<int>(LevelScreenManager::TYPE::DEFENSE)] = res.Load(ResourceManager::SRC::DEFENCE_UP_UI).handleId_;
 	imgSelects_[static_cast<int>(LevelScreenManager::TYPE::LIFE)] = res.Load(ResourceManager::SRC::LIFE_UP_UI).handleId_;
 	imgSelects_[static_cast<int>(LevelScreenManager::TYPE::SPEED)] = res.Load(ResourceManager::SRC::SPEED_UP_UI).handleId_;
-	imgCarsors_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CARSOLS).handleIds_;
+	imgCursors_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CARSOLS).handleIds_;
 	imgBack_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::LEVEL_UP_BACK).handleId_;
 	
 	//テキスト関係
@@ -231,44 +224,19 @@ void LevelupSelect::Load()
 		ResourceManager::GetInstance().Load(ResourceManager::SRC::CARSOL_SE).handleId_);
 }
 
-void LevelupSelect::SetFirstPos()
+void LevelSelect::SetFirstPos()
 {
-	Vector2 pos;
 	int cnt = 0;
-	int div = 4;
-	int center= 2;
-
-	switch (ele_.size())
-	{
-	case 2:
-		ele_[cnt].pos_ = { Application::SCREEN_SIZE_X / div, Application::SCREEN_SIZE_Y / 2 };
-		cnt++;
-		ele_[cnt].pos_ = { Application::SCREEN_SIZE_X / div * 3, Application::SCREEN_SIZE_Y / 2 };
-
-	case 3:
-		ele_[cnt].pos_ = { Application::SCREEN_SIZE_X / div, Application::SCREEN_SIZE_Y / div };
-		cnt++;
-		ele_[cnt].pos_ = { Application::SCREEN_SIZE_X / div, Application::SCREEN_SIZE_Y / div * 3};
-		cnt++;
-		ele_[cnt].pos_ = { Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / div * 3};
-		break;
-
-	case 4:
-		ele_[cnt].pos_ = { ELEMENT_POS_LU_X,ELEMENT_POS_LU_Y };
-		cnt++;
-		ele_[cnt].pos_ = { ELEMENT_POS_RU_X,ELEMENT_POS_RU_Y };
-		cnt++;
-		ele_[cnt].pos_ = { ELEMENT_POS_LD_X,ELEMENT_POS_LD_Y };
-		cnt++;
-		ele_[cnt].pos_ = { ELEMENT_POS_RD_X,ELEMENT_POS_RD_Y };
-		break;
-	default:
-		return;
-		break;
-	}
+	ele_[cnt].pos_ = { ELEMENT_POS_LU_X,ELEMENT_POS_LU_Y };
+	cnt++;
+	ele_[cnt].pos_ = { ELEMENT_POS_RU_X,ELEMENT_POS_RU_Y };
+	cnt++;
+	ele_[cnt].pos_ = { ELEMENT_POS_LD_X,ELEMENT_POS_LD_Y };
+	cnt++;
+	ele_[cnt].pos_ = { ELEMENT_POS_RD_X,ELEMENT_POS_RD_Y };
 }
 
-void LevelupSelect::CreateFonts()
+void LevelSelect::CreateFonts()
 {
 	auto& text_m = TextManager::GetInstance();
 	
@@ -285,14 +253,14 @@ void LevelupSelect::CreateFonts()
 		FONT_EXP_THICK);
 }
 
-inline LevelScreenManager::TYPE LevelupSelect::GetRandType()
+LevelScreenManager::TYPE LevelSelect::GetRandType()
 {
 	int rand = GetRand(LevelScreenManager::TYPE_MAX - 1);
 	LevelScreenManager::TYPE type = static_cast<LevelScreenManager::TYPE>(rand);
 	return type;
 }
 
-void LevelupSelect::SetSkipState()
+void LevelSelect::SetSkipState()
 {
 	for (int i = 0; i < ele_.size(); i++)
 	{
@@ -303,42 +271,42 @@ void LevelupSelect::SetSkipState()
 	ChangeState(STATE::SELECT);
 }
 
-void LevelupSelect::ChangeState(const STATE state)
+void LevelSelect::ChangeState(const STATE _state)
 {
 	//状態受け取り
-	state_ = state;
+	state_ = _state;
 
 	// 各状態遷移の初期処理
 	stateChanges_[state_]();
 }
 
-void LevelupSelect::ChangeStateNone()
+void LevelSelect::ChangeStateNone()
 {
-	stateUpdate_ = std::bind(&LevelupSelect::UpdateNone, this);
+	stateUpdate_ = std::bind(&LevelSelect::UpdateNone, this);
 }
 
-void LevelupSelect::ChangeStateExpansion()
+void LevelSelect::ChangeStateExpansion()
 {
-	stateUpdate_ = std::bind(&LevelupSelect::UpdateExpansion, this);
+	stateUpdate_ = std::bind(&LevelSelect::UpdateExpansion, this);
 }
 
-void LevelupSelect::ChangeStateSelect()
+void LevelSelect::ChangeStateSelect()
 {
-	stateUpdate_ = std::bind(&LevelupSelect::UpdateSelect, this);
+	stateUpdate_ = std::bind(&LevelSelect::UpdateSelect, this);
 }
 
-void LevelupSelect::ChangeStateFin()
+void LevelSelect::ChangeStateFin()
 {
-	stateUpdate_ = std::bind(&LevelupSelect::UpdateFin, this);
+	stateUpdate_ = std::bind(&LevelSelect::UpdateFin, this);
 }
 
-void LevelupSelect::UpdateNone()
+void LevelSelect::UpdateNone()
 {
 	//拡大処理に移る
 	ChangeState(STATE::EXPANSION);
 }
 
-void LevelupSelect::UpdateExpansion()
+void LevelSelect::UpdateExpansion()
 {
 	float scl = SCALE_RATE;
 	float max = SCALE_MAX;
@@ -359,7 +327,7 @@ void LevelupSelect::UpdateExpansion()
 	}
 }
 
-void LevelupSelect::UpdateSelect()
+void LevelSelect::UpdateSelect()
 {
 	//状態変更
 	bool isChange = true;
@@ -369,10 +337,10 @@ void LevelupSelect::UpdateSelect()
 		ele_[j].isText_ = false;
 	}
 
-	for (int i = 0; i < carsors_.size(); i++)
+	for (int i = 0; i < cursors_.size(); i++)
 	{
 		//カーソルの更新処理
-		carsors_[i]->Update();
+		cursors_[i]->Update();
 
 		for (int j = 0; j < ele_.size(); j++)
 		{
@@ -387,14 +355,14 @@ void LevelupSelect::UpdateSelect()
 			if (IsCollisionBoxCircle(
 				ele_[j].pos_,
 				ele_[j].size_,
-				carsors_[i]->GetPos(),
-				Carsor::RADIUS))
+				cursors_[i]->GetPos(),
+				Cursor::RADIUS))
 			{
 				//強化要素の説明を表示
 				ele_[j].isText_ = true;
 
 				//カーソルが決定の場合
-				if (carsors_[i]->IsDecide()) 
+				if (cursors_[i]->IsDecide()) 
 				{
 					//選択している要素を格納
 					selectTypes_[i] = ele_[j].type_;
@@ -417,7 +385,7 @@ void LevelupSelect::UpdateSelect()
 		if (selectTypes_[i] == LevelScreenManager::TYPE::MAX)
 		{
 			//カーソルを未決定に戻す
-			carsors_[i]->SetDecide(false);
+			cursors_[i]->SetDecide(false);
 		}
 	}
 	//状態遷移
@@ -427,11 +395,11 @@ void LevelupSelect::UpdateSelect()
 	}
 }
 
-void LevelupSelect::UpdateFin()
+void LevelSelect::UpdateFin()
 {
 }
 
-void LevelupSelect::DebagDraw()
+void LevelSelect::DebagDraw()
 {
 	for (auto ele : ele_)
 	{
@@ -444,43 +412,43 @@ void LevelupSelect::DebagDraw()
 	}
 }
 
-bool LevelupSelect::IsCollisionBoxCircle(Vector2 pos1, Vector2 size1, Vector2 pos2, float radius2)
+bool LevelSelect::IsCollisionBoxCircle(const Vector2 _pos1, const  Vector2 _size1, const  Vector2 _pos2, const  float _radius)
 {
-	Vector2 righttop = pos1;
-	righttop.x += size1.x / 2;
-	righttop.y -= size1.y / 2;
-	righttop = V2Sub(pos2, righttop);
-	int rightTop = std::hypot(righttop.x, righttop.y);
+	Vector2 righttop = _pos1;
+	righttop.x += _size1.x / 2;
+	righttop.y -= _size1.y / 2;
+	righttop = V2Sub(_pos2, righttop);
+	int rightTop = static_cast<int>(std::hypot(righttop.x, righttop.y));
 
-	Vector2 rightdown = pos1;
-	rightdown.x += size1.x / 2;
-	rightdown.y += size1.y / 2;
-	rightdown = V2Sub(pos2, rightdown);
-	int rightDown = std::hypot(rightdown.x, rightdown.y);
+	Vector2 rightdown = _pos1;
+	rightdown.x += _size1.x / 2;
+	rightdown.y += _size1.y / 2;
+	rightdown = V2Sub(_pos2, rightdown);
+	int rightDown = static_cast<int>(std::hypot(rightdown.x, rightdown.y));
 
-	Vector2 lefttop = pos1;
-	lefttop.x -= size1.x / 2;
-	lefttop.y -= size1.y / 2;
-	lefttop = V2Sub(pos2, lefttop);
-	int leftTop = std::hypot(lefttop.x, lefttop.y);
+	Vector2 lefttop = _pos1;
+	lefttop.x -= _size1.x / 2;
+	lefttop.y -= _size1.y / 2;
+	lefttop = V2Sub(_pos2, lefttop);
+	int leftTop = static_cast<int>(std::hypot(lefttop.x, lefttop.y));
 
-	Vector2 leftdown = pos1;
-	leftdown.x -= size1.x / 2;
-	leftdown.y += size1.y / 2;
-	leftdown = V2Sub(pos2, leftdown);
-	int leftDown = std::hypot(leftdown.x, leftdown.y);
+	Vector2 leftdown = _pos1;
+	leftdown.x -= _size1.x / 2;
+	leftdown.y += _size1.y / 2;
+	leftdown = V2Sub(_pos2, leftdown);
+	int leftDown = static_cast<int>(std::hypot(leftdown.x, leftdown.y));
 
 	//-----------------------------------------------------------
 
-	auto diffX = (pos1.x - pos2.x);/////終点から始点を引く///////
-	auto diffY = (pos1.y - pos2.y);/////終点から始点を引く///////
+	float diffX = static_cast<float>(_pos1.x - _pos2.x);/////終点から始点を引く///////
+	float diffY = static_cast<float>(_pos1.y - _pos2.y);/////終点から始点を引く///////
 
-	if (rightTop <= radius2 ||
-		rightDown <= radius2 ||
-		leftTop <= radius2 ||
-		leftDown <= radius2 ||
-		(fabsf(diffX) < radius2 && fabsf(diffY) < radius2 + size1.y / 2) ||
-		(fabsf(diffX) < radius2 + size1.x / 2 && fabsf(diffY) < size1.y / 2))
+	if (rightTop <= _radius ||
+		rightDown <= _radius ||
+		leftTop <= _radius ||
+		leftDown <= _radius ||
+		(fabsf(diffX) < _radius && fabsf(diffY) < _radius + _size1.y / 2) ||
+		(fabsf(diffX) < _radius + _size1.x / 2 && fabsf(diffY) < _size1.y / 2))
 	{
 		//衝突している
 		return true;
@@ -489,10 +457,10 @@ bool LevelupSelect::IsCollisionBoxCircle(Vector2 pos1, Vector2 size1, Vector2 po
 	return false;
 }
 
-Vector2 LevelupSelect::V2Sub(Vector2 pos1, Vector2 pos2)
+Vector2 LevelSelect::V2Sub(const Vector2 _pos1, const  Vector2 _pos2)
 {
 	Vector2 pos;
-	pos.x = pos1.x - pos2.x;
-	pos.y = pos1.y - pos2.y;
+	pos.x = _pos1.x - _pos2.x;
+	pos.y = _pos1.y - _pos2.y;
 	return pos;
 }

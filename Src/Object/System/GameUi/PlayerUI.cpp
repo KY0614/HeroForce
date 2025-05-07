@@ -28,36 +28,36 @@ PlayerUI::~PlayerUI()
 {
 }
 
-void PlayerUI::Init(PlayerBase& player,const DataBank::PLAYER_INFO& info)
+void PlayerUI::Init(PlayerBase& _player,const DataBank::PLAYER_INFO& _info)
 {
 	//読み込み
 	Load();
 
-	switch (info.role_)
+	switch (_info.role_)
 	{
 	case SceneManager::ROLE::KNIGHT:
-		iconNum_ = 0;
+		iconNum_ = ICON_CHARA_NUM_KN;
 		imgSkillIcon_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::SKILL_KNIGHT).handleIds_;
 		break;
 	case SceneManager::ROLE::AXEMAN:
-		iconNum_ = 1;
+		iconNum_ = ICON_CHARA_NUM_AX;
 		imgSkillIcon_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::SKILL_AXEMAN).handleIds_;
 		break;
 	case SceneManager::ROLE::ARCHER:
-		iconNum_ = 2;
+		iconNum_ = ICON_CHARA_NUM_AC;
 		imgSkillIcon_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::SKILL_ARCHER).handleIds_;
 		break;
 	case SceneManager::ROLE::MAGE:
-		iconNum_ = 3;
-		imgSkillIcon_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::SKILL_KNIGHT).handleIds_;//仮
+		iconNum_ = ICON_CHARA_NUM_MA;
+		imgSkillIcon_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::SKILL_KNIGHT).handleIds_;
 		break;
 	default:
 		break;
 	}
 
-	atk_ = static_cast<int>(player.GetAtkPow());
-	def_ = static_cast<int>(player.GetDef());
-	skill_ = static_cast<int>(player.GetSkillNo());
+	atk_ = static_cast<int>(_player.GetAtkPow());
+	def_ = static_cast<int>(_player.GetDef());
+	skill_ = static_cast<int>(_player.GetSkillNo());
 	barLength_ = HP_BAR_LENGTH;
 }
 
@@ -75,35 +75,32 @@ void PlayerUI::Load()
 	imgSkill_ = res.Load(ResourceManager::SRC::SKILL_UI).handleId_;
 }
 
-void PlayerUI::Update(PlayerBase& player)
+void PlayerUI::Update(PlayerBase& _player)
 {	
 	//情報の更新
-	hp_ = player.GetHp();
-	atk_ = static_cast<int>(player.GetAtkPow());
-	def_ = static_cast<int>(player.GetDef());
-	skill_ = static_cast<int>(player.GetSkillNo());
+	hp_ = _player.GetHp();
+	atk_ = static_cast<int>(_player.GetAtkPow());
+	def_ = static_cast<int>(_player.GetDef());
+	skill_ = static_cast<int>(_player.GetSkillNo());
 
 	//数字の設定
-	nums_[static_cast<int>(PARAM_TYPE::ATK)][0] = atk_ / 100 % 10;
-	nums_[static_cast<int>(PARAM_TYPE::ATK)][1] = atk_ / 10 % 10;
-	nums_[static_cast<int>(PARAM_TYPE::ATK)][2] = atk_ % 10;
+	nums_[static_cast<int>(PARAM_TYPE::ATK)][0] = atk_ / 100 % 10;	//3桁目
+	nums_[static_cast<int>(PARAM_TYPE::ATK)][1] = atk_ / 10 % 10;	//2桁目
+	nums_[static_cast<int>(PARAM_TYPE::ATK)][2] = atk_ % 10;		//1桁目
 
 	nums_[static_cast<int>(PARAM_TYPE::DEF)][0] = def_ / 100 % 10;
 	nums_[static_cast<int>(PARAM_TYPE::DEF)][1] = def_ / 10 % 10;
 	nums_[static_cast<int>(PARAM_TYPE::DEF)][2] = def_ % 10;
 
 	//HPBarの長さ更新
-	int hpMax = player.GetHpMax();
+	int hpMax = _player.GetHpMax();
 	float divSize = static_cast<float>(HP_BAR_LENGTH / hpMax);
 	barLength_ = divSize * hp_;
-
 }
 
 void PlayerUI::Draw()
 {
-	////描画先を変更
-	//SetDrawScreen(uiScreen_);
-
+	//黒箱の描画
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, BOX_ALPHA);
 	DrawBox(
 		BOX_POS_X, BOX_POS_Y,

@@ -21,7 +21,7 @@ ExplanScene::ExplanScene()
 	}
 }
 
-void ExplanScene::Init(void)
+void ExplanScene::Init()
 {
 	auto& res = ResourceManager::GetInstance();
 	auto& snd = SoundManager::GetInstance();
@@ -60,7 +60,7 @@ void ExplanScene::Init(void)
 	step_ = 0.0f;
 }
 
-void ExplanScene::Update(void)
+void ExplanScene::Update()
 {
 	auto& ins = InputManager::GetInstance();
 	auto& snd = SoundManager::GetInstance();
@@ -83,18 +83,32 @@ void ExplanScene::Update(void)
 		ins.IsTrgDown(KEY_INPUT_LEFT) ||
 		stickX < 0 && !isStick_)
 	{
+		//1ページ戻す
 		cntExp_--;
+
+		//0以下の時最大ページにする
 		if (cntExp_ < 0) { cntExp_ = EXPLAN_CNT - 1; }
+
+		//効果音再生
 		snd.Play(SoundManager::SOUND::EXPLAN_SWITCH);
+
+		//スティックは動作してる
 		isStick_ = true;
 	}
 	else if (ins.IsTrgDown(KEY_INPUT_D) ||
 		ins.IsTrgDown(KEY_INPUT_RIGHT) ||
 		stickX > 0 && !isStick_)
 	{
+		//1ページ進む
 		cntExp_++;
+
+		//最大ページの時0ページに戻す
 		if (cntExp_ >= EXPLAN_CNT) { cntExp_ = 0; }
+
+		//効果音再生
 		snd.Play(SoundManager::SOUND::EXPLAN_SWITCH);
+
+		//スティックは動作してる
 		isStick_ = true;
 	}
 
@@ -103,11 +117,13 @@ void ExplanScene::Update(void)
 	if (alpha_ > ALPHA_MAX) { alphaAdd_ = -1.0f; }
 	else if (alpha_ < ALPHA_MIN) { alphaAdd_ = 1.0f; }
 
+	//スティックを戻したとき判定を戻す
 	if (stickX == 0) { isStick_ = false; }
 }
 
-void ExplanScene::Draw(void)
+void ExplanScene::Draw()
 {
+	//説明書
 	DrawRotaGraph(
 		Application::SCREEN_SIZE_X / 2,
 		Application::SCREEN_SIZE_Y / 2,
@@ -116,7 +132,7 @@ void ExplanScene::Draw(void)
 		imgExp_[cntExp_],
 		true
 	);
-
+	//ポイント左
 	DrawRotaGraph(
 		POINT_SIZE / 2,
 		Application::SCREEN_SIZE_Y / 2,
@@ -124,14 +140,17 @@ void ExplanScene::Draw(void)
 		0.0f,
 		imgPoint_[0],
 		true);
+	//ポイント右
 	DrawRotaGraph(
 		Application::SCREEN_SIZE_X - POINT_SIZE / 2,
 		Application::SCREEN_SIZE_Y / 2,
 		1.0f,
 		0.0f,
 		imgPoint_[0],
-		true,true);
+		true,
+		true);//反転させる
 
+	//メッセージ
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)alpha_);
 	DrawFormatStringToHandle(
 		Application::SCREEN_SIZE_X / 2,
@@ -142,7 +161,7 @@ void ExplanScene::Draw(void)
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
-void ExplanScene::Release(void)
+void ExplanScene::Release()
 {
 	DeleteFontToHandle(font_);
 	SceneManager::GetInstance().ResetCameras();

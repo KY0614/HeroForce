@@ -10,7 +10,7 @@
 #include "../Shader/PixelShader.h"
 #include "TitleScene.h"
 
-TitleScene::TitleScene(void)
+TitleScene::TitleScene()
 {
 	imgLogo_ = -1;
 	imgMes_ = -1;
@@ -18,7 +18,7 @@ TitleScene::TitleScene(void)
 	step_ = -1.0;
 }
 
-void TitleScene::Init(void)
+void TitleScene::Init()
 {
 	auto& snd = SoundManager::GetInstance();
 	auto& res = ResourceManager::GetInstance();
@@ -53,7 +53,7 @@ void TitleScene::Init(void)
 	camera[0]->ChangeMode(Camera::MODE::FIXED_POINT);
 }
 
-void TitleScene::Update(void)
+void TitleScene::Update()
 {
 	InputManager& ins = InputManager::GetInstance();
 	SceneManager& mng = SceneManager::GetInstance();
@@ -78,7 +78,7 @@ void TitleScene::Update(void)
 	}
 }
 
-void TitleScene::Draw(void)
+void TitleScene::Draw()
 {
 	//スカイドーム描画
 	sky_->Draw();
@@ -93,7 +93,6 @@ void TitleScene::Draw(void)
 		false);
 
 	auto& ps = PixelShader::GetInstance();
-
 	//メッセージ描画
 	COLOR_F buf = COLOR_F();//= COLOR_F{ step_ };
 	buf.r = step_;
@@ -108,7 +107,7 @@ void TitleScene::Draw(void)
 	);
 }
 
-void TitleScene::Release(void)
+void TitleScene::Release()
 {
 	sky_->Release();
 }

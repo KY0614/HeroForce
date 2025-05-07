@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Character\PlayableChara\Other\OtherScenePlayerBase.cpp" />
     <ClCompile Include="Src\Manager\Generic\ResourceManager.cpp" />
     <ClCompile Include="Src\Object\System\GameUi\EnemyHpBar.cpp" />
     <ClCompile Include="Src\Object\System\InformFaze.cpp" />
@@ -74,12 +75,12 @@
     <ClCompile Include="Src\Manager\GameSystem\Collision.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\TextManager.cpp" />
     <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
-    <ClCompile Include="Src\Object\System\Carsor.cpp" />
+    <ClCompile Include="Src\Object\System\Cursor.cpp" />
     <ClCompile Include="Src\Object\System\LevelScreenManager.cpp" />
     <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
     <ClCompile Include="Src\Object\Arrow.cpp" />
-    <ClCompile Include="Src\Object\System\LevelupNotice.cpp" />
-    <ClCompile Include="Src\Object\System\LevelupSelect.cpp" />
+    <ClCompile Include="Src\Object\System\LevelNotice.cpp" />
+    <ClCompile Include="Src\Object\System\LevelSelect.cpp" />
     <ClCompile Include="Src\Object\UnitBase.cpp" />
     <ClCompile Include="Src\Scene\GameScene.cpp" />
     <ClCompile Include="Src\Common\IntVector3.cpp" />
@@ -101,6 +102,7 @@
     <ClCompile Include="Src\Manager\GameSystem\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Character\PlayableChara\Other\OtherScenePlayerBase.h" />
     <ClInclude Include="Src\Object\System\GameUi\EnemyHpBar.h" />
     <ClInclude Include="Src\Object\System\InformFaze.h" />
     <ClInclude Include="Src\Scene\ExplanScene.h" />
@@ -169,10 +171,10 @@
     <ClInclude Include="Src\Object\Stage\SkyDome.h" />
     <ClInclude Include="Src\Object\Stage\StageManager.h" />
     <ClInclude Include="Src\Object\Stage\StageObject.h" />
-    <ClInclude Include="Src\Object\System\Carsor.h" />
+    <ClInclude Include="Src\Object\System\Cursor.h" />
     <ClInclude Include="Src\Object\System\LevelScreenManager.h" />
-    <ClInclude Include="Src\Object\System\LevelupNotice.h" />
-    <ClInclude Include="Src\Object\System\LevelupSelect.h" />
+    <ClInclude Include="Src\Object\System\LevelNotice.h" />
+    <ClInclude Include="Src\Object\System\LevelSelect.h" />
     <ClInclude Include="Src\Object\System\UnitPositionLoad.h" />
     <ClInclude Include="Src\Object\UnitBase.h" />
     <ClInclude Include="Src\Scene\GameScene.h" />

@@ -3,7 +3,7 @@
 #include "../../Manager/Generic/InputManager.h"
 #include "../../Common/Vector2.h"
 
-class Carsor
+class Cursor
 {
 public:
 
@@ -39,29 +39,39 @@ public:
 		int decide_;
 	};
 
-	// 初期化処理
-	Carsor();
-	~Carsor();
+	//コンストラクタ
+	Cursor();
 
-	void Init(const int plNum,const int img);//プレイヤーナンバーと画像種類を受け取る
+	//デストラクタ
+	~Cursor() = default;
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="plNum"></param>プレイヤーナンバー
+	/// <param name="img"></param>画像
+	void Init(const int _plNum,const int _img);
+
+	//更新
 	void Update();
+
+	//描画
 	void Draw();
 
-	//初期化処理
+	//情報をリセットする
 	void Reset();
 
 	//操作関連の設定
-	void SetContllorKey(const int right, const int left, const int up, const int down, const int decide);
+	void SetControllKey(const int _right, const int _left, const int _up, const int _down, const int _decide);
 
 	//決定の設定
-	void SetDecide(const bool value);
+	void SetDecide(const bool _value);
 
 	//座標返す
-	Vector2 GetPos() const { return pos_; }
+	inline const Vector2 GetPos() const { return pos_; }
 
 	//決定済みか確認
-	bool IsDecide() const { return decide_; }
-
+	inline const bool IsDecide() const { return decide_; }
 
 private:
 

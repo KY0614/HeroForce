@@ -116,7 +116,7 @@ public:
 	//アニメーション関数
 	void Anim(void);
 	//アニメーションリセット
-	void ResetAnim(const ANIM _anim, const float _speed);
+	virtual void ResetAnim(const ANIM _anim, const float _speed);
 
 	//配列用アニメーション関数
 	void AnimArray(int i);

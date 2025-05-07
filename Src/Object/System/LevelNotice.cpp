@@ -5,9 +5,9 @@
 #include "../../Manager/GameSystem/TextManager.h"
 #include "../../Manager/Generic/Camera.h"
 #include "../../Common/Vector2.h"
-#include "LevelupNotice.h"
+#include "LevelNotice.h"
 
-LevelupNotice::LevelupNotice() 
+LevelNotice::LevelNotice() 
 {
 	newLevel_ = -1;
 	cnt_ = -1;
@@ -20,17 +20,13 @@ LevelupNotice::LevelupNotice()
 	text_ = "";
 
 	// 状態管理
-	stateChanges_.emplace(STATE::NONE, std::bind(&LevelupNotice::ChangeStateNone, this));
-	stateChanges_.emplace(STATE::FADE_IN, std::bind(&LevelupNotice::ChangeStateFade, this));
-	stateChanges_.emplace(STATE::MAINTAIN, std::bind(&LevelupNotice::ChangeStateMaintain, this));
-	stateChanges_.emplace(STATE::FIN, std::bind(&LevelupNotice::ChangeStateFin , this));
+	stateChanges_.emplace(STATE::NONE, std::bind(&LevelNotice::ChangeStateNone, this));
+	stateChanges_.emplace(STATE::FADE_IN, std::bind(&LevelNotice::ChangeStateFade, this));
+	stateChanges_.emplace(STATE::MAINTAIN, std::bind(&LevelNotice::ChangeStateMaintain, this));
+	stateChanges_.emplace(STATE::FIN, std::bind(&LevelNotice::ChangeStateFin , this));
 }
 
-LevelupNotice::~LevelupNotice()
-{
-}
-
-void LevelupNotice::Init()
+void LevelNotice::Init()
 {
 	//読み込み
 	Load();
@@ -39,13 +35,13 @@ void LevelupNotice::Init()
 	Reset();
 }
 
-void LevelupNotice::Update()
+void LevelNotice::Update()
 {
 	//更新処理
 	stateUpdate_();
 }
 
-void LevelupNotice::Draw()
+void LevelNotice::Draw()
 {
 	//描画設定
 	Vector2 pos ={ 0,0 };
@@ -77,13 +73,13 @@ void LevelupNotice::Draw()
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
-void LevelupNotice::Release()
+void LevelNotice::Release()
 {
 	DeleteFontToHandle(fontMes_);
 	DeleteFontToHandle(fontLevel_);
 }
 
-void LevelupNotice::Load()
+void LevelNotice::Load()
 {
 	//テキスト
 	auto& text_m = TextManager::GetInstance();
@@ -103,59 +99,59 @@ void LevelupNotice::Load()
 	imgEfe_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::LEVEL_SCREEN_EFE).handleIds_;
 }
 
-void LevelupNotice::Reset()
+void LevelNotice::Reset()
 {
 	cnt_ = START_ALPHA_LEVEL;
 	scl_ = 1.0f;	
 	alphaMes_ = 0.0f;
 	alphaLevel_ = 0.0f;
-	ChangeState(LevelupNotice::STATE::NONE);
+	ChangeState(LevelNotice::STATE::NONE);
 	efeStep_ = 0;
 	efeSpeed_ = EFFECT_ANIM_SPPED;
 	efeAnimNum_ = 0;
 	isEfe_ = false;
 }
 
-void LevelupNotice::ChangeState(const STATE state)
+void LevelNotice::ChangeState(const STATE _state)
 {
 	// 状態受け取り
-	state_ = state;
+	state_ = _state;
 
 	// 各状態遷移の初期処理
 	stateChanges_[state_]();
 }
 
-void LevelupNotice::SetNewLevel(const int& newLevel)
+void LevelNotice::SetNewLevel(const int& _newLevel)
 {
-	newLevel_ = newLevel;
+	newLevel_ = _newLevel;
 }
 
-void LevelupNotice::ChangeStateNone()
+void LevelNotice::ChangeStateNone()
 {
-	stateUpdate_ = std::bind(&LevelupNotice::UpdateNone, this);
+	stateUpdate_ = std::bind(&LevelNotice::UpdateNone, this);
 }
 
-void LevelupNotice::ChangeStateFade()
+void LevelNotice::ChangeStateFade()
 {
-	stateUpdate_ = std::bind(&LevelupNotice::UpdateFade, this);
+	stateUpdate_ = std::bind(&LevelNotice::UpdateFade, this);
 }
 
-void LevelupNotice::ChangeStateMaintain()
+void LevelNotice::ChangeStateMaintain()
 {
-	stateUpdate_ = std::bind(&LevelupNotice::UpdateMaintain, this);
+	stateUpdate_ = std::bind(&LevelNotice::UpdateMaintain, this);
 }
 
-void LevelupNotice::ChangeStateFin()
+void LevelNotice::ChangeStateFin()
 {
-	stateUpdate_ = std::bind(&LevelupNotice::UpdateFin, this);
+	stateUpdate_ = std::bind(&LevelNotice::UpdateFin, this);
 }
 
-void LevelupNotice::UpdateNone()
+void LevelNotice::UpdateNone()
 {
 	ChangeState(STATE::FADE_IN);
 }
 
-void LevelupNotice::UpdateFade()
+void LevelNotice::UpdateFade()
 {
 	float rate = EXPANSION_RATE;	
 	float max = Fader::ALPHA_MAX;		
@@ -165,7 +161,7 @@ void LevelupNotice::UpdateFade()
 
 	//透過処理
 	alphaMes_ += rate;
-	if (cnt_ <= 0) { 
+	if (cnt_ <= 0.0f) { 
 		alphaLevel_ += rate; 
 		isEfe_ = true;
 		EffectUpdate();
@@ -181,7 +177,7 @@ void LevelupNotice::UpdateFade()
 	}
 }
 
-void LevelupNotice::UpdateMaintain()
+void LevelNotice::UpdateMaintain()
 {
 	//カウント更新
 	cnt_ -= SceneManager::GetInstance().GetDeltaTime();
@@ -196,11 +192,11 @@ void LevelupNotice::UpdateMaintain()
 	}
 }
 
-void LevelupNotice::UpdateFin()
+void LevelNotice::UpdateFin()
 {
 }
 
-void LevelupNotice::EffectUpdate()
+void LevelNotice::EffectUpdate()
 {
 	//エフェクト更新処理
 	efeStep_++;
@@ -215,12 +211,12 @@ void LevelupNotice::EffectUpdate()
 	}
 }
 
-void LevelupNotice::DrawMessage()
+void LevelNotice::DrawMessage()
 {
 	int c = TextManager::CENTER_TEXT;
 	int cH = TextManager::CENTER_TEXT_H;
 	int color = 0xffffff;
-	int length = text_.length();
+	int length = static_cast<int>(text_.length());
 
 	Vector2 pos{
 	Application::SCREEN_SIZE_X / c - length * FONT_TEXT_SIZE / cH - MES_TEXT_POS_X,
@@ -229,13 +225,13 @@ void LevelupNotice::DrawMessage()
 	DrawFormatStringToHandle(pos.x, pos.y, color, fontMes_, text_.c_str());
 }
 
-void LevelupNotice::DrawLevel()
+void LevelNotice::DrawLevel()
 {
 	std::string levelText = std::to_string(newLevel_);
 	int c = TextManager::CENTER_TEXT;
 	int cH = TextManager::CENTER_TEXT_H;
 	int color = 0xffffff;
-	int length = levelText.length();
+	int length = static_cast<int>(levelText.length());
 	Vector2 pos{
 	Application::SCREEN_SIZE_X / c - length * FONT_LEVEL_SIZE / cH,
 	(Application::SCREEN_SIZE_Y - FONT_LEVEL_SIZE) / c + LEVEL_TEXT_POS_Y };

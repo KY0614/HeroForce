@@ -30,6 +30,7 @@ public:
 		END		//終了
 	};
 
+	//生存時の行動状態
 	enum class ALIVE_MOVE
 	{
 		IDLE,		//立ち止まる
@@ -42,10 +43,10 @@ public:
 	static constexpr VECTOR SCALE = { 1.3f,1.3f, 1.3f };
 
 	//パラメーター関連
-	static constexpr int DEFAULT_LIFE = 300;
-	static constexpr int DEFAULT_ATK = 0;
-	static constexpr int DEFAULT_DEF = 50;
-	static constexpr float DEFAULT_SPEED = 3.0f;
+	//static constexpr int DEFAULT_LIFE = 300;
+	//static constexpr int DEFAULT_ATK = 0;
+	//static constexpr int DEFAULT_DEF = 50;
+	//static constexpr float DEFAULT_SPEED = 3.0f;
 
 	//アニメーション速度
 	static constexpr float DEFAULT_SPEED_ANIM = 50.0f;
@@ -71,7 +72,7 @@ public:
 	static constexpr COLOR_F FADE_C_TO = { 0.8f, 0.1f, 0.1f, 0.0f };
 
 	//HELP画像表示時間
-	static constexpr int IS_HELP_CNT = 3 * Application::DEFAULT_FPS;
+	static constexpr float IS_HELP_CNT = static_cast<float>(3 * Application::DEFAULT_FPS);
 
 	//HELP相対位置
 	static constexpr VECTOR LOCAL_HELP_POS = { 0,180,0 };
@@ -94,21 +95,41 @@ public:
 	//ダメージエフェクト
 	static constexpr float DAMAGE_EFE_SCALE = 30.0f;
 
+	//エフェクトの生成範囲
+	static constexpr VECTOR EFC_CREATE_RANGE = { 50, 50, 0 };
+
+	//煙中心位置
+	static constexpr float SMOKE_CENTER_POS = 0.5f;
+
+	//コンストラクタ
 	ChickenBase();
+
+	//デストラクタ
 	~ChickenBase();
 
-	virtual void Create(VECTOR& pos);	//生成位置とターゲットのトランスフォームをもらう
-	virtual void Update(void)override;
-	void Draw(void)override;
+	/// <summary>
+	/// 生成
+	/// </summary>
+	/// <param name="pos"></param>生成位置
+	virtual void Create(const VECTOR& _pos);
+
+	//更新
+	virtual void Update()override;
+
+	//描画
+	void Draw()override;
 	
 	//画像表示の設定
 	void SetIsHelp();
 
-	//ターゲットの座標設定
-	void SetTarget(const VECTOR pos);
+	/// <summary>
+	/// ターゲットの座標を受け取る
+	/// </summary>
+	/// <param name="pos"></param>ターゲット位置
+	inline void SetTarget(const VECTOR _pos) { targetPos_ = _pos; }
 
 	//状態を返す
-	STATE GetState() const;
+	inline const STATE GetState() const { return state_; }
 
 protected:
 
@@ -124,7 +145,7 @@ protected:
 
 	//画像の表示
 	bool isHelp_;
-	int isHelpCnt_;
+	float isHelpCnt_;
 
 	//ターゲット用情報
 	VECTOR targetPos_;
@@ -141,18 +162,18 @@ protected:
 	float efeSpeed_;
 	
 	// 状態管理(状態遷移時初期処理)
-	std::map<STATE, std::function<void(void)>> stateChanges_;
+	std::map<STATE, std::function<void()>> stateChanges_;
 
-	std::map<ALIVE_MOVE, std::function<void(void)>> aliveChanges_;
+	std::map<ALIVE_MOVE, std::function<void()>> aliveChanges_;
 
 	// 状態管理(更新ステップ)
-	std::function<void(void)> stateUpdate_;
+	std::function<void()> stateUpdate_;
 
 	// 状態管理(描画)
-	std::function<void(void)> stateDraw_;
+	std::function<void()> stateDraw_;
 
 	// 生存時状態管理
-	std::function<void(void)> stateAliveUpdate_;
+	std::function<void()> stateAliveUpdate_;
 
 	//UIインスタンス生成
 	std::unique_ptr<CpuHpBar> hpUi_;
@@ -160,8 +181,8 @@ protected:
 	//モデル設定
 	void ModelSet();
 
-	//画像読み込み
-	void LoadImages();
+	//リソースの読み込み
+	void Load();
 
 	//パラメーターの設定
 	virtual void SetParam();
@@ -173,14 +194,14 @@ protected:
 	void SetUiParam();
 
 	//状態変更
-	void ChangeState(STATE state);
+	void ChangeState(const STATE _state);
 	void ChangeStateNone();
 	void ChangeStateAlive();
 	void ChangeStateDamage();
 	void ChangeStateDeath();
 	void ChangeStateEnd();
 
-	void ChangeAliveState(ALIVE_MOVE state);
+	void ChangeAliveState(const ALIVE_MOVE _state);
 	void ChangeAliveIdle();
 	void ChangeAliveWalk();
 	void ChangeAliveCall();

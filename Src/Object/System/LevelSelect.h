@@ -3,12 +3,11 @@
 #include <string>
 #include<memory>
 #include "../../Common/Vector2.h"
-#include "LevelScreenManager.h"
+#include "Cursor.h"
 
-class Carsor;
-class LevelScreenManager;
+class Cursor;
 
-class LevelupSelect
+class LevelSelect
 {
 public:
 
@@ -32,12 +31,12 @@ public:
 	static constexpr float SCALE_RATE = 0.01f;
 
 	//拡大最大
-	static constexpr float SCALE_MAX = 0.7f;//Application::SCREEN_SIZE_X * 1.5f / Application::DEFA_SCREEN_SIZE_X;
+	static constexpr float SCALE_MAX = 0.7f;
 
 	//フォント関連
-	static constexpr int FONT_MES_SIZE = 36;//Application::SCREEN_SIZE_X * 72 / Application::DEFA_SCREEN_SIZE_X;
+	static constexpr int FONT_MES_SIZE = 36;
 	static constexpr int FONT_MES_THICK = 5;
-	static constexpr int FONT_EXP_SIZE = 24;//Application::SCREEN_SIZE_X * 36 / Application::DEFA_SCREEN_SIZE_X;
+	static constexpr int FONT_EXP_SIZE = 24;
 	static constexpr int FONT_EXP_THICK = 3;
 
 	//メッセージ描画位置
@@ -58,12 +57,31 @@ public:
 	static constexpr int ELEMENT_POS_RD_X = Application::SCREEN_SIZE_X / 4 * 3 - 40;
 	static constexpr int ELEMENT_POS_RD_Y = Application::SCREEN_SIZE_Y / 4 * 3 + 10;
 
-	LevelupSelect();
-	~LevelupSelect();
+	//背景アルファ値
+	static constexpr int BACK_ALPHA = 150;
 
+	//パーセント用数字
+	static constexpr int POW = 30;
+
+	//テキスト位置調整用
+	static constexpr int TEXT_OFFSET_POS_Y = 90;
+
+	//コンストラクタ
+	LevelSelect();
+
+	//デストラクタ
+	~LevelSelect() = default;
+
+	//初期化
 	void Init();
+
+	//更新
 	void Update();
+
+	//描画
 	void Draw();
+
+	//解放
 	void Release();
 
 	//変数の初期化
@@ -72,15 +90,19 @@ public:
 	//読み込み
 	void Load();
 
-	//状態の受け取り
-	STATE GetState() const { return state_; }
+	/// <summary>
+	/// 状態を返す
+	/// </summary>
+	/// <returns></returns>状態
+	inline const STATE GetState() const { return state_; }
 
-	//種類の受け取り
-	inline LevelScreenManager::TYPE GetType(const int plNum) { return selectTypes_[plNum]; }
+	/// <summary>
+	/// 種類を返す
+	/// </summary>
+	/// <param name="plNum"></param>プレイヤー番号
+	/// <returns></returns>選択した種類
+	inline LevelScreenManager::TYPE GetType(const int _plNum) { return selectTypes_[_plNum]; }
 	
-	//種類のランダム決定
-	inline LevelScreenManager::TYPE GetRandType();
-
 	//スキップ用処理
 	void SetSkipState();
 
@@ -92,7 +114,7 @@ private:
 	//画像
 	int img_;
 	int imgSelects_[LevelScreenManager::TYPE_MAX];
-	int *imgCarsors_;
+	int *imgCursors_;
 	int imgBack_;
 
 	//強化要素数
@@ -109,19 +131,19 @@ private:
 	struct Element
 	{
 		//拡大率
-		float scl_;
+		float scl_ = 0.0f;
 
 		//座標
-		Vector2 pos_;
+		Vector2 pos_ = {};
 
 		//サイズ
-		Vector2 size_;
+		Vector2 size_ = {};
 
 		//種類
-		LevelScreenManager::TYPE type_;
+		LevelScreenManager::TYPE type_ = LevelScreenManager::TYPE::MAX;
 
 		//テキストの表示
-		bool isText_;
+		bool isText_ = false;
 	};
 
 	//エレメント
@@ -135,26 +157,29 @@ private:
 	std::string expTexts_[LevelScreenManager::TYPE_MAX];
 
 	// 状態管理(状態遷移時初期処理)
-	std::map<STATE, std::function<void(void)>> stateChanges_;
+	std::map<STATE, std::function<void()>> stateChanges_;
 
 	// 状態管理
-	std::function<void(void)> stateUpdate_;	//更新
+	std::function<void()> stateUpdate_;	//更新
 
 	//カーソル
-	std::vector<std::unique_ptr<Carsor>> carsors_;
+	std::vector<std::unique_ptr<Cursor>> cursors_;
 
 	//初期座標の設定
 	void SetFirstPos();
 
 	//フォント生成
-	void CreateFonts();
+	void CreateFonts();	
+	
+	//種類のランダム決定
+	LevelScreenManager::TYPE GetRandType();
 
 	//衝突判定
-	bool IsCollisionBoxCircle(Vector2 pos1, Vector2 size1, Vector2 pos2, float radius2);	//計算処理
-	Vector2 V2Sub(Vector2 value1, Vector2 value2);
+	bool IsCollisionBoxCircle(const Vector2 _pos1,const  Vector2 _size1,const  Vector2 _pos2,const  float _radius);	//計算処理
+	Vector2 V2Sub(const Vector2 _pos1, const  Vector2 _pos2);
 
 	//状態変更処理
-	void ChangeState(const STATE state);
+	void ChangeState(const STATE _state);
 	void ChangeStateNone();
 	void ChangeStateExpansion();
 	void ChangeStateSelect();

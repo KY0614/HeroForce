@@ -11,14 +11,12 @@ GameClearScene::GameClearScene()
 	for (auto& c : chickens_) { c = nullptr; }
 	player_ = nullptr;
 	imgMes_ = -1;
-
 	state_ = STATE::HAPPY;
-
 	stateChanges_.emplace(STATE::HAPPY, std::bind(&GameClearScene::ChangeStateHappy, this));
 	stateChanges_.emplace(STATE::DISPLAY, std::bind(&GameClearScene::ChangeStateDisplay, this));
 }
 
-void GameClearScene::Init(void)
+void GameClearScene::Init()
 {
 	auto& res = ResourceManager::GetInstance();
 	auto& snd = SoundManager::GetInstance();
@@ -65,9 +63,9 @@ void GameClearScene::Init(void)
 	auto& efe = EffectManager::GetInstance();
 	efe.Play(
 		EffectManager::EFFECT::FIREWORK,
-		EFFECT_POS,
+		EFC_POS,
 		Quaternion(),
-		EFFECT_SIZE,
+		EFC_SIZE,
 		SoundManager::SOUND::NONE);
 
 	//音関係
@@ -82,13 +80,14 @@ void GameClearScene::Init(void)
 	ChangeState(STATE::HAPPY);
 }
 
-void GameClearScene::Update(void)
+void GameClearScene::Update()
 {	
 	auto& efe = EffectManager::GetInstance();
 	auto& ins = InputManager::GetInstance();
 	auto& scm = SceneManager::GetInstance();
 	auto& snd = SoundManager::GetInstance();
 
+	//状態ごとの更新処理
 	stateUpdate_();
 
 	//各種オブジェクト処理
@@ -103,9 +102,9 @@ void GameClearScene::Update(void)
 		//エフェクトを再生
 		efe.Play(
 			EffectManager::EFFECT::FIREWORK,
-			EFFECT_POS,
+			EFC_POS,
 			Quaternion(),
-			EFFECT_SIZE,
+			EFC_SIZE,
 			SoundManager::SOUND::NONE);
 	}
 
@@ -123,14 +122,21 @@ void GameClearScene::Update(void)
 	}
 }
 
-void GameClearScene::Draw(void)
+void GameClearScene::Draw()
 {
+	//空
 	sky_->Draw();
+
+	//ステージ
 	stage_->Draw();
+
+	//プレイヤー
 	player_->Draw();
+
+	//チキン
 	for (auto& c : chickens_) { c->Draw(); }
 
-	//メッセージの描画
+	//クリアメッセージの描画
 	DrawRotaGraph(
 		MES_POS_X, MES_POS_Y,
 		1.0f,
@@ -139,6 +145,7 @@ void GameClearScene::Draw(void)
 		true,
 		false);
 
+	//シーン遷移メッセージの描画
 	if (state_ == STATE::DISPLAY) {
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)alpha_);
 		DrawRotaGraph(
@@ -152,7 +159,7 @@ void GameClearScene::Draw(void)
 	}
 }
 
-void GameClearScene::Release(void)
+void GameClearScene::Release()
 {
 	SceneManager::GetInstance().ResetCameras();
 	SceneManager::GetInstance().ReturnSolo();
@@ -180,10 +187,11 @@ void GameClearScene::ChangeStateDisplay()
 	stateUpdate_ = std::bind(&GameClearScene::UpdateDisplay, this);
 }
 
-void GameClearScene::UpdateHappy(void)
+void GameClearScene::UpdateHappy()
 {
 	step_ += SceneManager::GetInstance().GetDeltaTime();
 
+	//一定秒数で状態遷移
 	if (step_ >= CHANGE_SECOND)
 	{
 		SoundManager::GetInstance().Stop(SoundManager::SOUND::GAMECLEAR_SE);
@@ -192,30 +200,10 @@ void GameClearScene::UpdateHappy(void)
 	}
 }
 
-void GameClearScene::UpdateDisplay(void)
+void GameClearScene::UpdateDisplay()
 {
+	//アルファ値の計算
 	alpha_ += alphaAdd_;
 	if (alpha_ > ALPHA_MAX) { alphaAdd_ = -1.0f; }
 	else if (alpha_ < ALPHA_MIN) { alphaAdd_ = 1.0f; }
-}
-
-void GameClearScene::DebagPlay()
-{
-	/*auto& ins = InputManager::GetInstance();
-	if (ins.IsNew(KEY_INPUT_RIGHT))
-	{
-		pos.x++;
-	}
-	if (ins.IsNew(KEY_INPUT_LEFT))
-	{
-		pos.x--;
-	}
-	if (ins.IsNew(KEY_INPUT_UP))
-	{
-		pos.z++;
-	}
-	if (ins.IsNew(KEY_INPUT_DOWN))
-	{
-		pos.z--;
-	}*/
 }

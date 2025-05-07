@@ -22,6 +22,16 @@ void UnitPositionLoad::Init()
 	JsonLoad();
 }
 
+const std::vector<VECTOR> UnitPositionLoad::GetPos(const UNIT_TYPE _type)
+{
+	return pos_[_type];
+}
+
+const std::vector<VECTOR> UnitPositionLoad::GetRot(const UNIT_TYPE _type)
+{
+	return rot_[_type];
+}
+
 void UnitPositionLoad::SetJsonFile()
 {
 	//JSONファイルネーム
@@ -62,7 +72,7 @@ void UnitPositionLoad::JsonLoad()
 			//座標の取得
 			VECTOR ret = {
 				data["pos"]["x"] * SCALE,
-				data["pos"]["y"] * SCALE - SCALE * 1.5,
+				data["pos"]["y"] * SCALE + DOWN_POS_Y,
 				data["pos"]["z"] * SCALE };
 			pos.push_back(ret);
 
@@ -77,14 +87,4 @@ void UnitPositionLoad::JsonLoad()
 		pos_.emplace(type, rot);
 	}
 	ifs.close();
-}
-
-std::vector<VECTOR> UnitPositionLoad::GetPos(UNIT_TYPE type)
-{
-	return pos_[type];
-}
-
-std::vector<VECTOR> UnitPositionLoad::GetRot(UNIT_TYPE type)
-{
-	return rot_[type];
 }

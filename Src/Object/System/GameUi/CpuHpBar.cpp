@@ -20,11 +20,6 @@ void CpuHpBar::Load()
 	imgHpBar_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::HP_CPU).handleId_;
 }
 
-void CpuHpBar::SetParam()
-{
-	//Ží—Þ
-	typeHpBar_ = HPBAR_TYPE::CPU;
-}
 
 void CpuHpBar::Draw()
 {

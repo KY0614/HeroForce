@@ -6,6 +6,9 @@ class ShaderFade :public Fader
 {
 public:
 
+	ShaderFade();
+	~ShaderFade();
+
 	//•`‰æ(ˆø”‚Å‰æ‘œ‚Ìî•ñ‚ğ“Ç‚İ‚Ş)
 	void Init()override;
 	void Draw()override;

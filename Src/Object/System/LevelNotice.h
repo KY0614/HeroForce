@@ -8,7 +8,7 @@
 
 class LevelScreenManager;
 
-class LevelupNotice
+class LevelNotice
 {
 public:
 
@@ -28,7 +28,7 @@ public:
 	static constexpr float EXPANSION_MAX = 1.2f;
 
 	//維持秒数
-	static constexpr int MAINTAIN_SECONDS = 1.5 * Application::DEFAULT_FPS;
+	static constexpr int MAINTAIN_SECONDS = static_cast<int>(1.5f * Application::DEFAULT_FPS);
 
 	//フォント関連
 	static constexpr int FONT_TEXT_SIZE = Application::SCREEN_SIZE_X * 156 / Application::DEFA_SCREEN_SIZE_X;
@@ -36,7 +36,7 @@ public:
 	static constexpr int FONT_THICK = 3;
 
 	//透過開始時間(レベルテキスト)
-	static constexpr int START_ALPHA_LEVEL = 2 * Application::DEFAULT_FPS;
+	static constexpr float START_ALPHA_LEVEL =static_cast<float>( 2 * Application::DEFAULT_FPS);
 
 	//エフェクトスピード
 	static constexpr int EFFECT_ANIM_SPPED = 3;
@@ -49,9 +49,11 @@ public:
 	static constexpr int EFFECT_POS_X = Application::SCREEN_SIZE_X / 2;
 	static constexpr int EFFECT_POS_Y = (Application::SCREEN_SIZE_Y - FONT_LEVEL_SIZE) / 2 + LEVEL_TEXT_POS_Y;
 
+	//コンストラクタ
+	LevelNotice();
 
-	LevelupNotice();
-	~LevelupNotice();
+	//デストラクタ
+	~LevelNotice() = default;
 
 	void Init();
 	void Update();
@@ -61,32 +63,46 @@ public:
 	//読み込み
 	void Load();
 
-	//変数の初期化
+	//リセット
 	void Reset();
 
-	//状態の設定
-	void ChangeState(const STATE state);
+	/// <summary>
+	/// 状態変更
+	/// </summary>
+	/// <param name="_state"></param>状態
+	void ChangeState(const STATE _state);
 
-	//レベルの設定
-	void SetNewLevel(const int& newLevel);
+	/// <summary>
+	/// 新しいレベル設定
+	/// </summary>
+	/// <param name="_newLevel"></param>新しいレベル
+	void SetNewLevel(const int& _newLevel);
 
 	//状態を返す
-	inline STATE GetState() const { return state_; }
+	inline const STATE GetState() const { return state_; }
 
 private:
 	
-	//エフェクト関係
+	//エフェクト画像
 	int *imgEfe_;
+
+	//エフェクト更新用ステップ
 	int efeStep_;
+
+	//エフェクトのアニメーション番号
 	int efeAnimNum_;
+
+	//エフェクトのスピード
 	int efeSpeed_;
+
+	//エフェクトの再生
 	bool isEfe_;
 
 	//状態
 	STATE state_;
 
 	//カウント
-	int cnt_;
+	float cnt_;
 
 	//レベル
 	int newLevel_;
@@ -95,21 +111,21 @@ private:
 	float scl_;
 	
 	//アルファ値
-	float alphaMes_;
-	float alphaLevel_;
+	float alphaMes_;	//メッセージ用
+	float alphaLevel_;	//レベル用
 
 	//フォント
-	int fontMes_;
-	int fontLevel_;
+	int fontMes_;		//メッセージ用フォント
+	int fontLevel_;		//レベル用フォント
 
 	//テキスト
 	std::string text_;
 
 	// 状態管理(状態遷移時初期処理)
-	std::map<STATE, std::function<void(void)>> stateChanges_;
+	std::map<STATE, std::function<void()>> stateChanges_;
 
 	// 状態管理
-	std::function<void(void)> stateUpdate_;	//更新
+	std::function<void()> stateUpdate_;	//更新
 
 	//状態変更処理
 	void ChangeStateNone();

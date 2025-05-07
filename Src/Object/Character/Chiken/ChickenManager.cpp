@@ -10,10 +10,6 @@ ChickenManager::ChickenManager(
 	targetPos_ = AsoUtility::VECTOR_ZERO;
 }
 
-ChickenManager::~ChickenManager()
-{
-}
-
 void ChickenManager::Init()
 {
 	//座標の中身をシャッフルする
@@ -76,19 +72,17 @@ void ChickenManager::ShufflePos()
 	std::shuffle(pos_.begin(), pos_.end(), gen);
 }
 
-void ChickenManager::SetTargetPos(const VECTOR pos)
-{
-	targetPos_ = pos;
-}
+//void ChickenManager::SetTargetPos(const VECTOR pos)
+//{
+//	targetPos_ = pos;
+//}
 
-const int ChickenManager::GetAliveNum(void) const
+const int ChickenManager::GetAliveNum() const
 {      
 	int ret = 0;
-
 	for (auto& c:chickens_ ) {
 		if (c->IsAlive())ret++;
 	}
-
 	return ret;
 }
 
@@ -108,7 +102,7 @@ std::shared_ptr<ChickenBase> ChickenManager::GetChicken(const int _num)
 	return chickens_[_num];
 }
 
-const int ChickenManager::GetChickenAllNum(void) const
+const int ChickenManager::GetChickenAllNum() const
 {
 	return static_cast<int>(chickens_.size());
 }

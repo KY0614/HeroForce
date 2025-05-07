@@ -23,23 +23,30 @@ public:
 	static constexpr int MES_POS_X = Application::SCREEN_SIZE_X / 2;
 	static constexpr int MES_POS_Y = Application::SCREEN_SIZE_Y - FONT_SIZE - 15;
 
+	//コンストラクタ
 	ExplanScene();
+
+	//デストラクタ
 	~ExplanScene() = default;
 
-	void Init(void) override;
-	void Update(void) override;
-	void Draw(void) override;
-	void Release(void) override;
+	void Init() override;
+	void Update() override;
+	void Draw() override;
+	void Release() override;
 
 private:
 
 	//画像
-	int imgExp_[EXPLAN_CNT];
-	int *imgPoint_;
+	int imgExp_[EXPLAN_CNT];	//説明画像
+	int *imgPoint_;				//ポイント画像
 
 	//アルファ値
 	float alpha_;
+
+	//アルファ追加値
 	float alphaAdd_;
+
+	//更新用ステップ
 	float step_;
 
 	//フォント
@@ -48,6 +55,7 @@ private:
 	//説明書番号
 	int cntExp_;
 
+	//スティック判定
 	bool isStick_;
 
 };
