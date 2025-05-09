@@ -41,9 +41,6 @@ void OtherScenePlayerBase::Draw()
 	for (int i = 0; i < PLAYERS; i++)
 	{
 		MV1DrawModel(transArray_[i].modelId);
-
-		//ƒ‚ƒfƒ‹‚Ì‰Šú‰»
-		//transArray_[i].Update();
 	}
 }
 

@@ -42,12 +42,6 @@ public:
 	//キャラクターサイズ
 	static constexpr VECTOR SCALE = { 1.3f,1.3f, 1.3f };
 
-	//パラメーター関連
-	//static constexpr int DEFAULT_LIFE = 300;
-	//static constexpr int DEFAULT_ATK = 0;
-	//static constexpr int DEFAULT_DEF = 50;
-	//static constexpr float DEFAULT_SPEED = 3.0f;
-
 	//アニメーション速度
 	static constexpr float DEFAULT_SPEED_ANIM = 50.0f;
 	

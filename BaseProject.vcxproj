@@ -74,7 +74,6 @@
     <ClCompile Include="Src\Common\ImageFader.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\Collision.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\TextManager.cpp" />
-    <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
     <ClCompile Include="Src\Object\System\Cursor.cpp" />
     <ClCompile Include="Src\Object\System\LevelScreenManager.cpp" />
     <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
@@ -170,7 +169,6 @@
     <ClInclude Include="Src\Object\SelectImage.h" />
     <ClInclude Include="Src\Object\Stage\SkyDome.h" />
     <ClInclude Include="Src\Object\Stage\StageManager.h" />
-    <ClInclude Include="Src\Object\Stage\StageObject.h" />
     <ClInclude Include="Src\Object\System\Cursor.h" />
     <ClInclude Include="Src\Object\System\LevelScreenManager.h" />
     <ClInclude Include="Src\Object\System\LevelNotice.h" />

@@ -1,5 +1,6 @@
 #include <DxLib.h>
 #include "../../Application.h"
+#include "../../Utility/AsoUtility.h"
 #include "../../Manager/Decoration/SoundManager.h"
 #include "../../Manager/Generic/ResourceManager.h"
 #include "../../Manager/GameSystem/TextManager.h"
@@ -108,7 +109,7 @@ void LevelSelect::Draw()
 			if (ele.isText_) {
 
 				//テキスト描画
-				color = 0xffffff;
+				color = AsoUtility::WHITE;
 				length = static_cast<int>(expTexts_[type].length());
 				pos = ele.pos_;
 				pos.x -= length * FONT_EXP_SIZE / TextManager::CENTER_TEXT_H;
@@ -119,7 +120,7 @@ void LevelSelect::Draw()
 					pos.x, pos.y,
 					pos.x + length * FONT_EXP_SIZE / 2,
 					pos.y + FONT_EXP_SIZE,
-					0x000000, true);
+					AsoUtility::BLACK, true);
 				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 				DrawFormatStringToHandle(
@@ -175,7 +176,7 @@ void LevelSelect::Reset()
 	for (int i = 0; i < ele_.size(); i++)
 	{
 		//初期拡大値
-		ele_[i].scl_ = 0.00f;
+		ele_[i].scl_ = 0.0f;
 
 		//サイズ
 		ele_[i].size_ = { static_cast<int>(ELE_IMG_SIZE_X * SCALE_MAX),
@@ -352,7 +353,7 @@ void LevelSelect::UpdateSelect()
 			}
 
 			//衝突判定(強化項目とカーソルが衝突してる場合)
-			if (IsCollisionBoxCircle(
+			if (AsoUtility::IsCollisionBoxCircle(
 				ele_[j].pos_,
 				ele_[j].size_,
 				cursors_[i]->GetPos(),
@@ -408,59 +409,6 @@ void LevelSelect::DebagDraw()
 		Vector2 RDpos{ ele.pos_.x + ele.size_.x/2,
 			ele.pos_.y + ele.size_.y/2 };
 
-		DrawBox(LUpos.x ,LUpos.y, RDpos.x,RDpos.y,0xff00ff,true);
+		DrawBox(LUpos.x ,LUpos.y, RDpos.x,RDpos.y,AsoUtility::YELLOW,true);
 	}
-}
-
-bool LevelSelect::IsCollisionBoxCircle(const Vector2 _pos1, const  Vector2 _size1, const  Vector2 _pos2, const  float _radius)
-{
-	Vector2 righttop = _pos1;
-	righttop.x += _size1.x / 2;
-	righttop.y -= _size1.y / 2;
-	righttop = V2Sub(_pos2, righttop);
-	int rightTop = static_cast<int>(std::hypot(righttop.x, righttop.y));
-
-	Vector2 rightdown = _pos1;
-	rightdown.x += _size1.x / 2;
-	rightdown.y += _size1.y / 2;
-	rightdown = V2Sub(_pos2, rightdown);
-	int rightDown = static_cast<int>(std::hypot(rightdown.x, rightdown.y));
-
-	Vector2 lefttop = _pos1;
-	lefttop.x -= _size1.x / 2;
-	lefttop.y -= _size1.y / 2;
-	lefttop = V2Sub(_pos2, lefttop);
-	int leftTop = static_cast<int>(std::hypot(lefttop.x, lefttop.y));
-
-	Vector2 leftdown = _pos1;
-	leftdown.x -= _size1.x / 2;
-	leftdown.y += _size1.y / 2;
-	leftdown = V2Sub(_pos2, leftdown);
-	int leftDown = static_cast<int>(std::hypot(leftdown.x, leftdown.y));
-
-	//-----------------------------------------------------------
-
-	float diffX = static_cast<float>(_pos1.x - _pos2.x);/////終点から始点を引く///////
-	float diffY = static_cast<float>(_pos1.y - _pos2.y);/////終点から始点を引く///////
-
-	if (rightTop <= _radius ||
-		rightDown <= _radius ||
-		leftTop <= _radius ||
-		leftDown <= _radius ||
-		(fabsf(diffX) < _radius && fabsf(diffY) < _radius + _size1.y / 2) ||
-		(fabsf(diffX) < _radius + _size1.x / 2 && fabsf(diffY) < _size1.y / 2))
-	{
-		//衝突している
-		return true;
-	}
-	
-	return false;
-}
-
-Vector2 LevelSelect::V2Sub(const Vector2 _pos1, const  Vector2 _pos2)
-{
-	Vector2 pos;
-	pos.x = _pos1.x - _pos2.x;
-	pos.y = _pos1.y - _pos2.y;
-	return pos;
 }

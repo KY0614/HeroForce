@@ -55,7 +55,7 @@ void LevelNotice::Draw()
 	if (isEfe_) {
 		DrawRotaGraph(EFFECT_POS_X,
 			EFFECT_POS_Y,
-			1.5f,
+			EFFECT_RATE,
 			0.0f,
 			imgEfe_[efeAnimNum_],
 			true,
@@ -215,14 +215,13 @@ void LevelNotice::DrawMessage()
 {
 	int c = TextManager::CENTER_TEXT;
 	int cH = TextManager::CENTER_TEXT_H;
-	int color = 0xffffff;
 	int length = static_cast<int>(text_.length());
 
 	Vector2 pos{
 	Application::SCREEN_SIZE_X / c - length * FONT_TEXT_SIZE / cH - MES_TEXT_POS_X,
 	Application::SCREEN_SIZE_Y / c - FONT_TEXT_SIZE / c - MES_TEXT_POS_Y };
 	
-	DrawFormatStringToHandle(pos.x, pos.y, color, fontMes_, text_.c_str());
+	DrawFormatStringToHandle(pos.x, pos.y, AsoUtility::BLACK, fontMes_, text_.c_str());
 }
 
 void LevelNotice::DrawLevel()
@@ -230,11 +229,10 @@ void LevelNotice::DrawLevel()
 	std::string levelText = std::to_string(newLevel_);
 	int c = TextManager::CENTER_TEXT;
 	int cH = TextManager::CENTER_TEXT_H;
-	int color = 0xffffff;
 	int length = static_cast<int>(levelText.length());
 	Vector2 pos{
 	Application::SCREEN_SIZE_X / c - length * FONT_LEVEL_SIZE / cH,
 	(Application::SCREEN_SIZE_Y - FONT_LEVEL_SIZE) / c + LEVEL_TEXT_POS_Y };
 	
-	DrawFormatStringToHandle(pos.x, pos.y, color, fontLevel_, levelText.c_str() );
+	DrawFormatStringToHandle(pos.x, pos.y, AsoUtility::BLACK, fontLevel_, levelText.c_str() );
 }

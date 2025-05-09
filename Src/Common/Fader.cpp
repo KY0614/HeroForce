@@ -1,4 +1,5 @@
 #include <DxLib.h>
+#include "../Utility/AsoUtility.h"
 #include "../Application.h"
 #include "Fader.h"
 
@@ -126,6 +127,8 @@ void Fader::Draw(void)
 
 void Fader::CircleMask()
 {
+	constexpr int ALPHA_SPEED = 4;
+
 	// 描画領域をマスク画像領域に切り替える
 	// 元々は、背面スクリーンになっている
 	SetDrawScreen(tmpScreen_);
@@ -143,8 +146,8 @@ void Fader::CircleMask()
 	DrawCircle(
 		Application::SCREEN_SIZE_X / 2,
 		Application::SCREEN_SIZE_Y / 2,
-		(ALPHA_MAX - alpha_) * 4,
-		0xffffff,
+		(ALPHA_MAX - alpha_) * ALPHA_SPEED,
+		AsoUtility::BLACK,
 		true);
 
 	//描画領域を元に戻す

@@ -38,7 +38,7 @@ LevelScreenManager::~LevelScreenManager()
 void LevelScreenManager::Init()
 {
 	//レベルの初期設定
-	nowLevel_ = 1;
+	nowLevel_ = DEFAULT_LEVEL;
 	restExp_ = 0;
 
 	//インスタンス設定
@@ -221,8 +221,8 @@ void LevelScreenManager::DrawLevelUI()
 	DrawCircleGauge(pos.x, pos.y,
 		percent, imgGageExp_, 0.0f, GAGE_SCALE_RATE);
 
-	//現在レベル
-	if (nowLevel_ < 10)
+	//1桁の場合
+	if (nowLevel_ < AsoUtility::TWO_DIGIT_MIN)
 	{	
 		//1桁の場合
 		DrawRotaGraph(pos.x, pos.y, NUM_SCALE_RATE, 0.0f, imgNumbers_[nowLevel_], true, false);
@@ -230,8 +230,8 @@ void LevelScreenManager::DrawLevelUI()
 	else
 	{	
 		//2桁の場合
-		int leftNum = nowLevel_ / 10;
-		int rightNum = nowLevel_ % 10;
+		int leftNum = nowLevel_ / AsoUtility::TWO_DIGIT_MIN;
+		int rightNum = nowLevel_ % AsoUtility::TWO_DIGIT_MIN;
 
 		//左数字
 		Vector2 leftPos = pos;
@@ -318,7 +318,7 @@ void LevelScreenManager::Reset()
 
 void LevelScreenManager::SetGage(const int _level)
 {
-	gauge_ = CONSTANT_GAGE * (1.0f + (_level / 10));
+	gauge_ = CONSTANT_GAGE * (1.0f + (_level / LEVEL_DIV));
 }
 
 void LevelScreenManager::Reflection(PlayerBase& _player, const int _playerNum)
@@ -455,7 +455,7 @@ void LevelScreenManager::FaderDraw()
 		0, 0,
 		Application::SCREEN_SIZE_X,
 		Application::SCREEN_SIZE_Y,
-		0x000000, true);
+		AsoUtility::BLACK, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
@@ -516,13 +516,13 @@ void LevelScreenManager::DebagUpdate()
 void LevelScreenManager::DebagDraw()
 {
 	Vector2 pos = { 0,0 };
-	int interval = 16;
+	constexpr int INTERVAL = 16;
 	DrawFormatString
-	(pos.x, pos.y, 0xffffff, "現在の経験値%2f", exp_);
-	pos.y += interval;
+	(pos.x, pos.y, AsoUtility::WHITE, "現在の経験値%2f", exp_);
+	pos.y += INTERVAL;
 	DrawFormatString
-	(pos.x, pos.y, 0xffffff, "現在のレベル%d", nowLevel_);
-	pos.y += interval;
+	(pos.x, pos.y, AsoUtility::WHITE, "現在のレベル%d", nowLevel_);
+	pos.y += INTERVAL;
 	DrawFormatString
-	(pos.x, pos.y, 0xffffff, "現在のステート%d", static_cast<int>(state_));
+	(pos.x, pos.y, AsoUtility::WHITE, "現在のステート%d", static_cast<int>(state_));
 }

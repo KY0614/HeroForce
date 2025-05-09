@@ -79,6 +79,9 @@ public:
 	//左のローカル座標X
 	static constexpr int LEFT_LOCAL_POS_X = static_cast<int>(32 * 1.2f);
 
+	//レベル計算用
+	static constexpr int LEVEL_DIV = 10;
+
 	//コンストラクタ
 	LevelScreenManager();
 

@@ -508,22 +508,21 @@ void ChickenBase::DebagUpdate()
 
 void ChickenBase::DebagDraw()
 {
-	int divNum = 20;
-	int interval = 16;
+	constexpr int DIV_NUM = 20;
+	constexpr int INTERVAL = 16;
 	int cnt = 0;
-	int color = 0xff00ff;
 	bool fill = false;
-	Vector2 pos = { 0,Application::SCREEN_SIZE_Y - interval };
+	Vector2 pos = { 0,Application::SCREEN_SIZE_Y - INTERVAL };
 
 	//パラメーターの描画
-	DrawFormatString(pos.x, pos.y - interval * cnt, 0xffffff, "攻撃力%d", atkPow_);
+	DrawFormatString(pos.x, pos.y - INTERVAL * cnt, 0xffffff, "攻撃力%d", atkPow_);
 	cnt++;
-	DrawFormatString(pos.x, pos.y - interval * cnt, 0xffffff, "防御力%d", def_);
+	DrawFormatString(pos.x, pos.y - INTERVAL * cnt, 0xffffff, "防御力%d", def_);
 	cnt++;
-	DrawFormatString(pos.x, pos.y - interval * cnt, 0xffffff, "スピード%d", moveSpeed_);
+	DrawFormatString(pos.x, pos.y - INTERVAL * cnt, 0xffffff, "スピード%d", moveSpeed_);
 	cnt++;
-	DrawFormatString(pos.x, pos.y - interval * cnt, 0xffffff, "体力%d", hp_);
+	DrawFormatString(pos.x, pos.y - INTERVAL * cnt, 0xffffff, "体力%d", hp_);
 
 	//当たり判定の描画
-	DrawSphere3D(trans_.pos, radius_, divNum, color, color, fill);
+	DrawSphere3D(trans_.pos, radius_, DIV_NUM, AsoUtility::RED, AsoUtility::RED, fill);
 }

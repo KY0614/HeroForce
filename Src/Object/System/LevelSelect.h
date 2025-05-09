@@ -174,10 +174,6 @@ private:
 	//í—Ş‚Ìƒ‰ƒ“ƒ_ƒ€Œˆ’è
 	LevelScreenManager::TYPE GetRandType();
 
-	//Õ“Ë”»’è
-	bool IsCollisionBoxCircle(const Vector2 _pos1,const  Vector2 _size1,const  Vector2 _pos2,const  float _radius);	//ŒvZˆ—
-	Vector2 V2Sub(const Vector2 _pos1, const  Vector2 _pos2);
-
 	//ó‘Ô•ÏXˆ—
 	void ChangeState(const STATE _state);
 	void ChangeStateNone();

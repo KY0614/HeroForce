@@ -72,11 +72,6 @@ void ChickenManager::ShufflePos()
 	std::shuffle(pos_.begin(), pos_.end(), gen);
 }
 
-//void ChickenManager::SetTargetPos(const VECTOR pos)
-//{
-//	targetPos_ = pos;
-//}
-
 const int ChickenManager::GetAliveNum() const
 {      
 	int ret = 0;

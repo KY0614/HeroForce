@@ -41,7 +41,6 @@
     <ClCompile Include="Src\Common\ImageFader.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\Collision.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\TextManager.cpp" />
-    <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
     <ClCompile Include="Src\Object\System\Cursor.cpp" />
     <ClCompile Include="Src\Object\System\LevelScreenManager.cpp" />
     <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
@@ -68,9 +67,6 @@
     <ClCompile Include="Src\Object\System\LevelScreenManager.cpp" />
     <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
-    <ClCompile Include="Src\Object\System\Carsor.cpp" />
-    <ClCompile Include="Src\Object\System\LevelupNotice.cpp" />
-    <ClCompile Include="Src\Object\System\LevelupSelect.cpp" />
     <ClCompile Include="Src\Common\ImageFader.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneAxe.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\TextManager.cpp" />
@@ -166,7 +162,6 @@
     <ClCompile Include="Src\Object\Arrow.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClInclude Include="Src\Object\Stage\StageObject.h" />
     <ClInclude Include="Src\Object\Stage\SkyDome.h" />
     <ClInclude Include="Src\Object\System\Cursor.h" />
     <ClInclude Include="Src\Object\System\LevelNotice.h" />
@@ -221,9 +216,7 @@
     <ClInclude Include="Src\Object\Stage\SkyDome.h" />
     <ClInclude Include="Src\Object\Stage\StageManager.h" />
     <ClInclude Include="Src\Object\Stage\StageObject.h" />
-    <ClInclude Include="Src\Object\System\Carsor.h" />
     <ClInclude Include="Src\Object\System\LevelScreenManager.h" />
-    <ClInclude Include="Src\Object\System\LevelupNotice.h" />
     <ClInclude Include="Src\Object\System\LevelSelect.h" />
     <ClInclude Include="Src\Object\System\UnitPositionLoad.h" />
     <ClInclude Include="Src\Object\UnitBase.h" />

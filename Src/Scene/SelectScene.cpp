@@ -9,7 +9,6 @@
 #include "../Manager/GameSystem/DataBank.h"
 #include "../Utility/AsoUtility.h"
 #include "../Object/Stage/StageManager.h"
-#include "../Object/Stage/StageObject.h"
 #include "../Object/Stage/SkyDome.h"
 #include "../Object/Character/PlayableChara/Other/SelectPlayer.h"
 #include "../Object/SelectImage.h"

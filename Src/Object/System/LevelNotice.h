@@ -27,6 +27,9 @@ public:
 	//拡大最大
 	static constexpr float EXPANSION_MAX = 1.2f;
 
+	//エフェクト拡大率
+	static constexpr float EFFECT_RATE = 1.5f;
+
 	//維持秒数
 	static constexpr int MAINTAIN_SECONDS = static_cast<int>(1.5f * Application::DEFAULT_FPS);
 
