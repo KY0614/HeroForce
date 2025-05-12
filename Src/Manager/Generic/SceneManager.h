@@ -16,8 +16,21 @@ class SceneManager
 
 public:
 	static constexpr int PLAYER_NUM = 4;	//プレイヤー人数
+	//デルタタイム
 	static constexpr float DELTA_TIME = 1.0f / 60.0f;
 	static constexpr float DELTA_TIME_INIT = 0.016f;
+
+	//ウィンドウ関係
+	static constexpr int WINDOW_MAX_X = 2;
+	static constexpr int WINDOW_MARGIN = 30;
+	static constexpr int MAIN_WINDOW_NUM = 1;
+
+	//３D関係設定用
+	static constexpr int BACK_COLOR = 0;
+	static constexpr int FOG_COLOR = 5;
+	static constexpr float FOG_START = 10000.0f;
+	static constexpr float FOG_END = 20000.0f;
+	static constexpr VECTOR LIGHT_DIR = { 0.00f, -1.00f, 1.00f };
 
 	// シーン管理用
 	enum class SCENE_ID
