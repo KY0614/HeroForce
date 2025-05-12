@@ -4,11 +4,13 @@
 
 EneArcher::EneArcher(const VECTOR& _spawnPos) : Enemy(_spawnPos)
 {
+	//出現位置
 	trans_.pos = _spawnPos;
 }
 
 void EneArcher::Destroy(void)
 {
+	//共通解放
 	Enemy::Destroy();
 
 	lastArrow_ = nullptr;
@@ -25,7 +27,7 @@ void EneArcher::SetParam(void)
 
 	//モデル読み込み
 	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_ARCHER));
-	arrowMdlId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ARROW);	//矢のモデル
+	arrowMdlId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ARROW);	
 
 	//※個々で設定する
 	trans_.scl = { CHARACTER_SCALE,CHARACTER_SCALE,CHARACTER_SCALE };
@@ -117,6 +119,9 @@ void EneArcher::Skill_One(void)
 
 	//最後に生成された矢を格納
 	lastArrow_ = &arrow;
+
+	//ポインタ初期化
+	delete lastAtk_;
 
 	//同時に攻撃も生成
 	lastAtk_ = &createSkill_();

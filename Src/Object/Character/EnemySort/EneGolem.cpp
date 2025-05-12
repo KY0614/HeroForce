@@ -302,6 +302,9 @@ void EneGolem::Skill_Three(void)
 		//スキル生成
 		ATK& thisAtk = createSkill_();
 
+		//ポインタ初期化
+		delete lastAtk_;
+
 		//最後に生成された攻撃を格納
 		lastAtk_ = &thisAtk;
 
@@ -360,8 +363,13 @@ void EneGolem::ChangeStateAtk(void)
 
 	//最初に攻撃を生成するか
 	if (atkAct_ != ATK_ACT::SKILL_THREE)
+	{
+		//ポインタ初期化
+		delete lastAtk_;
+
 		//攻撃生成
 		lastAtk_ = &createSkill_();
+	}
 }
 
 void EneGolem::GetRandomPointInCircle(const VECTOR _myPos, const int _r, VECTOR& _tPos)

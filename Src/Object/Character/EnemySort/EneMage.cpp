@@ -13,6 +13,7 @@ void EneMage::Destroy(void)
 	//共通
 	Enemy::Destroy();
 
+	//エフェクトの停止
 	eff.Stop(EffectManager::EFFECT::STATE_DOWN);
 }
 

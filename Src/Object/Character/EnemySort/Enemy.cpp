@@ -7,6 +7,40 @@
 Enemy::Enemy(const VECTOR& _spawnPos)
 {
 	trans_.pos = _spawnPos;
+	state_ = STATE::MAX;
+	alertCnt_ = 0.0f;
+	breakCnt_ = 0.0f;
+	walkSpeed_ = 0.0f;
+	runSpeed_ = 0.0f;
+	atkAct_ = ATK_ACT::MAX;
+	isEndAlert_ = false;
+	isEndAllAtkSign_ = false;
+	isEndAllAtk_ = false;
+	nowSkillPreAnim_ = ANIM::NONE;
+	nowSkillAnim_ = ANIM::NONE;
+	localCenterPos_ = AsoUtility::VECTOR_ZERO;
+	colPos_ = AsoUtility::VECTOR_ZERO;
+	searchState_ = SEARCH_STATE::MAX;
+	preTargetPos_ = AsoUtility::VECTOR_ZERO;
+	targetPos_ = AsoUtility::VECTOR_ZERO;
+	searchRange_ = 0.0f;
+	atkStartRange_ = 0.0f;
+	isColStage_ = false;
+	colStageCnt_ = 0.0f;
+	startCnt_ = 0.0f;
+	exp_ = 0.0f;
+
+	for (auto& vertex : alertVertex_)
+	{
+		vertex.dif = {};
+		vertex.norm = AsoUtility::VECTOR_ZERO;
+		vertex.pos = AsoUtility::VECTOR_ZERO;
+		vertex.spc = {};
+		vertex.su = 0.0f;
+		vertex.sv = 0.0f;
+		vertex.u = 0.0f;
+		vertex.v = 0.0f;
+	}
 }
 
 void Enemy::Destroy(void)
@@ -21,9 +55,6 @@ void Enemy::Destroy(void)
 	skillPreAnims_.clear();
 	skillAnims_.clear();
 	SearchStateInfo_.clear();
-
-	lastAtk_ = nullptr;
-	delete lastAtk_;
 }
 
 void Enemy::Init(void)
@@ -214,6 +245,9 @@ void Enemy::ChangeStateAtk(void)
 {
 	//更新処理の中身初期化
 	stateUpdate_ = std::bind(&Enemy::UpdateAtk, this);
+
+	//ポインタ初期化
+	delete lastAtk_;
 
 	//攻撃生成
 	lastAtk_ = &createSkill_();

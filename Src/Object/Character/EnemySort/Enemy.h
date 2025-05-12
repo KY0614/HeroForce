@@ -153,13 +153,6 @@ public:
 	void SetTargetPos(const VECTOR _targetPos) { if(!isColStage_ && startCnt_ >= START_CNT)targetPos_ = _targetPos; }
 
 	/// <summary>
-	/// ダメージ
-	/// </summary>
-	/// <param name="_damage">ダメージ量</param>
-	/// <param name="_stunPow">スタン攻撃力</param>
-	//void Damage(const int _damage, const int _stunPow);
-
-	/// <summary>
 	/// 状態遷移
 	/// </summary>
 	/// <param name="_state">遷移する状態</param>
@@ -220,9 +213,6 @@ protected:
 
 	float searchRange_;		//索敵範囲
 	float atkStartRange_;	//攻撃開始範囲
-
-	//int stunDefMax_;	//気絶防御値の最大値
-	//int stunDef_;		//気絶防御値
 
 	bool isColStage_;	//ステージに当たったか(true:当たった)
 	float colStageCnt_;	//ステージ接触補完用カウンタ
