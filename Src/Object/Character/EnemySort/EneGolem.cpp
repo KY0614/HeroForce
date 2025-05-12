@@ -14,7 +14,7 @@ void EneGolem::Destroy(void)
 	//共通
 	Enemy::Destroy();
 
-	//eff.Stop(EffectManager::EFFECT::BOSS_PUNCH);
+	eff.Stop(EffectManager::EFFECT::BOSS_PUNCH);
 	eff.Stop(EffectManager::EFFECT::BOSS_SHOUT);
 	eff.Stop(EffectManager::EFFECT::BOSS_SHOUT_ATK);
 }
@@ -52,35 +52,67 @@ void EneGolem::InitAnim(void)
 {
 	//※ゴーレムは全部固有アニメーション
 
-	//固有アニメーション初期化
+#pragma region アニメーション初期化
+
+	//立ち
 	animNum_.emplace(ANIM::IDLE, EneGolem::ANIM_IDLE);
+	//歩き
 	animNum_.emplace(ANIM::WALK, EneGolem::ANIM_WALK);
+	//走り
 	animNum_.emplace(ANIM::RUN, EneGolem::ANIM_WALK);
+	//死亡
 	animNum_.emplace(ANIM::DEATH, EneGolem::ANIM_KNOCK);
+	//パンチ
 	animNum_.emplace(ANIM::SKILL_1, ANIM_PUNCH);
+	//薙ぎ払い
 	animNum_.emplace(ANIM::SKILL_2, ANIM_MOWDOWN);
+	//叫び
 	animNum_.emplace(ANIM::SKILL_3, ANIM_SHOUT);
+	//ジャンプ攻撃
 	animNum_.emplace(ANIM::SKILL_4, ANIM_JUMP_ATK);
+	//ジャンプ
 	animNum_.emplace(ANIM::UNIQUE_1, ANIM_JUMP);
+	//着地
 	animNum_.emplace(ANIM::UNIQUE_2, ANIM_LANDING);
+	//パンチ準備
 	animNum_.emplace(ANIM::UNIQUE_3, ANIM_PRE_PUNCH);
+	//薙ぎ払い準備
 	animNum_.emplace(ANIM::UNIQUE_4, ANIM_PRE_MOWDOWN);
+	//叫び準備
 	animNum_.emplace(ANIM::UNIQUE_5, ANIM_PRE_SHOUT);
 
-	//アニメーション速度設定
+#pragma endregion
+
+#pragma region アニメーション速度設定
+
+	//立ち
 	changeSpeedAnim_.emplace(ANIM::IDLE, SPEED_ANIM_IDLE);
+	//歩き
 	changeSpeedAnim_.emplace(ANIM::WALK, SPEED_ANIM_WALK);
+	//走り
 	changeSpeedAnim_.emplace(ANIM::RUN, SPEED_ANIM_WALK);
+	//死亡
 	changeSpeedAnim_.emplace(ANIM::DEATH, SPEED_ANIM_KNOCK);
+	//パンチ
 	changeSpeedAnim_.emplace(ANIM::SKILL_1, SPEED_ANIM_PUNCH);
+	//薙ぎ払い
 	changeSpeedAnim_.emplace(ANIM::SKILL_2, SPEED_ANIM_MOWDOWN);
+	//叫び
 	changeSpeedAnim_.emplace(ANIM::SKILL_3, SPEED_ANIM_SHOUT);
+	//ジャンプ攻撃
 	changeSpeedAnim_.emplace(ANIM::SKILL_4, SPEED_ANIM_JUMP);
+	//ジャンプ
 	changeSpeedAnim_.emplace(ANIM::UNIQUE_1, SPEED_ANIM_JUMP);
+	//着地
 	changeSpeedAnim_.emplace(ANIM::UNIQUE_2, SPEED_ANIM_JUMP);
+	//パンチ準備
 	changeSpeedAnim_.emplace(ANIM::UNIQUE_3, SPEED_ANIM_PRE_PUNCH);
+	//薙ぎ払い準備
 	changeSpeedAnim_.emplace(ANIM::UNIQUE_4, SPEED_ANIM_PRE_MOWDOWN);
+	//叫び準備
 	changeSpeedAnim_.emplace(ANIM::UNIQUE_5, SPEED_ANIM_PRE_SHOUT);
+
+#pragma endregion
 
 	//アニメーションリセット
 	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
@@ -88,12 +120,14 @@ void EneGolem::InitAnim(void)
 
 void EneGolem::InitEffect(void)
 {
+	//エフェクト
 	auto& eff = EffectManager::GetInstance();
+	//リソース
 	auto& res = ResourceManager::GetInstance();
 
 	//パンチエフェクト
-	//eff.Add(EffectManager::EFFECT::BOSS_PUNCH,
-	//	res.Load(ResourceManager::SRC::BOSS_PUNCH_EFE).handleId_);
+	eff.Add(EffectManager::EFFECT::BOSS_PUNCH,
+		res.Load(ResourceManager::SRC::BOSS_PUNCH_EFE).handleId_);
 
 	//叫びエフェクト
 	eff.Add(EffectManager::EFFECT::BOSS_SHOUT,
@@ -106,23 +140,39 @@ void EneGolem::InitEffect(void)
 
 void EneGolem::InitSkill(void)
 {
-	//ここにスキルの数分格納させる
+
+#pragma region スキルの格納
+
+	//スキル1
 	skills_.emplace(ATK_ACT::SKILL_ONE, SKILL_ONE);
+	//スキル2
 	skills_.emplace(ATK_ACT::SKILL_TWO, SKILL_TWO);
+	//スキル3
 	skills_.emplace(ATK_ACT::SKILL_THREE, SKILL_THREE);
 
-	//ここにスキルの数分アニメーションを格納させる
-	//----------------------------------------------
+#pragma endregion
 
-	//予備動作アニメーション
+#pragma region スキルの予備動作アニメーション格納
+
+	//スキル1
 	skillPreAnims_.emplace_back(ANIM::UNIQUE_3);
+	//スキル2
 	skillPreAnims_.emplace_back(ANIM::UNIQUE_4);
+	//スキル3
 	skillPreAnims_.emplace_back(ANIM::UNIQUE_5);
 
-	//動作アニメーション
+#pragma endregion
+
+#pragma region スキルの動作アニメーション
+
+	//スキル1
 	skillAnims_.emplace_back(ANIM::SKILL_1);
+	//スキル2
 	skillAnims_.emplace_back(ANIM::SKILL_2);
+	//スキル3
 	skillAnims_.emplace_back(ANIM::SKILL_3);
+
+#pragma endregion
 
 	//初期スキルを設定しておく
 	RandSkill();
@@ -222,13 +272,13 @@ void EneGolem::Skill_One(void)
 	//エフェクトマネージャー
 	auto& eff = EffectManager::GetInstance();
 
-	//if (stepAnim_ == 20.0f)
+	if (stepAnim_ == SKILL_ONE_EFF_TIME)
 		//エフェクト再生
-		/*eff.Play(EffectManager::EFFECT::BOSS_PUNCH,
+		eff.Play(EffectManager::EFFECT::BOSS_PUNCH,
 			MV1GetFramePosition(trans_.modelId, FRAME_R_HAND),
 			trans_.quaRot,
 			SKILL_ONE_EFF_SIZE,
-			SoundManager::SOUND::NONE);*/
+			SoundManager::SOUND::NONE);
 
 
 	//攻撃の再生成
@@ -299,21 +349,15 @@ void EneGolem::Skill_Three(void)
 		//間隔カウンタの初期化
 		skillThreeDelayCnt_ = 0.0f;
 
-		//スキル生成
-		ATK& thisAtk = createSkill_();
-
-		//ポインタ初期化
-		delete lastAtk_;
-
 		//最後に生成された攻撃を格納
-		lastAtk_ = &thisAtk;
+		lastAtk_ = &createSkill_();
 
 		//保持していた座標情報をもとにセット
-		thisAtk.pos_ = skillThreePreAtk_[skillThreeCnt_].pos_;
+		lastAtk_->pos_ = skillThreePreAtk_[skillThreeCnt_].pos_;
 
 		//エフェクトの再生
 		eff.Play(EffectManager::EFFECT::BOSS_SHOUT_ATK,
-			thisAtk.pos_,
+			lastAtk_->pos_,
 			trans_.quaRot,
 			SKILL_THREE_ATK_EFF_SIZE,
 			SoundManager::SOUND::NONE);
@@ -364,9 +408,6 @@ void EneGolem::ChangeStateAtk(void)
 	//最初に攻撃を生成するか
 	if (atkAct_ != ATK_ACT::SKILL_THREE)
 	{
-		//ポインタ初期化
-		delete lastAtk_;
-
 		//攻撃生成
 		lastAtk_ = &createSkill_();
 	}

@@ -44,10 +44,8 @@ public:
 	//フレーム(ボーン)番号
 	static constexpr int FRAME_L_HAND = 24;		//左の手のひら
 	static constexpr int FRAME_L_FOOT = 46;		//左の足
-	
 	static constexpr int FRAME_R_HAND = 38;		//右の手のひら
 	static constexpr int FRAME_R_FOOT = 50;		//右の足
-	
 	static constexpr int FRAME_HEAD = 15;		//頭
 
 	//攻撃関係
@@ -78,6 +76,7 @@ public:
 	static constexpr VECTOR SKILL_ONE_ALERT = { 0.0f,0.0f,210.0f };	//スキル１の警告判定用相対座標
 	//スキルエフェクト
 	static constexpr float SKILL_ONE_EFF_SIZE = 10.0f;				//スキル１エフェクトの大きさ
+	static constexpr float SKILL_ONE_EFF_TIME = 20.0f;				//スキル１エフェクトの出現時間
 
 
 	//スキルの当たり判定半径
