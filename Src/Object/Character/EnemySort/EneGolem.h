@@ -131,6 +131,9 @@ public:
 	//コンストラクタ
 	EneGolem(const VECTOR& _spawnPos);
 
+	//解放
+	void Destroy(void)override;
+
 private:	
 	//****************************************************************
 	//変数

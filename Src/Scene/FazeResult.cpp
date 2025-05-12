@@ -1,5 +1,9 @@
 #include<DxLib.h>
 #include<cassert>
+<<<<<<< HEAD
+=======
+#include"../Manager/Decoration/SoundManager.h"
+>>>>>>> Data2
 #include"../Manager/Generic/InputManager.h"
 #include"../Manager/Generic/ResourceManager.h"
 #include"../Manager/Generic/SceneManager.h"
@@ -18,6 +22,10 @@ FazeResult::FazeResult(void)
 	int i = -1;
 	imgRank_ = &i;
 	state_ = STATE::NOMAL;
+<<<<<<< HEAD
+=======
+	isPlay_ = false;
+>>>>>>> Data2
 }
 FazeResult::~FazeResult(void)
 {
@@ -52,11 +60,23 @@ void FazeResult::Init(void)
 		FONT_HEAD_SIZE,
 		0);
 
+<<<<<<< HEAD
+=======
+	SoundManager::GetInstance().Add(SoundManager::TYPE::SE,
+		SoundManager::SOUND::FAZE_REZALT,
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::FAZE_REZALT_SE).handleId_);
+
+>>>>>>> Data2
 	SetResult();
 }
 
 void FazeResult::Update(void)
 {
+<<<<<<< HEAD
+=======
+	if (!isPlay_) { SoundManager::GetInstance().Play(SoundManager::SOUND::FAZE_REZALT); isPlay_ = true; }
+
+>>>>>>> Data2
 	ChangeRank();
 	step_++;
 }
@@ -131,6 +151,27 @@ void FazeResult::Release(void)
 void FazeResult::Reset(void)
 {
 	isEnd_ = false;
+	isPlay_ = false;
+}
+
+void FazeResult::SetLast(void)
+{
+	dunkEnm_ = DataBank::GetInstance().Output(DataBank::INFO::GAME_DUNK_ENEMY);
+}
+
+void FazeResult::SetResult(void)
+{
+	//ƒŠƒUƒ‹ƒgî•ñ
+	dunkEnm_ = DataBank::GetInstance().Output(DataBank::INFO::FAZE_DUNK_ENEMY);
+	aliveChicken_ = DataBank::GetInstance().Output(DataBank::INFO::ALIVE_CHICKEN);
+	//ƒ‰ƒ“ƒN‚ÌŒˆ’è
+	JudgeRank();
+
+}
+
+float FazeResult::GetExp(void)
+{
+	return afterExp_;
 }
 
 void FazeResult::SetLast(void)

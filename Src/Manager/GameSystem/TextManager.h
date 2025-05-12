@@ -44,20 +44,33 @@ public:
 
 	//インスタンスの生成
 	//シングルトン化
-	static void CreateInstance(void);
-	static TextManager& GetInstance(void);
+	static void CreateInstance();
+	static TextManager& GetInstance();
 
+	//初期化
 	void Init();
-	void Release();
 
-	//テキスト読み込み
-	std::string TextLoad(TEXTS text);
+	/// <summary>
+	/// テキストを読みこむ
+	/// </summary>
+	/// <param name="_text"></param>テキスト種類
+	/// <returns></returns>テキスト
+	std::string TextLoad(const TEXTS _text);
 
-	//フォント名前受け取り
-	inline std::string GetFontName(FONT_TYPE type) const { return fontName_[static_cast<int>(type)]; }
+	/// <summary>
+	/// フォントの名前を返す
+	/// </summary>
+	/// <param name="_type"></param>フォント種類
+	/// <returns></returns>名前
+	inline std::string GetFontName(const FONT_TYPE _type) const { return fontName_[static_cast<int>(_type)]; }
 
-	//テキストサイズの受け取る
-	int GetTextSize(std::string txt, int num)const;
+	/// <summary>
+	/// テキストサイズを返す
+	/// </summary>
+	/// <param name="_txt"></param>テキスト
+	/// <param name="_num"></param>ナンバー
+	/// <returns></returns>テキストサイズ
+	int GetTextSize(const std::string _txt,const int _num)const;
 
 	//解放処理
 	void Destroy();
@@ -75,19 +88,16 @@ private:
 	void InitFont();
 
 	//テキストを保持するマップ
-	std::unordered_map<TEXTS, std::string> LoadDialogues(const std::string& filename);
+	std::unordered_map<TEXTS, std::string> LoadDialogues(const std::string& _filename);
 
 	//テキストの読み込み
-	std::string* _Load(TEXTS text);
+	std::string* _Load(const TEXTS _text);
 
-#pragma region シングルトン関係
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする
-	TextManager(void);
-	~TextManager(void) = default;
+	TextManager();
+	~TextManager() = default;
 
 	//シングルトン化
 	static TextManager* instance_;
-#pragma endregion
-
 };

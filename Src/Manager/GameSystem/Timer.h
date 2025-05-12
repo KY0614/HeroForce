@@ -32,6 +32,8 @@ public:
 	void Update();
 	void Draw();
 	void Reset();	//デバッグ用
+	void Release();
+	void Destroy();
 
 	const bool IsEnd(void) { return isEnd_; }
 
@@ -52,9 +54,9 @@ private:
 
 	int cnt_;	//カウンター
 
-	int font_;	//フォントハンドル
-	int fontSize_;	//フォントの大きさ
-	int strWidth_;	//文字列の横サイズ
+	//int font_;	//フォントハンドル
+	//int fontSize_;	//フォントの大きさ
+	//int strWidth_;	//文字列の横サイズ
 
 	VECTOR pos_;	//位置
 

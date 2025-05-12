@@ -6,7 +6,7 @@ class PlAxe :public JobManagerBase
 {
 public:
 	//ƒXƒLƒ‹‚P‚Ì’·‰Ÿ‚µ‚µ‚Ä‚¢‚È‚©‚Á‚½‚ÌUŒ‚”­¶
-	static constexpr float SKILL_ONE_START_NOCHARGE = 3.5f;
+	static constexpr float SKILL_ONE_START_NOCHARGE = 2.0f;
 
 
 	PlAxe(const SceneManager::CNTL _cntl);

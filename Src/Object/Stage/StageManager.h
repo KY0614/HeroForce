@@ -44,7 +44,7 @@ public:
 	virtual void Update(void);	//更新
 	virtual void Draw(void);	//描画
 
-	//ゲッター
+	//ステージのトランスフォームを返す
 	const Transform &GetTtans() const{ return trans_[static_cast<int>(MODEL_TYPE::STAGE)]; }	
 
 protected:

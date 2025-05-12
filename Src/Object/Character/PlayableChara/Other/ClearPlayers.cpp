@@ -2,13 +2,13 @@
 
 using S_ROLE = SceneManager::ROLE;
 
-ClearPlayers::ClearPlayers(void)
+ClearPlayers::ClearPlayers()
 {
 	for (int i = 0; i < PLAYERS; i++) { role_[i] = S_ROLE::NONE; }
 }
 
-void ClearPlayers::Init(void)
-{
+void ClearPlayers::InitAnim()
+{	
 	//–ðEÝ’è
 	for (int i = 0; i < PLAYERS; i++)
 	{

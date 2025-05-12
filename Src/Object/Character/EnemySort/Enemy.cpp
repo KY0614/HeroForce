@@ -69,6 +69,9 @@ void Enemy::Init(void)
 	atk_.ResetCnt();
 
 	trans_.Update();
+
+	ui_ = std::make_unique<EnemyHpBar>();
+	ui_->Init();
 }
 
 void Enemy::Update(void)
@@ -91,6 +94,7 @@ void Enemy::Update(void)
 	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_Q)) { Damage(1, 10); }
 #endif // DEBUG_ENEMY
 
+	SubHp();
 
 	//やられているなら何もしない
 	if (!IsAlive()) 
@@ -105,6 +109,7 @@ void Enemy::Update(void)
 
 	//状態ごとのUpdate
 	stateUpdate_();
+
 
 	//モデル制御
 	trans_.Update();
@@ -143,12 +148,29 @@ void Enemy::Damage(const int _damage, const int _stunPow)
 		return;
 	}
 
-	//ダメージカウント
-	hp_ -= _damage;
+	return false;
+}
 
 	//スタン値カウント
 	//stunDef_ += _stunPow;
 }
+
+//void Enemy::Damage(const int _damage, const int _stunPow)
+//{
+//	//既にやられているなら処理しない
+//	if (!IsAlive()) 
+//	{
+//		//やられたら死亡アニメーション
+//		ResetAnim(ANIM::DEATH, changeSpeedAnim_[ANIM::DEATH]);
+//		return;
+//	}
+//
+//	//ダメージカウント
+//	hp_ -= _damage;
+//
+//	//スタン値カウント
+//	//stunDef_ += _stunPow;
+//}
 
 void Enemy::ChangeState(const STATE _state)
 {

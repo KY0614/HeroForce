@@ -9,7 +9,7 @@ class EnemyManager
 {
 public:
 	//一種類の敵の最大数
-	static constexpr int ONETYPE_MAX = 5;
+	static constexpr int ONETYPE_MAX = 3;
 	//敵の出現最大数
 	static constexpr int ENEMY_MAX = 8;
 
@@ -21,14 +21,24 @@ public:
 	static constexpr int PHASE_TWO_INIT_CREATE_ENEMY = 6;
 
 	//敵の出現半径
-	static constexpr float GENELATE_RADIUS = 100.0f;
+	static constexpr float GENELATE_RADIUS = 300.0f;
 
 	//敵間の距離
-	static constexpr float ENEMY_DISTANCE = 30.0f;
+	static constexpr float ENEMY_DISTANCE = 20.0f;
+
+<<<<<<< HEAD
+	//敵の生成間隔
+	static constexpr float CREATE_INTERVAL = 5.0f;
+
+=======
+	//敵間の生成回数上限
+	static constexpr int ENEMY_CREATE_CHALLENGE_LIMIT = 5000;
 
 	//敵の生成間隔
 	static constexpr float CREATE_INTERVAL = 5.0f;
 
+	//敵の種類
+>>>>>>> Data2
 	enum class TYPE {
 		ARCHER,
 		AXE,
@@ -39,7 +49,7 @@ public:
 	};
 
 	//コンストラクタ
-	EnemyManager(std::vector<VECTOR> _pos) : createPos_(_pos) {};
+	EnemyManager(std::vector<VECTOR> _pos);
 
 	//デストラクタ
 	~EnemyManager() = default;
@@ -57,14 +67,25 @@ public:
 	/// </summary>
 	/// <param name="_num">欲しい敵の配列番号</param>
 	/// <returns>敵のインスタンス</returns>
-	Enemy* GetActiveEnemy(int _num){ return activeEnemys_[_num]; }
+	Enemy* GetActiveEnemy(int _num)const { return activeEnemys_[_num]; }
+
+	//総経験値量の取得
+	const float GetAllExp(void)const { return allExp_; }
+
+	//総経験値を削除
+	void ClearAllExp(void) { allExp_ = 0.0f; }
 
 	//敵の総数の取得
-	const int GetActiveNum(void) { return activeNum_; }
+	const int GetActiveNum(void)const { return activeNum_; }
 
 	//倒された敵の後処理 _num=倒された敵の配列番号
 	void DeathEnemy(int _num);
 
+<<<<<<< HEAD
+=======
+	const int GetDunkCnt(void)const { return dunkCnt_; }
+
+>>>>>>> Data2
 	//フェーズ変更
 	void ProcessChangePhase(const int _phase);
 
@@ -73,8 +94,17 @@ private:
 	//更新等をかける動きのある敵
 	Enemy* activeEnemys_[ENEMY_MAX];
 
+	TYPE activeEnemysType_[ENEMY_MAX];
+
 	//アクティブな敵の総数
 	int activeNum_;
+
+	//種類別の敵の量
+	int activeTypeNum_[static_cast<int>(TYPE::MAX)];
+
+	//総経験値数
+	float allExp_;
+	int dunkCnt_;	//倒した敵の総数(フェーズごとにリセット)
 
 	//生成座標
 	std::vector<VECTOR> createPos_;

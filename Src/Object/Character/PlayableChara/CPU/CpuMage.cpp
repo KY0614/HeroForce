@@ -13,6 +13,7 @@ void CpuMage::Init(void)
 {
 	obj_ = new Mage();
 	obj_->Init();
+	SetInitPos(playerNum_);
 }
 
 void CpuMage::Update(void)

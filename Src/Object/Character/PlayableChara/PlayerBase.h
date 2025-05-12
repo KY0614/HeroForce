@@ -6,6 +6,7 @@
 #include "../../UnitBase.h"
 #include"../../../Manager/Generic/InputManager.h"
 #include"../../../Manager/Decoration/EffectManager.h"
+#include"../PlayerManager.h"
 #include"../PlayerInput.h"
 #include "../../UnitBase.h"
 
@@ -30,7 +31,8 @@ public:
 
 #endif // DEBUG_ON
     //デバッグ用
-
+      //エフェクトを最初の1フレームの時に再生させる用のFPS
+    static constexpr float DELTATIME = 1.0f / 60.0f;
 
 
     //各アニメーション番号
@@ -76,6 +78,15 @@ public:
     //フェーズ変わるときにプレイヤーが死んでた時のhp回復
     static constexpr float CHANGEFAZE_RECOVERY_PER = 0.2f;
 
+    //プレイヤーの初期座標
+    static constexpr VECTOR PLAYER1_POS = { -200.0f,0.0F,0.0f };
+    static constexpr VECTOR PLAYER2_POS = { -100.0f,0.0F,0.0f };
+    static constexpr VECTOR PLAYER3_POS = { 0.0F,0.0F,0.0f };
+    static constexpr VECTOR PLAYER4_POS = { 100.0F,0.0F,0.0f };
+
+    //音量
+    static constexpr int SKILL_CHANGE_SE_VOL = 80;
+
     //*************************************************
     // 列挙型
     //*************************************************
@@ -104,12 +115,28 @@ public:
         ,MAX
     };
 
-    enum class BUFF_TYPE
+    enum class STATUSBUFF_TYPE
     {
         ATK_BUFF
         ,DEF_BUFF
         ,SPD_BUFF
         ,MAX
+    };
+
+    //バフするスキル
+    enum class SKILL_BUFF
+    {
+        BUFF_ARROW  //アーチャーのスキル2
+        ,GUARD      //ナイトのガード
+        ,MAX
+    };
+
+    struct BUFF
+    {
+        float cnt;
+        float percent[static_cast<int>(STATUSBUFF_TYPE::MAX)];
+        bool isBuff;            //バフしたかどうか(バフの重ね掛けを防ぐ)
+        bool isBuffing;         //バフ中かどうか  (毎フレームバフするのを防ぐ)
     };
 
     PlayerBase(void);
@@ -145,7 +172,7 @@ public:
 
     //役職それぞれのバフ(使わない役職もあるためスタブ)
     virtual void Buff(PlayerBase& _target) {}
-    void BuffPerAdd(BUFF_TYPE _type, float _per);
+    void BuffPerAdd(STATUSBUFF_TYPE _type, float _per);
     //移動関連
      //-------------------------------------
     //移動処理
@@ -163,7 +190,8 @@ public:
     //スキル変更処理
     void SkillChange(void);
 
- 
+    //バフ更新
+    void BuffUpdate(void);
 
     //*****************************************************
     //ゲッタ
@@ -173,6 +201,144 @@ public:
 
     //クールタイム
     const float GetCoolTime(ATK_ACT _act) { return coolTime_[static_cast<int>(_act)]; }
+
+    //現在の使いたいスキル
+    const ATK_ACT GetSkillNo(void) { return skillNo_; }
+
+    //攻撃中判定
+    const bool GetIsAtk(void) { return isAtk_; }
+
+    //スキル中判定
+    const bool GetIsSkill(void) { return isSkill_; }
+
+    //前隙
+    const float GetAtkStartCnt(void) { return atkStartCnt_; }
+
+    //アニメーションステップ
+    const float GetStepAnim(void) { return stepAnim_; }
+
+    //回避
+    PlayerDodge* GetDodge(void) { return dodge_; }
+
+    //クールタイム割合のゲッタ
+    const float* GetCoolTimePer(void) { return coolTimePer_; }
+
+    //バフされているかゲッタ
+    //const bool GetIsBuff(void) { return isBuff_; }
+
+    const bool GetIsBuff(SKILL_BUFF _skill) { return buffs_[_skill].isBuff; }
+
+    //矢などの遠距離武器のゲッタ(KnightとArcherで使う)
+    virtual const ATK GetArrowAtk(const int i) { return ATK(); }
+    virtual const ATK GetArrowAtk(const ATK_TYPE _act, const int i) { return ATK(); }
+
+
+    //遠距離武器の個数を獲得
+    virtual const int GetArrowCnt(const int _act) { return 0; }
+
+    //攻撃力ゲッタ
+    float GetAtkPow(void) { return atkPow_; }
+
+    SceneManager::ROLE GetRole(void) { return role_; }
+
+    VECTOR GetInitPos(int _num) { return initPos_[_num]; }
+    
+
+
+    //**************************************************************
+    //セッター
+    //**************************************************************
+    //攻撃系
+    //-------------------------------------------------------------------------------------------------------------------
+    //攻撃のそれぞれの値
+    void SetAtk(const ATK _atk) { atk_ = _atk; }
+    //前隙のカウンター
+    void SetAtkStartCnt(const float _atkStartCnt) { atkStartCnt_ = _atkStartCnt; }
+
+    //前隙の最大時間セッタ
+    void SetAtkStartTime(const float _atkStartTime, const ATK_ACT _act) { atkStartTime_[static_cast<int>(_act)] = _atkStartTime; }
+
+    //攻撃するかどうか
+    void SetIsAtk(const bool _isAtk) { isAtk_ = _isAtk; }
+
+    //攻撃発生中フラグ
+    const bool IsAtkStart(void)const { return 0.0f < atkStartCnt_ && atkStartCnt_ <= atkStartTime_[static_cast<int>(act_)]; }
+
+    //攻撃発生したのを確認する
+    const bool IsFinishAtkStart(void)const { return atkStartCnt_ > atkStartTime_[static_cast<int>(act_)]; }
+
+    //攻撃変更用(主に入力されたら変えるようにする)
+    void ChangeAct(const ATK_ACT _act);
+
+    //攻撃の最大値の初期化(弓矢とかの違うatkの配列とか使う用)
+    void ResetParam(ATK& _atk);
+
+    //近接攻撃のatk初期化用
+    void ResetParam(void);
+
+    //攻撃終わった後の初期化
+    virtual void InitAtk(void);
+
+    //持続時間セッタ
+    void SetDulation(const float _dulation) { atk_.duration_ = _dulation; }
+
+    //スキルするか
+    void SetIsSkill(const bool _isSkill) { isSkill_ = _isSkill; }
+
+    //移動可能かどうか
+    void SetMoveAble(const bool _moveAble) { moveAble_ = _moveAble; }
+    //クールにするかどうか
+    void SetIsCool(const bool _isCool, const ATK_ACT _act) { isCool_[static_cast<int>(_act)] = _isCool; }
+
+    //クールタイムセッタ
+    void SetCoolTime(const float coolTime, ATK_ACT _act) { coolTime_[static_cast<int>(_act)] = coolTime; }
+
+    //アーチャーのサーチセッタ
+    void SetIsSerchArcher(const bool _isSerch) { isSerchArcher_ = _isSerch; }
+
+    //その他
+    //------------------------------------------------------------------------------------
+    //アニメーションステップ
+    void SetStepAnim(const float _stepAnim) { stepAnim_ = _stepAnim; }
+
+    //スピード
+    void SetSpeed(const float _speed) { speed_ = _speed; }
+
+    //バフセッタ(時間制限付き)
+    //void SetBuff(STATUSBUFF_TYPE _type, float _per,float _second);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="_type"></param>
+    /// <param name="_skill"></param>
+    /// <param name="_per"></param>
+    /// <param name="_second"></param>
+    void SetBuff(STATUSBUFF_TYPE _type,SKILL_BUFF _skill, float _per,float _second);
+
+    //時間制限なし
+    //void SetBuff(STATUSBUFF_TYPE _type, float _per);
+
+    //前のステータス情報をセットする
+    void SetPreStatus(void);
+
+    //バフした判定セッタ
+    //void SetIsBuff(const bool _isBuff) { isBuff_ = _isBuff; }
+
+    /// <summary>
+    /// バフしたかセッタ
+    /// </summary>
+    /// <param name="_isBuff">true:バフした</param>
+    /// <param name="_skill">バフしたスキルは何か</param>
+    void SetIsBuff(SKILL_BUFF _skill,const bool _isBuff) { buffs_[_skill].isBuff = _isBuff; }
+
+    void SetIsBuff(PlayerBase& _player,SKILL_BUFF _skill, const bool _isBuff) { _player.SetIsBuff(_skill, _isBuff); }
+
+
+    //ターゲットセッタ
+    void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; } 
+
+ 
 
     //現在の使いたいスキル
     const ATK_ACT GetSkillNo(void) { return skillNo_; }
@@ -374,6 +540,7 @@ protected:
     //それぞれのアクションの初期化
     virtual void InitAct(void);
 
+    //スキル変更時の初期化
     void ChangeNmlAtk(void);
     void ChangeSkillOne(void);
     void ChangeSkillTwo(void);
@@ -383,7 +550,7 @@ protected:
     //ユーザーがいるときの更新
     void UserUpdate(void);
 
-    SceneManager::CNTL cntl_;
+    SceneManager::ROLE role_;
 
     ATK_ACT skillNo_;     //スキル変更用
 
@@ -450,19 +617,24 @@ private:
 
     std::map<ATK_TYPE, std::vector<ATK>>atks_;
 
+    std::map<SKILL_BUFF, BUFF>buffs_;
+    std::map<STATUSBUFF_TYPE, float>buffpers_;
+
     //バフ関係
-    float buffCnt_[static_cast<int>(BUFF_TYPE::MAX)];                                          //バフのカウンター(攻撃力、防御力、スピード)  
-    float buffPercent_[static_cast<int>(BUFF_TYPE::MAX)];                                      //バフの加算
-    BUFF_TYPE buffType_;                                   
+    float buffCnt_[static_cast<int>(STATUSBUFF_TYPE::MAX)];                                          //バフのカウンター(攻撃力、防御力、スピード)  
+    float buffPercent_[static_cast<int>(STATUSBUFF_TYPE::MAX)];                                      //バフの加算
+    STATUSBUFF_TYPE buffType_;                                   
     bool isBuffing_;                                                                             //バフ中かどうか
 
     float bufAtk_;          //バフ後の攻撃力
     float bufDef_;           //バフ後の防御力
     float bufSpd_;           //バフ後のスピード
 
-    float preAtk_;          //バフ後の攻撃力
+    float preAtkPow_;          //バフ後の攻撃力
     float preDef_;           //バフ後の防御力
     float preSpd_;           //バフ後のスピード
+
+    VECTOR initPos_[PlayerManager::PLAYER_NUM];     //プレイヤーたちの初期座標を格納
 
 
 

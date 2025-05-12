@@ -16,6 +16,7 @@ void PlKnight::Init(void)
 {
 	obj_ = new Knight();
 	obj_->Init();
+	SetInitPos(playerNum_);
 }
 
 void PlKnight::Update(void)
@@ -57,6 +58,9 @@ void PlKnight::Draw(void)
 
 void PlKnight::Release(void)
 {
+	obj_->Destroy();
+	delete obj_;
+	obj_ = nullptr;
 }
 
 void PlKnight::AtkInput(void)
@@ -73,6 +77,7 @@ void PlKnight::AtkInput(void)
 		obj_->ResetParam();
 		obj_->SetAtkStartCnt(deltaTime);
 		obj_->SetIsAtk(true);
+		obj_->SetIsSkill(false);
 	}
 }
 
@@ -92,7 +97,8 @@ void PlKnight::SkillTwoInput(void)
 	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
-	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN) && !obj_->GetIsAtk() && !obj_->GetIsSkill())
+	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN)
+		&&obj_->GetCoolTime(ATK_ACT::SKILL2)>= Knight::SKILL_TWO_START_COOLTIME)
 	{
 		//ボタンの押しはじめの時に値初期化
 		SkillTwoInit();
@@ -128,6 +134,7 @@ void PlKnight::SkillOneInit(void)
 	obj_->ResetParam();
 	obj_->SetAtkStartCnt(deltaTime);
 	obj_->SetMoveAble(false);
+	obj_->SetIsAtk(false);
 	obj_->SetIsSkill(true);
 }
 void PlKnight::SkillTwoInit(void)
@@ -145,8 +152,8 @@ void PlKnight::SkillTwoInit(void)
 		obj_->SetDulation(restCoolTime);
 		//atk_.duration_ = coolTime_[static_cast<int>(ATK_ACT::SKILL2)];
 		//CntUp(atkStartCnt_);
+		obj_->SetIsAtk(false);
 		obj_->SetIsSkill(true);
-		//isSkill_ = true;
 	}
 }
 //近接攻撃用

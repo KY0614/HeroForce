@@ -5,7 +5,7 @@
 using json = nlohmann::json;
 CharacterParamData* CharacterParamData::instance_ = nullptr;
 
-void CharacterParamData::CreateInstance(void)
+void CharacterParamData::CreateInstance()
 {
 	if (instance_ == nullptr)
 	{
@@ -14,7 +14,7 @@ void CharacterParamData::CreateInstance(void)
 	instance_->Init();
 }
 
-CharacterParamData& CharacterParamData::GetInstance(void)
+CharacterParamData& CharacterParamData::GetInstance()
 {
 	return *instance_;
 }

@@ -100,8 +100,15 @@ public:
 	const VECTOR GetScl(void)const;
 	//防御力
 	const float GetDef(void)const;
+	//攻撃力
+	const float GetAtkPow(void)const;
+	//体力
+	const int GetHp(void)const;
+	//最大体力
+	const int GetHpMax(void)const;
 	//攻撃関係
 	const ATK GetAtk(void)const;
+<<<<<<< HEAD
 	//攻撃力
 	const float GetAtkPow(void)const;
 	//体力
@@ -109,6 +116,8 @@ public:
 	//最大体力
 	const int GetHpMax(void)const;
 
+=======
+>>>>>>> Data2
 
 	//あたり判定
 	const float GetRadius(void)const;
@@ -118,7 +127,7 @@ public:
 	//アニメーション関数
 	void Anim(void);
 	//アニメーションリセット
-	void ResetAnim(const ANIM _anim, const float _speed);
+	virtual void ResetAnim(const ANIM _anim, const float _speed);
 
 	//配列用アニメーション関数
 	void AnimArray(int i);

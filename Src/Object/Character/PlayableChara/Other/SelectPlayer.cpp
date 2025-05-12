@@ -5,7 +5,7 @@
 
 SelectPlayer::SelectPlayer(void)
 {
-	role_ = 0;
+	role_ = -1;
 	for (auto& animTime : animChangeTime_)
 	{
 		animTime = -1.0f;
@@ -43,6 +43,7 @@ void SelectPlayer::Init(void)
 	{
 		animTime = 0.0f;
 	}
+	role_ = 0;
 }
 
 void SelectPlayer::Update(void)

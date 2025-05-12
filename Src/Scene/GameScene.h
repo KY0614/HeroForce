@@ -31,6 +31,13 @@ public:
 
 	static constexpr int LAST_FAZE = 3;
 
+<<<<<<< HEAD
+=======
+	//ヒットエフェクトサイズ
+	static constexpr float HIT_EFFECT_SIZE = 20.0f;
+	//バフアローのヒットエフェクトサイズ
+	static constexpr float BUFF_ARROW_EFFECT_SIZE = 40.0f;
+>>>>>>> Data2
 
 	// コンストラクタ
 	GameScene(void);
@@ -74,8 +81,11 @@ private:
 	//敵
 	std::unique_ptr<EnemyManager>enmMng_;
 
+<<<<<<< HEAD
 	//倒した敵の総数
 	int dunkEnmCnt_;
+=======
+>>>>>>> Data2
 	//フェーズ数カウント
 	int fazeCnt_;
 
@@ -99,6 +109,12 @@ private:
 	void CollisionPlayer(void);	//プレイヤー関連の当たり判定
 	void CollisionChicken(void);//ニワトリあたり判定
 	//void CollisionPlayerCPU(PlayerBase& _player,const VECTOR& _pPos);	//プレイヤー(CPU)関連の当たり判定
+<<<<<<< HEAD
+=======
+
+	void CollisionPlayerArrow(int _p1Num);	//遠距離関係の当たり判定
+	void CollisionPlayerSerch(int _p1Num);	//アーチャー用の攻撃ターゲット取得可能
+>>>>>>> Data2
 
 	//フェード
 	void Fade(void);

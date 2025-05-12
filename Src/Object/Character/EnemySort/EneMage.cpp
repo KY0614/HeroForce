@@ -6,6 +6,16 @@ EneMage::EneMage(const VECTOR& _spawnPos) : Enemy(_spawnPos)
 	trans_.pos = _spawnPos;
 }
 
+void EneMage::Destroy(void)
+{
+	auto& eff = EffectManager::GetInstance();
+
+	//ã§í 
+	Enemy::Destroy();
+
+	eff.Stop(EffectManager::EFFECT::STATE_DOWN);
+}
+
 void EneMage::SetParam(void)
 {
 	//çUåÇåxçê

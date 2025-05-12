@@ -41,7 +41,7 @@ public:
 	/// –ğE‚ğİ’è‚·‚é
 	/// </summary>
 	/// <param name="role">–ğE</param>
-	void SetRole(int role){ role_ = role; };
+	void SetRole(int role){ role_ = role - 1; };
 
 	/// <summary>
 	/// À•W‚ğİ’è‚·‚é

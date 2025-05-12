@@ -19,6 +19,8 @@ void PlAxe::Init(void)
 	//オブジェクトの作成
 	obj_ = new AxeMan();
 	obj_->Init();
+	SetInitPos(playerNum_);
+	
 }
 
 void PlAxe::Update(void)
@@ -56,7 +58,9 @@ void PlAxe::Draw(void)
 
 void PlAxe::Release(void)
 {
-	
+	obj_->Destroy();
+	delete obj_;
+	obj_ = nullptr;
 }
 
 void PlAxe::InitSkill(PlayerBase::ATK_ACT _act)
