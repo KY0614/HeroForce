@@ -33,6 +33,12 @@ public:
 	//前のフレーム位置に置く
 	void SetPrePos(void) { obj_->SetPrePos(); }
 
+	//プレイヤーNoをセットして座標を決める
+	void SetPlayerNum(const int _num) { playerNum_ = _num; }
+
+	//初期座標にプレイヤーを置く
+	void SetInitPos(int _num);
+
 protected:
 
 	PlayerBase* obj_;	//使用するインスタンス格納
@@ -42,6 +48,9 @@ protected:
 	virtual void SkillOneInput(void)=0;
 	virtual void SkillTwoInput(void)=0;
 
+	int playerNum_;		//何Pか(初期座標を置く用)
+
 	//攻撃系以外の入力処理(回避とかスキルチェンジとか)
 	void ActionInput(PlayerBase* _player,PlayerDodge* _dodge);
+
 };

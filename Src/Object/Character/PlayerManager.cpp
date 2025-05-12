@@ -30,14 +30,19 @@ void PlayerManager::Init(void)
 	for (int i = 0; i < PLAYER_NUM; i++) {
 		//î•ñ‚ðŽæ“¾
 		players_[i].info = DataBank::GetInstance().Output(i+1);
+
+		if (players_[i].info.role_ == SceneManager::ROLE::NONE)players_[i].info.role_ = SceneManager::ROLE::KNIGHT;
 		//¶¬
 		if (players_[i].info.mode_ == SceneManager::PLAY_MODE::USER){
 			//ƒ†[ƒU[
 			if (players_[i].info.cntrol_ == SceneManager::CNTL::KEYBOARD)players_[i].ins = CreateKeybordPlayer(players_[i].info.role_);
 			if (players_[i].info.cntrol_ == SceneManager::CNTL::PAD)players_[i].ins = CreatePadPlayer(players_[i].info.role_);
+
+			players_[i].ins->SetPlayerNum(i);
 		}
 		else {
 			players_[i].ins = CreateCpuPlayer(players_[i].info.role_);
+			players_[i].ins->SetPlayerNum(i);
 		}
 		
 
@@ -84,6 +89,14 @@ void PlayerManager::CollisionStage(const Transform& stageTrans)
 		{
 			players_[i].ins->SetPrePos();
 		}
+	}
+}
+
+void PlayerManager::ResetFaze(void)
+{
+	for (int i = 0; i < PLAYER_NUM; i++)
+	{
+		players_[i].ins->GetPlayer()->Reset();
 	}
 }
 

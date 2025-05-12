@@ -4,7 +4,10 @@
 #include"../../../Manager/Decoration/EffectManager.h"
 #include"../../../Manager/Decoration/SoundManager.h"
 #include"../../../Utility/AsoUtility.h"
+#include"../../System/GameUi/EnemyHpBar.h"
 #include "../../UnitBase.h"
+
+class EnemyHpBar;
 
 class Enemy : public UnitBase
 {
@@ -154,7 +157,7 @@ public:
 	/// </summary>
 	/// <param name="_damage">ダメージ量</param>
 	/// <param name="_stunPow">スタン攻撃力</param>
-	void Damage(const int _damage, const int _stunPow);
+	//void Damage(const int _damage, const int _stunPow);
 
 	/// <summary>
 	/// 状態遷移
@@ -212,6 +215,8 @@ protected:
 
 	VECTOR preTargetPos_;	//標的予定対象の座標
 	VECTOR targetPos_;		//標的の座標
+
+	std::unique_ptr<EnemyHpBar> ui_;	//UI関係
 
 	float searchRange_;		//索敵範囲
 	float atkStartRange_;	//攻撃開始範囲

@@ -107,6 +107,8 @@ private:
     RANK rank_; //ランク
     bool isEnd_;//終了しているか
 
+    bool isPlay_;
+
     //経験値の倍率を計算したものを取得
     float GetBonusExp(const RANK _rank)const;
 

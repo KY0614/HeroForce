@@ -51,6 +51,10 @@ public:
 	static constexpr int NAME_SIZE_X = 150 / NAME_NUM_X;
 	static constexpr int NAME_SIZE_Y = 180 / NAME_NUM_Y;
 
+	//スキルアイコン
+	static constexpr int SKILL_ICON_NUM_X = 1;
+	static constexpr int SKILL_ICON_NUM_Y = 2;
+	static constexpr int SKILL_ICON_SIZE = 120;
 
 	// リソース名
 	enum class SRC
@@ -69,7 +73,7 @@ public:
 		ENEMY_ARCHER,	//弓使い（敵）
 		ENEMY_AXEMAN,	//斧使い（敵）
 		ENEMY_GOLEM,	//ゴーレム(敵)
-		ARROW,			//ARROW
+		ARROW,
 
 		//ステージ
 		STAGE_01,
@@ -102,6 +106,13 @@ public:
 		MISSION_NOMAL,
 		MISSION_LAST,
 		CHANGE_TITLE_UI,
+		CHARA_ICONS,
+		HP_BOSS,
+		HP_BOSS_GAGE,
+		NUMBERS2,
+		PARAM_UI,
+		ROLE_NAMES,
+		TIMER_BACK,
 
 		//レベル通知用
 		LEVEL_UP,
@@ -116,6 +127,7 @@ public:
 		PARAM_UI,
 		ROLE_NAMES,
 		TIMER_BACK,
+
 
 
 		//強化
@@ -146,6 +158,11 @@ public:
 		READY,			//準備
 		DEVICE,			//デバイス
 		COMING_SOON,	//ComingSoon
+		PLAYER_IMG,
+		DISPLAY_IMG,
+		OPERATION_IMG,
+		ROLE_IMG,
+		WAIT_IMG,
 
 		//タイトル画面
 		TITLE_LOGO,
@@ -169,7 +186,7 @@ public:
 		GAME_NOMAL_BGM,
 		GAME_LAST_BGM,
 		TITLE_BGM,
-
+		SELECT_BGM,
 
 		//効果音
 		HIT_SND,
@@ -177,19 +194,54 @@ public:
 		ENEMY_DETH_SND,
 		CHICKEN_DETH_SND,
 		SCENE_CHANGE_SE1,
+		CHANGE_SELECT,
+		CANCEL_SELECT,
+		DECIDE_SELECT,
+		FAZE_REZALT_SE,
+		POWER_UP_SE,
+		
+		SKILL_CHANGE,
+
+		ARCHER_SKILL2,	//アーチャースキル2
+		BUFF_ARROW_HIT,  //アーチャースキル2がプレイヤーに当たったら
+
 
 		//エフェクト
 		SMOKE,
 		DAMAGE_EFE,
+		//敵エフェクト
+		BOSS_PUNCH_EFE,
+		BOSS_SHOUT_EFE,
+		BOSS_SHOUT_ATK_EFE,
+		STATE_DOWN_EFE,
 
-		//エフェクト
+		//プレイヤーエフェクト
 		ARROW_RED,		//矢のエフェクト(赤)
 		ARROW_WHITE,	//矢のエフェクト(白)
 
 		CHARGE_AXE_HIT, //アックスの溜めスキル
 		GUARD,			//ガード
+		CHARGE_SKILL,	//チャージエフェクト
 		HIT2,			//プレイヤーから敵への当たりエフェクト
 
+		CARSOL_SE,
+		LEVEL_UP_SE,
+		EXPLAN_SWITCH,
+
+		//説明書
+		EXPLAN,
+		EXPLAN2,
+		EXPLAN3,
+		EXPLAN4,
+		EXPLAN5,
+		EXPLAN6,
+		EXPLAN7,
+
+		//スキルUI関係
+		SKILL_UI,
+		SKILL_KNIGHT,
+		SKILL_AXEMAN,
+		SKILL_ARCHER,
 	};
 
 	// 明示的にインステンスを生成する
@@ -207,6 +259,7 @@ public:
 	void InitResult(void);
 	void InitGameOver(void);
 	void InitGameClear(void);
+	void InitExplan(void);
 
 	void ResourcePlayer(void);
 	void ResourceEnemy(void);

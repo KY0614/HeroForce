@@ -66,37 +66,37 @@ const bool PlayerDodge::IsDodgeable()const
 	return !IsDodge() &&  !IsCoolDodge(); 
 }
 
-void PlayerDodge::Dodge(Transform* trans)
-{
-//	//ドッジフラグがtrueになったら
-//	if (IsDodge() && !IsCoolDodge())
-//	{
-//		// ドッジのカウントを追加
-//		CntUp(dodgeCnt_);
-//
-//		//スキル中に回避が出た時にスキルのカウントをリセット
-//		atk_.ResetCnt();
-//
-//		// 移動中
-//		if (dodgeCnt_ < FRAME_DODGE_MAX)
-//		{
-//			VECTOR dir = trans->GetForward();
-//			//移動方向
-//			VECTOR movePow = VScale(dir, SPEED_DODGE);
-//			//移動処理
-//			trans->pos = VAdd(trans_.pos, movePow);
-//		}
-//		else
-//		{
-//			dodgeCdt_ = 0.0f;
-//		}
+//void PlayerDodge::Dodge(Transform* trans)
+//{
+////	//ドッジフラグがtrueになったら
+////	if (IsDodge() && !IsCoolDodge())
+////	{
+////		// ドッジのカウントを追加
+////		CntUp(dodgeCnt_);
+////
+////		//スキル中に回避が出た時にスキルのカウントをリセット
+////		atk_.ResetCnt();
+////
+////		// 移動中
+////		if (dodgeCnt_ < FRAME_DODGE_MAX)
+////		{
+////			VECTOR dir = trans->GetForward();
+////			//移動方向
+////			VECTOR movePow = VScale(dir, SPEED_DODGE);
+////			//移動処理
+////			trans->pos = VAdd(trans_.pos, movePow);
+////		}
+////		else
+////		{
+////			dodgeCdt_ = 0.0f;
+////		}
+////	}
+////	else
+////	{
+////		CntUp(dodgeCdt_);
+////		ResetDodgeFrame();
+////#ifdef DEBUG_ON
+////		color_Col_ = 0xffffff;
+////#endif // DEBUG_ON
 //	}
-//	else
-//	{
-//		CntUp(dodgeCdt_);
-//		ResetDodgeFrame();
-//#ifdef DEBUG_ON
-//		color_Col_ = 0xffffff;
-//#endif // DEBUG_ON
-	}
-//}
+////}

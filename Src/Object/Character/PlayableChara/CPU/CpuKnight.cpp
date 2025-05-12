@@ -13,6 +13,7 @@ void CpuKnight::Init(void)
 {
 	obj_ = new Knight();
 	obj_->Init();
+	SetInitPos(playerNum_);
 }
 
 void CpuKnight::Update(void)

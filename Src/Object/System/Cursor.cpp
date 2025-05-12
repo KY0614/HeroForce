@@ -1,9 +1,10 @@
 #include <DxLib.h>
 #include "../../Utility/AsoUtility.h"
-#include "Carsor.h"
+#include "Cursor.h"
 
-Carsor::Carsor()
+Cursor::Cursor()
 {
+	pad_ = InputManager::JOYPAD_NO::PAD1;
 	key_.right_ = -1;
 	key_.left_ = -1;
 	key_.up_ = -1;
@@ -17,45 +18,29 @@ Carsor::Carsor()
 	img_ = -1;
 }
 
-Carsor::~Carsor()
-{
-}
-
-void Carsor::Init(const int plNum,const int img)
+void Cursor::Init(const int _plNum,const int _img)
 {
 	//プレイヤーナンバー
-	playerNum_ = plNum;
+	playerNum_ = _plNum;
 
 	//画像
-	img_ = img;
+	img_ = _img;
 
 	//パッド情報
-	switch (playerNum_)
-	{
-	case 0:
-		pad_ = InputManager::JOYPAD_NO::PAD1;
-		break;
-	case 1:
-		pad_ = InputManager::JOYPAD_NO::PAD2;
-		break;
-	case 2:
-		pad_ = InputManager::JOYPAD_NO::PAD3;
-		break;
-	case 3:
-		pad_ = InputManager::JOYPAD_NO::PAD4;
-		break;
-	}
+	pad_ = static_cast<InputManager::JOYPAD_NO>(playerNum_ + 1);
 
 	//初期設定
 	Reset();
 }
 
-void Carsor::Update()
+void Cursor::Update()
 {
 	//決定済みの場合
 	if (decide_) { return; }
 
 	auto& ins = InputManager::GetInstance();
+
+	//スティック
 	int stickX = ins.GetJPadInputState(pad_).AKeyLX;
 	int stickY = ins.GetJPadInputState(pad_).AKeyLY;
 
@@ -101,11 +86,10 @@ void Carsor::Update()
 	}
 }
 
-void Carsor::Draw()
+void Cursor::Draw()
 {
+	//角度
 	float angle = AsoUtility::Deg2RadF(ANGLE);
-	bool trans = true;
-	bool revers = false;
 
 	//決定済みの場合は描画しない
 	if (decide_) { return; }
@@ -117,11 +101,11 @@ void Carsor::Draw()
 		rate_,
 		angle,
 		img_,
-		trans,
-		revers);
+		true,
+		false);
 }
 
-void Carsor::Reset()
+void Cursor::Reset()
 {
 	//決定
 	decide_ = false;
@@ -133,16 +117,16 @@ void Carsor::Reset()
 	rate_ = SCALE_RATE;
 }
 
-void Carsor::SetContllorKey(const int right, const int left, const int up, const int down, const int decide)
+void Cursor::SetControllKey(const int _right, const int _left, const int _up, const int _down, const int _decide)
 {
-	key_.right_ = right;
-	key_.left_ = left;
-	key_.up_ = up;
-	key_.down_ = down;
-	key_.decide_ = decide;
+	key_.right_ = _right;
+	key_.left_ = _left;
+	key_.up_ = _up;
+	key_.down_ = _down;
+	key_.decide_ = _decide;
 }
 
-void Carsor::SetDecide(const bool value)
+void Cursor::SetDecide(const bool _value)
 {
-	decide_ = value;
+	decide_ = _value;
 }

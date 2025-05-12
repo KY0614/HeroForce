@@ -15,15 +15,15 @@ Timer::Timer(void)
 
 	DataBank& data = DataBank::GetInstance();
 
-	fontSize_ = TIME_FONT_SIZE / data.Output(DataBank::INFO::USER_NUM);
-	font_ = CreateFontToHandle(NULL, fontSize_, 4, DX_FONTTYPE_EDGE);
+	//fontSize_ = TIME_FONT_SIZE / data.Output(DataBank::INFO::USER_NUM);
+	//font_ = CreateFontToHandle(NULL, fontSize_, 4, DX_FONTTYPE_EDGE);
 
 	std::string time = "Žc‚è" + std::to_string(minute_) + ":" + std::to_string(second_);
 	int len = (int)strlen(time.c_str());
-	strWidth_ = GetDrawStringWidthToHandle(time.c_str(), len, font_);
+	//strWidth_ = GetDrawStringWidthToHandle(time.c_str(), len, font_);
 
 	//pos_.x = static_cast<float>(data.Output(DataBank::INFO::SCREEN_SIZE, DataBank::GET_SIZE::X))/2.0f;
-	pos_.x = Application::SCREEN_SIZE_X / 2.0f - strWidth_ / 2.0f;
+	pos_.x = Application::SCREEN_SIZE_X / 2.0f;
 	pos_.y = 0.0f;
 	pos_.z = 0.0f;
 
@@ -33,7 +33,7 @@ Timer::Timer(void)
 
 Timer::~Timer(void)
 {
-	DeleteFontToHandle(font_);
+	//DeleteFontToHandle(font_);
 }
 
 void Timer::CreateInstance(void)
@@ -96,6 +96,16 @@ void Timer::Reset()
 	second_ = 0;
 	cnt_ = 0;
 	isEnd_ = false;
+}
+
+void Timer::Release()
+{
+	instance_ = nullptr;
+}
+
+void Timer::Destroy()
+{
+	delete instance_;
 }
 
 

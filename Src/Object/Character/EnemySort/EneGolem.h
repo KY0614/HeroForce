@@ -125,11 +125,15 @@ public:
 	static constexpr int SKILL_THREE_MAX_CNT = 5;				//スキル３の攻撃回数
 	//スキルエフェクト
 	static constexpr float SKILL_THREE_SHOUT_EFF_SIZE = 10.0f;	//叫びエフェクトの大きさ
-	static constexpr float SKILL_THREE_ATK_EFF_SIZE = 10.0f;	//叫びの攻撃エフェクトの大きさ
+	static constexpr float SKILL_THREE_ATK_EFF_SIZE = 25.0f;	//叫びの攻撃エフェクトの大きさ
+
 
 
 	//コンストラクタ
 	EneGolem(const VECTOR& _spawnPos);
+
+	//解放
+	void Destroy(void)override;
 
 private:	
 	//****************************************************************

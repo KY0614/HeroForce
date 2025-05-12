@@ -1,5 +1,6 @@
 #include<DxLib.h>
 #include<cassert>
+#include"../Manager/Decoration/SoundManager.h"
 #include"../Manager/Generic/InputManager.h"
 #include"../Manager/Generic/ResourceManager.h"
 #include"../Manager/Generic/SceneManager.h"
@@ -18,6 +19,7 @@ FazeResult::FazeResult(void)
 	int i = -1;
 	imgRank_ = &i;
 	state_ = STATE::NOMAL;
+	isPlay_ = false;
 }
 FazeResult::~FazeResult(void)
 {
@@ -52,11 +54,17 @@ void FazeResult::Init(void)
 		FONT_HEAD_SIZE,
 		0);
 
+	SoundManager::GetInstance().Add(SoundManager::TYPE::SE,
+		SoundManager::SOUND::FAZE_REZALT,
+		ResourceManager::GetInstance().Load(ResourceManager::SRC::FAZE_REZALT_SE).handleId_);
+
 	SetResult();
 }
 
 void FazeResult::Update(void)
 {
+	if (!isPlay_) { SoundManager::GetInstance().Play(SoundManager::SOUND::FAZE_REZALT); isPlay_ = true; }
+
 	ChangeRank();
 	step_++;
 }
@@ -131,6 +139,7 @@ void FazeResult::Release(void)
 void FazeResult::Reset(void)
 {
 	isEnd_ = false;
+	isPlay_ = false;
 }
 
 void FazeResult::SetLast(void)

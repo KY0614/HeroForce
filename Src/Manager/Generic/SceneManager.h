@@ -27,6 +27,7 @@ public:
 		GAME,
 		GAMECLEAR,
 		GAMEOVER,
+		EXP,
 	};
 
 	//ƒRƒ“ƒgƒ[ƒ‰Œn“

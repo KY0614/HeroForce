@@ -17,7 +17,7 @@ public:
     static constexpr float SPEED = PlayerBase::MOVE_SPEED_FAST;
 
     //バフ強化値
-    static constexpr float BUFF = 0.2f;
+    static constexpr float BUFF = 20.0f;
 
     static constexpr float ATK_START_RANGE = 250.0f * CHARACTER_SCALE;	//攻撃開始判定の大きさ
     static constexpr float ATKABLE_TIME = 0.0f;                         //連射受付時間
@@ -31,9 +31,13 @@ public:
     static constexpr float FRAME_ATK_DURATION = 2.0f;
     static constexpr float FRAME_ATK_BACKRASH = 0.1f;
     static constexpr VECTOR ATK_COL_LOCAL_POS = { 0.0f,100.0f,100.0f };
-    static constexpr float POW_ATK = 7.0f;
+    static constexpr float NMLATK_POW = 7.0f;
 
     static constexpr float COL_ATK = CHARACTER_SCALE * 100.0f;
+
+    //プレイヤー自体の後隙
+    static constexpr float NMLATK_BACKRASH_MAX = 0.2f;
+    //static constexpr float NMLATK_BACKRASH_MAX = 100.0f;
 
 
     //-----------------------------------------------------------
@@ -44,6 +48,9 @@ public:
     //-----------------------------------------------------------
     static constexpr float SKILL_ONE_COOLTIME = 3.0f;
     static constexpr float SKILL_ONE_START = 2.0f;
+
+    static constexpr float SKILL_ONE_CHARE_STARTCNT = 1.0f;
+
     static constexpr float FRAME_SKILL1_DURATION = 0.7f;
     static constexpr float FRAME_SKILL1_BACKRASH = 0.2f;
     static constexpr VECTOR SKILL1_COL_LOCAL_POS = { 0.0f,100.0f,100.0f };
@@ -56,17 +63,18 @@ public:
     //溜めアニメーションのステップ
     static constexpr float SKILL_CHARGE_STEPANIM = 9.5f;
 
-
     //プレイヤー自体の後隙
-    static constexpr float BACKRASH_MAX = 0.5f;
+    static constexpr float SKILL1_BACKRASH_MAX = 0.5f;
+
+
+
 
 
     //-----------------------------------------------------------
 
     //スキル2
     //-----------------------------------------------------------
-    //static constexpr float SKILL_TWO_COOLTIME = 5.0f;
-    static constexpr float SKILL_TWO_COOLTIME = 0.5f;
+    static constexpr float SKILL_TWO_COOLTIME = 5.0f;
     static constexpr float SKILL_TWO_START = 0.2f;
     static constexpr float FRAME_SKILL2_DURATION = 3.0f - SKILL_TWO_START;
     static constexpr float FRAME_SKILL2_BACKRASH = 0.2f;
@@ -76,8 +84,8 @@ public:
 
 
     static constexpr float SKILL2_CHANGE_ANIM_TIME = 0.25f;
-   // static constexpr float SKILL2_BUFF_TIME = 20.0f;
     static constexpr float SKILL2_BUFF_TIME = 20.0f;
+    static constexpr float SKILL2_BACKRASH_MAX = 0.2f;
 
 
     //-----------------------------------------------------------
@@ -89,7 +97,7 @@ public:
     //static constexpr int AIMING_NUM = 14;
 
     //通常攻撃の最大値
-    static constexpr ATK ATK_MAX{ ATK_COL_LOCAL_POS,COL_ATK,ATK_POW,FRAME_ATK_DURATION,FRAME_ATK_BACKRASH,0.0f,false };
+    static constexpr ATK ATK_MAX{ ATK_COL_LOCAL_POS,COL_ATK,NMLATK_POW,FRAME_ATK_DURATION,FRAME_ATK_BACKRASH,0.0f,false };
 
     //スキル１
     static constexpr ATK SKILL_ONE_MAX{ SKILL1_COL_LOCAL_POS ,COL_SKILL1 ,SKILL_ONE_POW_MIN,FRAME_SKILL1_DURATION ,FRAME_SKILL1_BACKRASH ,0.0f,false };
@@ -103,6 +111,9 @@ public:
     static constexpr float RELOAD_TIME = 5.0f;	//矢のリロード時間
     static constexpr float ARROW_SPEED = 10.0f;	//矢のとぶスピード
 
+    //エフェクト
+    //スキルチャージ
+    static constexpr float CHARGE_SKILL_EFF_SIZE = 50.0f;
  
 
     Archer(void);
@@ -128,7 +139,7 @@ public:
     //矢のゲッタ
     //const PlayerBase::ATK GetArrowAtk(const int i)override;
     const PlayerBase::ATK GetArrowAtk(const ATK_TYPE _type, const int i)override;
-    const int GetArrowCnt(const int _type)override { return arrowCnt_[_type]; }
+    const int GetArrowCnt(const int _type)override { return arrow_[static_cast<ATK_TYPE>(_type)].size(); }
     void SetIsArrowHit(ATK_TYPE _type, const bool _flg, int _num)override;
 
     //バフ
@@ -140,6 +151,7 @@ public:
     //std::vector<ATK>GetAtks(void)override { return arrowAtk_; }
 
     std::vector<ATK> GetAtks(ATK_TYPE _type)override { return arrowAtk_[_type]; }
+    void Destroy(void)override;
 
     void Update(void)override;
 

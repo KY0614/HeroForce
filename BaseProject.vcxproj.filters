@@ -41,13 +41,12 @@
     <ClCompile Include="Src\Common\ImageFader.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\Collision.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\TextManager.cpp" />
-    <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
-    <ClCompile Include="Src\Object\System\Carsor.cpp" />
+    <ClCompile Include="Src\Object\System\Cursor.cpp" />
     <ClCompile Include="Src\Object\System\LevelScreenManager.cpp" />
     <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
     <ClCompile Include="Src\Object\Arrow.cpp" />
-    <ClCompile Include="Src\Object\System\LevelupNotice.cpp" />
-    <ClCompile Include="Src\Object\System\LevelupSelect.cpp" />
+    <ClCompile Include="Src\Object\System\LevelNotice.cpp" />
+    <ClCompile Include="Src\Object\System\LevelSelect.cpp" />
     <ClCompile Include="Src\Object\UnitBase.cpp" />
     <ClCompile Include="Src\Scene\GameScene.cpp" />
     <ClCompile Include="Src\Common\IntVector3.cpp" />
@@ -60,7 +59,6 @@
     <ClCompile Include="Src\Manager\Generic\Camera.cpp" />
     <ClCompile Include="Src\Manager\Generic\InputManager.cpp" />
     <ClCompile Include="Src\Manager\Generic\Resource.cpp" />
-    <ClCompile Include="Src\Manager\Generic\ResourceManager.cpp" />
     <ClCompile Include="Src\Manager\Generic\SceneManager.cpp" />
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Scene\TitleScene.cpp" />
@@ -69,9 +67,6 @@
     <ClCompile Include="Src\Object\System\LevelScreenManager.cpp" />
     <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
-    <ClCompile Include="Src\Object\System\Carsor.cpp" />
-    <ClCompile Include="Src\Object\System\LevelupNotice.cpp" />
-    <ClCompile Include="Src\Object\System\LevelupSelect.cpp" />
     <ClCompile Include="Src\Common\ImageFader.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneAxe.cpp" />
     <ClCompile Include="Src\Manager\GameSystem\TextManager.cpp" />
@@ -105,7 +100,6 @@
     <ClCompile Include="Src\Object\SelectImage.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.cpp" />
     <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
-    <ClCompile Include="Src\Manager\Decoration\EffectManager.cpp" />
     <ClCompile Include="Src\Shader\PixelShader.cpp" />
     <ClCompile Include="Src\Scene\GameClearScene.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ClearChicken.cpp" />
@@ -122,6 +116,10 @@
     <ClCompile Include="Src\Manager\GameSystem\CharacterParamData.cpp" />
     <ClCompile Include="Src\Object\System\InformFaze.cpp" />
     <ClCompile Include="Src\Object\System\GameUi\PlayerUI.cpp" />
+    <ClCompile Include="Src\Scene\ExplanScene.cpp" />
+    <ClCompile Include="Src\Object\System\GameUi\EnemyHpBar.cpp" />
+    <ClCompile Include="Src\Manager\Generic\ResourceManager.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Other\OtherScenePlayerBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\Character\PlayableChara\PlayerBase.h" />
@@ -164,10 +162,9 @@
     <ClCompile Include="Src\Object\Arrow.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClInclude Include="Src\Object\Stage\StageObject.h" />
     <ClInclude Include="Src\Object\Stage\SkyDome.h" />
-    <ClInclude Include="Src\Object\System\Carsor.h" />
-    <ClInclude Include="Src\Object\System\LevelupNotice.h" />
+    <ClInclude Include="Src\Object\System\Cursor.h" />
+    <ClInclude Include="Src\Object\System\LevelNotice.h" />
     <ClInclude Include="Src\Common\ImageFader.h" />
     <ClInclude Include="Src\Common\IntVector3.h" />
     <ClInclude Include="Src\Common\Quaternion.h" />
@@ -219,10 +216,8 @@
     <ClInclude Include="Src\Object\Stage\SkyDome.h" />
     <ClInclude Include="Src\Object\Stage\StageManager.h" />
     <ClInclude Include="Src\Object\Stage\StageObject.h" />
-    <ClInclude Include="Src\Object\System\Carsor.h" />
     <ClInclude Include="Src\Object\System\LevelScreenManager.h" />
-    <ClInclude Include="Src\Object\System\LevelupNotice.h" />
-    <ClInclude Include="Src\Object\System\LevelupSelect.h" />
+    <ClInclude Include="Src\Object\System\LevelSelect.h" />
     <ClInclude Include="Src\Object\System\UnitPositionLoad.h" />
     <ClInclude Include="Src\Object\UnitBase.h" />
     <ClInclude Include="Src\Scene\FazeResult.h" />
@@ -246,6 +241,9 @@
     <ClInclude Include="Src\Object\Character\PlayableChara\Other\OverPlayers.h" />
     <ClInclude Include="Src\Object\System\InformFaze.h" />
     <ClInclude Include="Src\Object\System\GameUi\PlayerUI.h" />
+    <ClInclude Include="Src\Scene\ExplanScene.h" />
+    <ClInclude Include="Src\Object\System\GameUi\EnemyHpBar.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Other\OtherScenePlayerBase.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\HLSL\ColorTex.hlsl" />
@@ -253,5 +251,6 @@
     <FxCompile Include="Src\Shader\HLSL\FadeTextrure.hlsl" />
     <FxCompile Include="Src\Shader\HLSL\YellowBlink.hlsl" />
     <FxCompile Include="Src\Shader\HLSL\Texture.hlsl" />
+    <FxCompile Include="Src\Shader\HLSL\ColorBlinking.hlsl" />
   </ItemGroup>
 </Project>

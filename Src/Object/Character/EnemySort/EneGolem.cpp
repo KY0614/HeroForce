@@ -7,6 +7,18 @@ EneGolem::EneGolem(const VECTOR& _spawnPos) : Enemy(_spawnPos)
 	trans_.pos = _spawnPos;
 }
 
+void EneGolem::Destroy(void)
+{
+	auto& eff = EffectManager::GetInstance();
+
+	//共通
+	Enemy::Destroy();
+
+	//eff.Stop(EffectManager::EFFECT::BOSS_PUNCH);
+	eff.Stop(EffectManager::EFFECT::BOSS_SHOUT);
+	eff.Stop(EffectManager::EFFECT::BOSS_SHOUT_ATK);
+}
+
 void EneGolem::SetParam(void)
 {
 	//攻撃警告
@@ -295,6 +307,13 @@ void EneGolem::Skill_Three(void)
 
 		//保持していた座標情報をもとにセット
 		thisAtk.pos_ = skillThreePreAtk_[skillThreeCnt_].pos_;
+
+		//エフェクトの再生
+		eff.Play(EffectManager::EFFECT::BOSS_SHOUT_ATK,
+			thisAtk.pos_,
+			trans_.quaRot,
+			SKILL_THREE_ATK_EFF_SIZE,
+			SoundManager::SOUND::NONE);
 
 		//カウンタ増加
 		skillThreeCnt_++;

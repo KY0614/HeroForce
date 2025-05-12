@@ -61,6 +61,7 @@ void Enemy::Init(void)
 	isColStage_ = false;
 	colStageCnt_ = 0.0f;
 	startCnt_ = 0.0f;
+	damage_ = 0.0f;
 	targetPos_ = preTargetPos_ = AsoUtility::VECTOR_ZERO;
 	ChangeSearchState(SEARCH_STATE::CHICKEN_SEARCH);
 
@@ -69,6 +70,9 @@ void Enemy::Init(void)
 	atk_.ResetCnt();
 
 	trans_.Update();
+
+	ui_ = std::make_unique<EnemyHpBar>();
+	ui_->Init();
 }
 
 void Enemy::Update(void)
@@ -91,6 +95,7 @@ void Enemy::Update(void)
 	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_Q)) { Damage(1, 10); }
 #endif // DEBUG_ENEMY
 
+	SubHp();
 
 	//やられているなら何もしない
 	if (!IsAlive()) 
@@ -105,6 +110,7 @@ void Enemy::Update(void)
 
 	//状態ごとのUpdate
 	stateUpdate_();
+
 
 	//モデル制御
 	trans_.Update();
@@ -133,22 +139,22 @@ void Enemy::ChangeSearchState(const SEARCH_STATE _searchState)
 	SearchStateInfo_[searchState_]();
 }
 
-void Enemy::Damage(const int _damage, const int _stunPow)
-{
-	//既にやられているなら処理しない
-	if (!IsAlive()) 
-	{
-		//やられたら死亡アニメーション
-		ResetAnim(ANIM::DEATH, changeSpeedAnim_[ANIM::DEATH]);
-		return;
-	}
-
-	//ダメージカウント
-	hp_ -= _damage;
-
-	//スタン値カウント
-	//stunDef_ += _stunPow;
-}
+//void Enemy::Damage(const int _damage, const int _stunPow)
+//{
+//	//既にやられているなら処理しない
+//	if (!IsAlive()) 
+//	{
+//		//やられたら死亡アニメーション
+//		ResetAnim(ANIM::DEATH, changeSpeedAnim_[ANIM::DEATH]);
+//		return;
+//	}
+//
+//	//ダメージカウント
+//	hp_ -= _damage;
+//
+//	//スタン値カウント
+//	//stunDef_ += _stunPow;
+//}
 
 void Enemy::ChangeState(const STATE _state)
 {
@@ -232,6 +238,7 @@ void Enemy::ParamLoad(CharacterParamData::UNIT_TYPE type)
 	//歩きの速度
 	walkSpeed_ = data.speed_;
 	runSpeed_ = data.speed_ * RUN_SPEED_MULTI;
+	exp_ = data.exp_;
 }
 
 void Enemy::InitAnim()
@@ -458,17 +465,22 @@ void Enemy::Draw(void)
 
 #endif // DEBUG_ENEMY
 
+	//UIの描画
+	ui_->Draw(*this);
+
 	if (IsAlive() || anim_ == ANIM::DEATH && animTotalTime_ >= stepAnim_)
 	{
 		//敵モデルの描画
 		MV1DrawModel(trans_.modelId);
+		
 
-		for (auto& nowSkill : nowSkill_)
-		{
-			//攻撃の描画
-			if (nowSkill.IsAttack()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
-			else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
-		}
+
+		//for (auto& nowSkill : nowSkill_)
+		//{
+		//	//攻撃の描画
+		//	if (nowSkill.IsAttack()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
+		//	else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
+		//}
 
 		//攻撃予兆の描画
 		if (state_ == STATE::ALERT)
@@ -476,6 +488,7 @@ void Enemy::Draw(void)
 			DrawPolygon3D(alertVertex_, 2, DX_NONE_GRAPH, false);
 		}
 	}
+
 }
 
 const VECTOR Enemy::GetMoveVec(const VECTOR _start, const VECTOR _goal, const float _speed)

@@ -15,9 +15,9 @@ public:
     static constexpr float SKILL_TWO_COOLTIME = 1.0f;
 #else // DEBUG_COOL
     //クールタイム
-    static constexpr float ATK_COOLTIME = 2.0f;
-    static constexpr float SKILL_ONE_COOLTIME = 10.0f;
-    static constexpr float SKILL_TWO_COOLTIME = 5.0f;
+    static constexpr float ATK_COOLTIME = 1.5f;
+    static constexpr float SKILL_ONE_COOLTIME = 6.0f;
+    static constexpr float SKILL_TWO_COOLTIME = 3.5f;
 #endif // DEBUG_COOL
 
     //ステータス
@@ -53,24 +53,26 @@ public:
     static constexpr float COL_SKILL2 = CHARACTER_SCALE * 200.0f;
 
     //攻撃威力
-    static constexpr float ATK_POW = 7.0f;
+    static constexpr float NMLATK_POW = 12.0f;
     static constexpr float SKILL_ONE_POW = 25.0f;
     static constexpr float SKILL_ONE_CHARGE_POW = 50.0f;
-    static constexpr float SKILL_TWO_POW = 5.0f;
+    static constexpr float SKILL_TWO_POW = 8.0f;
 
     //溜めモーション
     static constexpr float SKILL_CHARGE_STEPANIM = 16.9f;
 
     //エフェクトサイズ
+    //----------------------------------------------------
+    //スキル２攻撃の瞬間
     static constexpr float CHARGE_AXE_EFF_SIZE = 20.0f;
 
-    //エフェクトを最初の1フレームの時に再生させる用のFPS
-    static constexpr float DELTATIME = 1.0f / 60.0f;
+    //スキルチャージ
+    static constexpr float CHARGE_SKILL_EFF_SIZE = 50.0f;
 
 
 
     //通常攻撃の最大値
-    static constexpr ATK ATK_MAX{ ATK_COL_LOCAL_POS,COL_ATK,ATK_POW,FRAME_ATK_DURATION,FRAME_ATK_BACKRASH,0.0f,false };
+    static constexpr ATK ATK_MAX{ ATK_COL_LOCAL_POS,COL_ATK,NMLATK_POW,FRAME_ATK_DURATION,FRAME_ATK_BACKRASH,0.0f,false };
 
     //スキル１
     static constexpr ATK SKILL_ONE_MAX{ SKILL1_COL_LOCAL_POS ,COL_SKILL1 ,SKILL_ONE_POW,FRAME_SKILL1_DURATION ,FRAME_SKILL1_BACKRASH ,0.0f,false };

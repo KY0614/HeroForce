@@ -37,6 +37,11 @@ PlayerBase::PlayerBase(void)
 
 	speed_ = 0.0f;
 
+	initPos_[0] = PLAYER1_POS;
+	initPos_[1] = PLAYER2_POS;
+	initPos_[2] = PLAYER3_POS;
+	initPos_[3] = PLAYER4_POS;
+
 	for (int i = 0; i < static_cast<int>(ATK_ACT::MAX); i++)
 	{
 		coolTime_[i] = coolTimeMax_[i];
@@ -46,20 +51,31 @@ PlayerBase::PlayerBase(void)
 
 void PlayerBase::Destroy(void)
 {
+	delete dodge_;
+	dodge_ = nullptr;
 
+	EffectManager::GetInstance().Stop(EffectManager::EFFECT::GUARD);
+	EffectManager::GetInstance().Stop(EffectManager::EFFECT::CHARGE_SKILL);
+	EffectManager::GetInstance().Stop(EffectManager::EFFECT::CHARGE_AXE_HIT);
+	EffectManager::GetInstance().Stop(EffectManager::EFFECT::ARCHER_SKILL2);
+	
+	SoundManager::GetInstance().Stop(SoundManager::SOUND::SKILL_CHANGE);
 }
 
 
 
 void PlayerBase::Init(void)
 {
-	//アニメーション初期化
+	//アニメーションNo初期化
 	InitAnimNum();
+
+
 	InitCharaAnim();
-	ResetAnim(ANIM::NONE, SPEED_ANIM);
+
 	SetParam();
 
 	InitAct();
+
 #ifdef DEBUG_ON
 	InitDebug();
 #endif // DEBUG_ON
@@ -71,6 +87,8 @@ void PlayerBase::Init(void)
 	radius_ = MY_COL_RADIUS;
 
 	skillNo_ = ATK_ACT::SKILL1;
+
+	
 
 	//dodgeCdt_ = DODGE_CDT_MAX;
 	dodge_ = new PlayerDodge();
@@ -96,14 +114,26 @@ void PlayerBase::Init(void)
 
 	hp_ = hpMax_;
 
-	atkUpPercent_ = 1.0f;
-
-	preAtk_ = atkPow_;
+	preAtkPow_ = atkPow_;
 	preDef_ = def_;
 	preSpd_ = moveSpeed_;
 
+	//バフ加算
+	buffpers_.emplace(STATUSBUFF_TYPE::ATK_BUFF, 0.0f);
+	buffpers_.emplace(STATUSBUFF_TYPE::DEF_BUFF, 0.0f);
+	buffpers_.emplace(STATUSBUFF_TYPE::SPD_BUFF, 0.0f);
 
+	//各バフの初期化
+	buffs_.emplace(SKILL_BUFF::BUFF_ARROW, (0.0f, 0.0f, 0.0f));
+	buffs_.emplace(SKILL_BUFF::GUARD, (0.0f, 0.0f, 0.0f));
+	
+	auto& snd = SoundManager::GetInstance();
+	auto& res = ResourceManager::GetInstance();
 
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::SKILL_CHANGE
+		, res.Load(ResourceManager::SRC::SKILL_CHANGE).handleId_);
+
+	//プレイヤー入力のインスタンスを作る
 	PlayerInput::CreateInstance();
 
 	//モデルの初期化
@@ -114,7 +144,7 @@ void PlayerBase::Init(void)
 		coolTime_[i] = coolTimeMax_[i];
 	}
 
-	for (int i = 0; i < static_cast<int>(BUFF_TYPE::MAX); i++)
+	for (int i = 0; i < static_cast<int>(STATUSBUFF_TYPE::MAX); i++)
 	{
 		buffPercent_[i] = 1.0f;
 	}
@@ -150,47 +180,10 @@ void PlayerBase::Update(void)
 	//クールタイム割合の計算
 	CoolTimePerCalc();
 
-	for (int i = 0; i < static_cast<int>(BUFF_TYPE::MAX); i++)
-	{
-		CntDown(buffCnt_[i]);
-		if (buffCnt_[i] > 0.0f&&isBuff_)
-		{
-			if (isBuffing_)return;
-			//atkPow_ *= buffPercent_[static_cast<int>(BUFF_TYPE::ATK_BUFF)];
-			//def_ *= buffPercent_[static_cast<int>(BUFF_TYPE::DEF_BUFF)];
-			//moveSpeed_ *= buffPercent_[static_cast<int>(BUFF_TYPE::SPD_BUFF)];
-			bufAtk_=atkPow_* buffPercent_[static_cast<int>(BUFF_TYPE::ATK_BUFF)];
-			bufDef_ = def_*buffPercent_[static_cast<int>(BUFF_TYPE::DEF_BUFF)];
-			bufSpd_= defSpeed_*buffPercent_[static_cast<int>(BUFF_TYPE::SPD_BUFF)];
+	//HPを減らす処理
+	SubHp();
 
-			atkPow_ = bufAtk_;
-			def_ = bufDef_;
-			moveSpeed_ = bufSpd_;
-			isBuffing_ = true;
-		}
-		else if(buffCnt_[i] <= 0.0f)
-		{
-			buffPercent_[i] = 1.0f;
-			buffCnt_[i] = 0.0f;
-			atkPow_ = preAtk_;
-			def_ = preDef_;
-			moveSpeed_ = preSpd_;
-			isBuff_ = false;
-			isBuffing_ = false;
-		}
-
-		if (!isBuff_)
-		{
-			preAtk_ = atkPow_;
-			preDef_ = def_;
-			preSpd_ = moveSpeed_;
-
-			atkPow_ = preAtk_;
-			def_ = preDef_;
-			defSpeed_ = preSpd_;
-		}
-
-	}
+	BuffUpdate();
 
 
 #ifdef DEBUG_ON
@@ -205,7 +198,7 @@ void PlayerBase::Draw(void)
 {
 	MV1DrawModel(trans_.modelId);
 #ifdef DEBUG_ON
-	//DrawDebug();
+	DrawDebug();
 #endif // DEBUG_ON
 }
 
@@ -241,6 +234,9 @@ void PlayerBase::UserUpdate(void)
 
 	//操作関係
 	ProcessAct();
+
+	auto& inpMng = InputManager::GetInstance();
+	auto& pInp = PlayerInput::GetInstance();
 
 	//回避
 	dodge_->Update(trans_);
@@ -283,9 +279,6 @@ void PlayerBase::ChangeAct(const ATK_ACT _act)
 
 	//変更点
 	changeAct_[_act]();
-	//ChangeAtkType(_act);
-	//atkStartCnt_をここで開始させる
-	//CntUp(atkStartCnt_);
 }
 
 void PlayerBase::ChangeNmlAtk(void)
@@ -330,6 +323,7 @@ void PlayerBase::DrawDebug(void)
 	//	, "FrameATK(%f)\nisAtk(%d)\nisBackSrash(%d)\nDodge(%f)\nSkill(%f)\natkStartTime(%f)\natkStartCnt(%f)\nskillType(%d)"
 	//	, atk_.cnt_, atk_.IsAttack(), atk_.IsBacklash()
 	//	, dodge_->GetDodgeCnt(), atk_.cnt_, atkStartTime_[static_cast<int>(SKILL_NUM::ONE)], atkStartCnt_, atkType_);
+
 
 
 	//DrawFormatString(0, 200, 0xffffff
@@ -409,53 +403,109 @@ void PlayerBase::InitAtk(void)
 	//攻撃の発生
 	atkStartCnt_ = 0.0f;
 
-	//防御力を元に戻す
-	def_ /= 2.0f;
 
 	EffectManager::GetInstance().Stop(EffectManager::EFFECT::GUARD);
+
+
 
 	
 }
 
-void PlayerBase::SetBuff(BUFF_TYPE _type, float _per, float _second)
+void PlayerBase::SetBuff(STATUSBUFF_TYPE _type, SKILL_BUFF _skill, float _per, float _second)
 {
-	buffCnt_[static_cast<int>(_type)] = _second;
-	buffPercent_[static_cast<int>(_type)] += _per;
+	buffs_[_skill].cnt = _second;
+	buffs_[_skill].percent[static_cast<int>(_type)] = _per;
 }
 
 void PlayerBase::SetPreStatus(void)
 {
-	preAtk_ = atkPow_;
+	preAtkPow_ = atkPow_;
 	preDef_ = def_;
 	preSpd_ = moveSpeed_;
+}
+
+void PlayerBase::BuffUpdate(void)
+{
+	for (auto& buff : buffs_)
+	{
+		CntDown(buff.second.cnt);
+	
+		if (buff.second.cnt>0.0f&&buff.second.isBuff)
+		{
+			for (int i = 0; i < static_cast<int>(SKILL_BUFF::MAX); i++)
+			{
+				if (buff.second.isBuffing == true)continue;
+
+				//それぞれのバフ(スキルごとに設定されたバフ)をステータスのバフに足す
+				buffpers_[STATUSBUFF_TYPE::ATK_BUFF] += buff.second.percent[static_cast<int>(STATUSBUFF_TYPE::ATK_BUFF)]/ DEFAULT_PERCENT;
+				buffpers_[STATUSBUFF_TYPE::DEF_BUFF] += buff.second.percent[static_cast<int>(STATUSBUFF_TYPE::DEF_BUFF)]/ DEFAULT_PERCENT;
+				buffpers_[STATUSBUFF_TYPE::SPD_BUFF] += buff.second.percent[static_cast<int>(STATUSBUFF_TYPE::SPD_BUFF)]/ DEFAULT_PERCENT;
+				buff.second.isBuffing = true;
+			}
+		}
+		else if(buff.second.cnt <= 0.0f)
+		{
+			buff.second.cnt = 0.0f;
+			for (int i = 0; i < static_cast<int>(SKILL_BUFF::MAX); i++)
+			{
+				if (buff.second.isBuffing == false)continue;
+
+				//制限時間が終わったらスキルで増やした増加量分引く
+				buffpers_[STATUSBUFF_TYPE::ATK_BUFF] -= buff.second.percent[static_cast<int>(STATUSBUFF_TYPE::ATK_BUFF)] / DEFAULT_PERCENT;
+				buffpers_[STATUSBUFF_TYPE::DEF_BUFF] -= buff.second.percent[static_cast<int>(STATUSBUFF_TYPE::DEF_BUFF)] / DEFAULT_PERCENT;
+				buffpers_[STATUSBUFF_TYPE::SPD_BUFF] -= buff.second.percent[static_cast<int>(STATUSBUFF_TYPE::SPD_BUFF)] / DEFAULT_PERCENT;
+				buff.second.isBuffing = false;
+				buff.second.isBuff = false;
+			}
+		}
+		atkPow_ = preAtkPow_ * (1.0f + buffpers_[STATUSBUFF_TYPE::ATK_BUFF]);
+		def_ = preDef_ * (1.0f + buffpers_[STATUSBUFF_TYPE::DEF_BUFF]);
+		moveSpeed_ = preSpd_ * (1.0f + buffpers_[STATUSBUFF_TYPE::SPD_BUFF]);
+	}
 }
 
 void PlayerBase::Reset(void)
 {
 	//アニメーション初期化
-	InitAnimNum();
-	InitCharaAnim();
-	ResetAnim(ANIM::NONE, SPEED_ANIM);
-	SetParam();
+	ResetAnim(ANIM::IDLE, SPEED_ANIM);
 
 	skillNo_ = ATK_ACT::SKILL1;
 
-	//dodgeCdt_ = DODGE_CDT_MAX;
 	dodge_->Init();
-	moveSpeed_ = 0.0f;
 
 	userOnePos_ = { -400.0f,0.0f,0.0f };
 
-	act_ = ATK_ACT::MAX;
+	ResetParam();
 
-	if (!IsAlive()) { hp_ += hpMax_ * CHANGEFAZE_RECOVERY_PER; }
+	hp_ = hpMax_;
 
-	//モデルの初期化
+	isSkill_ = false;
+	isAtk_ = false;
+
+	for (int i = 0; i < static_cast<int>(ATK_ACT::MAX); i++)
+	{
+		coolTime_[i] = coolTimeMax_[i];
+	}
+
+	////モデルの初期化
 	trans_.Update();
+
+	auto& effIns = EffectManager::GetInstance();
+	effIns.Stop(EffectManager::EFFECT::GUARD);
+	effIns.Stop(EffectManager::EFFECT::CHARGE_AXE_HIT);
+
+	//変更箇所
+	//---------------------------------------------
+	effIns.Stop(EffectManager::EFFECT::CHARGE_AXE_HIT);
+	effIns.Stop(EffectManager::EFFECT::ARCHER_SKILL2);
+
+	SoundManager::GetInstance().Stop(SoundManager::SOUND::SKILL_CHANGE);
+	//---------------------------------------------
+
 }
 
 
-void PlayerBase::BuffPerAdd(BUFF_TYPE _type, float _per)
+void PlayerBase::BuffPerAdd(STATUSBUFF_TYPE _type, float _per)
 {
 	buffPercent_[static_cast<int>(_type)] += _per;
 }
@@ -574,6 +624,9 @@ bool PlayerBase::IsSkillable(void)
 void PlayerBase::SkillChange(void)
 {
 	skillNo_ = static_cast<ATK_ACT>(static_cast<int>(skillNo_) + 1);
+	auto& snd = SoundManager::GetInstance();
+	snd.Play(SoundManager::SOUND::SKILL_CHANGE);
+	snd.AdjustVolume(SoundManager::SOUND::SKILL_CHANGE, SKILL_CHANGE_SE_VOL);
 	//MAXになったらスキル１に戻る
 	skillNo_ == ATK_ACT::MAX ? skillNo_ = ATK_ACT::SKILL1 : skillNo_ = skillNo_;
 	//変更点

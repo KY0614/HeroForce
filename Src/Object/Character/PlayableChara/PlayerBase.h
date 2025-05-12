@@ -6,6 +6,7 @@
 #include "../../UnitBase.h"
 #include"../../../Manager/Generic/InputManager.h"
 #include"../../../Manager/Decoration/EffectManager.h"
+#include"../PlayerManager.h"
 #include"../PlayerInput.h"
 #include "../../UnitBase.h"
 
@@ -30,7 +31,8 @@ public:
 
 #endif // DEBUG_ON
     //デバッグ用
-
+      //エフェクトを最初の1フレームの時に再生させる用のFPS
+    static constexpr float DELTATIME = 1.0f / 60.0f;
 
 
     //各アニメーション番号
@@ -76,6 +78,15 @@ public:
     //フェーズ変わるときにプレイヤーが死んでた時のhp回復
     static constexpr float CHANGEFAZE_RECOVERY_PER = 0.2f;
 
+    //プレイヤーの初期座標
+    static constexpr VECTOR PLAYER1_POS = { -200.0f,0.0F,0.0f };
+    static constexpr VECTOR PLAYER2_POS = { -100.0f,0.0F,0.0f };
+    static constexpr VECTOR PLAYER3_POS = { 0.0F,0.0F,0.0f };
+    static constexpr VECTOR PLAYER4_POS = { 100.0F,0.0F,0.0f };
+
+    //音量
+    static constexpr int SKILL_CHANGE_SE_VOL = 80;
+
     //*************************************************
     // 列挙型
     //*************************************************
@@ -104,12 +115,28 @@ public:
         ,MAX
     };
 
-    enum class BUFF_TYPE
+    enum class STATUSBUFF_TYPE
     {
         ATK_BUFF
         ,DEF_BUFF
         ,SPD_BUFF
         ,MAX
+    };
+
+    //バフするスキル
+    enum class SKILL_BUFF
+    {
+        BUFF_ARROW  //アーチャーのスキル2
+        ,GUARD      //ナイトのガード
+        ,MAX
+    };
+
+    struct BUFF
+    {
+        float cnt;
+        float percent[static_cast<int>(STATUSBUFF_TYPE::MAX)];
+        bool isBuff;            //バフしたかどうか(バフの重ね掛けを防ぐ)
+        bool isBuffing;         //バフ中かどうか  (毎フレームバフするのを防ぐ)
     };
 
     PlayerBase(void);
@@ -145,7 +172,7 @@ public:
 
     //役職それぞれのバフ(使わない役職もあるためスタブ)
     virtual void Buff(PlayerBase& _target) {}
-    void BuffPerAdd(BUFF_TYPE _type, float _per);
+    void BuffPerAdd(STATUSBUFF_TYPE _type, float _per);
     //移動関連
      //-------------------------------------
     //移動処理
@@ -163,7 +190,8 @@ public:
     //スキル変更処理
     void SkillChange(void);
 
- 
+    //バフ更新
+    void BuffUpdate(void);
 
     //*****************************************************
     //ゲッタ
@@ -196,7 +224,9 @@ public:
     const float* GetCoolTimePer(void) { return coolTimePer_; }
 
     //バフされているかゲッタ
-    const bool GetIsBuff(void) { return isBuff_; }
+    //const bool GetIsBuff(void) { return isBuff_; }
+
+    const bool GetIsBuff(SKILL_BUFF _skill) { return buffs_[_skill].isBuff; }
 
     //矢などの遠距離武器のゲッタ(KnightとArcherで使う)
     virtual const ATK GetArrowAtk(const int i) { return ATK(); }
@@ -206,9 +236,12 @@ public:
     //遠距離武器の個数を獲得
     virtual const int GetArrowCnt(const int _act) { return 0; }
 
-
+    //攻撃力ゲッタ
     float GetAtkPow(void) { return atkPow_; }
 
+    SceneManager::ROLE GetRole(void) { return role_; }
+
+    VECTOR GetInitPos(int _num) { return initPos_[_num]; }
     
 
 
@@ -272,20 +305,40 @@ public:
     void SetSpeed(const float _speed) { speed_ = _speed; }
 
     //バフセッタ(時間制限付き)
-    void SetBuff(BUFF_TYPE _type, float _per,float _second);
+    //void SetBuff(STATUSBUFF_TYPE _type, float _per,float _second);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="_type"></param>
+    /// <param name="_skill"></param>
+    /// <param name="_per"></param>
+    /// <param name="_second"></param>
+    void SetBuff(STATUSBUFF_TYPE _type,SKILL_BUFF _skill, float _per,float _second);
 
     //時間制限なし
-    //void SetBuff(BUFF_TYPE _type, float _per);
+    //void SetBuff(STATUSBUFF_TYPE _type, float _per);
 
     //前のステータス情報をセットする
     void SetPreStatus(void);
 
     //バフした判定セッタ
-    void SetIsBuff(const bool _isBuff) { isBuff_ = _isBuff; }
-    void SetIsBuff(PlayerBase& _player, const bool _isBuff) { _player.SetIsBuff(_isBuff); }
+    //void SetIsBuff(const bool _isBuff) { isBuff_ = _isBuff; }
+
+    /// <summary>
+    /// バフしたかセッタ
+    /// </summary>
+    /// <param name="_isBuff">true:バフした</param>
+    /// <param name="_skill">バフしたスキルは何か</param>
+    void SetIsBuff(SKILL_BUFF _skill,const bool _isBuff) { buffs_[_skill].isBuff = _isBuff; }
+
+    void SetIsBuff(PlayerBase& _player,SKILL_BUFF _skill, const bool _isBuff) { _player.SetIsBuff(_skill, _isBuff); }
+
 
     //ターゲットセッタ
     void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; } 
+
+ 
 
 protected:
     //ポインタ
@@ -374,6 +427,7 @@ protected:
     //それぞれのアクションの初期化
     virtual void InitAct(void);
 
+    //スキル変更時の初期化
     void ChangeNmlAtk(void);
     void ChangeSkillOne(void);
     void ChangeSkillTwo(void);
@@ -383,7 +437,7 @@ protected:
     //ユーザーがいるときの更新
     void UserUpdate(void);
 
-    SceneManager::CNTL cntl_;
+    SceneManager::ROLE role_;
 
     ATK_ACT skillNo_;     //スキル変更用
 
@@ -450,19 +504,24 @@ private:
 
     std::map<ATK_TYPE, std::vector<ATK>>atks_;
 
+    std::map<SKILL_BUFF, BUFF>buffs_;
+    std::map<STATUSBUFF_TYPE, float>buffpers_;
+
     //バフ関係
-    float buffCnt_[static_cast<int>(BUFF_TYPE::MAX)];                                          //バフのカウンター(攻撃力、防御力、スピード)  
-    float buffPercent_[static_cast<int>(BUFF_TYPE::MAX)];                                      //バフの加算
-    BUFF_TYPE buffType_;                                   
+    float buffCnt_[static_cast<int>(STATUSBUFF_TYPE::MAX)];                                          //バフのカウンター(攻撃力、防御力、スピード)  
+    float buffPercent_[static_cast<int>(STATUSBUFF_TYPE::MAX)];                                      //バフの加算
+    STATUSBUFF_TYPE buffType_;                                   
     bool isBuffing_;                                                                             //バフ中かどうか
 
     float bufAtk_;          //バフ後の攻撃力
     float bufDef_;           //バフ後の防御力
     float bufSpd_;           //バフ後のスピード
 
-    float preAtk_;          //バフ後の攻撃力
+    float preAtkPow_;          //バフ後の攻撃力
     float preDef_;           //バフ後の防御力
     float preSpd_;           //バフ後のスピード
+
+    VECTOR initPos_[PlayerManager::PLAYER_NUM];     //プレイヤーたちの初期座標を格納
 
 
 

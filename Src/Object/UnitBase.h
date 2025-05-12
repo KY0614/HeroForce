@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include"Common/Transform.h"
 #include<unordered_map>
-#include"../Manager//GameSystem/CharacterParamData.h"
 #include"../Manager/Generic/ResourceManager.h"
 #include"../Manager/Generic/InputManager.h"
 #include"../Manager/GameSystem/Collision.h"
@@ -100,15 +99,14 @@ public:
 	const VECTOR GetScl(void)const;
 	//防御力
 	const float GetDef(void)const;
-	//攻撃関係
-	const ATK GetAtk(void)const;
 	//攻撃力
 	const float GetAtkPow(void)const;
 	//体力
 	const int GetHp(void)const;
 	//最大体力
 	const int GetHpMax(void)const;
-
+	//攻撃関係
+	const ATK GetAtk(void)const;
 
 	//あたり判定
 	const float GetRadius(void)const;
@@ -118,7 +116,7 @@ public:
 	//アニメーション関数
 	void Anim(void);
 	//アニメーションリセット
-	void ResetAnim(const ANIM _anim, const float _speed);
+	virtual void ResetAnim(const ANIM _anim, const float _speed);
 
 	//配列用アニメーション関数
 	void AnimArray(int i);

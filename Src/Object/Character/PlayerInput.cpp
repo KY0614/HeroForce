@@ -49,10 +49,10 @@ void PlayerInput::InputKeyBoard(PlayerBase* _player)
 	else if (ins.IsNew(PlayerInput::MOVE_RIGHT_KEY)) { moveDeg_ = 90.0f; }
 
 	//通常攻撃
-	if (ins.IsTrgDown(ATK_KEY) && !_player->GetIsCool(ATK_ACT::ATK)) { actCntl_ = ACT_CNTL::NMLATK; }
+	if (ins.IsTrgDown(ATK_KEY) && !_player->GetIsCool(ATK_ACT::ATK) && !_player->GetIsAtk() && !_player->GetIsSkill()) { actCntl_ = ACT_CNTL::NMLATK; }
 
 	//スキル短押し
-	if (ins.IsTrgDown(SKILL_KEY)/* && !_player->GetIsCool(_player->GetSkillNo())*/) { actCntl_ = ACT_CNTL::SKILL_DOWN; }
+	if (ins.IsTrgDown(SKILL_KEY) && !_player->GetIsAtk() && !_player->GetIsSkill()) { actCntl_ = ACT_CNTL::SKILL_DOWN; }
 
 	//長押し
 	else if (ins.IsNew(SKILL_KEY)&& _player->GetIsSkill()) { actCntl_ = ACT_CNTL::SKILL_KEEP; }
@@ -61,10 +61,10 @@ void PlayerInput::InputKeyBoard(PlayerBase* _player)
 	if (ins.IsTrgUp(SKILL_KEY)&& _player->GetIsSkill()) { actCntl_ = ACT_CNTL::SKILL_UP; }
 
 	//回避
-	if (ins.IsTrgDown(DODGE_KEY)) { actCntl_ = ACT_CNTL::DODGE; }
+	if (ins.IsTrgDown(DODGE_KEY)&&!_player->GetIsAtk() && !_player->GetIsSkill()) { actCntl_ = ACT_CNTL::DODGE; }
 
 	//スキル変更キー
-	if (ins.IsTrgDown(SKILL_CHANGE_KEY)) { actCntl_ = ACT_CNTL::CHANGE_SKILL; }
+	if (ins.IsTrgDown(SKILL_CHANGE_KEY)&&!_player->GetIsSkill()) { actCntl_ = ACT_CNTL::CHANGE_SKILL; }
 }
 
 void PlayerInput::InputPad(PlayerBase* _player, InputManager::JOYPAD_NO _padNum)
@@ -88,12 +88,12 @@ void PlayerInput::InputPad(PlayerBase* _player, InputManager::JOYPAD_NO _padNum)
 	moveDeg_ = stickDeg_;
 
 
-	if(ins.IsPadBtnTrgDown(_padNum, ATK_BTN) && !_player->GetIsCool(ATK_ACT::ATK)){ actCntl_ = ACT_CNTL::NMLATK; }
-	if(ins.IsPadBtnTrgDown(_padNum, SKILL_BTN) && !_player->GetIsCool(_player->GetSkillNo())){ actCntl_ = ACT_CNTL::SKILL_DOWN; }
-	else if(ins.IsPadBtnNew(_padNum, SKILL_BTN) && _player->GetIsSkill()){ actCntl_ = ACT_CNTL::SKILL_KEEP; }
-	if( ins.IsPadBtnTrgUp(_padNum, SKILL_BTN) && _player->GetIsSkill()){ actCntl_ = ACT_CNTL::SKILL_UP; }
-	if(ins.IsPadBtnTrgDown(_padNum, DODGE_BTN)){ actCntl_ = ACT_CNTL::DODGE; }
-	if(ins.IsPadBtnTrgDown(_padNum, SKILL_CHANGE_BTN)){ actCntl_ = ACT_CNTL::CHANGE_SKILL; }
+	if (ins.IsPadBtnTrgDown(_padNum, ATK_BTN) && !_player->GetIsCool(ATK_ACT::ATK) &&!_player->GetIsAtk() && !_player->GetIsSkill()) { actCntl_ = ACT_CNTL::NMLATK; }
+	if(ins.IsPadBtnTrgDown(_padNum, SKILL_BTN) && !_player->GetIsAtk() && !_player->GetIsSkill()){ actCntl_ = ACT_CNTL::SKILL_DOWN; }
+	else if(ins.IsPadBtnNew(_padNum, SKILL_BTN) && _player->GetIsSkill()&& !_player->GetIsAtk()){ actCntl_ = ACT_CNTL::SKILL_KEEP; }
+	if( ins.IsPadBtnTrgUp(_padNum, SKILL_BTN) && _player->GetIsSkill()&&!_player->GetIsAtk()){ actCntl_ = ACT_CNTL::SKILL_UP; }
+	if(ins.IsPadBtnTrgDown(_padNum, DODGE_BTN) && !_player->GetIsAtk() && !_player->GetIsSkill()){ actCntl_ = ACT_CNTL::DODGE; }
+	if(ins.IsPadBtnTrgDown(_padNum, SKILL_CHANGE_BTN) && !_player->GetIsSkill()){ actCntl_ = ACT_CNTL::CHANGE_SKILL; }
 }
 
 PlayerInput::PlayerInput(void)

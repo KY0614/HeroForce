@@ -25,7 +25,11 @@ void Mage::SetParam(void)
 		0.0f, AsoUtility::Deg2RadF(180.0f),
 		0.0f
 	);
+	//ステータス
 	ParamLoad(CharacterParamData::UNIT_TYPE::MAGE);
+
+	//役職の割り当て
+	role_ = SceneManager::ROLE::MAGE;
 
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 }

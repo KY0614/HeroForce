@@ -15,6 +15,7 @@ void PlayerCpu::SetParam(void)
 
 void PlayerCpu::Update(void)
 {
+	PlayerBase::Update();
 	//Šeó‘Ô‚ÌXV
 	CpuStateUpdate();
 	auto& ins = InputManager::GetInstance();

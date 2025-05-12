@@ -27,11 +27,19 @@ public:
 	// デストラクタ
 	~SkyDome(void);
 
+	//初期化
 	void Init(void);
+
+	//更新
 	void Update(void);
+
+	//描画
 	void Draw(void);
+
+	//解放
 	void Release(void);
 
+	//自身のトランスフォームを返す
 	const Transform& GetTransform() const;
 
 private:	

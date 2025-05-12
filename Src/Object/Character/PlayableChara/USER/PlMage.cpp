@@ -18,6 +18,7 @@ void PlMage::Init(void)
 {
 	obj_ = new Mage();
 	obj_->Init();
+	SetInitPos(playerNum_);
 }
 
 void PlMage::Update(void)
@@ -54,6 +55,9 @@ void PlMage::Draw(void)
 
 void PlMage::Release(void)
 {
+	obj_->Destroy();
+	delete obj_;
+	obj_ = nullptr;
 }
 
 void PlMage::AtkInput(void)

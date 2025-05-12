@@ -165,6 +165,12 @@ private:
 	//それぞれのプレイヤーのデバイスと入力
 	Device input_[SceneManager::PLAYER_NUM];
 
+	int imgDisplay_;
+	int imgPlayer_;
+	int imgOperation_;
+	int imgRole_;
+	int imgWait_;
+
 	//状態遷移
 	void ChangeStateDisplay(void);
 	void ChangeStateNumber(void);

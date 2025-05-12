@@ -5,6 +5,7 @@ class GamaUIBase
 {
 public:
 
+	//HPバーの種類
 	enum class HPBAR_TYPE
 	{
 		PLAYER,
@@ -24,24 +25,29 @@ public:
 	static constexpr int HP_GAGE_SIZE_X = 120;
 	static constexpr int HP_GAGE_SIZE_Y = 45;
 
+	//コンストラクタ
 	GamaUIBase();
-	~GamaUIBase();
 
+	//デストラクタ
+	~GamaUIBase() = default;
+
+	//初期化
 	virtual void Init();
-	virtual void Update();
+
+	//描画
 	virtual void Draw();
 
-	//初期設定
-	virtual void SetParam();
+	/// <summary>
+	/// 座標設定
+	/// </summary>
+	/// <param name="_pos"></param>座標
+	inline void SetPos(const VECTOR _pos) { pos_ = _pos; }
 
-	//読み込み
-	virtual void Load();
-
-	//座標設定
-	void SetPos(const VECTOR pos);
-
-	//HP設定
-	void SetHP(const int hp);
+	/// <summary>
+	/// 体力設定
+	/// </summary>
+	/// <param name="_hp"></param>体力
+	inline void SetHP(const int _hp) { hp_ = _hp; if (hp_ <= 0) { hp_ = 0; }}
 
 protected:
 
@@ -56,7 +62,10 @@ protected:
 	VECTOR pos_;
 
 	//HP
-	int hp_;
+	int hp_;	
+	
+	//読み込み
+	virtual void Load();
 
 };
 

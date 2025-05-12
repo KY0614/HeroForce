@@ -24,6 +24,9 @@ void Knight::SetParam(void)
 	//ステータス
 	ParamLoad(CharacterParamData::UNIT_TYPE::KNIGHT);
 
+	//役職の割り当て
+	role_ = SceneManager::ROLE::KNIGHT;
+	
 	//溜め攻撃エフェクトロード
 	auto& effIns = EffectManager::GetInstance();
 	auto& resIns = ResourceManager::GetInstance();
@@ -122,7 +125,7 @@ void Knight::AtkFunc(void)
 			//クールタイムの初期化
 			coolTime_[static_cast<int>(act_)] = 0.0f;
 		}
-		else //if(atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
+		else if(atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
 		{
 			InitAtk();
 			isAtk_ = false;
@@ -169,10 +172,12 @@ void Knight::Skill1Func(void)
 	//明日からアーチャー作成する！
 	if (IsFinishAtkStart() && !isShotArrow_)
 	{
-		if (hp_ < hpMax_)return;
-		CreateSlash();
-		//CreateAtk();
-		isShotArrow_ = true;
+		if (hp_ == hpMax_)
+		{
+			CreateSlash();
+			//CreateAtk();
+			isShotArrow_ = true;
+		}
 	}
 
 	//近接攻撃用(atk_変数と遠距離で分ける)
@@ -193,7 +198,7 @@ void Knight::Skill1Func(void)
 			//クールタイムの初期化
 			coolTime_[static_cast<int>(act_)] = 0.0f;
 		}
-		else //if(atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
+		else if (atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
 		{
 			InitAtk();
 			isSkill_ = false;
@@ -204,7 +209,7 @@ void Knight::Skill1Func(void)
 
 void Knight::Skill2Func(void)
 {
-
+	if (!isSkill_)return;
 	//ボタン長押ししているときにクールタイムが0秒以下になった時
 	if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] <= 0.0f)
 	{
@@ -214,7 +219,6 @@ void Knight::Skill2Func(void)
 		InitAtk();
 		return;
 	}
-
 	if (isSkill_&&!IsFinishAtkStart())CntUp(atkStartCnt_);
 
 	else if (isSkill_ && IsFinishAtkStart())
@@ -222,12 +226,13 @@ void Knight::Skill2Func(void)
 		EffectManager::GetInstance().Stop(EffectManager::EFFECT::HIT2);
 		CntUp(atk_.cnt_);
 		CntDown(coolTime_[static_cast<int>(SKILL_NUM::TWO)]);
+		//スキル２継続中は防御力２倍になる
+		SetBuff(STATUSBUFF_TYPE::DEF_BUFF, SKILL_BUFF::GUARD, 100.0f, 0.1f);
 
+		SetIsBuff(SKILL_BUFF::GUARD, true);
 		//最初の1フレームだけの処理
 		if (atk_.cnt_ <= 1.0f / 60.0f)
 		{
-			//スキル２継続中は防御力２倍になる
-			def_ *= 2.0f;
 			auto& efeIns = EffectManager::GetInstance();
 			efeIns.Play(
 				EffectManager::EFFECT::GUARD,

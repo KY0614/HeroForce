@@ -3,7 +3,7 @@
 #include "../../../Application.h"
 #include "../../../Manager/Generic/ResourceManager.h"
 #include "../../../Manager/GameSystem/DataBank.h"
-#include "../../UnitBase.h"
+#include "../../Character/PlayableChara/PlayerBase.h"
 #include "GamaUIBase.h"
 
 class UnitBase;
@@ -12,14 +12,7 @@ class PlayerUI : public GamaUIBase
 {
 public:
 
-	enum class MESH_TYPE
-	{
-		HP,
-		HP_GAGE,
-		PARAM,
-		NAMUBER,
-	};
-
+	//パラメーター種類
 	enum class PARAM_TYPE
 	{
 		ATK,
@@ -29,6 +22,8 @@ public:
 
 	//パラメーター桁数
 	static constexpr int PARAM_DIG_CNT = 3;
+
+	//パラメーター種類数
 	static constexpr int PARAM_TYPE_MAX = static_cast<int>(PARAM_TYPE::MAX);
 
 	//ボックスアルファ値
@@ -41,6 +36,8 @@ public:
 	static constexpr float PARAM_RATE = 1.2f;
 	static constexpr float NAME_RATE = 1.0f;
 	static constexpr float NUMBER_RATE = 0.15f;
+	static constexpr float SKILL_RATE = 0.7f;
+	static constexpr float SKILL_ICON_RATE = 0.5f;
 
 	//サイズ
 	static constexpr int BOX_SIZE_X = 280;
@@ -55,6 +52,10 @@ public:
 	static constexpr int P_HP_SIZE_Y = HP_BAR_SIZE_Y * HP_RATE;
 	static constexpr int P_HP_GAGE_SIZE_X = HP_GAGE_SIZE_X * HP_GAGE_RATE;
 	static constexpr int P_HP_GAGE_SIZE_Y = HP_GAGE_SIZE_Y * HP_GAGE_RATE;
+	static constexpr int SKILL_SIZE_X = 96 * SKILL_RATE;
+	static constexpr int SKILL_SIZE_Y = 45 * SKILL_RATE;
+	static constexpr int SKILL_ICON_SIZE_X = 120 * SKILL_ICON_RATE;
+	static constexpr int SKILL_ICON_SIZE_Y = 120 * SKILL_ICON_RATE;
 
 	//位置
 	static constexpr int BOX_POS_X = 0;
@@ -85,18 +86,40 @@ public:
 			ICON_SIZE + NUMBER_SIZE * 5 + 30 } };
 	static constexpr int NUM_POS_Y = Application::SCREEN_SIZE_Y - P_HP_GAGE_SIZE_Y - NUMBER_SIZE / 2 - 20;
 
+	static constexpr int SKILL_POS_X = ICON_SIZE + SKILL_SIZE_X + SKILL_ICON_SIZE_X / 2 + 10;
+	static constexpr int SKILL_POS_Y = Application::SCREEN_SIZE_Y - 100;
+	static constexpr int SKILL_ICON_POS_X = ICON_SIZE + SKILL_SIZE_X + SKILL_ICON_SIZE_X / 2 + 10;
+	static constexpr int SKILL_ICON_POS_Y = SKILL_POS_Y - SKILL_ICON_SIZE_Y / 2;
+
+	//アイコンのキャラ番号
+	static constexpr int ICON_CHARA_NUM_KN = 0;
+	static constexpr int ICON_CHARA_NUM_AX = 1;
+	static constexpr int ICON_CHARA_NUM_AC = 2;
+	static constexpr int ICON_CHARA_NUM_MA = 3;
+
 	//HPバー長さ
 	static constexpr float HP_BAR_LENGTH = HP_POS_X2 - HP_POS_X;
 
-	//頂点数
-	static constexpr int VERTEXS = 4;
-
+	//コンストラクタ
 	PlayerUI();
+
+	//デストラクタ
 	~PlayerUI();
 
-	void Init(UnitBase& player,const DataBank::PLAYER_INFO& info);
-	void Load()override;
-	void Update(UnitBase& player);
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="player"></param>プレイヤー
+	/// <param name="info"></param>プレイヤー情報
+	void Init(PlayerBase& _player,const DataBank::PLAYER_INFO& _info);
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	/// <param name="player"></param>プレイヤー
+	void Update(PlayerBase& _player);
+
+	//描画
 	void Draw()override;
 
 private:
@@ -106,6 +129,8 @@ private:
 	int *imgName_;		//名前
 	int imgParam_;		//パラメーター
 	int *imgNumber_;	//数字
+	int imgSkill_;		//スキル
+	int *imgSkillIcon_;	//スキルアイコン
 
 	//描画スクリーン
 	int uiScreen_;
@@ -122,9 +147,18 @@ private:
 	//バーの長さ
 	float barLength_;
 
+	//スキル
+	int skill_;
+
 	//数字
 	int nums_[PARAM_TYPE_MAX][PARAM_DIG_CNT];
 
+	//読み込み
+	void Load()override;
+
 	//パラメータ関連の描画
 	void DrawParam();
+
+	//スキル関連の描画
+	void DrawSkill();
 };

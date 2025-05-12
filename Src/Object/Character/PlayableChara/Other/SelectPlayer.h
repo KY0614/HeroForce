@@ -36,12 +36,13 @@ public:
 	virtual void Draw(void)override;
 
 	//セッター
+	void SetRole(int role){ role_ = role; };
 
 	/// <summary>
 	/// 役職を設定する
 	/// </summary>
 	/// <param name="role">役職</param>
-	void SetRole(int role){ role_ = role; };
+	void SetRole(int role){ role_ = role - 1; };
 
 	/// <summary>
 	/// 座標を設定する

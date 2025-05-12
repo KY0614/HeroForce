@@ -4,11 +4,18 @@ class ClearChicken : public ChickenBase
 {
 public:
 
-	ClearChicken();
-	~ClearChicken();
+	//生存用体力
+	static constexpr int LIFE = 999;
 
-	void SetParam()override;
+	//コンストラクタ
+	ClearChicken();
+
+	//デストラクタ
+	~ClearChicken() = default;
 
 private:
+	
+	//パラメータの設定
+	void SetParam()override;
 };
 

@@ -29,13 +29,15 @@ public:
 
 
 	// コンストラクタ
-	TitleScene(void);
-	~TitleScene(void) = default;
+	TitleScene();
 
-	void Init(void) override;
-	void Update(void) override;
-	void Draw(void) override;
-	void Release(void) override;
+	//デストラクタ
+	~TitleScene() = default;
+
+	void Init() override;
+	void Update() override;
+	void Draw() override;
+	void Release() override;
 
 private:
 

@@ -94,6 +94,41 @@ void ResourceManager::InitSelect(void)
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_MODEL + "Chicken/Chicken.mv1");
 	resourcesMap_.emplace(SRC::CHICKEN, res);
 
+	//BGM
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_BGM + "SelectBGM.mp3");
+	resourcesMap_.emplace(SRC::SELECT_BGM, res);
+
+	//準備完了
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "SceneChange.mp3");
+	resourcesMap_.emplace(SRC::SCENE_CHANGE_SE1, res);
+
+	//キャンセル
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "Select_Cancel.mp3");
+	resourcesMap_.emplace(SRC::CANCEL_SELECT, res);
+
+	//選択変更
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "Change_Object.mp3");
+	resourcesMap_.emplace(SRC::CHANGE_SELECT, res);
+
+	//選択決定
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "Select_Decide.mp3");
+	resourcesMap_.emplace(SRC::DECIDE_SELECT, res);
+
+	//説明用画像
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Display_Select.png");
+	resourcesMap_.emplace(SRC::DISPLAY_IMG, res);
+	//説明用画像
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Player_Select.png");
+	resourcesMap_.emplace(SRC::PLAYER_IMG, res);
+	//説明用画像
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Operation_Select.png");
+	resourcesMap_.emplace(SRC::OPERATION_IMG, res);
+	//説明用画像
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Role_Select.png");
+	resourcesMap_.emplace(SRC::ROLE_IMG, res);
+	//説明用画像
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "Waiting.png");
+	resourcesMap_.emplace(SRC::WAIT_IMG, res);
 	ResourcePlayer();
 	ResourceEnemy();
 	ResourceStage();
@@ -278,10 +313,74 @@ void ResourceManager::InitGame(void)
 	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "FazeRezaltBack.jpg");
 	resourcesMap_.emplace(SRC::REZALT_BACK, res);
 
-	//矢
-	res = Resource(Resource::TYPE::MODEL, Application::PATH_ARROW + "Arrow.mv1");
-	resourcesMap_.emplace(SRC::ARROW, res);
+	//煙エフェクト
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Smokes.png", SMOKE_NUM_X, SMOKE_NUM_Y, SMOKE_SIZE_X, SMOKE_SIZE_Y);
+	resourcesMap_.emplace(SRC::SMOKE, res);
 
+	//ダメージエフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Damage.efkefc");
+	resourcesMap_.emplace(SRC::DAMAGE_EFE, res);
+
+	//ゲームUI用数字画像2
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Numbers2.png", NUMBERS_NUM_X, NUMBERS_NUM_Y, NUMBERS_SIZE, NUMBERS_SIZE);
+	resourcesMap_.emplace(SRC::NUMBERS2, res);
+
+	//パラメーターUI
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "ParamUI.png");
+	resourcesMap_.emplace(SRC::PARAM_UI, res);
+
+	//ボスHP
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "BossHpBar.png");
+	resourcesMap_.emplace(SRC::HP_BOSS, res);
+
+	//ボスHPBar
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "BossHpGage.png");
+	resourcesMap_.emplace(SRC::HP_BOSS_GAGE, res);
+
+	//キャラアイコン
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "CharaIcons.png", CHARA_ICON_NUM_X, CHARA_ICON_NUM_Y, CHARA_ICON_SIZE, CHARA_ICON_SIZE);
+	resourcesMap_.emplace(SRC::CHARA_ICONS, res);
+
+	//キャラ名前
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "RoleNames.png", NAME_NUM_X, NAME_NUM_Y, NAME_SIZE_X, NAME_SIZE_Y);
+	resourcesMap_.emplace(SRC::ROLE_NAMES, res);
+
+	//タイマー背景
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "TimerBack.png");
+	resourcesMap_.emplace(SRC::TIMER_BACK, res);
+
+	//カーソルSE
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "Carsol.mp3");
+	resourcesMap_.emplace(SRC::CARSOL_SE, res);
+
+	//レベルアップSE
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "LevelUp.mp3");
+	resourcesMap_.emplace(SRC::LEVEL_UP_SE, res);
+	//強化SE
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "PowerUp.mp3");
+	resourcesMap_.emplace(SRC::POWER_UP_SE, res);
+
+	//フェーズリザルトSE
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "FazeRezalt.mp3");
+	resourcesMap_.emplace(SRC::FAZE_REZALT_SE, res);
+
+	//スキルUI関連
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "skill.png");
+	resourcesMap_.emplace(SRC::SKILL_UI, res);
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "KnightSkills.png", SKILL_ICON_NUM_X, SKILL_ICON_NUM_Y, SKILL_ICON_SIZE, SKILL_ICON_SIZE);
+	resourcesMap_.emplace(SRC::SKILL_KNIGHT, res);
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "AxemanSkills.png", SKILL_ICON_NUM_X, SKILL_ICON_NUM_Y, SKILL_ICON_SIZE, SKILL_ICON_SIZE);
+	resourcesMap_.emplace(SRC::SKILL_AXEMAN, res);
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "ArcherSkills.png", SKILL_ICON_NUM_X, SKILL_ICON_NUM_Y, SKILL_ICON_SIZE, SKILL_ICON_SIZE);
+	resourcesMap_.emplace(SRC::SKILL_ARCHER, res);
+
+	//アーチャースキル2発動エフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Undine4.efkefc");
+	resourcesMap_.emplace(SRC::ARCHER_SKILL2, res);
+
+	//アーチャースキル2がプレイヤーにヒットしたときのエフェクト
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Salamander.efkefc");
+	resourcesMap_.emplace(SRC::BUFF_ARROW_HIT, res);
 }
 
 void ResourceManager::InitResult(void)
@@ -355,6 +454,39 @@ void ResourceManager::InitGameClear(void)
 	resourcesMap_.emplace(SRC::CHICKEN, res);
 }
 
+void ResourceManager::InitExplan(void)
+{
+	Resource res;
+
+	//説明書
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "explan.png");
+	resourcesMap_.emplace(SRC::EXPLAN, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "explan2.png");
+	resourcesMap_.emplace(SRC::EXPLAN2, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "explan3.png");
+	resourcesMap_.emplace(SRC::EXPLAN3, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "explan4.png");
+	resourcesMap_.emplace(SRC::EXPLAN4, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "explan5.png");
+	resourcesMap_.emplace(SRC::EXPLAN5, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "explan6.png");
+	resourcesMap_.emplace(SRC::EXPLAN6, res);
+	res = Resource(Resource::TYPE::IMG, Application::PATH_IMAGE + "explan7.png");
+	resourcesMap_.emplace(SRC::EXPLAN7, res);
+
+	//左矢印
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Left_point.png", 1, 1, 52, 52);
+	resourcesMap_.emplace(SRC::LEFT_POINT, res);
+
+	//説明切り替え効果音
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "ExplanSwitch.mp3");
+	resourcesMap_.emplace(SRC::EXPLAN_SWITCH, res);
+
+	//シーンチェンジ
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "SceneChange.mp3");
+	resourcesMap_.emplace(SRC::SCENE_CHANGE_SE1, res);
+}
+
 //プレイヤー
 //*************************************************************************************************************
 void ResourceManager::ResourcePlayer(void)
@@ -364,8 +496,8 @@ void ResourceManager::ResourcePlayer(void)
 	// エフェクト
 		// ********************************************************************
 
-		//斧使いのスキル1溜め攻撃
-		res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "fire.efkproj");
+	//斧使いのスキル1溜め攻撃
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "fire.efkproj");
 	resourcesMap_.emplace(SRC::CHARGE_AXE_HIT, res);
 
 	//騎士のガード
@@ -380,13 +512,19 @@ void ResourceManager::ResourcePlayer(void)
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Spear2.efkproj");
 	resourcesMap_.emplace(SRC::ARROW_WHITE, res);
 
+	//チャージエフェクト
+	//res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Rock1.efkproj");
+	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "Rock1.efkefc");
+	resourcesMap_.emplace(SRC::CHARGE_SKILL, res);
+
 	//当たりエフェクト
 	res = Resource(Resource::TYPE::EFFEKSEER, Application::PATH_EFFECT + "hit_eff.efkproj");
 	resourcesMap_.emplace(SRC::HIT2, res);
 
+
 	//モデル
-// ********************************************************************
-//魔法使い（プレイヤー）
+	//********************************************************************
+	//魔法使い（プレイヤー）
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_PLAYER + "Mage.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_MAGE, res);
 
@@ -401,6 +539,13 @@ void ResourceManager::ResourcePlayer(void)
 	//斧使い（プレイヤー）
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_PLAYER + "Axeman.mv1");
 	resourcesMap_.emplace(SRC::PLAYER_AXEMAN, res);
+
+	//効果音
+	//**********************************************************************
+
+	//スキル変更
+	res = Resource(Resource::TYPE::SOUND, Application::PATH_WAVE + "SkillSwap.mp3");
+	resourcesMap_.emplace(SRC::SKILL_CHANGE, res);
 }
 
 //敵
@@ -428,6 +573,10 @@ void ResourceManager::ResourceEnemy(void)
 	//ゴーレム（敵）
 	res = Resource(Resource::TYPE::MODEL, Application::PATH_ENEMY + "Boss_Golem.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_GOLEM, res);
+
+	//矢
+	res = Resource(Resource::TYPE::MODEL, Application::PATH_ARROW + "Arrow.mv1");
+	resourcesMap_.emplace(SRC::ARROW, res);
 }
 
 //ステージ

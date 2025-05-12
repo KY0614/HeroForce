@@ -11,8 +11,37 @@
 
 #include "EnemyManager.h"
 
+EnemyManager::EnemyManager(std::vector<VECTOR> _pos) : createPos_(_pos)
+{
+	for (int i = 0; i < ENEMY_MAX; i++)
+	{
+		activeEnemys_[i] = nullptr;
+		activeEnemysType_[i] = TYPE::MAX;
+	}
+
+	for (int a = 0; a < static_cast<int>(TYPE::MAX); a++)
+	{
+		activeTypeNum_[a] = 0;
+	}
+
+	allExp_ = 0.0f;
+
+	activeNum_ = 0;
+
+	createIntCnt_ = 0.0f;
+}
+
 void EnemyManager::Init(void)
 {
+	for (int a = 0; a < static_cast<int>(TYPE::MAX); a++)
+	{
+		activeTypeNum_[a] = 0;
+	}
+
+	dunkCnt_ = 0;
+
+	allExp_ = 0.0f;
+
 	activeNum_ = 0;
 
 	createIntCnt_ = 0.0f;
@@ -95,10 +124,12 @@ void EnemyManager::CreateEnemy(void)
 	do
 	{
 		type = static_cast<TYPE>(GetRand(static_cast<int>(TYPE::MAX) - 1));
-	} while (type == TYPE::GOLEM);
+	} while (type == TYPE::GOLEM || activeTypeNum_[static_cast<int>(type)] >= ONETYPE_MAX);
 
 	//生成相対座標
-	VECTOR createLocalPos = GetNotOverlappingPos();
+	VECTOR createLocalPos = createPos_[GetRand(createPos_.size() - 1)];
+	createLocalPos.x += activeNum_ * Enemy::COL_RADIUS;
+	createLocalPos.y = 0.0f;
 
 	//インスタンス生成
 	switch (type)
@@ -133,7 +164,11 @@ void EnemyManager::CreateEnemy(void)
 	//敵の更新等を掛けるやつをセット
 	activeEnemys_[activeNum_] = enm;
 
+	//敵の種類を保存
+	activeEnemysType_[activeNum_] = type;
+
 	//カウンタ増加
+	activeTypeNum_[static_cast<int>(activeEnemysType_[activeNum_])]++;
 	activeNum_++;
 }
 
@@ -160,7 +195,11 @@ void EnemyManager::CreateBoss(void)
 	//敵の更新等を掛けるやつをセット
 	activeEnemys_[activeNum_] = enm;
 
+	//敵の種類を保存
+	activeEnemysType_[activeNum_] = TYPE::GOLEM;
+
 	//カウンタ増加
+	activeTypeNum_[static_cast<int>(activeEnemysType_[activeNum_])]++;
 	activeNum_++;
 }
 
@@ -173,8 +212,11 @@ VECTOR EnemyManager::GetNotOverlappingPos(void)
 	//生成判定
 	bool isGenelateEnemy = false;
 
+	//生成挑戦回数
+	int challengeCnt = 0;
+
 	//生成座標
-	VECTOR createPos = createPos_[GetRand(createPos_.size() - 1)];
+	VECTOR createPos = AsoUtility::VECTOR_ZERO;//createPos_[GetRand(createPos_.size() - 1)];
 
 	//生成相対座標
 	VECTOR ret = AsoUtility::VECTOR_ZERO;
@@ -182,6 +224,15 @@ VECTOR EnemyManager::GetNotOverlappingPos(void)
 	//生成できるまで繰り返す
 	while (!isGenelateEnemy)
 	{
+ 		if (challengeCnt == ENEMY_CREATE_CHALLENGE_LIMIT)
+			assert("敵の生成挑戦回数上限に達したためフリーズと判断しました");
+
+		//カウンタ
+		challengeCnt++;
+
+		//生成座標
+		VECTOR createPos = createPos_[GetRand(createPos_.size() - 1)];
+
 		//円範囲の中の一点を取る
 		GetRandomPointInCircle(createPos, GENELATE_RADIUS, ret);
 
@@ -246,20 +297,26 @@ bool EnemyManager::IsOverlap(VECTOR& _tPos, float _minDist)
 
 void EnemyManager::DeleteAllEnemy(void)
 {
-	for (auto& enemy : activeEnemys_) {
-		if (enemy == nullptr)
+	for (int i = activeNum_ - 1; i >= 0;i--) {
+		if (activeEnemys_[i] == nullptr)
 			continue;
 
 		//敵をすべて削除
-		enemy->Destroy();
-		delete enemy;
-		enemy = nullptr;
+		activeEnemys_[i]->Destroy();
+		delete activeEnemys_[i];
+		activeEnemys_[i] = nullptr;
+		activeTypeNum_[static_cast<int>(activeEnemysType_[i])]--;
+		activeEnemysType_[i] = TYPE::MAX;
 		activeNum_--;
 	}
 }
 
 void EnemyManager::DeathEnemy(int _num)
 {
+	//倒された敵の経験値を保存
+	allExp_ += activeEnemys_[_num]->GetExp();
+	dunkCnt_++;
+
 	//倒された敵の消去
 	activeEnemys_[_num]->Destroy();
 	delete activeEnemys_[_num];
@@ -267,6 +324,10 @@ void EnemyManager::DeathEnemy(int _num)
 	//総数の減少
 	//この時点でactiveNum_は配列の末尾の番号を示すようになる。
 	activeNum_--;
+	activeTypeNum_[static_cast<int>(activeEnemysType_[_num])]--;
+
+	//有効な敵の種類の初期化
+	activeEnemysType_[_num] = TYPE::MAX;
 
 	//配列の空きを埋めるためのソート
 	//配列の末尾の物を空きに移動させる
@@ -277,13 +338,14 @@ void EnemyManager::DeathEnemy(int _num)
 	//deleteをすると移行された側の情報も消えるのでnullptr設定のみ　移動方法はstd::moveでもあり
 	activeEnemys_[_num] = activeEnemys_[activeNum_];
 	activeEnemys_[activeNum_] = nullptr;
-	
+	activeEnemysType_[_num] = activeEnemysType_[activeNum_];
 }
 
 void EnemyManager::ProcessChangePhase(const int _phase)
 {
 	//敵の削除
 	DeleteAllEnemy();
+	dunkCnt_ = 0;
 
 	//敵作成数
 	int createNum = 0;

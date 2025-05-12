@@ -9,7 +9,7 @@ ChickenBase::ChickenBase()
 	aliveState_ = ALIVE_MOVE::MAX;
 	targetPos_ = AsoUtility::VECTOR_ZERO;
 	isHelp_ = false;
-	isHelpCnt_ = -1;
+	isHelpCnt_ = 0.0f;
 	smokeNum_ = -1;
 	smokeStep_ = -1.0f;
 	efeSpeed_ = -1.0f;
@@ -34,16 +34,16 @@ ChickenBase::~ChickenBase()
 {
 }
 
-void ChickenBase::Create(VECTOR &pos)
+void ChickenBase::Create(const VECTOR &_pos)
 {
 	//情報の受け取り
-	trans_.pos = pos;		//生成位置
+	trans_.pos = _pos;
 	
 	//モデル設定
 	ModelSet();
 
-	//画像読み込み
-	LoadImages();
+	//リソースの読み込み
+	Load();
 
 	//アニメーション管理番号の初期化
 	InitAnimNum();
@@ -51,17 +51,18 @@ void ChickenBase::Create(VECTOR &pos)
 	//パラメーター設定
 	SetParam();
 
+	//HPUIの生成
 	hpUi_ = std::make_unique<CpuHpBar>();
 	hpUi_->Init();
 }
 
-void ChickenBase::Update(void)
+void ChickenBase::Update()
 {
 	//バックアップ
 	prePos_ = trans_.pos;	
 
 	//デバッグ処理
-	DebagUpdate();
+	//DebagUpdate();
 
 	//アニメーションカウント
 	Anim();
@@ -85,7 +86,7 @@ void ChickenBase::Update(void)
 	trans_.Update();
 }
 
-void ChickenBase::Draw(void)
+void ChickenBase::Draw()
 {
 	stateDraw_();
 
@@ -121,7 +122,7 @@ void ChickenBase::ModelSet()
 	trans_.Update();
 }
 
-void ChickenBase::LoadImages()
+void ChickenBase::Load()
 {
 	auto& res = ResourceManager::GetInstance();
 
@@ -146,7 +147,7 @@ void ChickenBase::SetParam()
 
 	//画像表示
 	isHelp_ = false; 
-	isHelpCnt_ = 0;
+	isHelpCnt_ = 0.0f;
 
 	//煙エフェクト
 	smokeNum_ = 0;
@@ -163,7 +164,7 @@ void ChickenBase::SetParam()
 	ResetAnim(ANIM::IDLE, DEFAULT_SPEED_ANIM);
 }
 
-void ChickenBase::InitAnimNum(void)
+void ChickenBase::InitAnimNum()
 {
 	animNum_.emplace(ANIM::IDLE, ANIM_IDLE);
 	animNum_.emplace(ANIM::WALK, ANIM_WALK);
@@ -182,25 +183,10 @@ void ChickenBase::SetUiParam()
 	hpUi_->SetHP(hp_);
 }
 
-void ChickenBase::SetTarget(const VECTOR pos)
-{
-	targetPos_ = pos;
-}
-
-void ChickenBase::SetDamage(const int damage)
-{
-	hp_ -= damage;
-}
-
-ChickenBase::STATE ChickenBase::GetState() const
-{
-	return state_;
-}
-
-void ChickenBase::ChangeState(STATE state)
+void ChickenBase::ChangeState(const STATE _state)
 {
 	// 状態変更
-	state_ = state;
+	state_ = _state;
 
 	// 各状態遷移の初期処理
 	stateChanges_[state_]();
@@ -230,7 +216,10 @@ void ChickenBase::ChangeStateDamage()
 	SetIsHelp();
 
 	//エフェクト再生
-	VECTOR localPos = { GetRand(50),GetRand(50),GetRand(0) };
+	VECTOR localPos = { 
+		GetRand(static_cast<int>(EFC_CREATE_RANGE.x)),
+		GetRand(static_cast<int>(EFC_CREATE_RANGE.y)),
+		GetRand(static_cast<int>(EFC_CREATE_RANGE.z)) };
 	VECTOR pos = VAdd(trans_.pos, localPos);
 	EffectManager::GetInstance().Play(
 		EffectManager::EFFECT::DAMAGE,
@@ -252,10 +241,10 @@ void ChickenBase::ChangeStateEnd()
 	stateDraw_ = std::bind(&ChickenBase::DrawEnd, this);
 }
 
-void ChickenBase::ChangeAliveState(ALIVE_MOVE state)
+void ChickenBase::ChangeAliveState(const ALIVE_MOVE _state)
 {
 	// 状態変更
-	aliveState_ = state;
+	aliveState_ = _state;
 
 	// 各状態遷移の初期処理
 	aliveChanges_[aliveState_]();
@@ -278,7 +267,7 @@ void ChickenBase::ChangeAliveCall()
 
 void ChickenBase::UpdateNone()
 {
-	//("#'ψ')~~することなし
+	//NONEの時は何も行わない
 }
 
 void ChickenBase::UpdateAlive()
@@ -290,7 +279,6 @@ void ChickenBase::UpdateDamage()
 {
 	//アニメーションを変更
 	ResetAnim(ANIM::DAMAGE, DEFAULT_SPEED_ANIM);
-
 }
 
 void ChickenBase::UpdateDeath()
@@ -304,7 +292,8 @@ void ChickenBase::UpdateDeath()
 		//エフェクトアニメーション番号
 		smokeStep_ += value;
 		smokeNum_ = static_cast<int>(smokeStep_ * efeSpeed_);
-		if (smokeNum_ >= SMOKE_NUM) {
+		if (smokeNum_ >= SMOKE_NUM)
+		{
 			ChangeState(STATE::END);
 		}
 		return;
@@ -316,12 +305,12 @@ void ChickenBase::UpdateDeath()
 
 void ChickenBase::UpdateEnd()
 {
-
+	//ENDのときは何も行わない
 }
 
 void ChickenBase::DrawNone()
 {
-
+	//描画を行わない
 }
 
 void ChickenBase::DrawAlive()
@@ -363,7 +352,7 @@ void ChickenBase::DrawDeath()
 		VECTOR pos = VAdd(trans_.pos, LOCAL_SMOKE_POS);
 		DrawBillboard3D(
 			pos,
-			0.5f, 0.5f,
+			SMOKE_CENTER_POS, SMOKE_CENTER_POS,
 			SMOKE_SCALE,
 			0.0f,
 			imgSmoke_[smokeNum_],
@@ -373,13 +362,15 @@ void ChickenBase::DrawDeath()
 
 void ChickenBase::DrawEnd()
 {
-
+	//描画を行わない
 }
 
 void ChickenBase::AliveIdle()
 {
+	//ターゲットを狙う
 	LookTarget();
 
+	//アニメーションを初期化
 	ResetAnim(ANIM::IDLE, DEFAULT_SPEED_ANIM);
 }
 
@@ -443,7 +434,7 @@ void ChickenBase::LookTarget()
 	trans_.quaRot = trans_.quaRot.LookRotation(targetVec);
 }
 
-void ChickenBase::FinishAnim(void)
+void ChickenBase::FinishAnim()
 {
 	switch (anim_)
 	{
@@ -470,7 +461,7 @@ void ChickenBase::CheckIsHelp()
 
 	isHelpCnt_ -= SceneManager::GetInstance().GetDeltaTime();
 
-	if (isHelpCnt_ <= 0)
+	if (isHelpCnt_ <= 0.0f)
 	{
 		isHelp_ = false;
 	}
@@ -511,22 +502,27 @@ void ChickenBase::DebagUpdate()
 	else if (ins.IsTrgDown(KEY_INPUT_O))
 	{
 		ChangeState(STATE::DAMAGE);
-		SetDamage(30);
+		//SetDamage(50,);
 	}
 }
 
 void ChickenBase::DebagDraw()
 {
-	int divNum = 20;
-	int color = 0xff00ff;
+	constexpr int DIV_NUM = 20;
+	constexpr int INTERVAL = 16;
+	int cnt = 0;
 	bool fill = false;
+	Vector2 pos = { 0,Application::SCREEN_SIZE_Y - INTERVAL };
 
-	Vector2 pos = { 0,Application::SCREEN_SIZE_Y -16};
-	DrawFormatString(pos.x, pos.y, 0xffffff, "攻撃力%d", atkPow_);
-	DrawFormatString(pos.x, pos.y -16, 0xffffff, "防御力%d", def_);
-	DrawFormatString(pos.x, pos.y -32, 0xffffff, "スピード%d", moveSpeed_);
-	DrawFormatString(pos.x, pos.y -48, 0xffffff, "体力%d", hp_);
+	//パラメーターの描画
+	DrawFormatString(pos.x, pos.y - INTERVAL * cnt, 0xffffff, "攻撃力%d", atkPow_);
+	cnt++;
+	DrawFormatString(pos.x, pos.y - INTERVAL * cnt, 0xffffff, "防御力%d", def_);
+	cnt++;
+	DrawFormatString(pos.x, pos.y - INTERVAL * cnt, 0xffffff, "スピード%d", moveSpeed_);
+	cnt++;
+	DrawFormatString(pos.x, pos.y - INTERVAL * cnt, 0xffffff, "体力%d", hp_);
 
 	//当たり判定の描画
-	DrawSphere3D(trans_.pos, radius_, divNum, color, color, fill);
+	DrawSphere3D(trans_.pos, radius_, DIV_NUM, AsoUtility::RED, AsoUtility::RED, fill);
 }

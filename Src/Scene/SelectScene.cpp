@@ -2,18 +2,16 @@
 #include <math.h>
 #include<algorithm>
 #include "../Application.h"
+#include "../Manager/Decoration/SoundManager.h"
 #include "../Manager/Generic/InputManager.h"
 #include "../Manager/Generic/ResourceManager.h"
 #include "../Manager/Generic/Camera.h"
 #include "../Manager/GameSystem/DataBank.h"
 #include "../Utility/AsoUtility.h"
 #include "../Object/Stage/StageManager.h"
-#include "../Object/Stage/StageObject.h"
 #include "../Object/Stage/SkyDome.h"
 #include "../Object/Character/PlayableChara/Other/SelectPlayer.h"
 #include "../Object/SelectImage.h"
-#include "../Object/Character/PlayableChara/PlayerBase.h"
-#include "../Object/Character/PlayableChara/USER/PlAxeMan.h"
 #include "../Object/Character/PlayableChara/Other/SelectEnemy.h"
 #include "SelectScene.h"
 
@@ -60,6 +58,24 @@ SelectScene::~SelectScene(void)
 
 void SelectScene::Init(void)
 {
+	auto& snd = SoundManager::GetInstance();
+	auto& res = ResourceManager::GetInstance();
+
+	//音楽読み込み
+	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::SELECT,
+		res.Load(ResourceManager::SRC::SELECT_BGM).handleId_);
+	//音量調節
+	snd.AdjustVolume(SoundManager::SOUND::SELECT, 128);
+	//音楽再生
+	snd.Play(SoundManager::SOUND::SELECT);
+
+	//画像の読み込み
+	imgPlayer_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_IMG).handleId_;
+ 	imgDisplay_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::DISPLAY_IMG).handleId_;
+	imgOperation_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::OPERATION_IMG).handleId_;
+	imgRole_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::ROLE_IMG).handleId_;
+	imgWait_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::WAIT_IMG).handleId_;
+
 	//スカイドーム
 	skyDome_ = std::make_unique<SkyDome>();
 	skyDome_->Init();
@@ -97,12 +113,6 @@ void SelectScene::Init(void)
 
 void SelectScene::Update(void)
 {
-	//キーの設定
-//	KeyConfigSetting();
-
-	//どちらかを操作しているときにもう片方を操作できないように制御
-//	ControllDevice();
-
 	//空を回転
 	skyDome_->Update();
 
@@ -148,9 +158,14 @@ void SelectScene::Draw(void)
 
 void SelectScene::Release(void)
 {
-	SceneManager::GetInstance().ResetCameras();
+	//SceneManager::GetInstance().ResetCameras();
 
-	//image_->Destroy();
+	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+	{
+		images_[i]->Destroy();
+		players_[i]->Destroy();
+		enemys_[i]->Destroy();
+	}
 }
 
 void SelectScene::ChangeStateDisplay(void)
@@ -204,7 +219,6 @@ void SelectScene::OperationUpdate(void)
 	ControllDevice();
 
 	images_[0]->Update();
-	//enemys_[0]->Update();
 	for (int i = 1; i < camera.size();i++)
 	{
 		for (int a = 0; a < SceneManager::PLAYER_NUM; a++) {
@@ -299,7 +313,7 @@ void SelectScene::RoleUpdate(void)
 	//全員準備完了状態で1Pが決定ボタン押下でゲーム画面へ
 	if (checkAllReady && input_[0].config_ == KEY_CONFIG::DECIDE)
 	{
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::EXP);
 	}
 
 }
@@ -312,11 +326,14 @@ void SelectScene::MaxUpdate(void)
 void SelectScene::DisplayDraw(void)
 {
 	images_[0]->Draw();
+
+	DrawRotaGraph(Application::SCREEN_SIZE_X/2, 60,1.0f, 0.0f, imgDisplay_, true);
 }
 
 void SelectScene::NumberDraw(void)
 {
 	images_[0]->Draw();
+	DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 60, 1.0f, 0.0f, imgPlayer_, true);
 }
 
 void SelectScene::OperationDraw(void)
@@ -328,6 +345,14 @@ void SelectScene::OperationDraw(void)
 	for (int i = 1; i < camera.size(); i++)
 	{
 		enemys_[i]->Draw();
+	}
+
+	if (SceneManager::GetInstance().GetNowWindow() < 1)
+	{ 
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 60, 1.0f, 0.0f, imgOperation_, true); 
+	}
+	else{
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 150, 1.0f, 0.0f, imgWait_, true); 
 	}
 }
 
@@ -344,6 +369,11 @@ void SelectScene::RoleDraw(void)
 	for (int i = 0; i < camera.size(); i++)
 	{
 		players_[i]->Draw();
+	}
+
+	if (SceneManager::GetInstance().GetNowWindow() > -1)
+	{
+		DrawRotaGraph(Application::SCREEN_SIZE_X - 180, 100, 1.0f, 0.0f, imgRole_, true);
 	}
 }
 
