@@ -47,10 +47,7 @@ public:
 	void Draw(void) override;
 	void Release(void) override;
 
-	
-
 private:
-
 	//ステージ
 	std::unique_ptr<StageManager> stage_;
 
@@ -92,18 +89,23 @@ private:
 
 	std::unique_ptr<UnitPositionLoad> unitLoad_;
 
-	//音関連初期化
-	void SoundInit(void);
+	void SoundInit(void);	//音関連初期化
 
-	//当たり判定（他項目に干渉するもののみ）
+#pragma region 当たり判定
+	//当たり判定All
 	void Collision(void);
-	void CollisionEnemy(void);	//敵関連の当たり判定
-	void CollisionPlayer(void);	//プレイヤー関連の当たり判定
-	void CollisionChicken(void);//ニワトリあたり判定
-	//void CollisionPlayerCPU(PlayerBase& _player,const VECTOR& _pPos);	//プレイヤー(CPU)関連の当たり判定
+	//敵関連の当たり判定
+	void CollisionEnemy(void);
+	//プレイヤー関連の当たり判定
+	void CollisionPlayer(void);
+	//ニワトリあたり判定
+	void CollisionChicken(void);
 
-	void CollisionPlayerArrow(int _p1Num);	//遠距離関係の当たり判定
-	void CollisionPlayerSerch(int _p1Num);	//アーチャー用の攻撃ターゲット取得可能
+	//遠距離関係の当たり判定
+	void CollisionPlayerArrow(int _p1Num);	
+	//アーチャー用の攻撃ターゲット取得可能
+	void CollisionPlayerSerch(int _p1Num);	
+#pragma endregion
 
 	//フェード
 	void Fade(void);
@@ -120,6 +122,7 @@ private:
 
 	//リザルト
 	void FazeResultUpdate(void);
+	//フェーズ数を知らせる
 	void InformFazeNum(void);
 
 	void SetIsInform(const bool _flag);	//フェーズ数表示するかどうかのフラグ

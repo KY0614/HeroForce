@@ -26,15 +26,27 @@
 GameScene::GameScene(void)
 {
 	stage_ = nullptr;
+
 	sky_ = nullptr;
+
 	fader_ = nullptr;
+	isFadeInFinish_ = false;
+
+	isPhaseChanging_ = false;
+	phaseCnt_ = -1;
+
+	fazeResult_ = nullptr;
+	fazeCnt_ = -1;
+	isInformFaze_ = false;
+	inform_ = nullptr;
+	isFazeRezult_ = false;
+
+	playerMng_ = nullptr;
+	enmMng_ = nullptr;
+
 	level_ = nullptr;
 	chicken_ = nullptr;
 	unitLoad_ = nullptr;
-	fazeResult_ = nullptr;
-
-	isPhaseChanging_ = false;
-	fazeCnt_ = 0;
 }
 
 GameScene::~GameScene(void)
@@ -104,6 +116,7 @@ void GameScene::Init(void)
 	fazeResult_->Init();
 
 	//フェーズ数カウント
+	fazeCnt_ = 0;
 	inform_ = std::make_unique<InformFaze>();
 	SetIsInform(true);
 
@@ -652,47 +665,6 @@ void GameScene::CollisionChicken(void)
 
 }
 
-//void GameScene::CollisionPlayerCPU(PlayerBase& _player, const VECTOR& _pPos)
-//{
-//	//衝突判定マネージャ取得
-//	auto& col = Collision::GetInstance();
-//	//敵の総数取得
-//	int maxCnt = enmMng_->GetActiveNum();
-//
-//	//敵をサーチ初期化
-//	_player.SetisEnemySerch(false);
-//
-//
-//	//敵の個体分行う
-//	for (int i = 0; i < maxCnt; i++)
-//	{
-//		//敵の取得
-//		Enemy* e = enmMng_->GetActiveEnemy(i);
-//
-//		//敵が死亡していたら処理しない
-//		if (!e->IsAlive())continue;
-//
-//		//敵個人の位置と攻撃を取得
-//		VECTOR ePos = e->GetPos();
-//
-//		//プレイヤー側索敵
-//		if (col.Search(_pPos, ePos, _player.GetSearchRange())
-//			&& !_player.GetIsCalledPlayer())
-//		{
-//			//敵をサーチしたかを返す
-//			_player.SetisEnemySerch(true);
-//			_player.SetTargetPos(ePos);
-//		}
-//
-//		if (col.Search(_player.GetPos(), ePos, _player.GetAtkStartRange())
-//			&& _player.GetState() == PlayerBase::CPU_STATE::NORMAL
-//			&& !_player.GetIsCalledPlayer())
-//		{
-//			//状態を変更
-//			_player.ChangeState(PlayerBase::CPU_STATE::ATTACK);
-//		}
-//	}
-//}
 
 void GameScene::Fade(void)
 {
