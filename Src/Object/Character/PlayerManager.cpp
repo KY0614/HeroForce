@@ -22,6 +22,7 @@ void PlayerManager::Init(void)
 
 	PLAYER info[4];
 
+	//プレイヤー番号ごとにプレイヤー情報を入れる
 	info[0].info= DataBank::GetInstance().Output(1);
 	info[1].info= DataBank::GetInstance().Output(2);
 	info[2].info= DataBank::GetInstance().Output(3);
@@ -44,8 +45,6 @@ void PlayerManager::Init(void)
 			players_[i].ins = CreateCpuPlayer(players_[i].info.role_);
 			players_[i].ins->SetPlayerNum(i);
 		}
-		
-
 		//デバッグ用
 		if (players_[i].ins == nullptr)assert("プレイヤーの生成が正常に動作していません");
 
@@ -136,19 +135,15 @@ JobManagerBase* PlayerManager::CreatePadPlayer(const SceneManager::ROLE _role)
 	switch (_role) {
 	case SceneManager::ROLE::AXEMAN:
 		ret = new PlAxe(static_cast<InputManager::JOYPAD_NO>(padNum_));
-		//ret = new PlAxe();
 		break;
 	case SceneManager::ROLE::ARCHER:
 		ret = new PlArcher(static_cast<InputManager::JOYPAD_NO>(padNum_));
-		//ret = new PlArcher();
 		break;
 	case SceneManager::ROLE::KNIGHT:
 		ret = new PlKnight(static_cast<InputManager::JOYPAD_NO>(padNum_));
-		//ret = new PlKnight();
 		break;
 	case SceneManager::ROLE::MAGE:
 		ret = new PlMage(static_cast<InputManager::JOYPAD_NO>(padNum_));
-		//ret = new PlMage();
 		break;
 	default:
 		assert("プレイヤーの役職情報が間違っています");
@@ -166,24 +161,16 @@ JobManagerBase* PlayerManager::CreateCpuPlayer(const SceneManager::ROLE _role)
 
 	switch (_role) {
 	case SceneManager::ROLE::AXEMAN:
-		//ret = new PlAxe(SceneManager::CNTL::NONE);
 		ret = new CpuAxe();
-		//ret = new PlAxe();
 		break;
 	case SceneManager::ROLE::ARCHER:
-		//ret = new PlArcher(SceneManager::CNTL::NONE);
 		ret = new CpuArcher();
-		//ret = new PlArcher();
 		break;
 	case SceneManager::ROLE::KNIGHT:
-		//ret = new PlKnight(SceneManager::CNTL::NONE);
 		ret = new CpuKnight();
-		//ret = new PlKnight();
 		break;
 	case SceneManager::ROLE::MAGE:
-		//ret = new PlMage(SceneManager::CNTL::NONE);
 		ret = new CpuMage();
-		//ret = new PlMage();
 		break;
 	default:
 		assert("プレイヤーの役職情報が間違っています");

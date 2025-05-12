@@ -6,12 +6,14 @@
 PlAxe::PlAxe(const SceneManager::CNTL _cntl)
 {
 	info_.cntrol_ = _cntl;
+	input_ = std::make_shared<PlayerInput>();
 }
 
 PlAxe::PlAxe(const InputManager::JOYPAD_NO _padNum)
 {
 	info_.cntrol_ = SceneManager::CNTL::PAD;
 	padNum_ = _padNum;
+	input_ = std::make_shared<PlayerInput>();
 }
 
 void PlAxe::Init(void)
@@ -20,7 +22,6 @@ void PlAxe::Init(void)
 	obj_ = new AxeMan();
 	obj_->Init();
 	SetInitPos(playerNum_);
-	
 }
 
 void PlAxe::Update(void)
@@ -31,8 +32,8 @@ void PlAxe::Update(void)
 
 	//キー入力
 	PlayerDodge* dodge = obj_->GetDodge();
-	PlayerInput::GetInstance().Update(obj_,padNum_,info_.cntrol_);
-	ActionInput(obj_,dodge);
+	input_->Update(obj_,padNum_,info_.cntrol_);
+	ActionInput(obj_,dodge, input_);
 
 	//通常攻撃
 	AtkInput();
@@ -79,12 +80,11 @@ void PlAxe::InitSkill(PlayerBase::ATK_ACT _act)
 
 void PlAxe::AtkInput(void)
 {
-	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	if (obj_->GetIsSkill()||obj_->GetIsCool(PlayerBase::ATK_ACT::ATK))return;
-	if (ins.CheckAct(ACT_CNTL::NMLATK) && !obj_->GetIsAtk()&&!obj_->GetIsSkill())
+	if (input_->CheckAct(ACT_CNTL::NMLATK) && !obj_->GetIsAtk()&&!obj_->GetIsSkill())
 	{
 		if (obj_->GetIsCool(ATK_ACT::ATK))return;
 		obj_->ChangeAct(ATK_ACT::ATK);
@@ -96,7 +96,6 @@ void PlAxe::AtkInput(void)
 
 void PlAxe::SkillOneInput(void)
 {
-	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
@@ -104,17 +103,17 @@ void PlAxe::SkillOneInput(void)
 	if(obj_->GetIsCool(PlayerBase::ATK_ACT::ATK))return;
 	if (!obj_->GetIsCool(ATK_ACT::SKILL1))
 	{
-		if (ins.CheckAct(ACT_CNTL::SKILL_DOWN) && !obj_->IsAtkStart())
+		if (input_->CheckAct(ACT_CNTL::SKILL_DOWN) && !obj_->IsAtkStart())
 		{
 			InitSkill(ATK_ACT::SKILL1);
 		}
 		//スキル(長押しでガード状態維持)
-		if (ins.CheckAct(ACT_CNTL::SKILL_KEEP) && obj_->IsAtkStart())
+		if (input_->CheckAct(ACT_CNTL::SKILL_KEEP) && obj_->IsAtkStart())
 		{
 			//押している反応
 			//CntUp(atkStartCnt_);
 		}
-		else if (ins.CheckAct(ACT_CNTL::SKILL_UP) && obj_->IsAtkStart())
+		else if (input_->CheckAct(ACT_CNTL::SKILL_UP) && obj_->IsAtkStart())
 		{
 			if (obj_->GetAtkStartCnt() <= SKILL_ONE_START_NOCHARGE)
 			{
@@ -131,12 +130,11 @@ void PlAxe::SkillOneInput(void)
 
 void PlAxe::SkillTwoInput(void)
 {
-	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	if (obj_->GetIsCool(PlayerBase::ATK_ACT::SKILL2))return;
-	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN))
+	if (input_->CheckAct(ACT_CNTL::SKILL_DOWN))
 	{
 		InitSkill(ATK_ACT::SKILL2);
 	}

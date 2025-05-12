@@ -19,7 +19,7 @@ void Mage::SetParam(void)
 		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_MAGE));
 	float scale = CHARACTER_SCALE;
 	trans_.scl = { scale, scale, scale };
-	trans_.pos = { -300.0f, 0.0f, 0.0f };
+	trans_.pos = { 0.0f, 0.0f, 0.0f };
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::Euler(
 		0.0f, AsoUtility::Deg2RadF(180.0f),

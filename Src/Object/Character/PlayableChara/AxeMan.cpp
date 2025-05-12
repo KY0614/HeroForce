@@ -26,7 +26,7 @@ void AxeMan::SetParam(void)
 		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_AXEMAN));
 	float scale = CHARACTER_SCALE;
 	trans_.scl = { scale, scale, scale };
-	trans_.pos = { -300.0f, 0.0f, 0.0f };
+	trans_.pos = { 0.0f, 0.0f, 0.0f };
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::Euler(
 		0.0f, AsoUtility::Deg2RadF(180.0f),
@@ -202,8 +202,6 @@ void AxeMan::Skill1Func(void)
 		{
 			coolTime_[static_cast<int>(ATK_ACT::SKILL1)] = 0.0f;
 
-			//efeIns.Stop(EffectManager::EFFECT::CHARGE_SKILL);
-
 			//スキル終わったら攻撃発生時間の最大時間をセットする
 			atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;
 
@@ -236,7 +234,7 @@ void AxeMan::Skill2Func(void)
 			//クールタイムの初期化
 			coolTime_[static_cast<int>(act_)] = 0.0f;
 		}
-		else //if(atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
+		else
 		{
 			InitAtk();
 			isSkill_ = false;
@@ -244,28 +242,28 @@ void AxeMan::Skill2Func(void)
 	}
 
 
-	if (atk_.cnt_ >= SKILL2_CHANGE_ANIM_TIME)
+	if (atk_.cnt_ < SKILL2_CHANGE_ANIM_TIME)return;
+
+	if (stepAnim_ > 14.0f)ResetAnim(ANIM::UNIQUE_2, SPEED_ANIM_ATK);
+	//回転中移動できる
+	moveAble_ = true;
+	//攻撃座標を移動中も同期する
+	SyncActPos(atk_);
+	//持続回転切り
+	if (atk_.isHit_)
 	{
-		if (stepAnim_ > 14.0f)ResetAnim(ANIM::UNIQUE_2, SPEED_ANIM_ATK);
-		//回転中移動できる
-		moveAble_ = true;
-		//攻撃座標を移動中も同期する
-		SyncActPos(atk_);
-		//持続回転切り
-		if (atk_.isHit_)
+		CntUp(multiHitInterval_);
+		//クールタイムの初期化
+		coolTime_[static_cast<int>(act_)] = 0.0f;
+		if (multiHitInterval_ >= MULTIHIT_INTERVAL)
 		{
-			CntUp(multiHitInterval_);
-			//クールタイムの初期化
-			coolTime_[static_cast<int>(act_)] = 0.0f;
-			if (multiHitInterval_ >= MULTIHIT_INTERVAL)
-			{
-				atk_.isHit_ = false;
-				multiHitInterval_ = 0.0f;
-			}
-		}
-		else
-		{
+			atk_.isHit_ = false;
 			multiHitInterval_ = 0.0f;
 		}
 	}
+	else
+	{
+		multiHitInterval_ = 0.0f;
+	}
+
 }

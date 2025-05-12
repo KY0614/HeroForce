@@ -154,24 +154,8 @@ protected:
     void InitCharaAnim(void)override;
 
 private:
-    //メンバー関数
-    void InitSlashAtk(ATK & arrowAtk);
-    void CreateSlash(void);
-    void CreateSlashAtk(void);
-
-
-
 
     //メンバ変数
     float guardCnt_;        //ガード時間
-    //std::vector<ATK>slashArrow_;
-    ATK slashArrow_;                            //斬撃(一つしか生成しないため普通の変数にする)
-    int arrowMdlId_;							//矢のモデル
-    std::vector<std::shared_ptr<Arrow>> arrow_;	//弓矢
-    bool isShotArrow_;							//矢を放ったかの判定(true:放った)
-    int arrowCnt_;								//矢の使用個数カウンタ
-    float reloadCnt_;							//矢のリロード時間
-
-    float atkAbleCnt_;                          //矢の発射可能カウント
 };
 

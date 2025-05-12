@@ -20,6 +20,30 @@ void Archer::DrawDebug(void)
 
 Archer::Archer(void)
 {
+	//スキルが終わったらクールタイムのカウント開始
+	isCool_[static_cast<int>(act_)] = true;
+
+	//移動可能にする
+	moveAble_ = true;
+
+	//攻撃の発生
+	atkStartCnt_ = 0.0f;
+
+	isShotArrow_ = false;
+
+	//攻撃可能時間
+	atkAbleCnt_ = 0.0f;
+
+	backrashCnt_ = 0.0f;
+
+	arrowMdlId_ = -1;
+
+	reloadCnt_ = 0.0f;
+
+	for (int i = 0; i < static_cast<int>(ATK_TYPE::MAX); i++)
+	{
+		arrowCnt_[i] = 0.0f;
+	}
 
 }
 void Archer::Destroy(void)
@@ -37,7 +61,7 @@ void Archer::SetParam(void)
 		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_ARCHER));
 	float scale = CHARACTER_SCALE;
 	trans_.scl = { scale, scale, scale };
-	trans_.pos = { -300.0f, 0.0f, 0.0f };
+	trans_.pos = { 0.0f, 0.0f, 0.0f };
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::Euler(
 		0.0f, AsoUtility::Deg2RadF(180.0f),

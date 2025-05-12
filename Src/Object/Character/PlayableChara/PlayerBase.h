@@ -34,6 +34,8 @@ public:
       //エフェクトを最初の1フレームの時に再生させる用のFPS
     static constexpr float DELTATIME = 1.0f / 60.0f;
 
+    //割合最大値
+    static constexpr float PER_MAX = 1.0f;
 
     //各アニメーション番号
     static constexpr int T_POSE_NUM = 64;
@@ -86,6 +88,8 @@ public:
 
     //音量
     static constexpr int SKILL_CHANGE_SE_VOL = 80;
+
+
 
     //*************************************************
     // 列挙型
@@ -163,9 +167,6 @@ public:
     virtual std::vector<ATK> GetAtks(ATK_TYPE _type) { return atks_[_type]; }
 
     virtual void SetIsArrowHit(ATK_TYPE _type, const bool _flg, int _num){ atks_[_type][_num].isHit_ = _flg; }
-
-     //ダメージ関数
-    void Damage(void);
 
     //リセット
     void Reset(void);
@@ -267,7 +268,7 @@ public:
     //攻撃発生したのを確認する
     const bool IsFinishAtkStart(void)const { return atkStartCnt_ > atkStartTime_[static_cast<int>(act_)]; }
 
-    //攻撃変更用(主に入力されたら変えるようにする)
+    //攻撃変更用(主に初期化用)
     void ChangeAct(const ATK_ACT _act);
 
     //攻撃の最大値の初期化(弓矢とかの違うatkの配列とか使う用)
@@ -315,6 +316,16 @@ public:
     /// <param name="_per"></param>
     /// <param name="_second"></param>
     void SetBuff(STATUSBUFF_TYPE _type,SKILL_BUFF _skill, float _per,float _second);
+
+
+    /// <summary>
+    /// バフを足す
+    /// </summary>
+    /// <param name="_skill">何のスキルか</param>
+    /// <param name="_type">どのステータスか</param>
+    void AddBuffStatus(const SKILL_BUFF _skill, const int _type);
+    //バフを引く
+    void SubBuffStatus(const SKILL_BUFF _skill, const int _type);
 
     //時間制限なし
     //void SetBuff(STATUSBUFF_TYPE _type, float _per);
@@ -377,9 +388,8 @@ protected:
     float coolTime_[static_cast<int>(ATK_ACT::MAX)];            //それぞれのクールタイムカウント
     bool isCool_[static_cast<int>(ATK_ACT::MAX)];               //それぞれの攻撃使い終わりを格納する
     float multiHitInterval_;                                    //多段ヒットのダメージ間隔
-    VECTOR userOnePos_;                                         //ユーザー1追従用の座標   
     VECTOR colPos_;                                             //プレイヤーの当たり判定座標
-    bool isSerchArcher_;                                              //アーチャーの射程圏内に入ったかどうか
+    bool isSerchArcher_;                                        //アーチャーの射程圏内に入ったかどうか
     float speed_;                                               //プレイヤーのスピード(ステータスではなく1フレームに動くもの)
 
 
@@ -397,8 +407,6 @@ protected:
     bool isBuff_;                                               //バフかそうでないか     true：バフである
 
 
-
-
     //それぞれの最大値セット用(攻撃の座標はローカル座標で設定してます)
     std::map<ATK_ACT, ATK>atkMax_;
     float coolTimeMax_[static_cast<int>(ATK_ACT::MAX)];             //クールタイム最大
@@ -406,10 +414,6 @@ protected:
 
     //コントローラー系
     InputManager::JOYPAD_NO padNum_;                //ゲームパッドの番号
-    int leftStickX_;            //パッドのスティックのX角度  
-    int leftStickY_;            //パッドのスティックのY角度
-    float stickDeg_;            //パッドのスティックの角度
-
 
     //*************************************************
     //メンバ関数

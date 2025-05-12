@@ -15,6 +15,12 @@ public:
     static constexpr int MOVE_BACK_KEY = KEY_INPUT_S;
     static constexpr int MOVE_RIGHT_KEY = KEY_INPUT_D;
 
+    //移動角度
+    static constexpr float FLONT_DEG = 0.0f;
+    static constexpr float RIGHT_DEG = 90.0f;
+    static constexpr float BACK_DEG = 180.0f;
+    static constexpr float LEFT_DEG = 270.0f;
+
     //攻撃
     static constexpr int ATK_KEY = KEY_INPUT_E;
     static constexpr InputManager::JOYPAD_BTN ATK_BTN = InputManager::JOYPAD_BTN::RIGHT;
@@ -44,16 +50,10 @@ public:
         , SKILL_UP          //長押しスキル(離す)
     };
 
-    //インスタンスの生成
-    static void CreateInstance(void);
-    static PlayerInput& GetInstance(void);
+    PlayerInput(void);
+    ~PlayerInput(void) = default;
 
-    
     void Update(PlayerBase* _player,InputManager::JOYPAD_NO _padNum,SceneManager::CNTL _cntl);
-
-
-
-
     //コントロール判定
     bool CheckAct(ACT_CNTL _actCntl) { return actCntl_ == _actCntl ? true : false; }
 
@@ -65,10 +65,7 @@ public:
 
 private:
 
-    //シングルトン化するために
-	PlayerInput(void);
-	~PlayerInput(void)=default;
-
+ 
     //メンバ関数
     void InputKeyBoard(PlayerBase* _player);
     void InputPad(PlayerBase* _player, InputManager::JOYPAD_NO _padNum);

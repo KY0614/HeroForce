@@ -3,6 +3,7 @@
 #include"Character/PlayableChara/PlayerBase.h"
 class PlayerBase;
 class PlayerDodge;
+class PlayerInput;
 class JobManagerBase
 {
 public:
@@ -43,6 +44,7 @@ protected:
 
 	PlayerBase* obj_;	//使用するインスタンス格納
 	DataBank::PLAYER_INFO info_;
+	std::shared_ptr<PlayerInput> input_;
 	InputManager::JOYPAD_NO padNum_;		//パッド番号
 	virtual void AtkInput(void)=0;
 	virtual void SkillOneInput(void)=0;
@@ -51,6 +53,6 @@ protected:
 	int playerNum_;		//何Pか(初期座標を置く用)
 
 	//攻撃系以外の入力処理(回避とかスキルチェンジとか)
-	void ActionInput(PlayerBase* _player,PlayerDodge* _dodge);
+	void ActionInput(PlayerBase* _player,PlayerDodge* _dodge,std::weak_ptr<PlayerInput> _input);
 
 };
