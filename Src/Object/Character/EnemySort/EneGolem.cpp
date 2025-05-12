@@ -7,18 +7,6 @@ EneGolem::EneGolem(const VECTOR& _spawnPos) : Enemy(_spawnPos)
 	trans_.pos = _spawnPos;
 }
 
-void EneGolem::Destroy(void)
-{
-	auto& eff = EffectManager::GetInstance();
-
-	//ã§í 
-	Enemy::Destroy();
-
-	//eff.Stop(EffectManager::EFFECT::BOSS_PUNCH);
-	eff.Stop(EffectManager::EFFECT::BOSS_SHOUT);
-	eff.Stop(EffectManager::EFFECT::BOSS_SHOUT_ATK);
-}
-
 void EneGolem::SetParam(void)
 {
 	//çUåÇåxçê

@@ -13,7 +13,6 @@ void CpuAxe::Init(void)
 {
 	obj_ = new AxeMan();
 	obj_->Init();
-	SetInitPos(playerNum_);
 }
 
 void CpuAxe::Update(void)

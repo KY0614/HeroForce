@@ -15,7 +15,6 @@ void PlayerCpu::SetParam(void)
 
 void PlayerCpu::Update(void)
 {
-	PlayerBase::Update();
 	//各状態の更新
 	CpuStateUpdate();
 	auto& ins = InputManager::GetInstance();
@@ -48,37 +47,6 @@ void PlayerCpu::Update(void)
 		//ターゲットを呼び出されたプレイヤーに設定する
 		//ターゲットを呼び出されたプレイヤーに設定する
 		SetTargetPos(userOnePos_);
-	}
-
-
-
-#ifdef DEBUG_ON
-	{
-		auto& ins = InputManager::GetInstance();
-		const float SPEED = 5.0f;
-		if (ins.IsNew(KEY_INPUT_W)) { userOnePos_.z += SPEED; }
-		if (ins.IsNew(KEY_INPUT_D)) { userOnePos_.x += SPEED; }
-		if (ins.IsNew(KEY_INPUT_S)) { userOnePos_.z -= SPEED; }
-		if (ins.IsNew(KEY_INPUT_A)) { userOnePos_.x -= SPEED; }
-
-
-
-		// 左スティックの横軸
-		leftStickX_ = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLX;
-
-		//縦軸
-		leftStickY_ = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLY;
-		auto stickRad = static_cast<float>(atan2(static_cast<double>(leftStickY_), static_cast<double>(leftStickX_)));
-		stickDeg_ = static_cast<float>(AsoUtility::DegIn360(AsoUtility::Rad2DegF(stickRad) + 90.0f));
-		//前
-		if (leftStickY_ < -1) { userOnePos_.z += SPEED; }
-		//右
-		else if (leftStickX_ > 1) { userOnePos_.x += SPEED; }
-		//下
-		else if (leftStickY_ > 1) { userOnePos_.z -= SPEED; }
-		//左
-		else if (leftStickX_ < -1) { userOnePos_.x -= SPEED; }
-
 	}
 
 

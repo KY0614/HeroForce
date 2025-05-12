@@ -8,7 +8,6 @@
 #include "../Scene/GameScene.h"
 #include "../Scene/GameOverScene.h"
 #include "../Scene/GameClearScene.h"
-#include "../Scene/ExplanScene.h"
 #include "ResourceManager.h"
 #include "Camera.h"
 #include"../Manager/GameSystem/CharacterParamData.h"
@@ -17,7 +16,6 @@
 #include"../Manager/GameSystem/CharacterParamData.h"
 #include"../Manager/Decoration/EffectManager.h"
 #include"../Manager/Decoration/SoundManager.h"
-#include"../Manager/GameSystem/Timer.h"
 #include"../Shader/PixelShader.h"
 #include "SceneManager.h"
 
@@ -200,7 +198,6 @@ void SceneManager::Destroy(void)
 	EffectManager::GetInstance().Destroy();
 	SoundManager::GetInstance().Destroy();
 	PixelShader::GetInstance().Destroy();
-	Timer::GetInstance().Destroy();
 
 	delete instance_;
 }
@@ -372,7 +369,7 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	
 	case SCENE_ID::SELECT:
 		scene_ = new SelectScene();
-   		resM.InitSelect();
+		resM.InitSelect();
 		break;	
 	
 	case SCENE_ID::GAME:
@@ -393,11 +390,6 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	case SCENE_ID::GAMECLEAR:
 		scene_ = new GameClearScene();
 		resM.InitGameClear();
-		break;
-
-	case SCENE_ID::EXP:
-		scene_ = new ExplanScene();
-		resM.InitExplan();
 		break;
 	}
 
@@ -459,20 +451,29 @@ void SceneManager::SetWindowPram(void)
 
 
 	int displayNum = DataBank::GetInstance().Output(DataBank::INFO::DHISPLAY_NUM);
-	int userNum = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
-
-	int r = 1;
-	//ディスプレイが余っているとき
-	if (displayNum > userNum) r = userNum;
-	else r = displayNum;
 
 
-	int sizeX = DISPLAY_X * r;
+	int sizeX = DISPLAY_X /** displayNum*/;
 	int sizeY = DISPLAY_Y;
 
-	if (activeWindowNum_ != displayNum)sizeX /= 2;
-	if (activeWindowNum_ > displayNum)sizeY /= 2;
-	if (sizeX > DISPLAY_X)sizeX = DISPLAY_X;
+	if (activeWindowNum_ != 1)sizeX /= 2;
+	if (activeWindowNum_ > 2)sizeY /= 2;
+
+	////生成するウィンドウの数よりディスプレイの方が多い場合
+	//if(displayNum>activeWindowNum_)
+	//{
+	//	//フルスクリーンで移す
+	//	sizeX = DISPLAY_X;
+	//	sizeY = DISPLAY_Y;
+	//}
+	//else
+	//{
+	//	if (activeWindowNum_ != 1)sizeX /= 2;
+	//	if (activeWindowNum_ > 2)sizeY /= 2;
+	//}
+	
+
+	//DataBank::GetInstance().Input(DataBank::INFO::SCREEN_SIZE, sizeX - 15, sizeY - 30);
 
 	for (HWND hwnd : subWindowH_)
 	{

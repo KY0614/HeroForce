@@ -1,18 +1,12 @@
 #include <DxLib.h>
 #include "../../Application.h"
-<<<<<<< HEAD:Src/Object/System/LevelupSelect.cpp
-=======
-#include "../../Utility/AsoUtility.h"
-#include "../../Manager/Decoration/SoundManager.h"
->>>>>>> Data2:Src/Object/System/LevelSelect.cpp
 #include "../../Manager/Generic/ResourceManager.h"
 #include "../../Manager/GameSystem/TextManager.h"
 #include "../../Manager/GameSystem/DataBank.h"
-#include "LevelScreenManager.h"
-#include "LevelSelect.h"
+#include "LevelupSelect.h"
+#include "Carsor.h"
 
-
-LevelSelect::LevelSelect()
+LevelupSelect::LevelupSelect()
 {
 	fontMes_ = -1;
 	fontExp_ = -1;
@@ -24,7 +18,7 @@ LevelSelect::LevelSelect()
 
 	//カーソル画像初期化
 	int value = -1;
-	imgCursors_ = &value;
+	imgCarsors_ = &value;
 
 	//画像
 	for (int i = 0; i < LevelScreenManager::TYPE_MAX; i++) {
@@ -32,13 +26,17 @@ LevelSelect::LevelSelect()
 	}
 
 	// 状態管理
-	stateChanges_.emplace(STATE::NONE, std::bind(&LevelSelect::ChangeStateNone, this));
-	stateChanges_.emplace(STATE::EXPANSION, std::bind(&LevelSelect::ChangeStateExpansion, this));
-	stateChanges_.emplace(STATE::SELECT, std::bind(&LevelSelect::ChangeStateSelect, this));
-	stateChanges_.emplace(STATE::FIN, std::bind(&LevelSelect::ChangeStateFin, this));
+	stateChanges_.emplace(STATE::NONE, std::bind(&LevelupSelect::ChangeStateNone, this));
+	stateChanges_.emplace(STATE::EXPANSION, std::bind(&LevelupSelect::ChangeStateExpansion, this));
+	stateChanges_.emplace(STATE::SELECT, std::bind(&LevelupSelect::ChangeStateSelect, this));
+	stateChanges_.emplace(STATE::FIN, std::bind(&LevelupSelect::ChangeStateFin, this));
 }
 
-void LevelSelect::Init()
+LevelupSelect::~LevelupSelect()
+{
+}
+
+void LevelupSelect::Init()
 {
 	//仮プレイヤー人数
 	plNum_ = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
@@ -51,12 +49,12 @@ void LevelSelect::Init()
 	ele_.resize(element_);
 
 	//カーソルの初期化
-	cursors_.resize(plNum_);
-	for (int i = 0; i < cursors_.size(); i++)
+	carsors_.resize(plNum_);
+	for (int i = 0; i < carsors_.size(); i++)
 	{
-		cursors_[i] = std::make_unique<Cursor>();
-		cursors_[i]->Init(i, imgCursors_[i]);
-		cursors_[i]->SetControllKey(
+		carsors_[i] = std::make_unique<Carsor>();
+		carsors_[i]->Init(i, imgCarsors_[i]);
+		carsors_[i]->SetContllorKey(
 			KEY_INPUT_RIGHT,
 			KEY_INPUT_LEFT,
 			KEY_INPUT_UP,
@@ -74,12 +72,12 @@ void LevelSelect::Init()
 	CreateFonts();
 }
 
-void LevelSelect::Update()
+void LevelupSelect::Update()
 {
 	stateUpdate_();
 }
 
-void LevelSelect::Draw()
+void LevelupSelect::Draw()
 {
 	//テキスト用変数
 	int color = 0;
@@ -112,27 +110,19 @@ void LevelSelect::Draw()
 			if (ele.isText_) {
 
 				//テキスト描画
-				color = AsoUtility::WHITE;
-				length = static_cast<int>(expTexts_[type].length());
+				int pow = 30;
+				color = 0xffffff;
+				length = expTexts_[type].length();
 				pos = ele.pos_;
-<<<<<<< HEAD:Src/Object/System/LevelupSelect.cpp
 				pos.x -= length * FONT_EXP_SIZE / 4;
 				pos.y += 90;
-=======
-				pos.x -= length * FONT_EXP_SIZE / TextManager::CENTER_TEXT_H;
-				pos.y += TEXT_OFFSET_POS_Y;
->>>>>>> Data2:Src/Object/System/LevelSelect.cpp
 
-				SetDrawBlendMode(DX_BLENDMODE_ALPHA, BACK_ALPHA);
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
 				DrawBox(
 					pos.x, pos.y,
-<<<<<<< HEAD:Src/Object/System/LevelupSelect.cpp
 					pos.x + length * FONT_EXP_SIZE / 2.0f,
-=======
-					pos.x + length * FONT_EXP_SIZE / 2,
->>>>>>> Data2:Src/Object/System/LevelSelect.cpp
 					pos.y + FONT_EXP_SIZE,
-					AsoUtility::BLACK, true);
+					0x000000, true);
 				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 				DrawFormatStringToHandle(
@@ -140,14 +130,14 @@ void LevelSelect::Draw()
 					color,
 					fontExp_,
 					expTexts_[type].c_str(),
-					POW);
+					pow);
 			}
 		}
 	}
 
 	//テキスト用変数
 	color = 0xffffff;
-	length = static_cast<int>(mesText_.length() / 2);
+	length = mesText_.length() / 2;
 	pos = { MES_TEXT_POS_X,MES_TEXT_POS_Y };
 	pos.x -= length * FONT_MES_SIZE / 2;
 
@@ -160,23 +150,23 @@ void LevelSelect::Draw()
 
 	if (state_ == STATE::SELECT)
 	{
-		for (int i = 0; i < cursors_.size(); i++)
+		for (int i = 0; i < carsors_.size(); i++)
 		{
-			cursors_[i]->Draw();
+			carsors_[i]->Draw();
 		}
 	}
 }
 
-void LevelSelect::Release()
+void LevelupSelect::Release()
 {
 	DeleteFontToHandle(fontExp_);
 	DeleteFontToHandle(fontMes_);
 }
 
-void LevelSelect::Reset()
+void LevelupSelect::Reset()
 {
 	//初期状態の設定
-	ChangeState(LevelSelect::STATE::NONE);
+	ChangeState(LevelupSelect::STATE::NONE);
 
 	//強化要素の種類
 	ele_[static_cast<int>(LevelScreenManager::TYPE::ATTACK)].type_ = LevelScreenManager::TYPE::ATTACK;
@@ -188,7 +178,10 @@ void LevelSelect::Reset()
 	for (int i = 0; i < ele_.size(); i++)
 	{
 		//初期拡大値
-		ele_[i].scl_ = 0.0f;
+		ele_[i].scl_ = 0.00f;
+
+		//強化要素の種類
+		//ele_[i].type_ = GetRandType();
 
 		//サイズ
 		ele_[i].size_ = { static_cast<int>(ELE_IMG_SIZE_X * SCALE_MAX),
@@ -199,9 +192,9 @@ void LevelSelect::Reset()
 	}
 
 	//カーソル初期化
-	for (int i = 0; i < cursors_.size(); i++)
+	for (int i = 0; i < carsors_.size(); i++)
 	{
-		cursors_[i]->Reset();
+		carsors_[i]->Reset();
 	}
 
 	//各プレイヤーごとの強化要素初期化
@@ -211,7 +204,7 @@ void LevelSelect::Reset()
 	}
 }
 
-void LevelSelect::Load()
+void LevelupSelect::Load()
 {
 	//画像
 	auto& res = ResourceManager::GetInstance();
@@ -220,7 +213,7 @@ void LevelSelect::Load()
 	imgSelects_[static_cast<int>(LevelScreenManager::TYPE::DEFENSE)] = res.Load(ResourceManager::SRC::DEFENCE_UP_UI).handleId_;
 	imgSelects_[static_cast<int>(LevelScreenManager::TYPE::LIFE)] = res.Load(ResourceManager::SRC::LIFE_UP_UI).handleId_;
 	imgSelects_[static_cast<int>(LevelScreenManager::TYPE::SPEED)] = res.Load(ResourceManager::SRC::SPEED_UP_UI).handleId_;
-	imgCursors_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CARSOLS).handleIds_;
+	imgCarsors_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CARSOLS).handleIds_;
 	imgBack_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::LEVEL_UP_BACK).handleId_;
 	
 	//テキスト関係
@@ -230,26 +223,46 @@ void LevelSelect::Load()
 	expTexts_[static_cast<int>(LevelScreenManager::TYPE::DEFENSE)] = text_m.TextLoad(TextManager::TEXTS::LV_DEF_MES);
 	expTexts_[static_cast<int>(LevelScreenManager::TYPE::SPEED)] = text_m.TextLoad(TextManager::TEXTS::LV_SPEED_MES);
 	expTexts_[static_cast<int>(LevelScreenManager::TYPE::LIFE)] = text_m.TextLoad(TextManager::TEXTS::LV_LIFE_MES);
-
-	SoundManager::GetInstance().Add(
-		SoundManager::TYPE::SE,
-		SoundManager::SOUND::CARSOL,
-		ResourceManager::GetInstance().Load(ResourceManager::SRC::CARSOL_SE).handleId_);
 }
 
-void LevelSelect::SetFirstPos()
+void LevelupSelect::SetFirstPos()
 {
+	Vector2 pos;
 	int cnt = 0;
-	ele_[cnt].pos_ = { ELEMENT_POS_LU_X,ELEMENT_POS_LU_Y };
-	cnt++;
-	ele_[cnt].pos_ = { ELEMENT_POS_RU_X,ELEMENT_POS_RU_Y };
-	cnt++;
-	ele_[cnt].pos_ = { ELEMENT_POS_LD_X,ELEMENT_POS_LD_Y };
-	cnt++;
-	ele_[cnt].pos_ = { ELEMENT_POS_RD_X,ELEMENT_POS_RD_Y };
+	int div = 4;
+	int center= 2;
+
+	switch (ele_.size())
+	{
+	case 2:
+		ele_[cnt].pos_ = { Application::SCREEN_SIZE_X / div, Application::SCREEN_SIZE_Y / 2 };
+		cnt++;
+		ele_[cnt].pos_ = { Application::SCREEN_SIZE_X / div * 3, Application::SCREEN_SIZE_Y / 2 };
+
+	case 3:
+		ele_[cnt].pos_ = { Application::SCREEN_SIZE_X / div, Application::SCREEN_SIZE_Y / div };
+		cnt++;
+		ele_[cnt].pos_ = { Application::SCREEN_SIZE_X / div, Application::SCREEN_SIZE_Y / div * 3};
+		cnt++;
+		ele_[cnt].pos_ = { Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / div * 3};
+		break;
+
+	case 4:
+		ele_[cnt].pos_ = { ELEMENT_POS_LU_X,ELEMENT_POS_LU_Y };
+		cnt++;
+		ele_[cnt].pos_ = { ELEMENT_POS_RU_X,ELEMENT_POS_RU_Y };
+		cnt++;
+		ele_[cnt].pos_ = { ELEMENT_POS_LD_X,ELEMENT_POS_LD_Y };
+		cnt++;
+		ele_[cnt].pos_ = { ELEMENT_POS_RD_X,ELEMENT_POS_RD_Y };
+		break;
+	default:
+		return;
+		break;
+	}
 }
 
-void LevelSelect::CreateFonts()
+void LevelupSelect::CreateFonts()
 {
 	auto& text_m = TextManager::GetInstance();
 	
@@ -266,60 +279,49 @@ void LevelSelect::CreateFonts()
 		FONT_EXP_THICK);
 }
 
-LevelScreenManager::TYPE LevelSelect::GetRandType()
+inline LevelScreenManager::TYPE LevelupSelect::GetRandType()
 {
 	int rand = GetRand(LevelScreenManager::TYPE_MAX - 1);
 	LevelScreenManager::TYPE type = static_cast<LevelScreenManager::TYPE>(rand);
 	return type;
 }
 
-void LevelSelect::SetSkipState()
-{
-	for (int i = 0; i < ele_.size(); i++)
-	{
-		//画像の拡大率を最大に
-		ele_[i].scl_ = SCALE_MAX;
-	}
-	//状態変更
-	ChangeState(STATE::SELECT);
-}
-
-void LevelSelect::ChangeState(const STATE _state)
+void LevelupSelect::ChangeState(const STATE state)
 {
 	//状態受け取り
-	state_ = _state;
+	state_ = state;
 
 	// 各状態遷移の初期処理
 	stateChanges_[state_]();
 }
 
-void LevelSelect::ChangeStateNone()
+void LevelupSelect::ChangeStateNone()
 {
-	stateUpdate_ = std::bind(&LevelSelect::UpdateNone, this);
+	stateUpdate_ = std::bind(&LevelupSelect::UpdateNone, this);
 }
 
-void LevelSelect::ChangeStateExpansion()
+void LevelupSelect::ChangeStateExpansion()
 {
-	stateUpdate_ = std::bind(&LevelSelect::UpdateExpansion, this);
+	stateUpdate_ = std::bind(&LevelupSelect::UpdateExpansion, this);
 }
 
-void LevelSelect::ChangeStateSelect()
+void LevelupSelect::ChangeStateSelect()
 {
-	stateUpdate_ = std::bind(&LevelSelect::UpdateSelect, this);
+	stateUpdate_ = std::bind(&LevelupSelect::UpdateSelect, this);
 }
 
-void LevelSelect::ChangeStateFin()
+void LevelupSelect::ChangeStateFin()
 {
-	stateUpdate_ = std::bind(&LevelSelect::UpdateFin, this);
+	stateUpdate_ = std::bind(&LevelupSelect::UpdateFin, this);
 }
 
-void LevelSelect::UpdateNone()
+void LevelupSelect::UpdateNone()
 {
 	//拡大処理に移る
 	ChangeState(STATE::EXPANSION);
 }
 
-void LevelSelect::UpdateExpansion()
+void LevelupSelect::UpdateExpansion()
 {
 	float scl = SCALE_RATE;
 	float max = SCALE_MAX;
@@ -340,7 +342,7 @@ void LevelSelect::UpdateExpansion()
 	}
 }
 
-void LevelSelect::UpdateSelect()
+void LevelupSelect::UpdateSelect()
 {
 	//状態変更
 	bool isChange = true;
@@ -350,10 +352,10 @@ void LevelSelect::UpdateSelect()
 		ele_[j].isText_ = false;
 	}
 
-	for (int i = 0; i < cursors_.size(); i++)
+	for (int i = 0; i < carsors_.size(); i++)
 	{
 		//カーソルの更新処理
-		cursors_[i]->Update();
+		carsors_[i]->Update();
 
 		for (int j = 0; j < ele_.size(); j++)
 		{
@@ -365,21 +367,20 @@ void LevelSelect::UpdateSelect()
 			}
 
 			//衝突判定(強化項目とカーソルが衝突してる場合)
-			if (AsoUtility::IsCollisionBoxCircle(
+			if (IsCollisionBoxCircle(
 				ele_[j].pos_,
 				ele_[j].size_,
-				cursors_[i]->GetPos(),
-				Cursor::RADIUS))
+				carsors_[i]->GetPos(),
+				Carsor::RADIUS))
 			{
 				//強化要素の説明を表示
 				ele_[j].isText_ = true;
 
 				//カーソルが決定の場合
-				if (cursors_[i]->IsDecide()) 
+				if (carsors_[i]->IsDecide()) 
 				{
 					//選択している要素を格納
 					selectTypes_[i] = ele_[j].type_;
-					SoundManager::GetInstance().Play(SoundManager::SOUND::CARSOL);
 				}
 				else
 				{
@@ -398,7 +399,7 @@ void LevelSelect::UpdateSelect()
 		if (selectTypes_[i] == LevelScreenManager::TYPE::MAX)
 		{
 			//カーソルを未決定に戻す
-			cursors_[i]->SetDecide(false);
+			carsors_[i]->SetDecide(false);
 		}
 	}
 	//状態遷移
@@ -408,11 +409,11 @@ void LevelSelect::UpdateSelect()
 	}
 }
 
-void LevelSelect::UpdateFin()
+void LevelupSelect::UpdateFin()
 {
 }
 
-void LevelSelect::DebagDraw()
+void LevelupSelect::DebagDraw()
 {
 	for (auto ele : ele_)
 	{
@@ -421,6 +422,59 @@ void LevelSelect::DebagDraw()
 		Vector2 RDpos{ ele.pos_.x + ele.size_.x/2,
 			ele.pos_.y + ele.size_.y/2 };
 
-		DrawBox(LUpos.x ,LUpos.y, RDpos.x,RDpos.y,AsoUtility::YELLOW,true);
+		DrawBox(LUpos.x ,LUpos.y, RDpos.x,RDpos.y,0xff00ff,true);
 	}
+}
+
+bool LevelupSelect::IsCollisionBoxCircle(Vector2 pos1, Vector2 size1, Vector2 pos2, float radius2)
+{
+	Vector2 righttop = pos1;
+	righttop.x += size1.x / 2;
+	righttop.y -= size1.y / 2;
+	righttop = V2Sub(pos2, righttop);
+	int rightTop = std::hypot(righttop.x, righttop.y);
+
+	Vector2 rightdown = pos1;
+	rightdown.x += size1.x / 2;
+	rightdown.y += size1.y / 2;
+	rightdown = V2Sub(pos2, rightdown);
+	int rightDown = std::hypot(rightdown.x, rightdown.y);
+
+	Vector2 lefttop = pos1;
+	lefttop.x -= size1.x / 2;
+	lefttop.y -= size1.y / 2;
+	lefttop = V2Sub(pos2, lefttop);
+	int leftTop = std::hypot(lefttop.x, lefttop.y);
+
+	Vector2 leftdown = pos1;
+	leftdown.x -= size1.x / 2;
+	leftdown.y += size1.y / 2;
+	leftdown = V2Sub(pos2, leftdown);
+	int leftDown = std::hypot(leftdown.x, leftdown.y);
+
+	//-----------------------------------------------------------
+
+	auto diffX = (pos1.x - pos2.x);/////終点から始点を引く///////
+	auto diffY = (pos1.y - pos2.y);/////終点から始点を引く///////
+
+	if (rightTop <= radius2 ||
+		rightDown <= radius2 ||
+		leftTop <= radius2 ||
+		leftDown <= radius2 ||
+		(fabsf(diffX) < radius2 && fabsf(diffY) < radius2 + size1.y / 2) ||
+		(fabsf(diffX) < radius2 + size1.x / 2 && fabsf(diffY) < size1.y / 2))
+	{
+		//衝突している
+		return true;
+	}
+	
+	return false;
+}
+
+Vector2 LevelupSelect::V2Sub(Vector2 pos1, Vector2 pos2)
+{
+	Vector2 pos;
+	pos.x = pos1.x - pos2.x;
+	pos.y = pos1.y - pos2.y;
+	return pos;
 }

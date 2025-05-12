@@ -4,7 +4,7 @@
 TextManager* TextManager::instance_ = nullptr;
 
 //シングルトン化
-void TextManager::CreateInstance()
+void TextManager::CreateInstance(void)
 {
 	//インスタンスがnullptrなら初期化されたのち生成処理を行う
 	if (instance_ == nullptr)
@@ -14,7 +14,7 @@ void TextManager::CreateInstance()
 	instance_->Init();
 }
 
-TextManager& TextManager::GetInstance()
+TextManager& TextManager::GetInstance(void)
 {
 	if (instance_ == nullptr)
 	{
@@ -33,27 +33,7 @@ void TextManager::Init()
     InitFont();
 }
 
-std::string TextManager::TextLoad(TEXTS _text)
-{
-    std::string* txt = _Load(_text);
-    if (txt == nullptr)
-    {
-        return "null";
-    }
-    std::string ret = *txt;
-    return ret;
-}
-
-int TextManager::GetTextSize(const std::string _txt,const int _num) const
-{
-    int ret = -1;
-    size_t bufferSize = std::snprintf(nullptr, 0, _txt.c_str(), _num) + 1; // +1は終端のヌル文字用
-    char* buffer = new char[bufferSize];
-
-    return ret;
-}
-
-void TextManager::Destroy()
+void TextManager::Release()
 {
     // フォント登録解除
     for (int i = 0; i < static_cast<int>(FONT_TYPE::MAX); i++)
@@ -67,6 +47,31 @@ void TextManager::Destroy()
             return;
         }
     }
+}
+
+std::string TextManager::TextLoad(TEXTS text)
+{
+    std::string* txt = _Load(text);
+    if (txt == nullptr)
+    {
+        return "null";
+    }
+    std::string ret = *txt;
+    return ret;
+}
+
+int TextManager::GetTextSize(std::string txt,int num) const
+{
+    int ret = -1;
+    size_t bufferSize = std::snprintf(nullptr, 0, txt.c_str(), num) + 1; // +1は終端のヌル文字用
+    char* buffer = new char[bufferSize];
+
+    return ret;
+}
+
+void TextManager::Destroy()
+{
+    Release();
     delete instance_;
 }
 
@@ -107,10 +112,10 @@ void TextManager::InitFont()
 }
 
 std::unordered_map<TextManager::TEXTS, std::string>
-TextManager::LoadDialogues(const std::string& _filename)
+TextManager::LoadDialogues(const std::string& filename)
 {
     std::unordered_map<TEXTS, std::string> dialogues;
-    std::ifstream file(_filename);
+    std::ifstream file(filename);
     std::string line;
 
     if (file.is_open())
@@ -137,12 +142,12 @@ TextManager::LoadDialogues(const std::string& _filename)
     return dialogues;
 }
 
-std::string* TextManager::_Load(const TEXTS _text)
+std::string* TextManager::_Load(TEXTS text)
 {
     std::string* ret = new std::string;
-    if (textDatas_.find(_text) != textDatas_.end())
+    if (textDatas_.find(text) != textDatas_.end())
     {
-        *ret = textDatas_.at(_text);
+        *ret = textDatas_.at(text);
         return ret;
     }
 
@@ -151,6 +156,6 @@ std::string* TextManager::_Load(const TEXTS _text)
     return ret;
 }
 
-TextManager::TextManager()
+TextManager::TextManager(void)
 {
 }

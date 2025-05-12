@@ -101,7 +101,6 @@ public:
 
 	//役職選択の際に表示するメッシュの座標へ移動させる
 	void MoveVertexPos(void);
-	void ReductinVertexPos(void);	//ComingSoon用の縮小用
 
 	/// <summary>
 	/// 選択しているオブジェクトを変更する

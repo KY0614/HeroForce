@@ -32,7 +32,6 @@ public:
 
 	//Õ“Ë”»’è
 	void CollisionStage(const Transform& stageTrans);
-	void ResetFaze(void);
 
 private:
 	//ƒvƒŒƒCƒ„[‚ÌŠÇ—

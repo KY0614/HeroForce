@@ -1,8 +1,5 @@
 #include"../Application.h"
-<<<<<<< HEAD
 #include"../Manager/GameSystem/CharacterParamData.h"
-=======
->>>>>>> Data2
 #include"../Manager/Decoration/SoundManager.h"
 #include"../Manager/GameSystem/CharacterParamData.h"
 #include "../Lib/nlohmann/json.hpp"
@@ -217,7 +214,7 @@ void UnitBase::SetIsHit(const bool _flag)
 
 void UnitBase::SetDamage(const int attackerPower, const int skillPower)
 {
-	//与えるダメージを増やす(ここdefDefになってるから間違ってる可能性あり)
+	//与えるダメージを増やす
 	damage_ += attackerPower * skillPower / defDef_;
 
 	//攻撃を喰らったのでSE再生
@@ -286,21 +283,21 @@ void UnitBase::SetPrePos(void)
 void UnitBase::SetAttack(const float percent)
 {
 	atkUpPercent_ += percent;			//強化％上昇
-	atkPow_ = defAtk_ * (atkUpPercent_ / DEFAULT_PERCENT);	//攻撃力を上昇
+	atkPow_ = defAtk_ * atkUpPercent_;	//攻撃力を上昇
 }
  
 //防御力の強化
 void UnitBase::SetDefense(const float percent)
 {
 	defUpPercent_ += percent;
-	def_ = defDef_ * (defUpPercent_ / DEFAULT_PERCENT);
+	def_ = defDef_ * defUpPercent_;
 }
 
 //移動速度
 void UnitBase::SetSpeed(const float percent)
 {
 	speedUpPercent_ += percent;
-	moveSpeed_ = defSpeed_ * (speedUpPercent_ / DEFAULT_PERCENT);
+	moveSpeed_ = defSpeed_ * speedUpPercent_;
 }
 
 //体力強化
@@ -309,10 +306,6 @@ void UnitBase::SetHpMax(const int hp)
 	hpMax_ += hp;
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> Data2
 void UnitBase::SetMoveSpeed(const float _speed)
 {
 	moveSpeed_ = _speed;
@@ -368,30 +361,4 @@ void UnitBase::CntDown(float& _count)
 	// 経過時間の取得
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	_count -= deltaTime;
-}
-
-void UnitBase::ParamLoad(CharacterParamData::UNIT_TYPE type)
-{
-	auto& data = CharacterParamData::GetInstance().GetParamData(type);
-
-	//デフォルトのステータス設定
-	defAtk_ = data.atk_;
-	defDef_ = data.def_;
-	defSpeed_ = data.speed_;
-	defHp_ = data.hp_;
-	radius_ = data.radius_;
-
-	//変化用の設定
-	atkPow_ = defAtk_;
-	def_ = defDef_;
-	moveSpeed_ = defSpeed_;
-	hp_ = defHp_;
-
-	//HPの最大値の設定
-	hpMax_ = defHp_;
-
-	//強化パーセントの初期化
-	atkUpPercent_ = DEFAULT_PERCENT;
-	defUpPercent_ = DEFAULT_PERCENT;
-	speedUpPercent_ = DEFAULT_PERCENT;
 }

@@ -32,19 +32,6 @@ public:
 		GAMECLEAR_BGM,
 		TITLE,
 		SCENE_CHANGE_1,
-		LEVEL_UP,
-		CARSOL,
-		EXPLAN_SWITCH,
-		SELECT,
-		CHANGE_SELECT,
-		CANCEL_SELECT,
-		DECIDE_SELECT,
-		FAZE_REZALT,
-		POWER_UP,
-		
-		//プレイヤー
-		SKILL_CHANGE,	//スキル切り替え音
-		SKILL,MISS,		//スキル打てないとき
 	};
 
 	struct SOUND_DATA

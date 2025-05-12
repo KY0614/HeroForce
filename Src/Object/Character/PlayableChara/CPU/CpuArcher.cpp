@@ -13,7 +13,6 @@ void CpuArcher::Init(void)
 {
 	obj_ = new Archer();
 	obj_->Init();
-	SetInitPos(playerNum_);
 }
 
 void CpuArcher::Update(void)

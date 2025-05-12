@@ -3,7 +3,6 @@
 #include"../Manager/Generic/SceneManager.h"
 #include"../Manager/Generic/ResourceManager.h"
 #include"../Manager/Decoration/SoundManager.h"
-<<<<<<< HEAD
 
 #include "GameOverScene.h"
 
@@ -56,64 +55,9 @@ void GameOverScene::Init(void)
 	step_ = 0.0f;
 
 	ChangeState(STATE::DOWN);
-=======
-#include "GameOverScene.h"
-
-GameOverScene::GameOverScene()
-{
-	imgBack_ = -1;
-	imgGameOver_ = -1;
-	imgMes_ = -1;
-
-	alphaAdd_ = -1.0f;
-	alpha_ = -1.0f;
-	step_ = -1.0f;
-
-	state_ = STATE::DOWN;
-
-	stateChanges_.emplace(STATE::DOWN, std::bind(&GameOverScene::ChangeStateDown, this));
-	stateChanges_.emplace(STATE::DISPLAY, std::bind(&GameOverScene::ChangeStateDisplay, this));
->>>>>>> Data2
 }
 
-void GameOverScene::Init()
-{
-	auto& res = ResourceManager::GetInstance();
-	auto& snd = SoundManager::GetInstance();
-
-	// カメラモード：定点カメラ
-	auto camera = SceneManager::GetInstance().GetCameras();
-	camera[0]->SetPos(DEFAULT_CAMERA_POS, DEFAULT_TARGET_POS);
-	camera[0]->ChangeMode(Camera::MODE::FIXED_POINT);
-
-	//ゲームオーバー画像
-	imgGameOver_ = res.Load(ResourceManager::SRC::GAMEOVER).handleId_;
-	imgBack_ = res.Load(ResourceManager::SRC::GAMEOVER_BACK).handleId_;
-	imgMes_ = res.Load(ResourceManager::SRC::CHANGE_TITLE_UI).handleId_;
-
-	//音関係
-	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::GAMEOVER_SE, 
-		res.Load(ResourceManager::SRC::GAMEOVER_SE).handleId_);
-	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::GAMEOVER_BGM, 
-		res.Load(ResourceManager::SRC::GAMEOVER_BGM).handleId_);
-
-	//最初にSEを再生させる
-	snd.Play(SoundManager::SOUND::GAMEOVER_SE);
-
-	//プレイヤー
-	player_ = std::make_unique<OverPlayers>();
-	player_->Init();
-
-	//各種変数初期化
-	alphaAdd_ = 1.0f;
-	alpha_ = ALPHA_MAX;
-	step_ = 0.0f;
-
-	//初期状態
-	ChangeState(STATE::DOWN);
-}
-
-void GameOverScene::Update()
+void GameOverScene::Update(void)
 {
 	InputManager& ins = InputManager::GetInstance();
 
@@ -125,31 +69,17 @@ void GameOverScene::Update()
 
 	//シーン遷移
 	if (ins.IsNew(KEY_INPUT_SPACE) || ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT)) {
-<<<<<<< HEAD
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 		SoundManager::GetInstance().Stop(SoundManager::SOUND::GAMEOVER_BGM);
 		SoundManager::GetInstance().Stop(SoundManager::SOUND::GAMEOVER_SE);
-=======
-		SoundManager & snd = SoundManager::GetInstance();
-
-		//シーン遷移
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
-
-		//音声停止
-		snd.Stop(SoundManager::SOUND::GAMEOVER_BGM);
-		snd.Stop(SoundManager::SOUND::GAMEOVER_SE);
->>>>>>> Data2
 	}
 }
 
-void GameOverScene::Draw()
+void GameOverScene::Draw(void)
 {
-<<<<<<< HEAD
 	int cx = Application::SCREEN_SIZE_X / 2;
 	int cy = Application::SCREEN_SIZE_Y / 2;
 
-=======
->>>>>>> Data2
 	//背景
 	DrawExtendGraph(
 		0, 0,
@@ -158,7 +88,6 @@ void GameOverScene::Draw()
 		imgBack_,
 		true
 	);
-<<<<<<< HEAD
 
 	//メッセージ画像
 	DrawRotaGraph(
@@ -169,19 +98,6 @@ void GameOverScene::Draw()
 		imgGameOver_,
 		true);
 
-=======
-
-	//ゲームオーバーメッセージ画像
-	DrawRotaGraph(
-		MES_DEFAULT_POS_X,
-		MES_DEFAULT_POS_Y,
-		1.0f,
-		0.0f,
-		imgGameOver_,
-		true);
-
-	//シーン遷移メッセージ描画
->>>>>>> Data2
 	if (state_ == STATE::DISPLAY) {
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)alpha_);
 		DrawRotaGraph(
@@ -194,59 +110,11 @@ void GameOverScene::Draw()
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 	
-<<<<<<< HEAD
-=======
-	//プレイヤー
->>>>>>> Data2
 	player_->Draw();
 }
 
-void GameOverScene::Release()
+void GameOverScene::Release(void)
 {
-	//音声の停止
-	SoundManager& snd = SoundManager::GetInstance();
-	snd.Stop(SoundManager::SOUND::GAMEOVER_BGM);
-	snd.Stop(SoundManager::SOUND::GAMEOVER_SE);
-}
-
-void GameOverScene::ChangeState(const STATE state)
-{
-	// 状態受け取り
-	state_ = state;
-
-	// 各状態遷移の初期処理
-	stateChanges_[state_]();
-}
-
-void GameOverScene::ChangeStateDown()
-{
-	stateUpdate_ = std::bind(&GameOverScene::UpdateDown, this);
-}
-
-void GameOverScene::ChangeStateDisplay()
-{
-	stateUpdate_ = std::bind(&GameOverScene::UpdateDisplay, this);
-}
-
-void GameOverScene::UpdateDown()
-{
-	//ステップ更新
-	step_ += SceneManager::GetInstance().GetDeltaTime();
-
-	if (step_ >= CHANGE_SECOND)
-	{
-		SoundManager::GetInstance().Stop(SoundManager::SOUND::GAMEOVER_SE);
-		SoundManager::GetInstance().Play(SoundManager::SOUND::GAMEOVER_BGM);
-		ChangeState(STATE::DISPLAY);
-	}
-}
-
-void GameOverScene::UpdateDisplay()
-{
-	//アルファ値更新
-	alpha_ += alphaAdd_;
-	if (alpha_ > ALPHA_MAX) { alphaAdd_ = -1.0f; }
-	else if (alpha_ < ALPHA_MIN) { alphaAdd_ = 1.0f; }
 }
 
 void GameOverScene::ChangeState(const STATE state)

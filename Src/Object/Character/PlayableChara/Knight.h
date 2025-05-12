@@ -36,8 +36,8 @@ public:
 #endif // DEBUG_ON
 
     //クールタイム
-    static constexpr float ATK_COOLTIME = 0.75f;
-    static constexpr float SKILL_ONE_COOLTIME = 3.3f;
+    static constexpr float ATK_COOLTIME = 1.0f;
+    static constexpr float SKILL_ONE_COOLTIME = 5.0f;
     static constexpr float SKILL_TWO_COOLTIME = 10.0f;
 #endif // DEBUG_COOL
     //通常攻撃のステータス
@@ -47,7 +47,7 @@ public:
     static constexpr float FRAME_ATK_BACKRASH = 0.1f;                      //後隙
     static constexpr VECTOR ATK_COL_LOCAL_POS = { 0.0f,100.0f,100.0f };    //ローカル座標
     static constexpr float COL_ATK = CHARACTER_SCALE * 100.0f;             //当たり判定の半径
-    static constexpr float NMLATK_POW = 9.0f;          //通常攻撃             //技威力
+    static constexpr float ATK_POW = 7.0f;          //通常攻撃             //技威力
     //------------------------------------------------------------------
 
     //スキル1のステータス
@@ -65,7 +65,7 @@ public:
     static constexpr VECTOR SLASH_LOCAL_POS = { 0.0f,100.0f,100.0f };
     static constexpr float FRAME_SLASH_DURATION = 2.0f;
     static constexpr float SLASH_POW = 30.0f;       //スキル1の斬撃
-    static constexpr float SLASH_SPEED = 15.0f;
+    static constexpr float SLASH_SPEED = 10.0f;
 
 
 
@@ -88,7 +88,7 @@ public:
     //通常攻撃の最大値
     static constexpr ATK ATK_MAX{ ATK_COL_LOCAL_POS
         ,COL_ATK
-        ,NMLATK_POW
+        ,ATK_POW
         ,FRAME_ATK_DURATION
         ,FRAME_ATK_BACKRASH
         ,0.0f,false };

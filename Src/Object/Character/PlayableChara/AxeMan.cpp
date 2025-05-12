@@ -37,23 +37,19 @@ void AxeMan::SetParam(void)
 	using EFFECT = EffectManager::EFFECT;
 
 	//溜め攻撃エフェクトロード
-	EffectManager::GetInstance().Add(EFFECT::CHARGE_AXE_HIT, 
-		ResourceManager::GetInstance().Load(ResourceManager::SRC::CHARGE_AXE_HIT).handleId_);
-
-	//スキルチャージ(ロードするとなぜかエフェクトが出なくなるから念のためコメントアウト)
-	EffectManager::GetInstance().Add(EFFECT::CHARGE_SKILL,
-		ResourceManager::GetInstance().Load(ResourceManager::SRC::CHARGE_SKILL).handleId_);
+	effIns.Add(EFFECT::CHARGE_AXE_HIT, resIns.Load(ResourceManager::SRC::CHARGE_AXE_HIT).handleId_);
 
 
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 
 	//ステータス関係
+	//------------------------------------------
+	//hpMax_ = HP_MAX;
+	//atkPow_ = POW_ATK;
+	//def_ = DEF_MAX;
+	//defSpeed_ = SPEED;
+
 	ParamLoad(CharacterParamData::UNIT_TYPE::AXEMAN);
-
-	//役職の割り当て
-	role_ = SceneManager::ROLE::AXEMAN;
-
-	
 
 	moveAble_ = true;
 
@@ -116,9 +112,10 @@ void AxeMan::InitCharaAnim(void)
 	animNum_.emplace(ANIM::SKILL_2, SKILL_TWO_NUM);
 }
 
-void AxeMan::NmlAtkInit(void)
-{
-}
+//void AxeMan::ChargeAct(void)
+//{
+//
+//}
 
 void AxeMan::NmlAtkInit(void)
 {
@@ -165,23 +162,18 @@ void AxeMan::AtkFunc(void)
 
 void AxeMan::Skill1Func(void)
 {
-	auto& efeIns = EffectManager::GetInstance();
+	//入力
+	//--------------------------------------------------------------
+
+
+
+
 	if (isCool_[static_cast<int>(skillNo_)])
 	{
 		return;
 	}
 	if (0.0f < atkStartCnt_ && atkStartCnt_ < atkStartTime_[static_cast<int>(act_)])
 	{
-		if (atkStartCnt_ <= DELTATIME)
-		{
-			EffectManager::GetInstance().Play(
-				EffectManager::EFFECT::CHARGE_SKILL,
-				trans_.pos,
-				Quaternion(),
-				CHARGE_SKILL_EFF_SIZE,
-				SoundManager::SOUND::NONE);
-		}
-
 		CntUp(atkStartCnt_);
 		if (stepAnim_ >= SKILL_CHARGE_STEPANIM)
 		{
@@ -191,11 +183,11 @@ void AxeMan::Skill1Func(void)
 	else if (atkStartCnt_ >= atkStartTime_[static_cast<int>(skillNo_)])
 	{
 		if (atkStartCnt_ > PlAxe::SKILL_ONE_START_NOCHARGE) { atk_.pow_ = SKILL_ONE_CHARGE_POW; }
-		
 		CntUp(atk_.cnt_);
 		if (atk_.cnt_ <=DELTATIME)
 		{
-			EffectManager::GetInstance().Play(
+			auto& efeIns = EffectManager::GetInstance();
+			efeIns.Play(
 				EffectManager::EFFECT::CHARGE_AXE_HIT,
 				atk_.pos_,
 				Quaternion(),
@@ -205,8 +197,6 @@ void AxeMan::Skill1Func(void)
 		if (atk_.IsFinishMotion())
 		{
 			coolTime_[static_cast<int>(ATK_ACT::SKILL1)] = 0.0f;
-
-			//efeIns.Stop(EffectManager::EFFECT::CHARGE_SKILL);
 
 			//スキル終わったら攻撃発生時間の最大時間をセットする
 			atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;

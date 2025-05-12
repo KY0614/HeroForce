@@ -3,15 +3,6 @@
 #include "../Shader/PixelShader.h"
 #include "ShaderFade.h"
 
-ShaderFade::ShaderFade()
-{
-	imgFade_ = -1;
-}
-
-ShaderFade::~ShaderFade()
-{
-}
-
 void ShaderFade::Init()
 {
 	Fader::Init();

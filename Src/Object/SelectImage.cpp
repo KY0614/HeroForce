@@ -1,4 +1,3 @@
-#include "../Manager/Decoration/SoundManager.h"
 #include "../Manager/Generic/ResourceManager.h"
 #include "../Manager/Generic/InputManager.h"
 #include "../Manager/GameSystem/DataBank.h"
@@ -130,11 +129,7 @@ void SelectImage::Init(void)
 	displayNum_ = 1;
 	playerNum_ = 1;
 	isPad_ = false;
-<<<<<<< HEAD
 	role_ = 0;
-=======
-	role_ = 1;
->>>>>>> Data2
 	isReady_ = false;
 	keyPressTime_ = 0.0f;
 	interval_ = 0.0f;
@@ -181,7 +176,6 @@ void SelectImage::Draw(void)
 
 void SelectImage::MoveVertexPos(void)
 {
-	//Lerpで動かしたいなという気持ち
 	//フルスク用
 	//mesh_.vertex_[0].pos = { -70.0f, 100.0f, VERTEX_Z + 12.0f };	//左下
 	//mesh_.vertex_[1].pos = { 0.0f, 100.0f, VERTEX_Z + 12.0f };		//右下
@@ -193,24 +187,18 @@ void SelectImage::MoveVertexPos(void)
 	//pointL_.mesh_.vertex_[2].pos = { POINT_LEFT_X - 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 左上
 	//pointL_.mesh_.vertex_[3].pos = { POINT_RIGHT_X - 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 右上
 
-	//pointR_.mesh_.vertex_[0].pos = { -POINT_RIGHT_X + 40.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };// 左下
+	//pointR_.mesh_.vertex_[0].pos = { -POINT_RIGHT_X + 40.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 左下
 	//pointR_.mesh_.vertex_[1].pos = { -POINT_LEFT_X + 40.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 右下
-	//pointR_.mesh_.vertex_[2].pos = { -POINT_RIGHT_X + 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };// 左上
+	//pointR_.mesh_.vertex_[2].pos = { -POINT_RIGHT_X + 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 左上
 	//pointR_.mesh_.vertex_[3].pos = { -POINT_LEFT_X + 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 右上
 
 	//600,800用
 	mesh_.vertex_[0].pos = { ROLE_MESH_LEFT_X, ROLE_MESH_UNDER_Z, VERTEX_Z + 12.0f };	//左下
-<<<<<<< HEAD
 	mesh_.vertex_[1].pos = { ROLE_MESH_RIGHT_X, ROLE_MESH_UNDER_Z, VERTEX_Z + 12.0f };		//右下
 	mesh_.vertex_[2].pos = { ROLE_MESH_LEFT_X, ROLE_MESH_TOP_Z, VERTEX_Z };			//左上
 	mesh_.vertex_[3].pos = { ROLE_MESH_RIGHT_X, ROLE_MESH_TOP_Z, VERTEX_Z };				//右上
 
 	float a;
-=======
-	mesh_.vertex_[1].pos = { ROLE_MESH_RIGHT_X, ROLE_MESH_UNDER_Z, VERTEX_Z + 12.0f };	//右下
-	mesh_.vertex_[2].pos = { ROLE_MESH_LEFT_X, ROLE_MESH_TOP_Z, VERTEX_Z };				//左上
-	mesh_.vertex_[3].pos = { ROLE_MESH_RIGHT_X, ROLE_MESH_TOP_Z, VERTEX_Z };			//右上
->>>>>>> Data2
 
 	pointL_.mesh_.vertex_[0].pos = { POINT_LEFT_X - 25.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 左下
 	pointL_.mesh_.vertex_[1].pos = { POINT_RIGHT_X - 25.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 右下
@@ -221,22 +209,6 @@ void SelectImage::MoveVertexPos(void)
 	pointR_.mesh_.vertex_[1].pos = { -POINT_LEFT_X + 25.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 右下
 	pointR_.mesh_.vertex_[2].pos = { -POINT_RIGHT_X + 25.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 左上
 	pointR_.mesh_.vertex_[3].pos = { -POINT_LEFT_X + 25.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 右上
-<<<<<<< HEAD
-=======
-
-	readyMesh_.vertex_[0].pos = { -70.0f, 70.0f, -408.0f };	// 左下
-	readyMesh_.vertex_[1].pos = { 90.0f, 70.0f, -408.0f };	// 右下
-	readyMesh_.vertex_[2].pos = { -70.0f, 160.0f, -410.0f };// 左上
-	readyMesh_.vertex_[3].pos = { 90.0f, 160.0f, -410.0f };	// 右上
-}
-
-void SelectImage::ReductinVertexPos(void)
-{
-	readyMesh_.vertex_[0].pos = { -60.0f, 80.0f, -408.0f };	// 左下
-	readyMesh_.vertex_[1].pos = { 60.0f, 80.0f, -408.0f };	// 右下
-	readyMesh_.vertex_[2].pos = { -60.0f, 150.0f, -410.0f };// 左上
-	readyMesh_.vertex_[3].pos = { 60.0f, 150.0f, -410.0f };	// 右上
->>>>>>> Data2
 }
 
 void SelectImage::Load(void)
@@ -257,7 +229,6 @@ void SelectImage::Load(void)
 	imgDeviceNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::DEVICE).handleIds_;
 	
 	imgComingSoon_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::COMING_SOON).handleIds_;
-<<<<<<< HEAD
 }
 
 void SelectImage::DisplayUpdate(void)
@@ -371,194 +342,12 @@ void SelectImage::DisplayUpdate(void)
 	pointL_.mesh_.vertex_[1].u = 1.0f;	pointL_.mesh_.vertex_[1].v = 1.0f;	// 右下
 	pointL_.mesh_.vertex_[2].u = 0.0f;	pointL_.mesh_.vertex_[2].v = 0.0f;	// 左上
 	pointL_.mesh_.vertex_[3].u = 1.0f;	pointL_.mesh_.vertex_[3].v = 0.0f;	// 右上
-=======
-
-	auto& snd = SoundManager::GetInstance();
-	auto& res = ResourceManager::GetInstance();
-
-	//SE読み込み
-
-	//準備完了
-	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::SCENE_CHANGE_1,
-		res.Load(ResourceManager::SRC::SCENE_CHANGE_SE1).handleId_);
-	int ret = res.Load(ResourceManager::SRC::SCENE_CHANGE_SE1).handleId_;
-	if (ret == -1)
-	{
-		return;
-	}
-	//音量調節
-	snd.AdjustVolume(SoundManager::SOUND::SCENE_CHANGE_1, 256);
-
-	//キャンセル
-	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::CANCEL_SELECT,
-		res.Load(ResourceManager::SRC::CANCEL_SELECT).handleId_);
-	ret = res.Load(ResourceManager::SRC::CANCEL_SELECT).handleId_;
-	if (ret == -1)
-	{
-		return;
-	}
-	//音量調節
-	snd.AdjustVolume(SoundManager::SOUND::CANCEL_SELECT, 256);
-
-	//選択変更
-	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::CHANGE_SELECT,
-		res.Load(ResourceManager::SRC::CHANGE_SELECT).handleId_);
-	 ret = res.Load(ResourceManager::SRC::CHANGE_SELECT).handleId_;
-	if (ret == -1)
-	{
-		return;
-	}
-	//音量調節
-	snd.AdjustVolume(SoundManager::SOUND::CHANGE_SELECT, 70);
-
-	//選択決定
-	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::DECIDE_SELECT,
-		res.Load(ResourceManager::SRC::DECIDE_SELECT).handleId_);
-	ret = res.Load(ResourceManager::SRC::DECIDE_SELECT).handleId_;
-	if (ret == -1)
-	{
-		return;
-	}
-	//音量調節
-	snd.AdjustVolume(SoundManager::SOUND::DECIDE_SELECT, 80);
->>>>>>> Data2
-}
-
-void SelectImage::DisplayUpdate(void)
-{
-	DataBank& data = DataBank::GetInstance();
-	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
-	auto& snd = SoundManager::GetInstance();
-	bool sound = false;
-
-	//右の矢印がONの時にキーの右に値する入力をし続けると
-	if (pointR_.isToggle_ &&
-		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::RIGHT)
-	{
-		if (!press_)
-		{
-			snd.Play(SoundManager::SOUND::CHANGE_SELECT);
-			press_ = true;
-
-			//人数を１追加(中身は1～4に収める)
-			displayNum_ = (displayNum_ % SceneManager::PLAYER_NUM) + 1;
-		}
-
-		//キーが押されている間経過時間を加算していく
-		keyPressTime_ += delta;
-
-		//経過時間がある一定時間経った場合
-		if (keyPressTime_ > SELECT_TIME)
-		{
-			//インターバルを加算していく
-			interval_ += delta;
-
-			//インターバル1秒ごとに数を１ずつ増やしていく
-			if (interval_ > INTERVAL_TIME)
-			{
-				interval_ = 0.0f;
-				displayNum_ = (displayNum_ % SceneManager::PLAYER_NUM) + 1;
-				(!sound) ? snd.Play(SoundManager::SOUND::CHANGE_SELECT), sound != sound : sound;
-			}
-		}
-	}
-	else if (pointR_.isToggle_)
-	{
-		keyPressTime_ = 0.0f;
-		interval_ = INTERVAL_TIME;
-		press_ = false;
-	}
-
-	//左
-	if (pointL_.isToggle_ &&
-		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::LEFT)
-	{
-		if (!press_)
-		{
-			snd.Play(SoundManager::SOUND::CHANGE_SELECT);
-			press_ = true;
-
-			//人数を１削除(中身は1～4に収める)
-			displayNum_ = (displayNum_ + 3) % SceneManager::PLAYER_NUM;
-			if (displayNum_ == 0)displayNum_ = SceneManager::PLAYER_NUM;
-		}
-
-		//キーが押されている間経過時間を加算していく
-		keyPressTime_ += delta;
-
-		//経過時間がある一定時間経った場合
-		if (keyPressTime_ > SELECT_TIME)
-		{
-			//インターバルを加算していく
-			interval_ += delta;
-
-			//インターバル1秒ごとに数を１ずつ減らしていく
-			if (interval_ > INTERVAL_TIME)
-			{
-				interval_ = 0.0f;
-
-				displayNum_ = (displayNum_ + 3) % SceneManager::PLAYER_NUM;
-				if (displayNum_ == 0)displayNum_ = SceneManager::PLAYER_NUM;
-				(!sound) ? snd.Play(SoundManager::SOUND::CHANGE_SELECT), sound != sound : sound;
-
-			}
-		}
-	}
-	else if (pointL_.isToggle_)
-	{
-		keyPressTime_ = 0.0f;
-		interval_ = INTERVAL_TIME;
-		press_ = false;
-	}
-
-	//スペースキー押下で決定&入力デバイス選択へ
-	if (selectScene_.GetConfig() == SelectScene::KEY_CONFIG::DECIDE)
-	{
-		snd.Play(SoundManager::SOUND::DECIDE_SELECT);
-
-		//プレイヤー人数の設定
-		data.Input(SceneManager::PLAY_MODE::USER, displayNum_);
-
-		//ディスプレイの設定
-		data.Input(DataBank::INFO::DHISPLAY_NUM, displayNum_);
-
-		selectScene_.ChangeSelect(SelectScene::SELECT::NUMBER);
-		ChangeSelect(SelectScene::SELECT::NUMBER);
-	}
-
-	//選択する矢印
-	if (!pointR_.isToggle_ &&
-		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::RIGHT)
-	{
-		pointR_.isToggle_ = true;
-		pointL_.isToggle_ = false;
-	}
-
-	if (!pointL_.isToggle_ &&
-		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::LEFT)
-	{
-		pointR_.isToggle_ = false;
-		pointL_.isToggle_ = true;
-	}
-
-	//UV座標（テクスチャ座標）
-	mesh_.vertex_[0].u = ((float)(displayNum_)-1.0f) / 4.0f;	mesh_.vertex_[0].v = 1.0f;	// 左下
-	mesh_.vertex_[1].u = (float)(displayNum_) / 4.0f;			mesh_.vertex_[1].v = 1.0f;	// 右下
-	mesh_.vertex_[2].u = ((float)(displayNum_)-1.0f) / 4.0f;	mesh_.vertex_[2].v = 0.0f;	// 左上
-	mesh_.vertex_[3].u = (float)(displayNum_) / 4.0f;			mesh_.vertex_[3].v = 0.0f;	// 右上
-
-	pointL_.mesh_.vertex_[0].u = 0.0f;	pointL_.mesh_.vertex_[0].v = 1.0f;	// 左下
-	pointL_.mesh_.vertex_[1].u = 1.0f;	pointL_.mesh_.vertex_[1].v = 1.0f;	// 右下
-	pointL_.mesh_.vertex_[2].u = 0.0f;	pointL_.mesh_.vertex_[2].v = 0.0f;	// 左上
-	pointL_.mesh_.vertex_[3].u = 1.0f;	pointL_.mesh_.vertex_[3].v = 0.0f;	// 右上
 }
 
 void SelectImage::NumberUpdate(void)
 {
 	DataBank& data = DataBank::GetInstance();
 	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
-	auto& snd = SoundManager::GetInstance();
-	bool sound = false;
 
 	//右の矢印がONの時にキーの右に値する入力をし続けると
 	if (pointR_.isToggle_ &&
@@ -566,8 +355,6 @@ void SelectImage::NumberUpdate(void)
 	{
 		if (!press_)
 		{
-			snd.Play(SoundManager::SOUND::CHANGE_SELECT);
-
 			press_ = true;
 
 			//人数を１追加(中身は1～4に収める)
@@ -584,12 +371,8 @@ void SelectImage::NumberUpdate(void)
 			interval_ += delta;
 
 			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
-			if (interval_ > INTERVAL_TIME)
-			{
-				interval_ = 0.0f;
-				playerNum_ = (playerNum_ % SceneManager::PLAYER_NUM) + 1 ;
-				(!sound) ? snd.Play(SoundManager::SOUND::CHANGE_SELECT), sound != sound : sound;
-			}
+			(interval_ > INTERVAL_TIME) ?
+				interval_ = 0.0f, playerNum_ = (playerNum_ % SceneManager::PLAYER_NUM) + 1 : interval_;
 		}
 	}
 	else if (pointR_.isToggle_)
@@ -605,12 +388,11 @@ void SelectImage::NumberUpdate(void)
 	{
 		if (!press_)
 		{
-			snd.Play(SoundManager::SOUND::CHANGE_SELECT);
 			press_ = true;
 
 			//人数を１削除(中身は1～4に収める)
 			playerNum_ = (playerNum_ + 3) % SceneManager::PLAYER_NUM;
-			if (playerNum_ == 0)playerNum_ = SceneManager::PLAYER_NUM;
+			if (playerNum_ == 0)playerNum_ = 4;
 		}
 
 		//キーが押されている間経過時間を加算していく
@@ -623,13 +405,9 @@ void SelectImage::NumberUpdate(void)
 			interval_ += delta;
 
 			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
-			if (interval_ > INTERVAL_TIME)
-			{
-				interval_ = 0.0f;
-				playerNum_ = (playerNum_ + 3) % SceneManager::PLAYER_NUM;
-				if (playerNum_ == 0)playerNum_ = SceneManager::PLAYER_NUM;
-				(!sound) ? snd.Play(SoundManager::SOUND::CHANGE_SELECT), sound != sound : sound;
-			}
+			(interval_ > INTERVAL_TIME) ?
+				interval_ = 0.0f, playerNum_ = (playerNum_ + 3) % SceneManager::PLAYER_NUM : interval_;
+			if (playerNum_ == 0)playerNum_ = 4;
 		}
 	}
 	else if (pointL_.isToggle_)
@@ -642,8 +420,6 @@ void SelectImage::NumberUpdate(void)
 	//スペースキー押下で決定&入力デバイス選択へ
 	if (selectScene_.GetConfig() == SelectScene::KEY_CONFIG::DECIDE)
 	{
-		snd.Play(SoundManager::SOUND::DECIDE_SELECT);
-
 		//プレイヤー人数の設定
 		data.Input(SceneManager::PLAY_MODE::USER, playerNum_);
 		
@@ -721,8 +497,6 @@ void SelectImage::OperationUpdate(void)
 {
 	DataBank& data = DataBank::GetInstance();
 	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
-	auto& snd = SoundManager::GetInstance();
-	bool sound = false;
 
 	//右の矢印がONの時にキーの右に値する入力をし続けると
 	if (pointR_.isToggle_ &&
@@ -730,7 +504,6 @@ void SelectImage::OperationUpdate(void)
 	{
 		if (!press_)
 		{
-			snd.Play(SoundManager::SOUND::CHANGE_SELECT);
 			press_ = true;
 
 			//キーを押した際に選択しているものを反転(2種類しかないので)
@@ -745,13 +518,9 @@ void SelectImage::OperationUpdate(void)
 			//インターバルを加算していく
 			interval_ += delta;
 
-			//インターバル1秒ごとに数を１ずつ増やしていく
-			if (interval_ > INTERVAL_TIME)
-			{
-				interval_ = 0.0f;
-				isPad_ = !isPad_;
-				(!sound) ? snd.Play(SoundManager::SOUND::CHANGE_SELECT), sound != sound : sound;
-			}
+			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
+			(interval_ > INTERVAL_TIME) ?
+				interval_ = 0.0f, isPad_ = !isPad_ : interval_;
 		}
 	}
 	else if (pointR_.isToggle_)
@@ -767,7 +536,6 @@ void SelectImage::OperationUpdate(void)
 	{
 		if (!press_)
 		{
-			snd.Play(SoundManager::SOUND::CHANGE_SELECT);
 			press_ = true;
 
 			//キーを押した際に選択しているものを反転(2種類しかないので)
@@ -783,12 +551,8 @@ void SelectImage::OperationUpdate(void)
 			interval_ += delta;
 
 			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
-			if (interval_ > INTERVAL_TIME)
-			{
-				interval_ = 0.0f;
-				isPad_ = !isPad_;
-				(!sound) ? snd.Play(SoundManager::SOUND::CHANGE_SELECT), sound != sound : sound;
-			}
+			(interval_ > INTERVAL_TIME) ?
+				interval_ = 0.0f, isPad_ = !isPad_ : interval_;
 		}
 	}
 	else if (pointL_.isToggle_)
@@ -801,8 +565,6 @@ void SelectImage::OperationUpdate(void)
 	//スペースキー押下で決定&役職選択へ
 	if (selectScene_.GetConfig() == SelectScene::KEY_CONFIG::DECIDE)
 	{
-		snd.Play(SoundManager::SOUND::DECIDE_SELECT);
-
 		//1Pの操作の設定
 		(isPad_) ? data.Input(SceneManager::CNTL::PAD, 1) : data.Input(SceneManager::CNTL::KEYBOARD, 1);
 		(isPad_) ? selectScene_.Set1PDevice(SceneManager::CNTL::PAD) : selectScene_.Set1PDevice(SceneManager::CNTL::KEYBOARD);
@@ -847,13 +609,6 @@ void SelectImage::DisplayDraw(void)
 	PointsDraw();
 }
 
-void SelectImage::DisplayDraw(void)
-{
-	mesh_.DrawTwoMesh(*imgDisplayNum_);
-
-	PointsDraw();
-}
-
 void SelectImage::NumberDraw(void)
 {
 	mesh_.DrawTwoMesh(*imgPlayerNum_);
@@ -887,14 +642,8 @@ void SelectImage::RoleDraw(void)
 	PointsDraw();
 
 	//仮表記
-<<<<<<< HEAD
 	if (role_ == 2)
 	{
-=======
-	if (GetRole() == static_cast<int>(SceneManager::ROLE::MAGE))
-	{
-		
->>>>>>> Data2
 		readyMesh_.DrawTwoMesh(*imgComingSoon_);
 	}
 }
@@ -944,16 +693,11 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 {
 	DataBank& data = DataBank::GetInstance();
 	float delta = 2.0f * SceneManager::GetInstance().GetDeltaTime();
-	auto& snd = SoundManager::GetInstance();
-	bool sound = false;
 
 	if (isReady_ == true)
 	{
 		if (input.config_ == SelectScene::KEY_CONFIG::CANCEL)
 		{
-			//キャンセル音
- 			snd.Play(SoundManager::SOUND::CANCEL_SELECT);
-
 			isReady_ = false;
 		}
 		//準備完了の時にキャラ選択を操作できないようにする
@@ -966,13 +710,10 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 	{
 		if (!press_)
 		{
-			//選択変更音
-			snd.Play(SoundManager::SOUND::CHANGE_SELECT);
-
 			press_ = true;
 
 			//役職を選択
-			role_ = (role_ % SceneManager::PLAYER_NUM) + 1;
+			role_ = (role_ + 1) % SceneManager::PLAYER_NUM;
 		}
 
 		//キーが押されている間経過時間を加算していく
@@ -985,12 +726,8 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 			interval_ += delta;
 
 			//インターバル1秒ごとにプレイ人数を１ずつ増やしていく
-			if (interval_ > INTERVAL_TIME)
-			{
-				interval_ = 0.0f;
-				role_ = (role_ % SceneManager::PLAYER_NUM) + 1;
-				(!sound) ? snd.Play(SoundManager::SOUND::CHANGE_SELECT), sound != sound: sound;
-			} 
+			(interval_ > INTERVAL_TIME) ?
+				interval_ = 0.0f, role_ = (role_ + 1) % SceneManager::PLAYER_NUM : interval_;
 		}
 	}
 	else if (pointR_.isToggle_)
@@ -1000,20 +737,15 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 		press_ = false;
 	}
 
-	//左
 	if (pointL_.isToggle_ &&
 		input.config_ == SelectScene::KEY_CONFIG::LEFT)
 	{
 		if (!press_)
 		{
-			//選択変更音
-			snd.Play(SoundManager::SOUND::CHANGE_SELECT);
-
 			press_ = true;
 
 			//役職を選択
-			role_ = (role_ + 3) % SceneManager::PLAYER_NUM;
-			if (role_ == 0)role_ = SceneManager::PLAYER_NUM;
+			role_ = (role_ - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM;
 		}
 		//キーが押されている間経過時間を加算していく
 		keyPressTime_ += delta;
@@ -1025,13 +757,8 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 			interval_ += delta;
 
 			//インターバル1秒ごとにプレイ人数を１ずつ減らしていく
-			if (interval_ > INTERVAL_TIME)
-			{
-				interval_ = 0.0f;
-				role_ = (role_ + 3) % SceneManager::PLAYER_NUM;
-				if (role_ == 0)role_ = SceneManager::PLAYER_NUM;
-				(!sound) ? snd.Play(SoundManager::SOUND::CHANGE_SELECT), sound != sound : sound;
-			}
+			(interval_ > INTERVAL_TIME) ?
+				interval_ = 0.0f, role_ = (role_ - 1 + SceneManager::PLAYER_NUM) % SceneManager::PLAYER_NUM : interval_;
 		}
 	}
 	else if (pointL_.isToggle_)
@@ -1041,20 +768,12 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 		press_ = false;
 	}
 
-<<<<<<< HEAD
 	//スペースキー押下でゲーム画面へ
 	if (role_ != 2	&&
-=======
-	//スペースキー押下役職決定
-	if (role_ != 3	&&
->>>>>>> Data2
 		input.config_ == SelectScene::KEY_CONFIG::DECIDE)
 	{
-		//決定音
-		snd.Play(SoundManager::SOUND::SCENE_CHANGE_1);
-
 		//役職の設定
- 		data.Input(static_cast<SceneManager::ROLE>(role_ ), i + 1);
+		data.Input(static_cast<SceneManager::ROLE>(role_ + 1), i + 1);
 
 		isReady_ = true;
 	}
@@ -1075,10 +794,10 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 	}
 
 	//UV座標（テクスチャ座標）
-	mesh_.vertex_[0].u = 0.0f;	mesh_.vertex_[0].v = ((float)(role_)) / 4.0f;	// 左下
-	mesh_.vertex_[1].u = 1.0f;	mesh_.vertex_[1].v = ((float)(role_)) / 4.0f;	// 右下
-	mesh_.vertex_[2].u = 0.0f;	mesh_.vertex_[2].v = ((float)(role_)-1.0f) / 4.0f;	// 左上
-	mesh_.vertex_[3].u = 1.0f;	mesh_.vertex_[3].v = ((float)(role_)-1.0f) / 4.0f;	// 右上
+	mesh_.vertex_[0].u = 0.0f;	mesh_.vertex_[0].v = ((float)(role_)+1.0f) / 4.0f;	// 左下
+	mesh_.vertex_[1].u = 1.0f;	mesh_.vertex_[1].v = ((float)(role_)+1.0f) / 4.0f;	// 右下
+	mesh_.vertex_[2].u = 0.0f;	mesh_.vertex_[2].v = (float)(role_) / 4.0f;			// 左上
+	mesh_.vertex_[3].u = 1.0f;	mesh_.vertex_[3].v = (float)(role_) / 4.0f;			// 右上
 }
 
 void SelectImage::ChangeSelect(const SelectScene::SELECT _state)
@@ -1105,13 +824,8 @@ void SelectImage::InitVertex(void)
 
 	readyMesh_.vertex_[0].pos = { -80.0f, 70.0f, -408.0f };	// 左下
 	readyMesh_.vertex_[1].pos = { 80.0f, 70.0f, -408.0f };	// 右下
-<<<<<<< HEAD
 	readyMesh_.vertex_[2].pos = { -80.0f, 160.0f, -410.0f };		// 左上
 	readyMesh_.vertex_[3].pos = { 80.0f, 160.0f, -410.0f };		// 右上
-=======
-	readyMesh_.vertex_[2].pos = { -80.0f, 160.0f, -410.0f };// 左上
-	readyMesh_.vertex_[3].pos = { 80.0f, 160.0f, -410.0f };	// 右上
->>>>>>> Data2
 
 	pointL_.mesh_.vertex_[0].pos = { POINT_LEFT_X, POINT_UNDER_Y, POINT_TOP_Z };	// 左下
 	pointL_.mesh_.vertex_[1].pos = { POINT_RIGHT_X, POINT_UNDER_Y, POINT_TOP_Z };	// 右下
@@ -1122,6 +836,7 @@ void SelectImage::InitVertex(void)
 	pointR_.mesh_.vertex_[1].pos = { -POINT_LEFT_X, POINT_UNDER_Y, POINT_TOP_Z };	// 右下
 	pointR_.mesh_.vertex_[2].pos = { -POINT_RIGHT_X, POINT_TOP_Y, POINT_UNDER_Z };	// 左上
 	pointR_.mesh_.vertex_[3].pos = { -POINT_LEFT_X, POINT_TOP_Y, POINT_UNDER_Z };	// 右上
+
 }
 
 VECTOR SelectImage::RotateVertex(VECTOR pos, VECTOR center, float angle)
@@ -1172,7 +887,6 @@ void SelectImage::ChangeStateOperation(void)
 void SelectImage::ChangeStateRole(void)
 {
 	MoveVertexPos();
-	ReductinVertexPos();
 	stateUpdate_ = std::bind(&SelectImage::RoleUpdate, this);
 }
 

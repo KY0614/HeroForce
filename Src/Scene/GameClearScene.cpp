@@ -11,18 +11,14 @@ GameClearScene::GameClearScene()
 	for (auto& c : chickens_) { c = nullptr; }
 	player_ = nullptr;
 	imgMes_ = -1;
-<<<<<<< HEAD
 
 	state_ = STATE::HAPPY;
 
-=======
-	state_ = STATE::HAPPY;
->>>>>>> Data2
 	stateChanges_.emplace(STATE::HAPPY, std::bind(&GameClearScene::ChangeStateHappy, this));
 	stateChanges_.emplace(STATE::DISPLAY, std::bind(&GameClearScene::ChangeStateDisplay, this));
 }
 
-void GameClearScene::Init()
+void GameClearScene::Init(void)
 {
 	auto& res = ResourceManager::GetInstance();
 	auto& snd = SoundManager::GetInstance();
@@ -49,8 +45,7 @@ void GameClearScene::Init()
 	player_->Init();
 
 	//画像
-	imgMes_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CHANGE_TITLE_UI).handleId_;
-	imgClear_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CONGRATULATIONS).handleId_;
+	imgMes_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CONGRATULATIONS).handleId_;
 
 	//エフェクト
 	EffectManager::GetInstance().Add(EffectManager::EFFECT::FIREWORK,
@@ -58,20 +53,15 @@ void GameClearScene::Init()
 
 	// カメラモード：定点カメラ
 	auto camera = SceneManager::GetInstance().GetCameras();
-	for (auto& c : camera)
-	{
-		c->SetPos(DEFAULT_CAMERA_POS, DEFAULT_TARGET_POS);
-		c->ChangeMode(Camera::MODE::FIXED_POINT);
-	}
-	
-	
+	camera[0]->SetPos(DEFAULT_CAMERA_POS, DEFAULT_TARGET_POS);
+	camera[0]->ChangeMode(Camera::MODE::FIXED_POINT);
 
 	auto& efe = EffectManager::GetInstance();
 	efe.Play(
 		EffectManager::EFFECT::FIREWORK,
-		EFC_POS,
+		EFFECT_POS,
 		Quaternion(),
-		EFC_SIZE,
+		EFFECT_SIZE,
 		SoundManager::SOUND::NONE);
 
 	//音関係
@@ -86,17 +76,13 @@ void GameClearScene::Init()
 	ChangeState(STATE::HAPPY);
 }
 
-void GameClearScene::Update()
+void GameClearScene::Update(void)
 {	
 	auto& efe = EffectManager::GetInstance();
 	auto& ins = InputManager::GetInstance();
 	auto& scm = SceneManager::GetInstance();
 	auto& snd = SoundManager::GetInstance();
 
-<<<<<<< HEAD
-=======
-	//状態ごとの更新処理
->>>>>>> Data2
 	stateUpdate_();
 
 	//各種オブジェクト処理
@@ -111,9 +97,9 @@ void GameClearScene::Update()
 		//エフェクトを再生
 		efe.Play(
 			EffectManager::EFFECT::FIREWORK,
-			EFC_POS,
+			EFFECT_POS,
 			Quaternion(),
-			EFC_SIZE,
+			EFFECT_SIZE,
 			SoundManager::SOUND::NONE);
 	}
 
@@ -131,52 +117,25 @@ void GameClearScene::Update()
 	}
 }
 
-void GameClearScene::Draw()
+void GameClearScene::Draw(void)
 {
-	//空
 	sky_->Draw();
-
-	//ステージ
 	stage_->Draw();
-<<<<<<< HEAD
 	player_->Draw();
-=======
-
-	//プレイヤー
-	player_->Draw();
-
-	//チキン
->>>>>>> Data2
 	for (auto& c : chickens_) { c->Draw(); }
 
-	//クリアメッセージの描画
+	//メッセージの描画
 	DrawRotaGraph(
 		MES_POS_X, MES_POS_Y,
 		1.0f,
 		0.0f,
-		imgClear_,
+		imgMes_,
 		true,
 		false);
-
-	//シーン遷移メッセージの描画
-	if (state_ == STATE::DISPLAY) {
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)alpha_);
-		DrawRotaGraph(
-			MES2_POS_X,
-			MES2_POS_Y,
-			1.0f,
-			0.0f,
-			imgMes_,
-			true);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	}
 }
 
-void GameClearScene::Release()
+void GameClearScene::Release(void)
 {
-	SceneManager::GetInstance().ResetCameras();
-	SceneManager::GetInstance().ReturnSolo();
-
 	sky_->Release();
 	stage_->Destroy();
 }
@@ -188,7 +147,6 @@ void GameClearScene::ChangeState(const STATE state)
 
 	// 各状態遷移の初期処理
 	stateChanges_[state_]();
-<<<<<<< HEAD
 }
 
 void GameClearScene::ChangeStateHappy()
@@ -239,37 +197,4 @@ void GameClearScene::DebagPlay()
 	{
 		pos.z--;
 	}*/
-=======
->>>>>>> Data2
-}
-
-void GameClearScene::ChangeStateHappy()
-{
-	stateUpdate_ = std::bind(&GameClearScene::UpdateHappy, this);
-}
-
-void GameClearScene::ChangeStateDisplay()
-{	
-	stateUpdate_ = std::bind(&GameClearScene::UpdateDisplay, this);
-}
-
-void GameClearScene::UpdateHappy()
-{
-	step_ += SceneManager::GetInstance().GetDeltaTime();
-
-	//一定秒数で状態遷移
-	if (step_ >= CHANGE_SECOND)
-	{
-		SoundManager::GetInstance().Stop(SoundManager::SOUND::GAMECLEAR_SE);
-		SoundManager::GetInstance().Play(SoundManager::SOUND::GAMECLEAR_BGM);
-		ChangeState(STATE::DISPLAY);
-	}
-}
-
-void GameClearScene::UpdateDisplay()
-{
-	//アルファ値の計算
-	alpha_ += alphaAdd_;
-	if (alpha_ > ALPHA_MAX) { alphaAdd_ = -1.0f; }
-	else if (alpha_ < ALPHA_MIN) { alphaAdd_ = 1.0f; }
 }

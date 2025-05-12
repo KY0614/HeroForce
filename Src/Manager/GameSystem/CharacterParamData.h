@@ -44,21 +44,14 @@ public:
 	//インスタンスの生成
 	static void CreateInstance(void);
 
-	/// <summary>
-	/// インスタンスを返す
-	/// </summary>
-	/// <returns></returns>インスタンス
+	//インスタンスの取得
 	static CharacterParamData& GetInstance(void);
 
 	//初期化
 	void Init();
 
-	/// <summary>
-	/// 情報の受け取り
-	/// </summary>
-	/// <param name="type"></param>
-	/// <returns></returns>
-	inline const PARAM GetParamData(const UNIT_TYPE type)const { return charParam_.at(type); }
+	//情報の受け取り
+	const PARAM GetParamData(const UNIT_TYPE type)const { return charParam_.at(type); }
 
 private:
 
@@ -70,5 +63,6 @@ private:
 
 	CharacterParamData();
 	~CharacterParamData() = default;
+
 };
 

@@ -40,12 +40,6 @@ public:
 		//ARCHER
 		ARROW_RED,		//矢のエフェクト(赤)
 		ARROW_WHITE,	//矢のエフェクト(白)
-
-		//チャージスキル
-		CHARGE_SKILL,
-
-		ARCHER_SKILL2,	//アーチャースキル2
-		BUFF_ARROW_HIT, //アーチャースキル2がプレイヤーに当たったら
 	};
 
 

@@ -70,9 +70,6 @@ public:
 	//コンストラクタ
 	EneMage(const VECTOR& _spawnPos);
 
-	//解放
-	void Destroy(void)override;
-
 private:
 
 	//****************************************************************

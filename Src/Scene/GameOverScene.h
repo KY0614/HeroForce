@@ -1,7 +1,4 @@
 #pragma once
-#include <functional>
-#include <memory>
-#include <map>
 #include "SceneBase.h"
 #include "../Object/Character/PlayableChara/Other/OverPlayers.h"
 
@@ -39,17 +36,10 @@ public:
 	//状態遷移秒数
 	static constexpr float CHANGE_SECOND = 2.0f;
 
-<<<<<<< HEAD
 	void Init(void) override;
 	void Update(void) override;
 	void Draw(void) override;
 	void Release(void) override;
-=======
-	void Init() override;
-	void Update() override;
-	void Draw() override;
-	void Release() override;
->>>>>>> Data2
 
 private:
 
@@ -57,19 +47,11 @@ private:
 	STATE state_;
 
 	//画像
-<<<<<<< HEAD
 	int imgGameOver_;
 	int imgBack_;
 	int imgMes_;
 
 	//更新用
-=======
-	int imgGameOver_;		//ゲームオーバー画像
-	int imgBack_;			//背景画像
-	int imgMes_;			//メッセージ画像
-
-	//更新用ステップ
->>>>>>> Data2
 	float step_;
 
 	//アルファ値
@@ -77,17 +59,10 @@ private:
 	float alphaAdd_;
 
 	// 状態管理(状態遷移時初期処理)
-<<<<<<< HEAD
 	std::map<STATE, std::function<void(void)>> stateChanges_;
 
 	// 状態管理
 	std::function<void(void)> stateUpdate_;	//更新
-=======
-	std::map<STATE, std::function<void()>> stateChanges_;
-
-	// 状態管理
-	std::function<void()> stateUpdate_;	//更新
->>>>>>> Data2
 
 	//状態変更
 	void ChangeState(const STATE state);
@@ -95,13 +70,8 @@ private:
 	void ChangeStateDisplay();
 
 	//各種更新処理
-<<<<<<< HEAD
 	void UpdateDown(void);
 	void UpdateDisplay(void);
-=======
-	void UpdateDown();
-	void UpdateDisplay();
->>>>>>> Data2
 	
 	//プレイヤー
 	std::unique_ptr<OverPlayers> player_;

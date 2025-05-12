@@ -38,30 +38,16 @@ void SelectEnemy::Update(void)
 	//アニメーションと同じ時間を加算していく
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 
-	//if (isSpawn_[3] &&
-	//	animChangeTime_[3] > animArrayTotalTime_[3])
-	//{
-	//	//リセット
-	//	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
-	//	{
-	//		ResetAnimArray(ANIM::UNIQUE_1, SPAWN_ANIM, i);
-	//		animChangeTime_[i] = 0.0f;
-	//		isSpawn_[i] = false;
-	//		FinishAnimArray(i);
-	//	}
-	//	isSpawn_[0] = true;
-	//}
-
 	//アニメーション
-	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+	for (int i = 0; i < SceneManager::PLAYER_NUM; i++) 
 	{
-		if (isSpawn_[i])
+		if(isSpawn_[i] == true)
 		{
-			AnimArray(i);
+			AnimArray(i); 
 			animChangeTime_[i] += ANIM_SPEED * deltaTime;
 		}
 
-		if (isSpawn_[i] &&
+		if (isSpawn_[i]	&&
 			animChangeTime_[i] > animArrayTotalTime_[i])
 		{
 			if (animStateArray_[i] != ANIM::IDLE)
@@ -69,7 +55,6 @@ void SelectEnemy::Update(void)
 				ResetAnimArray(ANIM::IDLE, ANIM_SPEED, i);
 				animChangeTime_[i] = 0.0f;
 				isSpawn_[i + 1] = true;
-
 			}
 		}
 	}
@@ -112,11 +97,11 @@ void SelectEnemy::Init3DModel(void)
 		.LoadModelDuplicate(ResourceManager::SRC::ENEMY_BRIGANT));
 
 	//座標、拡大率、回転を設定
-	float scale = 0.6f;
+	float scale = 0.4f;
 	for (int i = 0; i < SceneManager::PLAYER_NUM;i++)
 	{
 		transArray_[i].scl = { scale, scale, scale };
-		transArray_[i].pos = { -210.0f + (150.0f * i), -50.0f, 70.0f};
+		transArray_[i].pos = { -160.0f + (100.0f * i), -50.0f, 0.0f};
 		transArray_[i].quaRot = Quaternion();
 		transArray_[i].quaRotLocal = Quaternion::Euler(
 			0.0f, AsoUtility::Deg2RadF(0.0f),
