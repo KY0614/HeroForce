@@ -118,7 +118,7 @@ void EneArcher::AlertSkill_One(void)
 	pos = VAdd(trans_.pos, VScale(pos, ARROW_SPEED * SKILL_ONE_DURATION));
 
 	//�͈͍쐬
-	CreateAlert(pos, SKILL_ONE_COL_RADIUS * 2, SKILL_ONE_COL_RADIUS * 2 * ARROW_SPEED * SKILL_ONE_DURATION);
+	CreateAlert(pos, (SKILL_ONE_COL_RADIUS * 2), (SKILL_ONE_COL_RADIUS * 2) * ARROW_SPEED * SKILL_ONE_DURATION);
 }
 
 void EneArcher::Skill_One(void)

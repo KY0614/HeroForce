@@ -4,17 +4,27 @@
 EneMage::EneMage(const VECTOR& _spawnPos) : Enemy(_spawnPos)
 {
 	trans_.pos = _spawnPos;
+
+	skillOneShot_ = AsoUtility::VECTOR_ZERO;
+	skillOneDelayCnt_ = 0.0f;
+	skillOneShotCnt_ = 0;
+	skillAllCnt_ = 0.0f;
 }
 
 void EneMage::Destroy(void)
 {
+	//エフェクト
 	auto& eff = EffectManager::GetInstance();
 
 	//共通
 	Enemy::Destroy();
 
-	//エフェクトの停止
+#pragma region 固有エフェクトの停止
+
+	//ステータスダウン
 	eff.Stop(EffectManager::EFFECT::STATE_DOWN);
+
+#pragma endregion
 }
 
 void EneMage::SetParam(void)
@@ -72,11 +82,18 @@ void EneMage::InitAnim(void)
 
 void EneMage::InitEffect(void)
 {
+	//エフェクト
 	auto& eff = EffectManager::GetInstance();
+	//リソース
 	auto& res = ResourceManager::GetInstance();
 
+#pragma region 固有エフェクト追加
+
+	//ステータスダウン
 	eff.Add(EffectManager::EFFECT::STATE_DOWN,
 		res.Load(ResourceManager::SRC::STATE_DOWN_EFE).handleId_);
+
+#pragma endregion
 }
 
 void EneMage::InitSkill(void)
@@ -108,6 +125,7 @@ void EneMage::InitSkill(void)
 
 void EneMage::AlertSkill_One(void)
 {
+	//何もしない
 }
 
 void EneMage::Attack(void)
@@ -173,8 +191,10 @@ void EneMage::Skill_One(void)
 
 void EneMage::DrawDebug(void)
 {
+	//共通
 	Enemy::DrawDebug();
 	
+	//攻撃の後隙
 	if(!isEndAllAtk_)DrawSphere3D(skillOneShot_, 25.0f, 20, 0xf0f0f0, 0xf0f0f0, true);
 }
 

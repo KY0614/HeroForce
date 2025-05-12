@@ -5,18 +5,41 @@
 EneGolem::EneGolem(const VECTOR& _spawnPos) : Enemy(_spawnPos)
 {
 	trans_.pos = _spawnPos;
+
+	skillThreeCnt_ = 0;
+	skillThreeDelayCnt_ = 0.0f;
+	isPreSkillThreeAtk_ = false;
+
+	for (int i = 0; i < SKILL_THREE_MAX_CNT; i++)
+	{
+		skillThreePreAtk_[i].pos_ = AsoUtility::VECTOR_ZERO;
+		skillThreePreAtk_[i].radius_ = 0.0f;
+		skillThreePreAtk_[i].pow_ = 0.0f;
+		skillThreePreAtk_[i].duration_ = 0.0f;
+		skillThreePreAtk_[i].backlash_ = 0.0f;
+		skillThreePreAtk_[i].cnt_ = 0.0f;
+		skillThreePreAtk_[i].isHit_ = false;
+	}
 }
 
 void EneGolem::Destroy(void)
 {
+	//エフェクト
 	auto& eff = EffectManager::GetInstance();
 
 	//共通
 	Enemy::Destroy();
 
+#pragma region 固有エフェクトの停止
+
+	//パンチエフェクト
 	eff.Stop(EffectManager::EFFECT::BOSS_PUNCH);
+	//叫びエフェクト
 	eff.Stop(EffectManager::EFFECT::BOSS_SHOUT);
+	//叫び攻撃エフェクト
 	eff.Stop(EffectManager::EFFECT::BOSS_SHOUT_ATK);
+
+#pragma endregion
 }
 
 void EneGolem::SetParam(void)
@@ -125,6 +148,8 @@ void EneGolem::InitEffect(void)
 	//リソース
 	auto& res = ResourceManager::GetInstance();
 
+#pragma region 固有エフェクト追加
+
 	//パンチエフェクト
 	eff.Add(EffectManager::EFFECT::BOSS_PUNCH,
 		res.Load(ResourceManager::SRC::BOSS_PUNCH_EFE).handleId_);
@@ -136,6 +161,8 @@ void EneGolem::InitEffect(void)
 	//叫び(攻撃)エフェクト
 	eff.Add(EffectManager::EFFECT::BOSS_SHOUT_ATK,
 		res.Load(ResourceManager::SRC::BOSS_SHOUT_ATK_EFE).handleId_);
+
+#pragma endregion
 }
 
 void EneGolem::InitSkill(void)
