@@ -243,11 +243,6 @@ void SceneManager::ResetCameras(void)
 	}
 }
 
-
-/// <summary>
-/// ウィンドウの追加
-/// </summary>
-/// <param name="_mode"></param>
 void SceneManager::SetSubWindowH(HWND _mode)
 {
 	subWindowH_.push_back(_mode);
@@ -323,21 +318,26 @@ void SceneManager::ReturnSolo(void)
 
 SceneManager::SceneManager(void)
 {
-
 	sceneId_ = SCENE_ID::NONE;
 	waitSceneId_ = SCENE_ID::NONE;
+
+	subWindowH_ = {};
+	activeWindowNum_ = -1;
+	nowWindowNum_ = -1;
+	cameras_ = {};
 
 	scene_ = nullptr;
 	fader_ = nullptr;
 
 	isSceneChanging_ = false;
 	// デルタタイム
-	deltaTime_ = 1.0f / 60.0f;	
+	deltaTime_ = DELTA_TIME;	
+	preTime_ = std::chrono::system_clock::now();
 }
 
 void SceneManager::ResetDeltaTime(void)
 {
-	deltaTime_ = 0.016f;
+	deltaTime_ = DELTA_TIME_INIT;
 	preTime_ = std::chrono::system_clock::now();
 }
 
@@ -375,9 +375,6 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	
 	case SCENE_ID::GAME:
 		//ウィンドウの設定
-
-		
-
 		RedySubWindow();
 		scene_ = new GameScene();
 		resM.InitGame();
