@@ -47,6 +47,12 @@ public:
 
 	static constexpr int BLEND_PARAM = 128;			//ブレンドモードの強さ
 
+	//準備完了用メッシュ関連
+	static constexpr VECTOR READYMESH_LEFT_TOP = { 80.0f, 70.0f, -408.0f };
+	static constexpr VECTOR READYMESH_LEFT_BOT = { -80.0f, 70.0f, -408.0f };
+	static constexpr VECTOR READYMESH_RIGHT_TOP = { 80.0f, 160.0f, -410.0f };
+	static constexpr VECTOR READYMESH_RIGHT_BOT = { 80.0f, 70.0f, -408.0f };
+
 	//キー入力関連
 	static constexpr float SELECT_TIME = 1.0f;		//キー押下経過時間
 	static constexpr float INTERVAL_TIME = 0.6f;	//インターバル上限
@@ -257,7 +263,8 @@ private:
 	//関数-------------------------------------------------------------------------------------
 
 	//読み込み用
-	void Load(void);	
+	void LoadImages(void);	
+	void LoadSounds(void);	
 
 	//頂点座標初期化
 	void InitVertex(void);

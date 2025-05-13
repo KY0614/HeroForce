@@ -123,7 +123,8 @@ void SelectImage::Destroy(void)
 
 void SelectImage::Init(void)
 {
-	Load();
+	LoadImages();
+	LoadSounds();
 
 	InitVertex();
 
@@ -205,82 +206,6 @@ void SelectImage::ReductionVertexPos(void)
 	readyMesh_.vertex_[1].pos = { 60.0f, 80.0f, -408.0f };	// 右下
 	readyMesh_.vertex_[2].pos = { -60.0f, 150.0f, -410.0f };// 左上
 	readyMesh_.vertex_[3].pos = { 60.0f, 150.0f, -410.0f };	// 右上
-}
-
-void SelectImage::Load(void)
-{
-	//画像の読み込み
-
-	//人数選択用
-	imgPlayerNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_NUM).handleIds_;
-
-	//ディスプレイ数選択用
-	imgDisplayNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::DISPLAY_NUM).handleIds_;
-
-	//役職選択用
-	imgRoleNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CHARA_PARAMS).handleIds_;
-
-	//使用デバイス選択用
-	imgDeviceNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::DEVICE).handleIds_;
-
-	//矢印
-	imgRightPoint_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::RIGHT_POINT).handleIds_;
-	imgLeftPoint_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::LEFT_POINT).handleIds_;
-
-	//準備完了用
-	imgReady_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::READY).handleIds_;
-
-	//魔法使い用のComingSoon画像
-	imgComingSoon_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::COMING_SOON).handleIds_;
-
-	auto& snd = SoundManager::GetInstance();
-	auto& res = ResourceManager::GetInstance();
-
-	//SE読み込み
-
-	//準備完了
-	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::SCENE_CHANGE_1,
-		res.Load(ResourceManager::SRC::SCENE_CHANGE_SE1).handleId_);
-	int ret = res.Load(ResourceManager::SRC::SCENE_CHANGE_SE1).handleId_;
-	if (ret == -1)
-	{
-		return;
-	}
-	//音量調節
-	snd.AdjustVolume(SoundManager::SOUND::SCENE_CHANGE_1, 256);
-
-	//キャンセル
-	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::CANCEL_SELECT,
-		res.Load(ResourceManager::SRC::CANCEL_SELECT).handleId_);
-	ret = res.Load(ResourceManager::SRC::CANCEL_SELECT).handleId_;
-	if (ret == -1)
-	{
-		return;
-	}
-	//音量調節
-	snd.AdjustVolume(SoundManager::SOUND::CANCEL_SELECT, 256);
-
-	//選択変更
-	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::CHANGE_SELECT,
-		res.Load(ResourceManager::SRC::CHANGE_SELECT).handleId_);
-	 ret = res.Load(ResourceManager::SRC::CHANGE_SELECT).handleId_;
-	if (ret == -1)
-	{
-		return;
-	}
-	//音量調節
-	snd.AdjustVolume(SoundManager::SOUND::CHANGE_SELECT, 70);
-
-	//選択決定
-	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::DECIDE_SELECT,
-		res.Load(ResourceManager::SRC::DECIDE_SELECT).handleId_);
-	ret = res.Load(ResourceManager::SRC::DECIDE_SELECT).handleId_;
-	if (ret == -1)
-	{
-		return;
-	}
-	//音量調節
-	snd.AdjustVolume(SoundManager::SOUND::DECIDE_SELECT, 80);
 }
 
 void SelectImage::DisplayUpdate(void)
@@ -930,6 +855,84 @@ void SelectImage::ChangeSelect(const SelectScene::SELECT _state)
 	stateChanges_[state_]();
 }
 
+void SelectImage::LoadImages(void)
+{
+	//画像の読み込み
+
+	//人数選択用
+	imgPlayerNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_NUM).handleIds_;
+	if (imgPlayerNum_ == nullptr)return;	//中身がなかったら中止
+	
+	//ディスプレイ数選択用
+	imgDisplayNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::DISPLAY_NUM).handleIds_;
+	if (imgDisplayNum_ == nullptr)return;
+	
+	//役職選択用
+	imgRoleNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CHARA_PARAMS).handleIds_;
+	if (imgRoleNum_ == nullptr)return;
+	
+	//使用デバイス選択用
+	imgDeviceNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::DEVICE).handleIds_;
+	if (imgDeviceNum_ == nullptr)return;
+	
+	//矢印
+	imgRightPoint_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::RIGHT_POINT).handleIds_;
+	imgLeftPoint_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::LEFT_POINT).handleIds_;
+	if (imgRightPoint_ == nullptr)return;
+	if (imgLeftPoint_ == nullptr)return;
+	
+	//準備完了用
+	imgReady_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::READY).handleIds_;
+	if (imgReady_ == nullptr)return;
+	//魔法使い用のComingSoon画像
+	imgComingSoon_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::COMING_SOON).handleIds_;
+	if (imgComingSoon_ == nullptr)return;
+}
+
+void SelectImage::LoadSounds(void)
+{
+	auto& snd = SoundManager::GetInstance();
+	auto& res = ResourceManager::GetInstance();
+
+	//SE読み込み
+
+	//準備完了SE
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::SCENE_CHANGE_1,
+		res.Load(ResourceManager::SRC::SCENE_CHANGE_SE1).handleId_);
+	int ret = res.Load(ResourceManager::SRC::SCENE_CHANGE_SE1).handleId_;
+	if (ret == -1)return;
+	
+	//音量調節
+	snd.AdjustVolume(SoundManager::SOUND::SCENE_CHANGE_1, 256);
+
+	//キャンセルSE
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::CANCEL_SELECT,
+		res.Load(ResourceManager::SRC::CANCEL_SELECT).handleId_);
+	ret = res.Load(ResourceManager::SRC::CANCEL_SELECT).handleId_;
+	if (ret == -1)return;
+	
+	//音量調節
+	snd.AdjustVolume(SoundManager::SOUND::CANCEL_SELECT, 256);
+
+	//選択変更SE
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::CHANGE_SELECT,
+		res.Load(ResourceManager::SRC::CHANGE_SELECT).handleId_);
+	ret = res.Load(ResourceManager::SRC::CHANGE_SELECT).handleId_;
+	if (ret == -1)return;
+
+	//音量調節
+	snd.AdjustVolume(SoundManager::SOUND::CHANGE_SELECT, 70);
+
+	//決定SE
+	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::DECIDE_SELECT,
+		res.Load(ResourceManager::SRC::DECIDE_SELECT).handleId_);
+	ret = res.Load(ResourceManager::SRC::DECIDE_SELECT).handleId_;
+	if (ret == -1)return;
+	
+	//音量調節
+	snd.AdjustVolume(SoundManager::SOUND::DECIDE_SELECT, 80);
+}
+
 void SelectImage::InitVertex(void)
 {
 	leftTop_ = { VERTEX_LEFT_X, VERTEX_TOP_Y, VERTEX_Z };
@@ -943,10 +946,10 @@ void SelectImage::InitVertex(void)
 	mesh_.vertex_[2].pos = leftTop_;		// 左上
 	mesh_.vertex_[3].pos = rightTop_;		// 右上
 
-	readyMesh_.vertex_[0].pos = { -80.0f, 70.0f, -408.0f };	// 左下
-	readyMesh_.vertex_[1].pos = { 80.0f, 70.0f, -408.0f };	// 右下
-	readyMesh_.vertex_[2].pos = { -80.0f, 160.0f, -410.0f };// 左上
-	readyMesh_.vertex_[3].pos = { 80.0f, 160.0f, -410.0f };	// 右上
+	readyMesh_.vertex_[0].pos = READYMESH_LEFT_BOT;	// 左下
+	readyMesh_.vertex_[1].pos = READYMESH_RIGHT_BOT;	// 右下
+	readyMesh_.vertex_[2].pos = READYMESH_LEFT_TOP;// 左上
+	readyMesh_.vertex_[3].pos = READYMESH_RIGHT_TOP;	// 右上
 
 	pointL_.mesh_.vertex_[0].pos = { POINT_LEFT_X, POINT_UNDER_Y, POINT_TOP_Z };	// 左下
 	pointL_.mesh_.vertex_[1].pos = { POINT_RIGHT_X, POINT_UNDER_Y, POINT_TOP_Z };	// 右下
