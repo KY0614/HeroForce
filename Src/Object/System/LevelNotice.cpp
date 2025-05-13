@@ -221,7 +221,7 @@ void LevelNotice::DrawMessage()
 	Application::SCREEN_SIZE_X / c - length * FONT_TEXT_SIZE / cH - MES_TEXT_POS_X,
 	Application::SCREEN_SIZE_Y / c - FONT_TEXT_SIZE / c - MES_TEXT_POS_Y };
 	
-	DrawFormatStringToHandle(pos.x, pos.y, AsoUtility::BLACK, fontMes_, text_.c_str());
+	DrawFormatStringToHandle(pos.x, pos.y, AsoUtility::WHITE, fontMes_, text_.c_str());
 }
 
 void LevelNotice::DrawLevel()
@@ -234,5 +234,5 @@ void LevelNotice::DrawLevel()
 	Application::SCREEN_SIZE_X / c - length * FONT_LEVEL_SIZE / cH,
 	(Application::SCREEN_SIZE_Y - FONT_LEVEL_SIZE) / c + LEVEL_TEXT_POS_Y };
 	
-	DrawFormatStringToHandle(pos.x, pos.y, AsoUtility::BLACK, fontLevel_, levelText.c_str() );
+	DrawFormatStringToHandle(pos.x, pos.y, AsoUtility::WHITE, fontLevel_, levelText.c_str() );
 }

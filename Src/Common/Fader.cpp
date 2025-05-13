@@ -138,7 +138,7 @@ void Fader::CircleMask()
 		0, 0,
 		Application::SCREEN_SIZE_X,
 		Application::SCREEN_SIZE_Y,
-		0x000000,
+		AsoUtility::BLACK,
 		true);
 
 	//”’F‚Ì‰~‚ğ•`‰æ‚·‚é
@@ -147,7 +147,7 @@ void Fader::CircleMask()
 		Application::SCREEN_SIZE_X / 2,
 		Application::SCREEN_SIZE_Y / 2,
 		(ALPHA_MAX - alpha_) * ALPHA_SPEED,
-		AsoUtility::BLACK,
+		AsoUtility::WHITE,
 		true);
 
 	//•`‰æ—Ìˆæ‚ğŒ³‚É–ß‚·
