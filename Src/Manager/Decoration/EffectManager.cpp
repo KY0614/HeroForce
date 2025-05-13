@@ -17,16 +17,11 @@ EffectManager& EffectManager::GetInstance(void)
 }
 
 EffectManager::EffectManager(void) {
-	int i[NONE_MAX] = {};
-
-	//effectTest_.emplace(EFFECT::NONE,i);
+	effectRes_ = {};
+	effectPlay_ = {};
+	effectMax_ = {};
 }
 
-/// <summary>
-/// エフェクトの追加
-/// </summary>
-/// <param name="_efc">エフェクト種類名</param>
-/// <param name="_data">エフェクトのデータ</param>
 void EffectManager::Add(const EFFECT& _efc, int _data)
 {
 	//連想配列内にすでに要素が入っているかを検索
@@ -37,14 +32,6 @@ void EffectManager::Add(const EFFECT& _efc, int _data)
 	effectRes_.emplace(_efc, _data);
 }
 
-
-/// <summary>
-/// エフェクトの再生
-/// </summary>
-/// <param name="_efc">エフェクト種類名</param>
-/// <param name="_pos">再生位置</param>
-/// <param name="_qua">角度</param>
-/// <param name="_size">大きさ</param>
 void EffectManager::Play(const EFFECT& _efc, const VECTOR& _pos, const Quaternion& _qua, const float& _size, const SoundManager::SOUND _sound)
 {
 	//元データがないときは警告
@@ -68,11 +55,6 @@ void EffectManager::Play(const EFFECT& _efc, const VECTOR& _pos, const Quaternio
 		}
 }
 
-
-/// <summary>
-/// エフェクトの再生停止
-/// </summary>
-/// <param name="_efc">エフェクト種類名</param>
 void EffectManager::Stop(const EFFECT& _efc)
 {
 	//配列内に入っていないものを停止しようとしたら警告
@@ -101,7 +83,6 @@ bool EffectManager::IsPlayEffect(const EFFECT& _efc)
 	return false;
 }
 
-//解放処理
 void EffectManager::Release(void)
 {
 	//配列内の要素を全て消去

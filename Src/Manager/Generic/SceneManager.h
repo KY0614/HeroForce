@@ -15,8 +15,22 @@ class SceneManager
 {
 
 public:
-
 	static constexpr int PLAYER_NUM = 4;	//プレイヤー人数
+	//デルタタイム
+	static constexpr float DELTA_TIME = 1.0f / 60.0f;
+	static constexpr float DELTA_TIME_INIT = 0.016f;
+
+	//ウィンドウ関係
+	static constexpr int WINDOW_MAX_X = 2;
+	static constexpr int WINDOW_MARGIN = 30;
+	static constexpr int MAIN_WINDOW_NUM = 1;
+
+	//３D関係設定用
+	static constexpr int BACK_COLOR = 0;
+	static constexpr int FOG_COLOR = 5;
+	static constexpr float FOG_START = 10000.0f;
+	static constexpr float FOG_END = 20000.0f;
+	static constexpr VECTOR LIGHT_DIR = { 0.00f, -1.00f, 1.00f };
 
 	// シーン管理用
 	enum class SCENE_ID
@@ -82,35 +96,67 @@ public:
 	// デルタタイムの取得
 	float GetDeltaTime(void) const;
 
-	// カメラの取得
+	/// <summary>
+	/// カメラ取得
+	/// </summary>
+	/// <returns>カメラ(動的配列なのでアクセス範囲注意)</returns>
 	std::vector<std::shared_ptr<Camera>> GetCameras(void) const;
-	//カメラを一つに戻す
+	
+	/// <summary>
+	/// カメラを一つに戻す
+	/// </summary>
 	void ResetCameras(void);
 
 
 	//ウィンドウ関係
 	// ************************************************************************
-	//ウィンドウの追加
+	
+	/// <summary>
+	/// ウィンドウ追加
+	/// </summary>
+	/// <param name="_mode">追加するウィンドウ情報</param>
 	void SetSubWindowH(HWND _mode);
-	//ウィンドウの準備(その個数に元ずくカメラの複数生成)
+
+	/// <summary>
+	/// ウィンドウ準備(同数のカメラも生成する)
+	/// </summary>
 	void RedySubWindow(void);
 
-	//モードを変える
+	/// <summary>
+	/// ウィンドウの状態をかえる
+	/// </summary>
+	/// <param name="_mode">変更後の状態</param>
 	void ChangeWindowMode(const Application::WINDOW _mode);
-	//メインウィンドウ以外をHIDE状態にする
+
+
+	/// <summary>
+	/// メイン以外をHIDEに
+	/// </summary>
 	void SetHideSubWindows(void);
-	//フルスクに戻す
+
+	/// <summary>
+	/// ウィンドウを一つ(フルスク)に戻す
+	/// </summary>
 	void ReturnSolo(void);
 
-	//ウィンドウの位置やサイズの調整
+	/// <summary>
+	/// ウィンドウのパラメータ設定
+	/// </summary>
 	void SetWindowPram(void);
 
-	//使用するウィンドウの数のゲッター
+	/// <summary>
+	/// 使用中のウィンドウ数取得
+	/// </summary>
+	/// <returns>ウィンドウ数</returns>
 	const int GetActiveNum(void) { return activeWindowNum_; }
+
 	//上記のセッター
 	void SetActiveNum(const int _num) { activeWindowNum_ = _num; }
 
-	//現在描画中のウィンドウの番号を取得
+	/// <summary>
+	/// 現在使用しているウィンドウ番号を取得
+	/// </summary>
+	/// <returns>ウィンドウ番号</returns>
 	const int GetNowWindow(void)const;
 
 private:
