@@ -13,7 +13,7 @@ void PlayerDodge::Update(Transform& transform)
 	//ドッジフラグがtrueになったら
 	if (IsDodge() && !IsCoolDodge())
 	{
-		// カウントを加算
+		//カウントを加算
 		dodgeCnt_ += deltaTime;
 
 		// 移動中

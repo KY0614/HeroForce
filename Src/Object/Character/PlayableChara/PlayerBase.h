@@ -86,6 +86,11 @@ public:
     static constexpr VECTOR PLAYER3_POS = { 0.0F,0.0F,0.0f };
     static constexpr VECTOR PLAYER4_POS = { 100.0F,0.0F,0.0f };
 
+    //プレイヤー１を置くX座標
+    static constexpr float PLAYER_ONE_POS_X = -200.0f;
+    //他プレイヤーとの間隔
+    static constexpr float DISTANCE = 100;
+
     //音量
     static constexpr int SKILL_CHANGE_SE_VOL = 80;
 
@@ -168,7 +173,7 @@ public:
 
     virtual void SetIsArrowHit(ATK_TYPE _type, const bool _flg, int _num){ atks_[_type][_num].isHit_ = _flg; }
 
-    //リセット
+    //リセット(基本的にはステータスの初期化)
     void Reset(void);
 
     //役職それぞれのバフ(使わない役職もあるためスタブ)
@@ -307,12 +312,12 @@ public:
     //void SetBuff(STATUSBUFF_TYPE _type, float _per,float _second);
 
     /// <summary>
-    /// 
+    /// バフセット
     /// </summary>
-    /// <param name="_type"></param>
-    /// <param name="_skill"></param>
-    /// <param name="_per"></param>
-    /// <param name="_second"></param>
+    /// <param name="_type">どのステータスをバフするか</param>
+    /// <param name="_skill">どのスキルをつかうか</param>
+    /// <param name="_per">バフ量</param>
+    /// <param name="_second">バフ効果時間</param>
     void SetBuff(STATUSBUFF_TYPE _type,SKILL_BUFF _skill, float _per,float _second);
 
 
@@ -325,14 +330,8 @@ public:
     //バフを引く
     void SubBuffStatus(const SKILL_BUFF _skill, const int _type);
 
-    //時間制限なし
-    //void SetBuff(STATUSBUFF_TYPE _type, float _per);
-
     //前のステータス情報をセットする
     void SetPreStatus(void);
-
-    //バフした判定セッタ
-    //void SetIsBuff(const bool _isBuff) { isBuff_ = _isBuff; }
 
     /// <summary>
     /// バフしたかセッタ
@@ -342,7 +341,6 @@ public:
     void SetIsBuff(SKILL_BUFF _skill,const bool _isBuff) { buffs_[_skill].isBuff = _isBuff; }
 
     void SetIsBuff(PlayerBase& _player,SKILL_BUFF _skill, const bool _isBuff) { _player.SetIsBuff(_skill, _isBuff); }
-
 
     //ターゲットセッタ
     void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; } 

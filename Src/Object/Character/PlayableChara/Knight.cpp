@@ -56,12 +56,12 @@ void Knight::InitAct(void)
 	atkMax_.emplace(ATK_ACT::SKILL2, SKILL_TWO_MAX);
 
 	//クールタイム
-	coolTimeMax_[static_cast<int>(ATK_ACT::ATK)] = ATK_COOLTIME;
+	coolTimeMax_[static_cast<int>(ATK_ACT::ATK)] = NORMAL_ATK_COOLTIME;
 	coolTimeMax_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_COOLTIME;
 	coolTimeMax_[static_cast<int>(ATK_ACT::SKILL2)] = SKILL_TWO_COOLTIME;
 
 	//攻撃発生時間
-	atkStartTime_[static_cast<int>(ATK_ACT::ATK)] = ATK_START;
+	atkStartTime_[static_cast<int>(ATK_ACT::ATK)] = NORMAL_ATK_START;
 	atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;
 	atkStartTime_[static_cast<int>(ATK_ACT::SKILL2)] = SKILL_TWO_START;
 }

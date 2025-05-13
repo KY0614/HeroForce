@@ -106,19 +106,15 @@ std::shared_ptr<JobManagerBase> PlayerManager::CreateKeybordPlayer(const SceneMa
 	switch (_role) {
 	case SceneManager::ROLE::AXEMAN:
 		ret = std::make_shared<PlAxe>(SceneManager::CNTL::KEYBOARD);  //キャラクタ一人に必要な情報
-		//ret = new PlAxe();
 		break;
 	case SceneManager::ROLE::ARCHER:
 		ret = std::make_shared<PlArcher>(SceneManager::CNTL::KEYBOARD);
-		//ret = new PlArcher();
 		break;
 	case SceneManager::ROLE::KNIGHT:
 		ret = std::make_shared<PlKnight>(SceneManager::CNTL::KEYBOARD);
-		//ret = new PlKnight();
 		break;
 	case SceneManager::ROLE::MAGE:
 		ret = std::make_shared<PlMage>(SceneManager::CNTL::KEYBOARD);
-		//ret = new PlMage();
 		break;
 	default:
 		assert("プレイヤーの役職情報が間違っています");
@@ -176,6 +172,5 @@ std::shared_ptr<JobManagerBase> PlayerManager::CreateCpuPlayer(const SceneManage
 		assert("プレイヤーの役職情報が間違っています");
 		break;
 	}
-
 	return ret;
 }

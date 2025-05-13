@@ -59,7 +59,7 @@ void AxeMan::SetParam(void)
 
 	//当たり判定の設定
 	radius_ = MY_COL_RADIUS;
-	//acts_[ATK_ACT::ATK].radius_ = COL_ATK;
+	//acts_[ATK_ACT::ATK].radius_ = NORMAL_ATK_COL;
 
 }
 void AxeMan::InitAct(void)
@@ -75,12 +75,12 @@ void AxeMan::InitAct(void)
 
 
 	//クールタイム
-	coolTimeMax_[static_cast<int>(ATK_ACT::ATK)] = ATK_COOLTIME;
+	coolTimeMax_[static_cast<int>(ATK_ACT::ATK)] = NORMAL_ATK_COOLTIME;
 	coolTimeMax_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_COOLTIME;
 	coolTimeMax_[static_cast<int>(ATK_ACT::SKILL2)] = SKILL_TWO_COOLTIME;
 
 	//攻撃発生時間
-	atkStartTime_[static_cast<int>(ATK_ACT::ATK)] = ATK_START;
+	atkStartTime_[static_cast<int>(ATK_ACT::ATK)] = NORMAL_ATK_START;
 	atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;
 	atkStartTime_[static_cast<int>(ATK_ACT::SKILL2)] = SKILL_TWO_START;
 
@@ -177,9 +177,9 @@ void AxeMan::Skill1Func(void)
 		}
 
 		CntUp(atkStartCnt_);
-		if (stepAnim_ >= SKILL_CHARGE_STEPANIM)
+		if (stepAnim_ >= SKILL_ONE_CHARGE_STEPANIM)
 		{
-			stepAnim_ = SKILL_CHARGE_STEPANIM;
+			stepAnim_ = SKILL_ONE_CHARGE_STEPANIM;
 		}
 	}
 	else if (atkStartCnt_ >= atkStartTime_[static_cast<int>(skillNo_)])
@@ -238,11 +238,11 @@ void AxeMan::Skill2Func(void)
 			isSkill_ = false;
 		}
 	}
-
-
+	
+	//スキルチェンジのカウントになったらアニメーション変更
 	if (atk_.cnt_ < SKILL2_CHANGE_ANIM_TIME)return;
 
-	if (stepAnim_ > 14.0f)ResetAnim(ANIM::UNIQUE_2, SPEED_ANIM_ATK);
+	if (stepAnim_ > SKILL_TWO_CHANGE_ANIM_STEP)ResetAnim(ANIM::UNIQUE_2, SPEED_ANIM_ATK);
 	//回転中移動できる
 	moveAble_ = true;
 	//攻撃座標を移動中も同期する

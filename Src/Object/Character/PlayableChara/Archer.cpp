@@ -93,7 +93,7 @@ void Archer::SetParam(void)
 
 	//当たり判定の設定
 	radius_ = MY_COL_RADIUS;
-	//acts_[ATK_ACT::ATK].radius_ = COL_ATK;
+	//acts_[ATK_ACT::ATK].radius_ = NORMAL_ATK_COL;
 
 	auto& effIns = EffectManager::GetInstance();
 	auto& resIns = ResourceManager::GetInstance();
@@ -122,13 +122,13 @@ void Archer::InitAct(void)
 
 
 	//クールタイム
-	coolTimeMax_[static_cast<int>(ATK_ACT::ATK)] = ATK_COOLTIME;
+	coolTimeMax_[static_cast<int>(ATK_ACT::ATK)] = NORMAL_ATK_COOLTIME;
 	coolTimeMax_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_COOLTIME;
 	coolTimeMax_[static_cast<int>(ATK_ACT::SKILL2)] = SKILL_TWO_COOLTIME;
 
 
 	//攻撃発生時間
-	atkStartTime_[static_cast<int>(ATK_ACT::ATK)] = ATK_START;
+	atkStartTime_[static_cast<int>(ATK_ACT::ATK)] = NORMAL_ATK_START;
 	atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;
 	atkStartTime_[static_cast<int>(ATK_ACT::SKILL2)] = SKILL_TWO_START;
 }
@@ -239,9 +239,9 @@ void Archer::Buff(PlayerBase& _target)
 	_target.SetPreStatus();
 
 	//バフ情報をセット
-	_target.SetBuff(STATUSBUFF_TYPE::ATK_BUFF,SKILL_BUFF::BUFF_ARROW, BUFF, SKILL2_BUFF_TIME);
-	_target.SetBuff(STATUSBUFF_TYPE::SPD_BUFF, SKILL_BUFF::BUFF_ARROW, BUFF, SKILL2_BUFF_TIME);
-	_target.SetBuff(STATUSBUFF_TYPE::DEF_BUFF, SKILL_BUFF::BUFF_ARROW, BUFF, SKILL2_BUFF_TIME);
+	_target.SetBuff(STATUSBUFF_TYPE::ATK_BUFF,SKILL_BUFF::BUFF_ARROW, BUFF, SKILL_TWO_BUFF_TIME);
+	_target.SetBuff(STATUSBUFF_TYPE::SPD_BUFF, SKILL_BUFF::BUFF_ARROW, BUFF, SKILL_TWO_BUFF_TIME);
+	_target.SetBuff(STATUSBUFF_TYPE::DEF_BUFF, SKILL_BUFF::BUFF_ARROW, BUFF, SKILL_TWO_BUFF_TIME);
 }
 
 
@@ -351,12 +351,14 @@ void Archer::Skill1Func(void)
 			CreateAtk(ATK_TYPE::ATTACK);
 			CreateArrow(ATK_TYPE::ATTACK);
 		}
-		if (atkStartCnt_ > SKILL_ONE_CHARE_STARTCNT)
+		if (atkStartCnt_ > SKILL_ONE_CHARGE_START_CNT)
+		{
 			arrowAtk_[ATK_TYPE::ATTACK].back().pow_ = SKILL_ONE_POW_MAX;
+		}
 
 		isShotArrow_ = true;
 		CntUp(backrashCnt_);
-		if (backrashCnt_ >= SKILL1_BACKRASH_MAX)
+		if (backrashCnt_ >= SKILL_ONE_BACKRASH_MAX)
 		{
 			coolTime_[static_cast<int>(ATK_ACT::SKILL1)] = 0.0f;
 
@@ -402,7 +404,7 @@ void Archer::Skill2Func(void)
 		CntUp(backrashCnt_);
 		//クールタイムの初期化
 		coolTime_[static_cast<int>(act_)] = 0.0f;
-		if (backrashCnt_ >= SKILL2_BACKRASH_MAX)
+		if (backrashCnt_ >= SKILL_TWO_BACKRASH_MAX)
 		{
 			InitAtk();
 			isSkill_ = false;

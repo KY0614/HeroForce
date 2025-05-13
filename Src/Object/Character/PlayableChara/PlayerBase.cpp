@@ -42,10 +42,10 @@ PlayerBase::PlayerBase(void)
 	bufDef_ = defDef_;
 	bufSpd_ = defSpeed_;
 	speed_ = 0.0f;
-	initPos_[0] = PLAYER1_POS;
-	initPos_[1] = PLAYER2_POS;
-	initPos_[2] = PLAYER3_POS;
-	initPos_[3] = PLAYER4_POS;
+	for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
+	{
+		initPos_[i] = { PLAYER_ONE_POS_X + DISTANCE * i,0.0f,0.0f };
+	}
 	preAtkPow_ = atkPow_;
 	preDef_ = def_;
 	preSpd_ = moveSpeed_;
@@ -178,6 +178,7 @@ void PlayerBase::Update(void)
 
 	colPos_ = VAdd(trans_.pos, VScale(PLAYER_COL_LOCAL_POS, CHARACTER_SCALE));
 
+	//プレイヤー更新
 	UserUpdate();
 
 	//クールタイム割合の計算
@@ -186,6 +187,7 @@ void PlayerBase::Update(void)
 	//HPを減らす処理
 	SubHp();
 
+	//バフ更新
 	BuffUpdate();
 #ifdef DEBUG_ON
 
@@ -225,17 +227,15 @@ void PlayerBase::Move(float _deg, VECTOR _axis)
 
 void PlayerBase::UserUpdate(void)
 {
+	//操作関係
+	ProcessAct();
+
 	//停止アニメーションになる条件
 	if (!IsMove() && !dodge_->IsDodge() && 0.0f >= atkStartCnt_ &&!isAtk_&&!isSkill_)
 	{
 		ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 		speed_ = 0.0f;
 	}
-
-	//操作関係
-	ProcessAct();
-
-	auto& inpMng = InputManager::GetInstance();
 	//回避
 	dodge_->Update(trans_);
 	if (dodge_->IsDodge() && !dodge_->IsCoolDodge()) {
@@ -426,7 +426,7 @@ void PlayerBase::BuffUpdate(void)
 
 		if (buff.second.cnt > 0.0f && buff.second.isBuff)
 		{
-			//バフ中は
+			//バフを重ねないためにバフ中だったらバフを受けないようにする
 			if (buff.second.isBuffing == true)continue;
 
 			//それぞれのバフ(スキルごとに設定されたバフ)をステータスのバフに足す
@@ -460,7 +460,6 @@ void PlayerBase::BuffUpdate(void)
 
 void PlayerBase::Reset(void)
 {
-	//アニメーション初期化
 	ResetAnim(ANIM::IDLE, SPEED_ANIM);
 
 	skillNo_ = ATK_ACT::SKILL1;
@@ -523,7 +522,6 @@ void PlayerBase::ChangeSkillControll(ATK_ACT _skill)
 	atkType_ = atkTypes_[static_cast<int>(_skill)];
 	isPush_ = false;
 	moveAble_ = true;
-
 }
 const bool PlayerBase::IsAtkable(void) const
 {
@@ -601,6 +599,7 @@ bool PlayerBase::IsSkillable(void)
 
 void PlayerBase::SkillChange(void)
 {
+	//スキルを変えるために１つ加算する
 	skillNo_ = static_cast<ATK_ACT>(static_cast<int>(skillNo_) + 1);
 	auto& snd = SoundManager::GetInstance();
 	snd.Play(SoundManager::SOUND::SKILL_CHANGE);
