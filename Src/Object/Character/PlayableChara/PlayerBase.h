@@ -53,7 +53,7 @@ public:
     static constexpr float SPEED_ANIM_ATK = 50.0f;
 
     //死にアニメーションの止めるカウント
-    static constexpr float DEATH_STEP_ANIM = 22.7;
+    static constexpr float DEATH_STEP_ANIM = 22.7f;
 
     //攻撃の種類の数
     static constexpr int ATK_TOTAL = 3;
