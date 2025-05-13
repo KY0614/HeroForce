@@ -345,10 +345,10 @@ void GameScene::CollisionEnemy(void)
 	for (int i = 0; i < maxCnt; i++)
 	{
 		//敵の取得
-		Enemy* e = enmMng_->GetActiveEnemy(i);
+		Enemy& e = enmMng_->GetActiveEnemy(i);
 
 		//敵個人の位置と攻撃を取得
-		VECTOR ePos = e->GetPos();
+		VECTOR ePos = e.GetPos();
 
 		//敵個人の索敵判定
 		bool isPlayerFound = false;
@@ -364,44 +364,44 @@ void GameScene::CollisionEnemy(void)
 			//範囲内に入っているとき
 
 			//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
-			if (col.Search(ePos, pPos, e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL) {
+			if (col.Search(ePos, pPos, e.GetAtkStartRange()) && e.GetState() == Enemy::STATE::NORMAL) {
 				//状態を変更
-				e->ChangeState(Enemy::STATE::ALERT);
+				e.ChangeState(Enemy::STATE::ALERT);
 			}
 
-			if (col.Search(ePos, pPos, e->GetSearchRange())) {
+			if (col.Search(ePos, pPos, e.GetSearchRange())) {
 				//プレイヤーを狙う
-				e->ChangeSearchState(Enemy::SEARCH_STATE::PLAYER_FOUND);
-				e->SetTargetPos(pPos);
+				e.ChangeSearchState(Enemy::SEARCH_STATE::PLAYER_FOUND);
+				e.SetTargetPos(pPos);
 
 				//見つけた
 				isPlayerFound = true;
 			}
-			else if (!isPlayerFound && e->GetSearchState() != Enemy::SEARCH_STATE::CHICKEN_FOUND) {
+			else if (!isPlayerFound && e.GetSearchState() != Enemy::SEARCH_STATE::CHICKEN_FOUND) {
 				//誰も狙っていない
-				e->ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_SEARCH);
+				e.ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_SEARCH);
 			}
 
 			//攻撃判定
-			for (int a = 0; a < e->GetAtks().size(); a++)
+			for (int a = 0; a < e.GetAtks().size(); a++)
 			{
 				//攻撃情報をセット
-				e->SetAtk(e->GetAtks()[a]);
+				e.SetAtk(e.GetAtks()[a]);
 
 				//セットしてきた情報をとってくる
-				UnitBase::ATK eAtk = e->GetAtk();
+				UnitBase::ATK eAtk = e.GetAtk();
 
 				//アタック中 && 攻撃判定が終了していないときだけ処理する。それ以外はしないので戻る
 				if (eAtk.IsAttack() && !eAtk.isHit_) {
 
 
 					//攻撃が当たる範囲 && プレイヤーが回避していないとき
-					if (col.IsHitAtk(*e, *p)/* && !p->GetDodge()->IsDodge()*/)
+					if (col.IsHitAtk(e, *p)/* && !p->GetDodge()->IsDodge()*/)
 					{
 						//ダメージ
-						p->SetDamage(e->GetAtkPow(), eAtk.pow_);
+						p->SetDamage(e.GetAtkPow(), eAtk.pow_);
 						//使用した攻撃を判定終了に
-						e->SetAtksIsHit(a, true);
+						e.SetAtksIsHit(a, true);
 					}
 				}
 			}
@@ -448,12 +448,12 @@ void GameScene::CollisionPlayer(void)
 		for (int i = 0; i < maxCnt; i++)
 		{
 			//敵の取得
-			Enemy* e = enmMng_->GetActiveEnemy(i);
-			VECTOR ePos = e->GetPos();
+			Enemy& e = enmMng_->GetActiveEnemy(i);
+			VECTOR ePos = e.GetPos();
 			//当たり判定
-			if (col.IsHitAtk(*p, *e)) {
+			if (col.IsHitAtk(*p, e)) {
 				//被弾
-				e->SetDamage(p->GetAtkPow(), p->GetAtk().pow_);
+				e.SetDamage(p->GetAtkPow(), p->GetAtk().pow_);
 				EffectManager::GetInstance().Play(EffectManager::EFFECT::HIT2, ePos, Quaternion(), HIT_EFFECT_SIZE, SoundManager::SOUND::NONE);
 				//攻撃判定の終了
 				p->SetIsHit(true);
@@ -494,13 +494,13 @@ void GameScene::CollisionPlayerArrow(int _p1Num)
 			if (!arrow.IsAttack() || arrow.isHit_)continue;
 			p->SetAtk(arrow);
 			//敵の取得
-			Enemy* e = enmMng_->GetActiveEnemy(enemy);
+			Enemy& e = enmMng_->GetActiveEnemy(enemy);
 			//当たり判定
 			//if (col.IsHitArrowAtk(p, *e, arrowCnt)) {
-			if (col.IsHitAtk(*p, *e)) {
+			if (col.IsHitAtk(*p, e)) {
 				//被弾
-				e->SetDamage(p->GetAtkPow(), p->GetAtk().pow_);
-				EffectManager::GetInstance().Play(EffectManager::EFFECT::HIT2, e->GetPos(), Quaternion(), HIT_EFFECT_SIZE, SoundManager::SOUND::NONE);
+				e.SetDamage(p->GetAtkPow(), p->GetAtk().pow_);
+				EffectManager::GetInstance().Play(EffectManager::EFFECT::HIT2, e.GetPos(), Quaternion(), HIT_EFFECT_SIZE, SoundManager::SOUND::NONE);
 				//攻撃判定の終了
 				p->SetIsArrowHit(PlayerBase::ATK_TYPE::ATTACK, true, arrowCnt);
 			}
@@ -556,7 +556,7 @@ void GameScene::CollisionPlayerSerch(int _p1Num)
 		VECTOR pPos = playerMng_->GetPlayer(_p1Num)->GetPos();
 		for (int ecnt = 0; ecnt < enmCnt; ecnt++)
 		{
-			VECTOR ePos1 = enmMng_->GetActiveEnemy(ecnt)->GetPos();
+			VECTOR ePos1 = enmMng_->GetActiveEnemy(ecnt).GetPos();
 
 			//プレイヤーと敵との距離を求める
 			float e2p = sqrt((ePos1.x - pPos.x) * (ePos1.x - pPos.x) + (ePos1.z - pPos.z) * (ePos1.z - pPos.z));
@@ -598,53 +598,53 @@ void GameScene::CollisionChicken(void)
 		{
 
 			//敵の取得
-			Enemy* e = enmMng_->GetActiveEnemy(r);
+			Enemy& e = enmMng_->GetActiveEnemy(r);
 
 			//敵個人の位置と攻撃を取得
-			VECTOR ePos = e->GetPos();
+			VECTOR ePos = e.GetPos();
 
 			//索敵
 			//範囲内に入っているとき
-			if (col.Search(ePos, c->GetPos(), e->GetSearchRange())) {
+			if (col.Search(ePos, c->GetPos(), e.GetSearchRange())) {
 				//移動を開始
 
 				//鶏を狙う
-				e->ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_FOUND);
-				e->SetTargetPos(c->GetPos());
+				e.ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_FOUND);
+				e.SetTargetPos(c->GetPos());
 			}
-			else if (e->GetSearchState() != Enemy::SEARCH_STATE::PLAYER_FOUND) {
+			else if (e.GetSearchState() != Enemy::SEARCH_STATE::PLAYER_FOUND) {
 				//移動を開始
 
 				//まだ探し中
-				e->ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_SEARCH);
-				e->SetPreTargetPos(c->GetPos());
+				e.ChangeSearchState(Enemy::SEARCH_STATE::CHICKEN_SEARCH);
+				e.SetPreTargetPos(c->GetPos());
 			}
 
 			//通常状態時 && 攻撃範囲内にプレイヤーが入ったら攻撃を開始
-			if (col.Search(ePos, c->GetPos(), e->GetAtkStartRange()) && e->GetState() == Enemy::STATE::NORMAL) {
+			if (col.Search(ePos, c->GetPos(), e.GetAtkStartRange()) && e.GetState() == Enemy::STATE::NORMAL) {
 				//状態を変更
-				e->ChangeState(Enemy::STATE::ALERT);
+				e.ChangeState(Enemy::STATE::ALERT);
 			}
 
 			//攻撃判定
-			for (int a = 0; a < e->GetAtks().size(); a++)
+			for (int a = 0; a < e.GetAtks().size(); a++)
 			{
 				//攻撃情報をセット
-				e->SetAtk(e->GetAtks()[a]);
+				e.SetAtk(e.GetAtks()[a]);
 
 				//セットしてきた情報をとってくる
-				UnitBase::ATK eAtk = e->GetAtk();
+				UnitBase::ATK eAtk = e.GetAtk();
 
 				//アタック中 && 攻撃判定が終了していないときだけ処理する。それ以外はしないので戻る
 				if (!(eAtk.IsAttack() && !eAtk.isHit_))continue;
 
 				//攻撃が当たる範囲 && プレイヤーが回避していないとき
-				if (col.IsHitAtk(*e, *c))
+				if (col.IsHitAtk(e, *c))
 				{
 					//ダメージ
-					c->SetDamage(e->GetAtkPow(),e->GetAtk().pow_);
+					c->SetDamage(e.GetAtkPow(),e.GetAtk().pow_);
 					//使用した攻撃を判定終了に
-					e->SetAtksIsHit(a, true);
+					e.SetAtksIsHit(a, true);
 				}
 			}
 		}
@@ -670,10 +670,10 @@ void GameScene::CollisionChicken(void)
 //		Enemy* e = enmMng_->GetActiveEnemy(i);
 //
 //		//敵が死亡していたら処理しない
-//		if (!e->IsAlive())continue;
+//		if (!e.IsAlive())continue;
 //
 //		//敵個人の位置と攻撃を取得
-//		VECTOR ePos = e->GetPos();
+//		VECTOR ePos = e.GetPos();
 //
 //		//プレイヤー側索敵
 //		if (col.Search(_pPos, ePos, _player.GetSearchRange())

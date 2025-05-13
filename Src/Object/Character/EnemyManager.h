@@ -8,29 +8,31 @@ class Enemy;
 class EnemyManager
 {
 public:
-	//一種類の敵の最大数
-	static constexpr int ONETYPE_MAX = 3;
-	//敵の出現最大数
-	static constexpr int ENEMY_MAX = 8;
 
-	//フェーズごとの初期生成数
+	//****************************************************************
+	//定数
+	//****************************************************************
 	
-	//フェーズ1の敵の初期生成数
-	static constexpr int PHASE_ONE_INIT_CREATE_ENEMY = 4;
-	//フェーズ2の敵の初期生成数
-	static constexpr int PHASE_TWO_INIT_CREATE_ENEMY = 6;
+	//敵の数
+	static constexpr int ONETYPE_MAX = 3;	//一種類の敵の最大数
+	static constexpr int ENEMY_MAX = 8;		//敵の出現最大数
 
-	//敵の出現半径
-	static constexpr float GENELATE_RADIUS = 300.0f;
+	//フェーズ
+	static constexpr int PHASE_FIRST = 1;					//最初のフェーズ
+	static constexpr int PHASE_ONE_INIT_CREATE_ENEMY = 4;	//フェーズ1の敵の初期生成数
+	static constexpr int PHASE_TWO_INIT_CREATE_ENEMY = 6;	//フェーズ2の敵の初期生成数
 
-	//敵間の距離
-	static constexpr float ENEMY_DISTANCE = 20.0f;
+	//敵の出現関係
+	static constexpr float GENELATE_RADIUS = 300.0f;			//敵の出現半径
+	static constexpr float ENEMY_DISTANCE = 20.0f;				//敵間の距離
+	static constexpr float CREATE_INTERVAL = 5.0f;				//敵の生成間隔
 
-	//敵間の生成回数上限
-	static constexpr int ENEMY_CREATE_CHALLENGE_LIMIT = 5000;
+	//ループの制限
+	static constexpr int RETRY_LIMIT = 200;	//ループ回数上限
 
-	//敵の生成間隔
-	static constexpr float CREATE_INTERVAL = 5.0f;
+	//****************************************************************
+	//列挙型
+	//****************************************************************
 
 	//敵の種類
 	enum class TYPE {
@@ -42,15 +44,23 @@ public:
 		MAX,
 	};
 
+	//****************************************************************
+	//メンバ関数
+	//****************************************************************
+
 	//コンストラクタ
 	EnemyManager(std::vector<VECTOR> _pos);
 
 	//デストラクタ
 	~EnemyManager() = default;
 
+	//初期化
 	void Init(void);
+	//更新
 	void Update(void);
+	//描画
 	void Draw(void);
+	//解放
 	void Release(void);
 
 	//衝突判定
@@ -61,7 +71,7 @@ public:
 	/// </summary>
 	/// <param name="_num">欲しい敵の配列番号</param>
 	/// <returns>敵のインスタンス</returns>
-	Enemy* GetActiveEnemy(int _num)const { return activeEnemys_[_num]; }
+	Enemy& GetActiveEnemy(int _num)const { return *activeEnemys_[_num]; }
 
 	//総経験値量の取得
 	const float GetAllExp(void)const { return allExp_; }
@@ -75,34 +85,33 @@ public:
 	//倒された敵の後処理 _num=倒された敵の配列番号
 	void DeathEnemy(int _num);
 
+	//敵の倒された数を返す
 	const int GetDunkCnt(void)const { return dunkCnt_; }
 
 	//フェーズ変更
 	void ProcessChangePhase(const int _phase);
 
 private:
+	//****************************************************************
+	//メンバ変数
+	//****************************************************************
+	
+	std::unique_ptr<Enemy> activeEnemys_[ENEMY_MAX];	//生きている敵
+	TYPE activeEnemysType_[ENEMY_MAX];					//生きている敵の種類
 
-	//更新等をかける動きのある敵
-	Enemy* activeEnemys_[ENEMY_MAX];
+	int activeNum_;										//アクティブな敵の総数
+	int activeTypeNum_[static_cast<int>(TYPE::MAX)];	//種類別の敵の量
 
-	TYPE activeEnemysType_[ENEMY_MAX];
-
-	//アクティブな敵の総数
-	int activeNum_;
-
-	//種類別の敵の量
-	int activeTypeNum_[static_cast<int>(TYPE::MAX)];
-
-	//総経験値数
-	float allExp_;
+	float allExp_;	//総経験値数
 	int dunkCnt_;	//倒した敵の総数(フェーズごとにリセット)
 
-	//生成座標
-	std::vector<VECTOR> createPos_;
-
-	//生成間隔
-	float createIntCnt_;
+	std::vector<VECTOR> createPos_;	//生成座標
+	float createIntCnt_;			//生成間隔
 	
+	//****************************************************************
+	//メンバ関数
+	//****************************************************************
+
 	//引数の敵をアクティブ状態に
 	void CreateEnemy(void);
 
@@ -111,24 +120,5 @@ private:
 
 	//ボスを作成
 	void CreateBoss(void);
-
-	//重なっていない座標を取る
-	VECTOR GetNotOverlappingPos(void);
-
-	/// <summary>
-	/// 円範囲のランダム一点を取る
-	/// </summary>
-	/// <param name="_myPos">出現予定座標</param>
-	/// <param name="_r">出現範囲</param>
-	/// <param name="_tPos">出現させる座標</param>
-	void GetRandomPointInCircle(VECTOR _myPos, const int _r, VECTOR& _tPos);
-
-	/// <summary>
-	/// 敵達が重なっていないか
-	/// </summary>
-	/// <param name="_thisEnemy">比較したい敵</param>
-	/// <param name="_minDist">敵の直径</param>
-	/// <returns>敵が重なったか(true:重なった)</returns>
-	bool IsOverlap(VECTOR& _tPos, float _minDist);
 };
 

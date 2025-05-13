@@ -269,22 +269,34 @@ void Enemy::InitAnim()
 {
 #pragma region 共通アニメーション設定
 
+	//立ち
 	animNum_.emplace(ANIM::IDLE, ANIM_IDLE);
+	//歩き
 	animNum_.emplace(ANIM::WALK, ANIM_WALK);
+	//走り
 	animNum_.emplace(ANIM::RUN, ANIM_RUN);
+	//ダメージ
 	animNum_.emplace(ANIM::DAMAGE, ANIM_DAMAGE);
+	//死亡
 	animNum_.emplace(ANIM::DEATH, ANIM_DEATH);
+	//出現
 	animNum_.emplace(ANIM::ENTRY, ANIM_ENTRY);
 
 #pragma endregion
 
 #pragma region アニメーション速度設定
 
+	//立ち
 	changeSpeedAnim_.emplace(ANIM::IDLE, SPEED_ANIM);
+	//歩き
 	changeSpeedAnim_.emplace(ANIM::WALK, SPEED_ANIM_WALK);
+	//走り
 	changeSpeedAnim_.emplace(ANIM::RUN, SPEED_ANIM);
+	//ダメージ
 	changeSpeedAnim_.emplace(ANIM::DAMAGE, SPEED_ANIM);
+	//死亡
 	changeSpeedAnim_.emplace(ANIM::DEATH, SPEED_ANIM);
+	//出現
 	changeSpeedAnim_.emplace(ANIM::ENTRY, SPEED_ANIM);
 
 #pragma endregion

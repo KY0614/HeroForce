@@ -21,7 +21,7 @@ public:
 	static constexpr int ANIM_RELOAD = 6;		//弾補充アニメーション(固有アニメーション2)
 
 	//アニメーション速度(キャラ固有)
-	static constexpr int SPEED_ANIM_RELOAD = ARROW_SIZE_MAX * 7.0f;		//弾補充アニメーション(固有アニメーション2)
+	static constexpr float SPEED_ANIM_RELOAD = ARROW_SIZE_MAX * 7.0f;		//弾補充アニメーション(固有アニメーション2)
 
 	//モデル関係
 	static constexpr VECTOR  LOCAL_CENTER_POS = { 0.0f,100.0f * CHARACTER_SCALE,0.0f };	//モデルの中心座標への相対座標
