@@ -1,24 +1,23 @@
-#include "SelectEnemy.h"
+#include"../Manager/Generic/SceneManager.h"
+#include"../../../../Utility/AsoUtility.h"
+#include "WaitEnemy.h"
 
-SelectEnemy::SelectEnemy(void)
+WaitEnemy::WaitEnemy(void)
 {
-	animChangeTime_[0] = 0.0f;
-	animChangeTime_[1] = 0.0f;
-	animChangeTime_[2] = 0.0f;
-	animChangeTime_[3] = 0.0f;
-
-	isSpawn_[0] = false;
-	isSpawn_[1] = false;
-	isSpawn_[2] = false;
-	isSpawn_[3] = false;
+	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+	{
+		animChangeTime_[i] = 0.0f;
+		isSpawn_[i] = false;
+	}
 }
 
-void SelectEnemy::Destroy(void)
+void WaitEnemy::Destroy(void)
 {
 }
 
-void SelectEnemy::Init(void)
+void WaitEnemy::Init(void)
 {
+	//3Dモデルの初期化
 	Init3DModel();
 
 	//キャラクター用
@@ -30,37 +29,26 @@ void SelectEnemy::Init(void)
 		ResetAnimArray(ANIM::UNIQUE_1, ANIM_SPEED, i);
 	}
 
+	//先頭の敵だけスポーン中にする
 	isSpawn_[0] = true;
 }
 
-void SelectEnemy::Update(void)
+void WaitEnemy::Update(void)
 {
 	//アニメーションと同じ時間を加算していく
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 
-	//if (isSpawn_[3] &&
-	//	animChangeTime_[3] > animArrayTotalTime_[3])
-	//{
-	//	//リセット
-	//	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
-	//	{
-	//		ResetAnimArray(ANIM::UNIQUE_1, SPAWN_ANIM, i);
-	//		animChangeTime_[i] = 0.0f;
-	//		isSpawn_[i] = false;
-	//		FinishAnimArray(i);
-	//	}
-	//	isSpawn_[0] = true;
-	//}
-
 	//アニメーション
 	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
 	{
+		//スポーン中はスポーン用のアニメーションを再生
 		if (isSpawn_[i])
 		{
 			AnimArray(i);
 			animChangeTime_[i] += ANIM_SPEED * deltaTime;
 		}
 
+		//スポーンアニメーションの再生が終わったらIdleアニメーションに切り替える
 		if (isSpawn_[i] &&
 			animChangeTime_[i] > animArrayTotalTime_[i])
 		{
@@ -68,28 +56,29 @@ void SelectEnemy::Update(void)
 			{
 				ResetAnimArray(ANIM::IDLE, ANIM_SPEED, i);
 				animChangeTime_[i] = 0.0f;
-				isSpawn_[i + 1] = true;
+				isSpawn_[i + 1] = true;		//次出現させる敵をスポーン中にする
 
 			}
 		}
 	}
 
-	//モデルの初期化
+	//モデル情報の更新
 	for (auto& tran_ : transArray_)
 	{
 		tran_.Update();
 	}
 }
 
-void SelectEnemy::Draw(void)
+void WaitEnemy::Draw(void)
 {
+	//順番に描画
 	for (auto& tran : transArray_)
 	{
 		MV1DrawModel(tran.modelId);
 	}
 }
 
-void SelectEnemy::Init3DModel(void)
+void WaitEnemy::Init3DModel(void)
 {
 	//弓使い
 	transArray_[0].SetModel(

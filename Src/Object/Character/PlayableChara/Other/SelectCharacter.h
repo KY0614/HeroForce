@@ -4,9 +4,10 @@
 #include"../Manager/Generic/SceneManager.h"
 #include "../../../UnitBase.h"
 
-class SelectPlayer : public UnitBase
+class SelectCharacter : public UnitBase
 {
 public:
+	//キャラクター関連
 	static constexpr float ROT_SPEED = 0.5f;
 
 	static constexpr float ANIM_SPEED = 20.0f;
@@ -19,10 +20,10 @@ public:
 	static constexpr int SWING_ANIM = 6;
 
 	//コンストラクタ
-	SelectPlayer(void);
+	SelectCharacter(void);
 
 	//デストラクタ
-	~SelectPlayer(void) = default;
+	~SelectCharacter(void) = default;
 
 	//解放
 	virtual void Destroy(void);
@@ -35,7 +36,19 @@ public:
 	//描画
 	virtual void Draw(void)override;
 
-	//セッター
+	/// <summary>
+	/// Transform配列の先頭の座標を取得(他の座標も同じなので)
+	/// </summary>
+	/// <returns>Transform配列の先頭の座標</returns>
+	VECTOR GetFrontPos(void)const { return transArray_[0].pos; }
+
+	/// <summary>
+	/// チキンの座標を取得
+	/// </summary>
+	/// <returns>チキンの座標</returns>
+	VECTOR GetChickenPos(void)const { return trans_.pos; };
+
+	//セッター(設定用関数)---------------------------------------------------
 
 	/// <summary>
 	/// 役職を設定する
@@ -67,33 +80,21 @@ public:
 	/// <param name="quo">角度</param>
 	void SetRotChicken(Quaternion quo) { trans_.quaRotLocal = quo;  };
 
-	//
-	VECTOR GetPos(void) { for (auto& tran : transArray_) { return tran.pos; } };
-	VECTOR GetChickenPos(void) { return trans_.pos; };
-	VECTOR GetPosArray(int i) { return transArray_[i].pos; };
-	
-	//アニメーションを変更する
-	void ChangeAnim(void);
-
 	/// <summary>
-	/// 攻撃アニメーションを設定
+	/// 一定時間ごとにアニメーションを変える
 	/// </summary>
-	/// <param name="i">設定する配列の引数</param>
-	void SetAtkAnim(int i);
-
-	/// <summary>
-	/// 通常アニメーションを設定
-	/// </summary>
-	/// <param name="i">設定する配列の引数</param>
-	void SetIdleAnim(int i);
+	void UpdateAnimCycle(void);
 
 private:
 
 	//役職
 	int role_;
 
-	//アニメーション変更時間
+	//アニメーション変更時間(transArrayに合わせて配列)
 	float animChangeTime_[SceneManager::PLAYER_NUM];
 
+	/// <summary>
+	/// 3Dモデルの初期化処理
+	/// </summary>
 	void Init3DModel(void);
 };

@@ -3,10 +3,10 @@
 #include "../Manager/Generic/InputManager.h"
 #include "../Manager/GameSystem/DataBank.h"
 #include "../Scene/SelectScene.h"
-#include "../Object/Character/PlayableChara/Other/SelectPlayer.h"
+#include "../Object/Character/PlayableChara/Other/SelectCharacter.h"
 #include "SelectImage.h"
 
-SelectImage::SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> player) : selectScene_(select), player_(player)
+SelectImage::SelectImage(SelectScene& select) : selectScene_(select)
 {
 	imgPlayerNum_ = nullptr;
 	imgDisplayNum_ = nullptr;
@@ -177,23 +177,6 @@ void SelectImage::Draw(void)
 
 void SelectImage::MoveVertexPos(void)
 {
-	//Lerpで動かしたいなという気持ち
-	//フルスク用
-	//mesh_.vertex_[0].pos = { -70.0f, 100.0f, VERTEX_Z + 12.0f };	//左下
-	//mesh_.vertex_[1].pos = { 0.0f, 100.0f, VERTEX_Z + 12.0f };		//右下
-	//mesh_.vertex_[2].pos = { -70.0f, 170.0f, VERTEX_Z };			//左上
-	//mesh_.vertex_[3].pos = { 0.0f, 170.0f, VERTEX_Z };				//右上
-
-	//pointL_.mesh_.vertex_[0].pos = { POINT_LEFT_X - 40.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 左下
-	//pointL_.mesh_.vertex_[1].pos = { POINT_RIGHT_X - 40.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 右下
-	//pointL_.mesh_.vertex_[2].pos = { POINT_LEFT_X - 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 左上
-	//pointL_.mesh_.vertex_[3].pos = { POINT_RIGHT_X - 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 右上
-
-	//pointR_.mesh_.vertex_[0].pos = { -POINT_RIGHT_X + 40.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };// 左下
-	//pointR_.mesh_.vertex_[1].pos = { -POINT_LEFT_X + 40.0f, POINT_UNDER_Y - 10.0f, POINT_TOP_Z };	// 右下
-	//pointR_.mesh_.vertex_[2].pos = { -POINT_RIGHT_X + 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };// 左上
-	//pointR_.mesh_.vertex_[3].pos = { -POINT_LEFT_X + 40.0f, POINT_TOP_Y - 10.0f, POINT_UNDER_Z };	// 右上
-
 	//600,800用
 	mesh_.vertex_[0].pos = { ROLE_MESH_LEFT_X, ROLE_MESH_UNDER_Z, VERTEX_Z + 12.0f };	//左下
 	mesh_.vertex_[1].pos = { ROLE_MESH_RIGHT_X, ROLE_MESH_UNDER_Z, VERTEX_Z + 12.0f };	//右下
@@ -216,7 +199,7 @@ void SelectImage::MoveVertexPos(void)
 	readyMesh_.vertex_[3].pos = { 90.0f, 160.0f, -410.0f };	// 右上
 }
 
-void SelectImage::ReductinVertexPos(void)
+void SelectImage::ReductionVertexPos(void)
 {
 	readyMesh_.vertex_[0].pos = { -60.0f, 80.0f, -408.0f };	// 左下
 	readyMesh_.vertex_[1].pos = { 60.0f, 80.0f, -408.0f };	// 右下
@@ -227,20 +210,27 @@ void SelectImage::ReductinVertexPos(void)
 void SelectImage::Load(void)
 {
 	//画像の読み込み
+
+	//人数選択用
 	imgPlayerNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_NUM).handleIds_;
 
+	//ディスプレイ数選択用
 	imgDisplayNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::DISPLAY_NUM).handleIds_;
 
-	imgRightPoint_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::RIGHT_POINT).handleIds_;
-
-	imgLeftPoint_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::LEFT_POINT).handleIds_;
-
-	imgReady_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::READY).handleIds_;
-
+	//役職選択用
 	imgRoleNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::CHARA_PARAMS).handleIds_;
 
+	//使用デバイス選択用
 	imgDeviceNum_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::DEVICE).handleIds_;
-	
+
+	//矢印
+	imgRightPoint_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::RIGHT_POINT).handleIds_;
+	imgLeftPoint_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::LEFT_POINT).handleIds_;
+
+	//準備完了用
+	imgReady_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::READY).handleIds_;
+
+	//魔法使い用のComingSoon画像
 	imgComingSoon_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::COMING_SOON).handleIds_;
 
 	auto& snd = SoundManager::GetInstance();
@@ -302,7 +292,7 @@ void SelectImage::DisplayUpdate(void)
 
 	//右の矢印がONの時にキーの右に値する入力をし続けると
 	if (pointR_.isToggle_ &&
-		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::RIGHT)
+		selectScene_.Get1PConfig() == SelectScene::KEY_CONFIG::RIGHT)
 	{
 		if (!press_)
 		{
@@ -340,7 +330,7 @@ void SelectImage::DisplayUpdate(void)
 
 	//左
 	if (pointL_.isToggle_ &&
-		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::LEFT)
+		selectScene_.Get1PConfig() == SelectScene::KEY_CONFIG::LEFT)
 	{
 		if (!press_)
 		{
@@ -381,7 +371,7 @@ void SelectImage::DisplayUpdate(void)
 	}
 
 	//スペースキー押下で決定&入力デバイス選択へ
-	if (selectScene_.GetConfig() == SelectScene::KEY_CONFIG::DECIDE)
+	if (selectScene_.Get1PConfig() == SelectScene::KEY_CONFIG::DECIDE)
 	{
 		snd.Play(SoundManager::SOUND::DECIDE_SELECT);
 
@@ -397,14 +387,14 @@ void SelectImage::DisplayUpdate(void)
 
 	//選択する矢印
 	if (!pointR_.isToggle_ &&
-		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::RIGHT)
+		selectScene_.Get1PConfig() == SelectScene::KEY_CONFIG::RIGHT)
 	{
 		pointR_.isToggle_ = true;
 		pointL_.isToggle_ = false;
 	}
 
 	if (!pointL_.isToggle_ &&
-		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::LEFT)
+		selectScene_.Get1PConfig() == SelectScene::KEY_CONFIG::LEFT)
 	{
 		pointR_.isToggle_ = false;
 		pointL_.isToggle_ = true;
@@ -431,7 +421,7 @@ void SelectImage::NumberUpdate(void)
 
 	//右の矢印がONの時にキーの右に値する入力をし続けると
 	if (pointR_.isToggle_ &&
-		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::RIGHT)
+		selectScene_.Get1PConfig() == SelectScene::KEY_CONFIG::RIGHT)
 	{
 		if (!press_)
 		{
@@ -470,7 +460,7 @@ void SelectImage::NumberUpdate(void)
 
 	//左
 	if (pointL_.isToggle_ &&
-		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::LEFT)
+		selectScene_.Get1PConfig() == SelectScene::KEY_CONFIG::LEFT)
 	{
 		if (!press_)
 		{
@@ -509,7 +499,7 @@ void SelectImage::NumberUpdate(void)
 	}
 
 	//スペースキー押下で決定&入力デバイス選択へ
-	if (selectScene_.GetConfig() == SelectScene::KEY_CONFIG::DECIDE)
+	if (selectScene_.Get1PConfig() == SelectScene::KEY_CONFIG::DECIDE)
 	{
 		snd.Play(SoundManager::SOUND::DECIDE_SELECT);
 
@@ -561,14 +551,14 @@ void SelectImage::NumberUpdate(void)
 
 	//選択する矢印
 	if (!pointR_.isToggle_ &&
-		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::RIGHT)
+		selectScene_.Get1PConfig() == SelectScene::KEY_CONFIG::RIGHT)
 	{
 		pointR_.isToggle_ = true;
 		pointL_.isToggle_ = false;
 	}
 
 	if (!pointL_.isToggle_ &&
-		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::LEFT)
+		selectScene_.Get1PConfig() == SelectScene::KEY_CONFIG::LEFT)
 	{
 		pointR_.isToggle_ = false;
 		pointL_.isToggle_ = true;
@@ -595,7 +585,7 @@ void SelectImage::OperationUpdate(void)
 
 	//右の矢印がONの時にキーの右に値する入力をし続けると
 	if (pointR_.isToggle_ &&
-		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::RIGHT)
+		selectScene_.Get1PConfig() == SelectScene::KEY_CONFIG::RIGHT)
 	{
 		if (!press_)
 		{
@@ -632,7 +622,7 @@ void SelectImage::OperationUpdate(void)
 
 	//左
 	if (pointL_.isToggle_ &&
-		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::LEFT)
+		selectScene_.Get1PConfig() == SelectScene::KEY_CONFIG::LEFT)
 	{
 		if (!press_)
 		{
@@ -668,14 +658,13 @@ void SelectImage::OperationUpdate(void)
 	}
 
 	//スペースキー押下で決定&役職選択へ
-	if (selectScene_.GetConfig() == SelectScene::KEY_CONFIG::DECIDE)
+	if (selectScene_.Get1PConfig() == SelectScene::KEY_CONFIG::DECIDE)
 	{
 		snd.Play(SoundManager::SOUND::DECIDE_SELECT);
 
 		//1Pの操作の設定
 		(isPad_) ? data.Input(SceneManager::CNTL::PAD, 1) : data.Input(SceneManager::CNTL::KEYBOARD, 1);
-		(isPad_) ? selectScene_.Set1PDevice(SceneManager::CNTL::PAD) : selectScene_.Set1PDevice(SceneManager::CNTL::KEYBOARD);
-		//selectedCntl_ = (isPad_) ? SceneManager::CNTL::PAD : SceneManager::CNTL::KEYBOARD;
+		(isPad_) ? selectScene_.Change1PDevice(SceneManager::CNTL::PAD) : selectScene_.Change1PDevice(SceneManager::CNTL::KEYBOARD);
 
 		selectScene_.ChangeSelect(SelectScene::SELECT::ROLE);
 		ChangeSelect(SelectScene::SELECT::ROLE);
@@ -683,14 +672,14 @@ void SelectImage::OperationUpdate(void)
 
 	//選択する矢印
 	if (!pointR_.isToggle_ &&
-		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::RIGHT)
+		selectScene_.Get1PConfig() == SelectScene::KEY_CONFIG::RIGHT)
 	{
 		pointR_.isToggle_ = true;
 		pointL_.isToggle_ = false;
 	}
 
 	if (!pointL_.isToggle_ &&
-		selectScene_.GetConfig() == SelectScene::KEY_CONFIG::LEFT)
+		selectScene_.Get1PConfig() == SelectScene::KEY_CONFIG::LEFT)
 	{
 		pointR_.isToggle_ = false;
 		pointL_.isToggle_ = true;
@@ -970,36 +959,6 @@ void SelectImage::InitVertex(void)
 	pointR_.mesh_.vertex_[3].pos = { -POINT_LEFT_X, POINT_TOP_Y, POINT_UNDER_Z };	// 右上
 }
 
-VECTOR SelectImage::RotateVertex(VECTOR pos, VECTOR center, float angle)
-{
-	//メッシュの中心点を計算(今はとりあえずメッシュの真ん中の座標)
-	VECTOR Center;
-	Center.x = (VERTEX_RIGHT_X + VERTEX_LEFT_X) * 0.5f;
-	Center.y = (VERTEX_TOP_Y + VERTEX_UNDER_Y) * 0.5f;
-	Center.z = VERTEX_Z;
-
-	//半径
-	const float DIS = 50.0f;
-
-	// 時間進行
-	angle_ += SceneManager::GetInstance().GetDeltaTime();
-
-	// 回転行列を適用して頂点を回転
-
-	//for (int i = 1; i < 4; i += 2)
-	//{
-		//XZ平面上で回転させる
-	//	vertices_[i].pos.x = Center.x + (DIS * (sinf(angle_)));
-	//	vertices_[i].pos.z = Center.z + (DIS * (cosf(angle_)));
-	//}
-	//for (int i = 0; i < 4; i += 2)
-	//{
-	//	vertices_[i].pos.x = Center.x + (-DIS * (sinf(angle_)));
-	//	vertices_[i].pos.z = Center.z + (-DIS * (cosf(angle_)));
-	//}
-	return AsoUtility::VECTOR_ZERO;
-}
-
 void SelectImage::ChangeStateDisplay(void)
 {
 	stateUpdate_ = std::bind(&SelectImage::DisplayUpdate, this);
@@ -1018,7 +977,7 @@ void SelectImage::ChangeStateOperation(void)
 void SelectImage::ChangeStateRole(void)
 {
 	MoveVertexPos();
-	ReductinVertexPos();
+	ReductionVertexPos();
 	stateUpdate_ = std::bind(&SelectImage::RoleUpdate, this);
 }
 

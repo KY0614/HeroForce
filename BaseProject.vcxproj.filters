@@ -18,7 +18,7 @@
     <ClCompile Include="Src\Object\Character\PlayableChara\CPU\CpuMage.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Knight.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Mage.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Other\SelectCharacter.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\PlayerBase.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\PlayerCpu.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlArcher.cpp" />
@@ -63,7 +63,6 @@
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
     <ClCompile Include="Src\Scene\TitleScene.cpp" />
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
-    <ClCompile Include="Src\Object\Stage\StageObject.cpp" />
     <ClCompile Include="Src\Object\System\LevelScreenManager.cpp" />
     <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
     <ClCompile Include="Src\Object\Stage\StageManager.cpp" />
@@ -108,7 +107,7 @@
     <ClCompile Include="Src\Object\Character\PlayerInput.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ClearChicken.cpp" />
     <ClCompile Include="Src\Scene\GameClearScene.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\Other\SelectEnemy.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Other\WaitEnemy.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Other\ClearPlayers.cpp" />
     <ClCompile Include="Src\Object\System\GameUi\CpuHpBar.cpp" />
     <ClCompile Include="Src\Object\System\GameUi\GamaUIBase.cpp" />
@@ -200,7 +199,7 @@
     <ClInclude Include="Src\Object\Character\PlayableChara\CPU\CpuMage.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Knight.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Mage.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Other\SelectCharacter.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\PlayerBase.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\PlayerCpu.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\USER\PlArcher.h" />
@@ -215,7 +214,6 @@
     <ClInclude Include="Src\Object\SelectImage.h" />
     <ClInclude Include="Src\Object\Stage\SkyDome.h" />
     <ClInclude Include="Src\Object\Stage\StageManager.h" />
-    <ClInclude Include="Src\Object\Stage\StageObject.h" />
     <ClInclude Include="Src\Object\System\LevelScreenManager.h" />
     <ClInclude Include="Src\Object\System\LevelSelect.h" />
     <ClInclude Include="Src\Object\System\UnitPositionLoad.h" />
@@ -234,7 +232,7 @@
     <ClInclude Include="Src\Object\Character\PlayableChara\Other\ClearPlayers.h" />
     <ClInclude Include="Src\Object\System\GameUi\CpuHpBar.h" />
     <ClInclude Include="Src\Object\System\GameUi\GamaUIBase.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\Other\SelectEnemy.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Other\WaitEnemy.h" />
     <ClInclude Include="Src\Manager\GameSystem\CharacterParamData.h" />
     <ClInclude Include="Src\Application.h" />
     <ClInclude Include="Src\Common\Fader.h" />
