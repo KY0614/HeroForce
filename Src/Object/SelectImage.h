@@ -1,12 +1,9 @@
 #pragma once
 #include <functional>
-#include"../Utility/AsoUtility.h"
-#include"Common/Transform.h"
-#include "../Common/Vector2.h"
 #include "./UnitBase.h"
 #include "../Scene/SelectScene.h"
 
-//class SelectScene;
+
 class SelectCharacter;
 
 class SelectImage : public UnitBase
@@ -77,8 +74,7 @@ public:
 
 		//èâä˙âª
 		Point() : isToggle_(false),mesh_() {}
-		Point(bool isT,Mesh& mesh) :
-			 isToggle_(isT) , mesh_(mesh)  {}
+		Point(const bool isToggle,Mesh& mesh) : isToggle_(isToggle) , mesh_(mesh)  {}
 	};
 
 	//------------------------------------------------------------------------------

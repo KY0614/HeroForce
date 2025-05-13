@@ -35,7 +35,7 @@ SelectScene::SelectScene(void)
 	stateChanges_.emplace(
 		SELECT::MAX, std::bind(&SelectScene::ChangeStateMax, this));
 
-	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+	for (int i = 0; i < PLAYER_NUM; i++)
 	{
 		isOk_[i] = false;
 
@@ -88,7 +88,7 @@ void SelectScene::Init(void)
 	stage_->Init();
 
 	//プレイヤーと敵と画像の初期化
-	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+	for (int i = 0; i < PLAYER_NUM; i++)
 	{
 		characters_[i] = std::make_unique<SelectCharacter>();
 		characters_[i]->Init();
@@ -208,7 +208,7 @@ void SelectScene::OperationUpdate(void)
 	//1P以外の画面には敵をアニメーションさせて待機中の画面を作る
 	for (int pNum = 1; pNum < camera.size(); pNum++)
 	{
-		for (int index = 0; index < SceneManager::PLAYER_NUM; index++) {
+		for (int index = 0; index < PLAYER_NUM; index++) {
 			//カメラの回転に合わせて出現場所を90度ずつ回転させる
 			VECTOR pos = AsoUtility::RotXZPos(DEFAULT_CAMERA_POS, enemys_[pNum - 1]->GetPosAtIndex(index), AsoUtility::Deg2RadF(90.0f));
 			enemys_[pNum]->SetPosAtIndex(pos, index);
@@ -246,34 +246,36 @@ void SelectScene::RoleUpdate(void)
 	{
 		for (int i = 0; i < 4; i++)
 		{
+			//回転させる前の座標を取っておく
 			ver[i] = images_[m - 1]->GetMeshVertexAtIndex(i);
 			ready[i] = images_[m - 1]->GetReadyMeshVertexAtIndex(i);
 			pointL[i] = images_[m - 1]->GetPointLMeshVertexAtIndex(i);
 			pointR[i] = images_[m - 1]->GetPointRMeshVertexAtIndex(i);
 
 			VECTOR prevPos = ver[i].pos;
-			VECTOR readyPos = ready[i].pos;
-			VECTOR pointLPos = pointL[i].pos;
-			VECTOR pointRPos = pointR[i].pos;
+			VECTOR prevReadyPos = ready[i].pos;
+			VECTOR prevPointLPos = pointL[i].pos;
+			VECTOR prevPointRPos = pointR[i].pos;
 
-			//人数オブジェクト
+			//回転させる
+			//人数選択メッシュ
 			VECTOR pos = AsoUtility::RotXZPos(
 				DEFAULT_CAMERA_POS, prevPos, AsoUtility::Deg2RadF(90.0f));
 			images_[m]->RotMeshPos(pos, i);
 
-			//Readyオブジェクト
+			//Readyメッシュ
 			pos = AsoUtility::RotXZPos(
-				DEFAULT_CAMERA_POS, readyPos, AsoUtility::Deg2RadF(90.0f));
+				DEFAULT_CAMERA_POS, prevReadyPos, AsoUtility::Deg2RadF(90.0f));
 			images_[m]->RotReadyMeshPos(pos, i);
 
-			//左矢印オブジェクト
+			//左矢印メッシュ
 			pos = AsoUtility::RotXZPos(
-				DEFAULT_CAMERA_POS, pointLPos, AsoUtility::Deg2RadF(90.0f));
+				DEFAULT_CAMERA_POS, prevPointLPos, AsoUtility::Deg2RadF(90.0f));
 			images_[m]->RotPointLMeshPos(pos, i);
 
-			//右矢印オブジェクト
+			//右矢印メッシュ
 			pos = AsoUtility::RotXZPos(
-				DEFAULT_CAMERA_POS, pointRPos, AsoUtility::Deg2RadF(90.0f));
+				DEFAULT_CAMERA_POS, prevPointRPos, AsoUtility::Deg2RadF(90.0f));
 			images_[m]->RotPointRMeshPos(pos, i);
 		}
 	}
@@ -288,22 +290,22 @@ void SelectScene::RoleUpdate(void)
 		characters_[i]->SetRole(images_[i]->GetRole());
 	}
 
-	//キャラクターの位置と向きを設定
+	//キャラクターの位置と向きをカメラの回転をもとに設定
 	for (int i = 1; i < camera.size(); i++)
 	{
+		//位置
 		characters_[i]->SetPos(AsoUtility::RotXZPos(DEFAULT_CAMERA_POS, characters_[i - 1]->GetFrontPos(), AsoUtility::Deg2RadF(90.0f)));
 		characters_[i]->SetRot(Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-90.0f * i), 0.0f));
-
+		//向き
 		characters_[i]->SetChickenPos(AsoUtility::RotXZPos(DEFAULT_CAMERA_POS, characters_[i - 1]->GetChickenPos(), AsoUtility::Deg2RadF(90.0f)));
 		characters_[i]->SetRotChicken(Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-90.0f * i), 0.0f));
 	}
 
-	//全員準備完了状態で1Pが決定ボタン押下で説明の画面へ
+	//全員準備完了状態で1Pが決定ボタン押下で説明画面へ
 	if (checkAllReady && input_[0].config_ == KEY_CONFIG::DECIDE)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::EXP);
 	}
-
 }
 
 void SelectScene::MaxUpdate(void)
@@ -313,14 +315,17 @@ void SelectScene::MaxUpdate(void)
 
 void SelectScene::DisplayDraw(void)
 {
+	//画面複製していないので先頭だけ描画
 	images_[0]->Draw();
-
+	//ディスプレイ数選択用画像描画
 	DrawRotaGraph(Application::SCREEN_SIZE_X/2, IMAGE_POS_Y,1.0f, 0.0f, imgDisplay_, true);
 }
 
 void SelectScene::NumberDraw(void)
 {
+	//画面複製していないので先頭だけ描画
 	images_[0]->Draw();
+	//人数選択用画像描画
 	DrawRotaGraph(Application::SCREEN_SIZE_X / 2, IMAGE_POS_Y, 1.0f, 0.0f, imgPlayer_, true);
 }
 
@@ -328,6 +333,7 @@ void SelectScene::OperationDraw(void)
 {
 	auto camera = SceneManager::GetInstance().GetCameras();
 
+	//選択するのは1Pだけなので先頭だけ描画
 	images_[0]->Draw();
 
 	for (int i = 1; i < camera.size(); i++)
@@ -335,6 +341,7 @@ void SelectScene::OperationDraw(void)
 		enemys_[i]->Draw();
 	}
 
+	//ウィンドウが複製されていたら1Pにはデバイス選択を、他には待機中の画像を描画
 	if (SceneManager::GetInstance().GetNowWindow() < 1)
 	{ 
 		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, IMAGE_POS_Y, 1.0f, 0.0f, imgOperation_, true);
@@ -390,7 +397,7 @@ void SelectScene::Process1PInput(void)
 	}
 	
 	//2P以降は全員PAD入力
-	for (int i = 1; i < SceneManager::PLAYER_NUM; i++) {
+	for (int i = 1; i < PLAYER_NUM; i++) {
 		input_[i].cntl_ = SceneManager::CNTL::PAD;
 	}
 
@@ -419,12 +426,6 @@ void SelectScene::KeyBoardProcess(void)
 	if (ins.IsNew(KEY_INPUT_LEFT) || ins.IsNew(KEY_INPUT_A))	input_[0].config_ = KEY_CONFIG::LEFT;
 	if (ins.IsNew(KEY_INPUT_RIGHT) || ins.IsNew(KEY_INPUT_D))	input_[0].config_ = KEY_CONFIG::RIGHT;
 
-	////キーの押下判定(押した瞬間だけ)
-	//if (ins.IsTrgDown(KEY_INPUT_UP)  || ins.IsTrgDown(KEY_INPUT_W))input_[0].config_ = KEY_CONFIG::UP_TRG;
-	//if (ins.IsTrgDown(KEY_INPUT_DOWN) || ins.IsTrgDown(KEY_INPUT_S))input_[0].config_ = KEY_CONFIG::DOWN_TRG;
-	//if (ins.IsTrgDown(KEY_INPUT_LEFT) || ins.IsTrgDown(KEY_INPUT_A))input_[0].config_ = KEY_CONFIG::LEFT_TRG;
-	//if (ins.IsTrgDown(KEY_INPUT_RIGHT) || ins.IsTrgDown(KEY_INPUT_D))input_[0].config_ = KEY_CONFIG::RIGHT_TRG;
-
 	if (ins.IsTrgDown(KEY_INPUT_SPACE) || ins.IsTrgDown(KEY_INPUT_RETURN))input_[0].config_ = KEY_CONFIG::DECIDE;
 	if (ins.IsTrgDown(KEY_INPUT_C))input_[0].config_ = KEY_CONFIG::CANCEL;
 }
@@ -434,9 +435,9 @@ void SelectScene::PadProcess(void)
 	auto& ins = InputManager::GetInstance();
 
 	// 左スティックの横軸
-	int leftStickX_[SceneManager::PLAYER_NUM];
+	int leftStickX_[PLAYER_NUM];
 	//縦軸
-	int leftStickY_[SceneManager::PLAYER_NUM];
+	int leftStickY_[PLAYER_NUM];
 
 	leftStickX_[0] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLX;
 	leftStickX_[1] = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD2).AKeyLX;
@@ -517,6 +518,7 @@ bool SelectScene::IsAllReady(void)
 	auto camera = SceneManager::GetInstance().GetCameras();
 	for (int i = 0; i < camera.size(); i++)
 	{
+		//一人でも準備ができていなかったらfalse
 		if (!isOk_[i])
 		{
 			return false;

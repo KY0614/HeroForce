@@ -7,17 +7,26 @@
 class SelectCharacter : public UnitBase
 {
 public:
-	//キャラクター関連
-	static constexpr float ROT_SPEED = 0.5f;
 
-	static constexpr float ANIM_SPEED = 20.0f;
-	static constexpr float CHICKEN_SPEED =40.0f;
-	static constexpr int IDLE_ANIM = 36;
-	static constexpr int KNIGHT_ANIM = 1;
-	static constexpr int AXE_ANIM = 2;
-	static constexpr int MAGE_ANIM = 61;
-	static constexpr int ARCHER_ANIM = 6;
-	static constexpr int SWING_ANIM = 6;
+	//キャラクター関連
+	static constexpr float ROT_SPEED = 0.5f;			//キャラクターの回転速度
+
+	//キャラクターアニメーション関連
+	static constexpr float ANIM_SPEED = 20.0f;			//キャラクターのアニメーション速度
+
+	static constexpr float CHICKEN_SPEED = 40.0f;		//チキンのアニメーション速度
+
+	static constexpr int IDLE_ANIM = 36;				//IDLEアニメーション番号
+
+	static constexpr int KNIGHT_ANIM = 1;				//騎士用アニメーション番号
+
+	static constexpr int AXE_ANIM = 2;					//斧使い用アニメーション番号
+
+	static constexpr int MAGE_ANIM = 61;				//魔法使いアニメーション番号
+
+	static constexpr int ARCHER_ANIM = 6;				//弓使いアニメーション番号
+
+	static constexpr int CHICKEN_SWINGHAND_ANIM = 6;	//チキン用アニメーション番号
 
 	//コンストラクタ
 	SelectCharacter(void);

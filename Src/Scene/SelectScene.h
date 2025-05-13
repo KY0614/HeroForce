@@ -1,9 +1,7 @@
 #pragma once
 #include <functional>
 #include "SceneBase.h"
-#include "../Object/Common/Transform.h"
 #include "../Manager/Generic/SceneManager.h"
-#include "../Common/Vector2.h"
 
 class SkyDome;
 class StageManager;
@@ -15,31 +13,21 @@ class SelectScene :public SceneBase
 {
 public:
 
-	//#define DEBUG_RECT
+	//キャラクター関連
+	static constexpr int PLAYER_NUM = SceneManager::PLAYER_NUM;	//最大プレイ人数
 
-	//三角形用の定数
-	static constexpr int TRI_SCALE = 150;	//大きさ
-	static constexpr int TRI_POS_X = Application::SCREEN_SIZE_X / 2;	//X座標
-	static constexpr int TRI_POS_Y = Application::SCREEN_SIZE_Y / 2;	//Y座標
+	static constexpr int ROLE_NUM = SceneManager::PLAYER_NUM;	//最大役職数
 
-	//四角形の大きさ
-	static constexpr int RECT_SCALE = 300;
-
-	//図形同士の間隔
-	static constexpr int PRI_SPACE = 100;
-
-	static constexpr int PLAYER_NUM = SceneManager::PLAYER_NUM;
-	static constexpr int ROLE_NUM = SceneManager::PLAYER_NUM;
+	static constexpr float CHARACTER_SCALE = 0.5f;				//キャラクターの拡大率
 
 	//カメラ関連
 	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 100.0f, -500.0f };		//カメラの座標
 	static constexpr VECTOR DEFAULT_TARGET_POS = { 0.0f, 150.0f, -100.0f };		//カメラの注視点座標
 
-	static constexpr float CHARACTER_SCALE = 0.5f;
 
 	//画像関連
-	static constexpr int IMAGE_POS_Y = 60;
-	static constexpr int WAITIMAGE_POS_Y = 60;
+	static constexpr int IMAGE_POS_Y = 60;		//画像のY座標
+	static constexpr int WAITIMAGE_POS_Y = 60;	//待機中画像のY座標
 
 	//選択している種類
 	enum class SELECT 
@@ -78,9 +66,13 @@ public:
 	// デストラクタ
 	~SelectScene(void);
 
+	// 初期化処理
 	virtual void Init(void) override;
+	// 更新ステップ
 	virtual void Update(void) override;
+	// 描画処理
 	virtual void Draw(void) override;
+	// 解放処理
 	virtual void Release(void) override;
 
 	/// <summary>

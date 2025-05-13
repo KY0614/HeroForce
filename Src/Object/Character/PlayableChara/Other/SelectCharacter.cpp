@@ -1,14 +1,12 @@
 #include "../../../../Manager/Generic/ResourceManager.h"
-#include "../PlayerBase.h"
-#include "../../Chiken/ChickenBase.h"
 #include "SelectCharacter.h"
 
 SelectCharacter::SelectCharacter(void)
 {
 	role_ = -1;
-	for (auto& animTime : animChangeTime_)
+	for (int i = 0; i < 4; i++) 
 	{
-		animTime = -1.0f;
+		animChangeTime_[i] = -1.0f;
 	}
 }
 
@@ -35,7 +33,7 @@ void SelectCharacter::Init(void)
 	animNumArray_[3].emplace(ANIM::SKILL_1, ARCHER_ANIM);
 
 	//チキン用
-	animNum_.emplace(ANIM::UNIQUE_1, SWING_ANIM);
+	animNum_.emplace(ANIM::UNIQUE_1, CHICKEN_SWINGHAND_ANIM);
 	ResetAnim(ANIM::UNIQUE_1, CHICKEN_SPEED);
 
 	//アニメーション時間を初期化
@@ -43,6 +41,8 @@ void SelectCharacter::Init(void)
 	{
 		animTime = 0.0f;
 	}
+
+	//初期の役職を騎士にしとく
 	role_ = 0;
 }
 
@@ -83,6 +83,7 @@ void SelectCharacter::Draw(void)
 
 void SelectCharacter::SetPos(VECTOR pos)
 {
+	//配列の座標を順々に設定
 	for (auto& tran_ : transArray_)
 	{
 		tran_.pos = pos;
