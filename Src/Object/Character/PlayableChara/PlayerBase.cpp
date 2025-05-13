@@ -25,38 +25,38 @@ PlayerBase::PlayerBase(void)
 
 	isBuff_ = false;
 	isBuffing_ = false;
-	colPos_ = { 0.0f,0.0f,0.0f };
+	colPos_ = AsoUtility::VECTOR_ZERO;
 	isSkill_ = false;
 	skillNo_ = ATK_ACT::SKILL1;
-
+	padNum_ = InputManager::JOYPAD_NO::INPUT_KEY;
 	moveSpeed_ = 0.0f;
-
 	atk_.isHit_ = false;
-
 	multiHitInterval_ = 0.0f;
-
 	atkStartCnt_ = 0.0f;
-
 	isPush_ = false;
-
 	dodge_ = nullptr;
-
 	moveAble_ = true;
-
 	isSerchArcher_ = false;
-
 	isBuffing_ = false;
-
 	bufAtk_ = atkPow_;
 	bufDef_ = defDef_;
 	bufSpd_ = defSpeed_;
-
 	speed_ = 0.0f;
-
 	initPos_[0] = PLAYER1_POS;
 	initPos_[1] = PLAYER2_POS;
 	initPos_[2] = PLAYER3_POS;
 	initPos_[3] = PLAYER4_POS;
+	preAtkPow_ = atkPow_;
+	preDef_ = def_;
+	preSpd_ = moveSpeed_;
+	role_ = SceneManager::ROLE::NONE;
+	targetPos_ = AsoUtility::VECTOR_ZERO;
+	atkType_ = ATK_TYPE::MAX;
+	for (int i = 0; i < static_cast<int>(ATK_TYPE::MAX); i++)
+	{
+		atkTypes_[i] = ATK_TYPE::MAX;
+	}
+
 
 	for (int i = 0; i < static_cast<int>(ATK_ACT::MAX); i++)
 	{
@@ -84,7 +84,6 @@ void PlayerBase::Init(void)
 {
 	//アニメーションNo初期化
 	InitAnimNum();
-
 
 	InitCharaAnim();
 
@@ -170,14 +169,11 @@ void PlayerBase::Update(void)
 #ifdef INPUT_DEBUG_ON
 	InputUpdate();
 #endif // INPUT_DEBUG_ON
-
-
 	//座標のバックアップ
 	prePos_ = trans_.pos;
 
 	//モデルの更新
 	trans_.Update();
-
 	SyncActPos(atk_);
 
 	colPos_ = VAdd(trans_.pos, VScale(PLAYER_COL_LOCAL_POS, CHARACTER_SCALE));
@@ -191,8 +187,6 @@ void PlayerBase::Update(void)
 	SubHp();
 
 	BuffUpdate();
-
-
 #ifdef DEBUG_ON
 
 
@@ -266,12 +260,12 @@ void PlayerBase::InitAnimNum(void)
 
 void PlayerBase::InitCharaAnim(void)
 {
-
+	//スタブ
 }
 
 void PlayerBase::InitAct(void)
 {
-
+	//スタブ
 }
 
 void PlayerBase::ChangeAct(const ATK_ACT _act)
@@ -602,7 +596,7 @@ void PlayerBase::CoolTimePerCalc(void)
 
 bool PlayerBase::IsSkillable(void)
 {
-	{ return !IsAtkAction() && !dodge_->IsDodge(); }
+	return !IsAtkAction() && !dodge_->IsDodge();
 }
 
 void PlayerBase::SkillChange(void)

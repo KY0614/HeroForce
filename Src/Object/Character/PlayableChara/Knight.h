@@ -154,8 +154,5 @@ protected:
     void InitCharaAnim(void)override;
 
 private:
-
-    //ƒƒ“ƒo•Ï”
-    float guardCnt_;        //ƒK[ƒhŠÔ
 };
 

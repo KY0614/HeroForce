@@ -109,12 +109,10 @@ protected:
     //固有アニメーション番号の初期化
     void InitCharaAnim(void)override;
 
-    //void ChargeAct(void)override;
     //攻撃入力
     void NmlAtkInit(void)override;
     //スキル入力
     void SkillOneInit(void)override;
     void SkillTwoInit(void)override;
-    //void ResetParam(ATK_ACT _act)override;
 };
 

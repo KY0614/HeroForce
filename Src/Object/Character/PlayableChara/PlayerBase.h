@@ -225,8 +225,6 @@ public:
     const float* GetCoolTimePer(void) { return coolTimePer_; }
 
     //バフされているかゲッタ
-    //const bool GetIsBuff(void) { return isBuff_; }
-
     const bool GetIsBuff(SKILL_BUFF _skill) { return buffs_[_skill].isBuff; }
 
     //矢などの遠距離武器のゲッタ(KnightとArcherで使う)
@@ -359,19 +357,6 @@ protected:
     //*************************************************
     // 列挙型
     //*************************************************
-    struct PlayerAtk
-    {
-        ATK_ACT act_;
-        float atkStartCnt_;
-        ATK atk_;
-        float CoolTime_[static_cast<int>(ATK_ACT::MAX)];
-        float CoolTimeMax_[static_cast<int>(ATK_ACT::MAX)];                //クールタイム最大
-        std::map<ATK_ACT, ATK>atkMax_;
-        float atkStartTime_[static_cast<int>(ATK_ACT::MAX)];            //攻撃発生時間
-        bool IsAtkStart(void) { return 0.0f < atkStartCnt_ && atkStartCnt_ <= atkStartTime_[static_cast<int>(act_)]; }
-    };
-
-
     //*************************************************
     // メンバ変数
     //*************************************************
@@ -392,13 +377,8 @@ protected:
     bool isSerchArcher_;                                        //アーチャーの射程圏内に入ったかどうか
     float speed_;                                               //プレイヤーのスピード(ステータスではなく1フレームに動くもの)
 
-
-
     //誰をターゲットにするか
     VECTOR targetPos_;
-
- 
-
 
     bool isPush_;                                               //長押しスキル用のボタンを押しているかどうか  true:押している
     bool moveAble_;             //移動可能かを返す  true:移動可能

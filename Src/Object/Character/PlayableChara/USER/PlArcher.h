@@ -1,15 +1,14 @@
 #pragma once
-#include"../Manager//\Generic/SceneManager.h"
-#include"../Manager//\Generic/InputManager.h"
-
 #include"../../../JobManagerBase.h"
 
 class PlArcher :public JobManagerBase
 {
 public:
 	//定数
-	static constexpr float SKILL_ONE_START_NOCHARGE = 0.2;
+	static constexpr float SKILL_ONE_START_NOCHARGE = 0.5f;
 
+	//エフェクトを再生するためにデルタタイムを定数にする
+	static constexpr float DELTA_TIME = 1.0f / 60.0f;
 
 	PlArcher(const SceneManager::CNTL _cntl);
 	PlArcher(const InputManager::JOYPAD_NO _padNum);

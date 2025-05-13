@@ -122,7 +122,5 @@ private:
 
     //CPUˆÚ“®
     void CpuMove(VECTOR _targetPos);
-
-
 };
 

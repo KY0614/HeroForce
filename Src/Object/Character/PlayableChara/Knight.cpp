@@ -32,7 +32,6 @@ void Knight::SetParam(void)
 	auto& resIns = ResourceManager::GetInstance();
 	using EFFECT = EffectManager::EFFECT;
 	effIns.Add(EFFECT::GUARD, resIns.Load(ResourceManager::SRC::GUARD).handleId_);
-
 }
 
 void Knight::Update(void)
@@ -159,7 +158,6 @@ void Knight::Skill1Func(void)
 			isSkill_ = false;
 		}
 	}
-
 }
 
 void Knight::Skill2Func(void)
@@ -196,7 +194,6 @@ void Knight::Skill2Func(void)
 				GUARD_EFFECT_SIZE,
 				SoundManager::SOUND::NONE);
 		}
-	
 	}
 	//ボタンを押していても残りクールタイムが3秒以下だったら
 	else if (coolTime_[static_cast<int>(SKILL_NUM::TWO)] <= SKILL_TWO_START_COOLTIME)

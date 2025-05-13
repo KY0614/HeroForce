@@ -5,6 +5,11 @@
 
 Arrow::Arrow(void)
 {
+	atkPow_=0.0f;
+	isAlive_=true;
+	speed_ = 0.0f;
+	state_=STATE::NONE;
+	targetPos_=AsoUtility::VECTOR_ZERO;
 }
 
 void Arrow::Init(const int _mdlId, const Transform& _trans, const float _speed)

@@ -1,6 +1,8 @@
 #include"../Archer.h"
 #include"../../PlayerInput.h"
+#include"../Manager/\Generic/SceneManager.h"
 #include "PlArcher.h"
+
 
 PlArcher::PlArcher(const SceneManager::CNTL _cntl)
 {
@@ -11,6 +13,7 @@ PlArcher::PlArcher(const SceneManager::CNTL _cntl)
 PlArcher::PlArcher(const InputManager::JOYPAD_NO _padNum)
 {
 	info_.cntrol_ = SceneManager::CNTL::PAD;
+	input_ = std::make_shared<PlayerInput>();
 	padNum_ = _padNum;
 }
 
@@ -76,36 +79,37 @@ void PlArcher::SkillOneInput(void)
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
 	int skillOne = static_cast<int>(ATK_ACT::SKILL1);
-	if (!obj_->GetIsCool(ATK_ACT::SKILL1))
+	//クール中は処理しない
+	if (obj_->GetIsCool(ATK_ACT::SKILL1))return;
+
+	if (input_->CheckAct(ACT_CNTL::SKILL_DOWN) && !obj_->IsAtkStart())
 	{
-		if (input_->CheckAct(ACT_CNTL::SKILL_DOWN) && !obj_->IsAtkStart())
+		SkillOneInit();
+	}
+	//スキル(長押しでガード状態維持)
+	if (input_->CheckAct(ACT_CNTL::SKILL_KEEP) && obj_->IsAtkStart())
+	{
+		//押している反応
+		//CntUp(atkStartCnt_);
+	}
+	else if (input_->CheckAct(ACT_CNTL::SKILL_UP) && obj_->IsAtkStart())
+	{
+		if (obj_->GetAtkStartCnt() <= SKILL_ONE_START_NOCHARGE)
 		{
-			SkillOneInit();
+			obj_->SetAtkStartTime(SKILL_ONE_START_NOCHARGE, ATK_ACT::SKILL1);
 		}
-		//スキル(長押しでガード状態維持)
-		if (input_->CheckAct(ACT_CNTL::SKILL_KEEP) && obj_->IsAtkStart())
+		else
 		{
-			//押している反応
-			//CntUp(atkStartCnt_);
-		}
-		else if (input_->CheckAct(ACT_CNTL::SKILL_UP) && obj_->IsAtkStart())
-		{
-			if (obj_->GetAtkStartCnt() <= SKILL_ONE_START_NOCHARGE)
-			{
-				obj_->SetAtkStartTime(SKILL_ONE_START_NOCHARGE, ATK_ACT::SKILL1);
-			}
-			else
-			{
-				float atkStartCnt = obj_->GetAtkStartCnt();
-				obj_->SetAtkStartTime(atkStartCnt, ATK_ACT::SKILL1);
-			}
+			float atkStartCnt = obj_->GetAtkStartCnt();
+			obj_->SetAtkStartTime(atkStartCnt, ATK_ACT::SKILL1);
 		}
 	}
+
 }
 
 void PlArcher::AtkInit(void)
 {
-	float deltaTime = 1.0f / 60.0f;
+	float deltaTime = DELTA_TIME;
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
 	obj_->ChangeAct(ATK_ACT::ATK);
@@ -117,7 +121,7 @@ void PlArcher::AtkInit(void)
 
 void PlArcher::SkillOneInit(void)
 {
-	float deltaTime = 1.0f / 60.0f;
+	float deltaTime = DELTA_TIME;
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
 	obj_->ChangeAct(ATK_ACT::SKILL1);
@@ -136,7 +140,7 @@ void PlArcher::SkillTwoInput(void)
 }
 void PlArcher::SkillTwoInit(void)
 {
-	float deltaTime = 1.0f / 60.0f;
+	float deltaTime = DELTA_TIME;
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
 	obj_->ChangeAct(ATK_ACT::SKILL2);

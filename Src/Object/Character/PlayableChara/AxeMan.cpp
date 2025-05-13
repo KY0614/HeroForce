@@ -104,8 +104,6 @@ void AxeMan::Draw(void)
 #ifdef DEBUG_ON
 	DrawDebug();
 #endif // DEBUG_ON
-
-	
 }
 
 void AxeMan::InitCharaAnim(void)

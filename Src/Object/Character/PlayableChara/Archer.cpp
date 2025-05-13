@@ -31,14 +31,10 @@ Archer::Archer(void)
 
 	isShotArrow_ = false;
 
-	//攻撃可能時間
-	atkAbleCnt_ = 0.0f;
 
 	backrashCnt_ = 0.0f;
 
 	arrowMdlId_ = -1;
-
-	reloadCnt_ = 0.0f;
 
 	for (int i = 0; i < static_cast<int>(ATK_TYPE::MAX); i++)
 	{
@@ -107,9 +103,6 @@ void Archer::SetParam(void)
 	EffectManager::GetInstance().Add(EFFECT::CHARGE_SKILL,
 		ResourceManager::GetInstance().Load(ResourceManager::SRC::CHARGE_SKILL).handleId_);
 
-	atkAbleCnt_ = 0;
-
-
 	for (int i = 0; i < static_cast<int>(ATK_TYPE::MAX); i++)
 	{
 		arrowCnt_[i] = 0;
@@ -160,14 +153,7 @@ void Archer::InitAtk(void)
 
 	isShotArrow_ = false;
 
-	//攻撃可能時間
-	atkAbleCnt_ = 0.0f;
-
 }
-
-
-
-
 
 void Archer::CreateArrow(ATK_TYPE _type)
 {
@@ -283,8 +269,6 @@ void Archer::Draw(void)
 			arrow.get()->Draw();
 		}
 	}
-
-
 #ifdef DEBUG_ON
 	DrawDebug();
 #endif // DEBUG_ON
@@ -347,6 +331,7 @@ void Archer::Skill1Func(void)
 				SoundManager::SOUND::NONE);
 		}
 		CntUp(atkStartCnt_);
+		moveAble_ = false;
 		if (isSerchArcher_)
 		{
 			VECTOR targetVec = GetTargetVec(targetPos_, false);
@@ -468,19 +453,10 @@ void Archer::ArrowUpdate(ATK_TYPE _type)
 				//存在している矢を減らす
 				arrowCnt_[static_cast<int>(_type)]--;
 			}
-
 			arrow_[_type][a].get()->Destroy();
-
 		}
 		//更新
 		arrow_[_type][a].get()->Update(arrowAtk_[_type][a]);
-
-		////エフェクト設定
-		//EffectManager::GetInstance().SyncEffect(
-		//	EffectManager::EFFECT::ARROW_RED,
-		//	arrowAtk_[_type][a].pos_,
-		//	trans_.GetForward(),
-		//	ARROW_EFFECT_SIZE);
 	}
 }
 void Archer::InitArrowAtk(ATK& arrowAtk)

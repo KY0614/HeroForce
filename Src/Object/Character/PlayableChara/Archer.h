@@ -66,10 +66,6 @@ public:
     //プレイヤー自体の後隙
     static constexpr float SKILL1_BACKRASH_MAX = 0.5f;
 
-
-
-
-
     //-----------------------------------------------------------
 
     //スキル2
@@ -145,11 +141,6 @@ public:
     //バフ
     void Buff(PlayerBase& _target)override;
 
-    //ヒットのセッタ
-    //void SetIsArrowHit(const bool _flg, ATK _atk)override { _atk.isHit_ = _flg; }
-
-    //std::vector<ATK>GetAtks(void)override { return arrowAtk_; }
-
     std::vector<ATK> GetAtks(ATK_TYPE _type)override { return arrowAtk_[_type]; }
     void Destroy(void)override;
 
@@ -169,13 +160,8 @@ protected:
     //矢と矢に対応した攻撃に対応する更新処理(スキルに名前を付けてやってみる)
     void ArrowUpdate(ATK_TYPE _type);
 
-    //弓連射用
-    //void NmlActCommon (void)override;
-
     //弓矢一つのatk初期化
     void InitArrowAtk(ATK& arrowAtk);
-
-    //std::vector<ATK>arrowAtk_;
 
     std::map<ATK_TYPE, std::vector<ATK>>arrowAtk_;
 
@@ -187,9 +173,8 @@ protected:
 
     //各攻撃の矢の個数カウント
     int arrowCnt_[static_cast<int>(ATK_TYPE::MAX)];								//矢の使用個数カウンタ
-    float reloadCnt_;							//矢のリロード時間
 
-    float atkAbleCnt_;                          //矢の発射可能カウント
+
     float backrashCnt_;                            //アーチャー自体の後隙
 };
 
