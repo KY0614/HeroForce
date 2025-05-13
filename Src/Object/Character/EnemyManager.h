@@ -18,14 +18,17 @@ public:
 	static constexpr int ENEMY_MAX = 8;		//敵の出現最大数
 
 	//フェーズ
-	static constexpr int PHASE_FIRST = 1;					//最初のフェーズ
+	static constexpr int PHASE_ONE = 1;						//最初のフェーズ
+	static constexpr int PHASE_TWO = 2;						//フェーズ2
+	static constexpr int PHASE_LAST = 3;					//最後のフェーズ
 	static constexpr int PHASE_ONE_INIT_CREATE_ENEMY = 4;	//フェーズ1の敵の初期生成数
 	static constexpr int PHASE_TWO_INIT_CREATE_ENEMY = 6;	//フェーズ2の敵の初期生成数
 
 	//敵の出現関係
-	static constexpr float GENELATE_RADIUS = 300.0f;			//敵の出現半径
-	static constexpr float ENEMY_DISTANCE = 20.0f;				//敵間の距離
-	static constexpr float CREATE_INTERVAL = 5.0f;				//敵の生成間隔
+	static constexpr float GENELATE_RADIUS = 300.0f;	//敵の出現半径
+	static constexpr float ENEMY_DISTANCE = 20.0f;		//敵間の距離
+	static constexpr float CREATE_INTERVAL = 5.0f;		//敵の生成間隔
+	static constexpr int GOLEM_SPAWN = 1;				//ボスの出現位置
 
 	//ループの制限
 	static constexpr int RETRY_LIMIT = 200;	//ループ回数上限

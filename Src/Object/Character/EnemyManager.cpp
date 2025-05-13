@@ -43,7 +43,7 @@ void EnemyManager::Init(void)
 
 	createIntCnt_ = 0.0f;
 
-	ProcessChangePhase(PHASE_FIRST);
+	ProcessChangePhase(PHASE_ONE);
 }
 
 void EnemyManager::Update(void)
@@ -196,7 +196,7 @@ void EnemyManager::CreateBoss(void)
 	std::unique_ptr<Enemy> enm;
 
 	//生成相対座標
-	VECTOR createLocalPos = createPos_[1];
+	VECTOR createLocalPos = createPos_[GOLEM_SPAWN];
 
 	//ゴーレムの生成
 	enm = std::make_unique<EneGolem>(createLocalPos);
@@ -222,7 +222,7 @@ void EnemyManager::CreateBoss(void)
 void EnemyManager::DeleteAllEnemy(void)
 {
 	for (int i = activeNum_ - 1; i >= 0;i--) {
-		if (activeEnemys_[i] == nullptr)
+		if (activeEnemys_[i] == nullptr || activeEnemysType_[i] == TYPE::MAX)
 			continue;
 
 		//敵をすべて削除
@@ -258,7 +258,7 @@ void EnemyManager::DeathEnemy(int _num)
 	if (_num == activeNum_)return;
 
 	//挿入処理
-	//deleteをすると移行された側の情報も消えるのでnullptr設定のみ　移動方法はstd::moveでもあり
+	//末尾配列を消去した配列に移す
 	activeEnemys_[_num] = std::move(activeEnemys_[activeNum_]);
 	activeEnemysType_[_num] = activeEnemysType_[activeNum_];
 }
@@ -267,23 +267,34 @@ void EnemyManager::ProcessChangePhase(const int _phase)
 {
 	//敵の削除
 	DeleteAllEnemy();
+
+	//倒した敵の数初期化
 	dunkCnt_ = 0;
 
 	//敵の初期作成数
 	int createNum = 0;
 
 	//フェーズによって作成する敵の数を変える
-	if (_phase == 1)
-		createNum = PHASE_ONE_INIT_CREATE_ENEMY;
-	else if (_phase == 2)
-		createNum = PHASE_TWO_INIT_CREATE_ENEMY;
-	else if (_phase == 3)
+	switch (_phase)
 	{
-		//ボスの作成
+	case PHASE_ONE:
+		//フェーズ1の時
+		createNum = PHASE_ONE_INIT_CREATE_ENEMY;
+		break;
+
+	case PHASE_TWO:
+		//フェーズ2の時
+		createNum = PHASE_TWO_INIT_CREATE_ENEMY;
+		break;
+
+	case PHASE_LAST:
+		//ボスの生成
 		CreateBoss();
 		return;
+
+	default:
+		return;
 	}
-	else return;
 
 	for (int i = 0; i < createNum; i++)
 	{
