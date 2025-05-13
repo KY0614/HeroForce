@@ -31,7 +31,7 @@ public:
 	static constexpr float EFFECT_RATE = 1.5f;
 
 	//維持秒数
-	static constexpr int MAINTAIN_SECONDS = static_cast<int>(1.5f * Application::DEFAULT_FPS);
+	static constexpr float MAINTAIN_SECONDS =1.5f;
 
 	//フォント関連
 	static constexpr int FONT_TEXT_SIZE = Application::SCREEN_SIZE_X * 156 / Application::DEFA_SCREEN_SIZE_X;
@@ -39,7 +39,7 @@ public:
 	static constexpr int FONT_THICK = 3;
 
 	//透過開始時間(レベルテキスト)
-	static constexpr float START_ALPHA_LEVEL =static_cast<float>( 2 * Application::DEFAULT_FPS);
+	static constexpr float START_ALPHA_LEVEL =2;
 
 	//エフェクトスピード
 	static constexpr int EFFECT_ANIM_SPPED = 3;
