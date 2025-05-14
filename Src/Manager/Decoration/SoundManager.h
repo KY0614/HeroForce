@@ -96,7 +96,7 @@ private:
 	static SoundManager* instance_;
 
 	//データ格納用
-	std::unordered_map<SOUND, SOUND_DATA>sounds_;
+	std::unordered_map<SOUND, SOUND_DATA>sounds_ = {};
 
 	//コンストラクタ＆デストラクタ
 	SoundManager() = default;

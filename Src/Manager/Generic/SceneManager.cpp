@@ -74,7 +74,7 @@ void SceneManager::Init(void)
 
 	//メインウィンドウを追加
 	subWindowH_.push_back(NULL);
-	activeWindowNum_ = 1;	//メインをアクティブにするので初期値１
+	activeWindowNum_ = MAIN_WINDOW_NUM;	//メインをアクティブにするので初期値１
 	nowWindowNum_ = 0;
 }
 
@@ -82,7 +82,7 @@ void SceneManager::Init3D(void)
 {
 
 	// 背景色設定
-	SetBackgroundColor(0, 0, 0);
+	SetBackgroundColor(BACK_COLOR, BACK_COLOR ,BACK_COLOR);
 
 	// Zバッファを有効にする
 	SetUseZBuffer3D(true);
@@ -97,15 +97,15 @@ void SceneManager::Init3D(void)
 	SetUseLighting(true);
 
 	// 正面から斜め下に向かったライト
-	ChangeLightTypeDir({ 0.00f, -1.00f, 1.00f });
+	ChangeLightTypeDir(LIGHT_DIR);
 
 	// ライトの設定
 	//ChangeLightTypeDir({ 0.3f, -0.7f, 0.8f });
 
 	// フォグ設定
 	SetFogEnable(true);
-	SetFogColor(5, 5, 5);
-	SetFogStartEnd(10000.0f, 20000.0f);
+	SetFogColor(FOG_COLOR, FOG_COLOR, FOG_COLOR);
+	SetFogStartEnd(FOG_START, FOG_END);
 
 }
 
@@ -143,8 +143,7 @@ void SceneManager::Draw(void)
 	// (３Ｄ描画で使用するカメラの設定などがリセットされる)
 	SetDrawScreen(DX_SCREEN_BACK);
 
-	for (HWND hwnd : subWindowH_)
-	{
+	for (HWND hwnd : subWindowH_){
 		//カウンタがウィンドウのアクティブ数を超えたら終了
 		if (cnt >= activeWindowNum_)return;
 
@@ -236,18 +235,12 @@ void SceneManager::ResetCameras(void)
 {
 	auto size = cameras_.size();
 	//末尾から消していくので最後の一つが残るように調整
-	size -= 1;
-	for (int i = 0; i < size; i++)
-	{
+	size --;
+	for (int i = 0; i < size; i++){
 		cameras_.pop_back();
 	}
 }
 
-
-/// <summary>
-/// ウィンドウの追加
-/// </summary>
-/// <param name="_mode"></param>
 void SceneManager::SetSubWindowH(HWND _mode)
 {
 	subWindowH_.push_back(_mode);
@@ -262,8 +255,7 @@ void SceneManager::RedySubWindow(void)
 	SetWindowPram();
 
 	//すでに一つは生成されているので初期値は①
-	for (int i = 1; i < num; i++)
-	{
+	for (int i = 1; i < num; i++){
 		//生成及び初期化
 		auto c = std::make_shared<Camera>();
 		c->Init();
@@ -275,12 +267,10 @@ void SceneManager::RedySubWindow(void)
 //ウィンドウの状態を変える
 void SceneManager::ChangeWindowMode(const Application::WINDOW _mode)
 {
-	int cnt = 1;
-	for (HWND hwnd : subWindowH_)
-	{
+	int cnt = MAIN_WINDOW_NUM;
+	for (HWND hwnd : subWindowH_){
 		if (cnt > activeWindowNum_)return;
-		if (cnt == 1)
-		{
+		if (cnt == MAIN_WINDOW_NUM){
 			cnt++;
 			continue;
 		}
@@ -294,11 +284,9 @@ void SceneManager::SetHideSubWindows(void)
 {
 	//少し雑に作るので要見直し
 	//もしかしたらこの関数すらいらない可能性はある
-	int cnt = 1;
-	for (HWND hwnd : subWindowH_)
-	{
-		if (cnt == 1)	//メインウィンドウはスキップ
-		{
+	int cnt = MAIN_WINDOW_NUM;
+	for (HWND hwnd : subWindowH_){
+		if (cnt == MAIN_WINDOW_NUM){	//メインウィンドウはスキップ
 			cnt++;
 			continue;
 		}
@@ -312,32 +300,37 @@ void SceneManager::SetHideSubWindows(void)
 void SceneManager::ReturnSolo(void)
 {
 	//画面枚数を一枚に戻す
-	SetActiveNum(1);
+	SetActiveNum(MAIN_WINDOW_NUM);
 	//サブウィンドウを隠す
 	SetHideSubWindows();
 	//フルスクに戻る
-	SetWindowSize(1960, 1080);
+	SetWindowSize(Application::DEFA_SCREEN_SIZE_X, Application::DEFA_SCREEN_SIZE_Y);
 }
 
 
 
 SceneManager::SceneManager(void)
 {
-
 	sceneId_ = SCENE_ID::NONE;
 	waitSceneId_ = SCENE_ID::NONE;
+
+	subWindowH_ = {};
+	activeWindowNum_ = -1;
+	nowWindowNum_ = -1;
+	cameras_ = {};
 
 	scene_ = nullptr;
 	fader_ = nullptr;
 
 	isSceneChanging_ = false;
 	// デルタタイム
-	deltaTime_ = 1.0f / 60.0f;	
+	deltaTime_ = DELTA_TIME;	
+	preTime_ = std::chrono::system_clock::now();
 }
 
 void SceneManager::ResetDeltaTime(void)
 {
-	deltaTime_ = 0.016f;
+	deltaTime_ = DELTA_TIME_INIT;
 	preTime_ = std::chrono::system_clock::now();
 }
 
@@ -354,14 +347,12 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	sceneId_ = sceneId;
 
 	// 現在のシーンを解放
-	if (scene_ != nullptr)
-	{
+	if (scene_ != nullptr){
 		scene_->Release();
 		delete scene_;
 	}
 
-	switch (sceneId_)
-	{
+	switch (sceneId_){
 	case SCENE_ID::TITLE:
 		ChangeWindowMode(Application::WINDOW::HIDE);
 		scene_ = new TitleScene();
@@ -375,9 +366,6 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	
 	case SCENE_ID::GAME:
 		//ウィンドウの設定
-
-		
-
 		RedySubWindow();
 		scene_ = new GameScene();
 		resM.InitGame();
@@ -411,12 +399,10 @@ void SceneManager::Fade(void)
 {
 
 	Fader::STATE fState = fader_->GetState();
-	switch (fState)
-	{
+	switch (fState){
 	case Fader::STATE::FADE_IN:
 		// 明転中
-		if (fader_->IsEnd())
-		{
+		if (fader_->IsEnd()){
 			// 明転が終了したら、フェード処理終了
 			fader_->SetFade(Fader::STATE::NONE);
 			isSceneChanging_ = false;
@@ -424,8 +410,7 @@ void SceneManager::Fade(void)
 		break;
 	case Fader::STATE::FADE_OUT:
 		// 暗転中
-		if (fader_->IsEnd())
-		{
+		if (fader_->IsEnd()){
 			// 完全に暗転してからシーン遷移
 			DoChangeScene(waitSceneId_);
 			// 暗転から明転へ
@@ -472,27 +457,23 @@ void SceneManager::SetWindowPram(void)
 	if (activeWindowNum_ > displayNum)sizeY /= 2;
 	if (sizeX > DISPLAY_X)sizeX = DISPLAY_X;
 
-	for (HWND hwnd : subWindowH_)
-	{
+	for (HWND hwnd : subWindowH_){
 		//cntは配列の要素数を表すのでactiveWindow未満の間だけ
 		if (cnt >= activeWindowNum_)return;
 		cnt++;
 
-		if (cnt == 1)
-		{
-			SetWindowSize(sizeX - 15, sizeY - 30);
+		if (cnt == MAIN_WINDOW_NUM){
+			SetWindowSize(sizeX - WINDOW_MARGIN / 2, sizeY - WINDOW_MARGIN);
 			//SetWindowSizeExtendRate(0.95, 0.95);
 			SetWindowPosition(posX, posY);
 		}
-		else
-		{
+		else{
 			SetWindowPos(hwnd, NULL, posX, posY, sizeX, sizeY, NULL);
 			//MoveWindow(hwnd, posX, posY, sizeX, sizeY, true);
 		}
 		posX += sizeX;
 
-		if (cnt == 2)
-		{
+		if (cnt == WINDOW_MAX_X){
 			posY += sizeY;
 			posX = 0;
 		}

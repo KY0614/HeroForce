@@ -6,7 +6,9 @@ class DataBank
 {
 	//cppやSceneをまたぎ扱う情報等を保存する
 public:
-
+	/// <summary>
+	/// プレイヤー情報
+	/// </summary>
 	struct PLAYER_INFO
 	{
 		SceneManager::CNTL cntrol_;
@@ -14,6 +16,9 @@ public:
 		SceneManager::ROLE role_;
 	};
 
+	/// <summary>
+	/// 各種情報
+	/// </summary>
 	enum class INFO
 	{
 		NONE,
@@ -35,15 +40,54 @@ public:
 
 	void Init(void);
 
-	//データ入力
-	void Input(const SceneManager::CNTL _cntl, const int _playerNum);		//コントロール方法の入力
-	void Input(const SceneManager::PLAY_MODE _mode, const int _playerNum);	//ユーザーかCPU科の入力
-	void Input(const SceneManager::ROLE _role, const int _playerNum);		//役職の入力
-	void Input(const INFO _info, const int _num);							//システムに関する数値入力（画面数・ユーザー数用）
+#pragma region 入力
+	/// <summary>
+	/// コントロール方法の入力
+	/// </summary>
+	/// <param name="_cntl">コントロールの方法(SceneManager::CNTL)を参照</param>
+	/// <param name="_playerNum">プレイヤー番号（何Pか)</param>
+	void Input(const SceneManager::CNTL _cntl, const int _playerNum);
 
-	//データ出力
-	const PLAYER_INFO Output(const int _playerNum);	//プレイヤーに関する情報を返す
-	const int Output(const INFO _info);				//システムに関する数値出力（画面数・ユーザー数用）
+
+	/// <summary>
+	/// ユーザーかCPUかの入力
+	/// </summary>
+	/// <param name="_mode">ユーザーかCPUか(SceneManager::PLAY_MODE)を参照</param>
+	/// <param name="_playerNum">プレイヤー番号</param>
+	void Input(const SceneManager::PLAY_MODE _mode, const int _playerNum);
+
+	/// <summary>
+	/// 役職の入力
+	/// </summary>
+	/// <param name="_role">役職(SceneManager::ROLE)参照</param>
+	/// <param name="_playerNum">プレイヤー番号</param>
+	void Input(const SceneManager::ROLE _role, const int _playerNum);
+
+	/// <summary>
+	/// システムに関する数値入力 ※ユーザー数・ディスプレイ数以外で使用しないこと！！
+	/// </summary>
+	/// <param name="_info">設定対象
+	/// (INFOのUSERとDISPLAYのみ)</param>
+	/// <param name="_num">数値</param>
+	void Input(const INFO _info, const int _num);
+#pragma endregion
+
+#pragma region 出力
+	/// <summary>
+	/// プレイヤー情報の出力
+	/// </summary>
+	/// <param name="_playerNum">プレイヤー番号</param>
+	/// <returns>プレイヤーに関する情報</returns>
+	const PLAYER_INFO Output(const int _playerNum);
+
+	/// <summary>
+	/// システムに関する数値出力（画面数・ユーザー数用）
+	/// </summary>
+	/// <param name="_info">対象
+	/// (INFOのUSERとDISPLAYのみ)</param>
+	/// <returns>システムに関する情報</returns>
+	const int Output(const INFO _info);
+#pragma endregion
 
 	// リソースの破棄
 	void Destroy(void);

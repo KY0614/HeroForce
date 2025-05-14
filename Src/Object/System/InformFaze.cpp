@@ -7,9 +7,9 @@ InformFaze::InformFaze(void)
 	informStrPos_ = { 0.0f,0.0f,0.0f };
 	fazeCnt_ = 0;
 	informCnt_ = 0;
-	missionImg_[0] = ResourceManager::GetInstance().Load(ResourceManager::SRC::MISSION_NOMAL).handleId_;
-	missionImg_[1] = ResourceManager::GetInstance().Load(ResourceManager::SRC::MISSION_LAST).handleId_;
-	font_ = CreateFontToHandle(NULL, 80, 4, DX_FONTTYPE_EDGE);
+	missionImg_[static_cast<int>(INFORM_TYPE::NOMAL)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::MISSION_NOMAL).handleId_;
+	missionImg_[static_cast<int>(INFORM_TYPE::LAST)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::MISSION_LAST).handleId_;
+	font_ = CreateFontToHandle(NULL, FONT_SIZE, FONT_THICK, DX_FONTTYPE_EDGE);
 	missionCnt_ = 0;
 
 	informStrPos_ = { 0.0f,STRING_SPOS_Y,0.0f };
@@ -47,7 +47,7 @@ void InformFaze::Draw(void)
 	if (informCnt_ <= INFORM_HARF)
 	{
 		//フェーズ数表示
-		DrawFormatStringToHandle(informStrPos_.x, informStrPos_.y, 0xff0000, font_, "第%dフェーズ", fazeCnt_);
+		DrawFormatStringToHandle(informStrPos_.x, informStrPos_.y, RED_COLOR, font_, "第%dフェーズ", fazeCnt_);
 		return;
 	}
 	
@@ -73,6 +73,6 @@ void InformFaze::SetFazeCnt(const int _cnt)
 	//カウント初期化
 	informCnt_ = 0;
 
-	if (fazeCnt_ == GameScene::LAST_FAZE)missionCnt_ = 1;
+	if (fazeCnt_ == GameScene::LAST_FAZE)missionCnt_ = FAZE_INIT;
 	else missionCnt_ = 0;
 }
