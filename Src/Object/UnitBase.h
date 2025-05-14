@@ -6,12 +6,9 @@
 #include"../Manager/GameSystem/Collision.h"
 #include"../Manager/GameSystem/CharacterParamData.h"
 
-//test
-
 class UnitBase
 {
 public:
-
 	//攻撃関係
 	struct ATK
 	{
@@ -21,9 +18,9 @@ public:
 		float duration_;	//持続時間（攻撃がどれくらい続くかを記述)
 		float backlash_;	//後隙（後隙がどれくらい続くかを記述)
 		float cnt_;			//カウンター
-		bool isHit_;
+		bool isHit_;		//当たったか
 
-	//攻撃中かどうか
+		//攻撃中かどうか
 		const bool IsAttack(void)const { return 0 < cnt_ && cnt_ <= duration_; };
 		//後隙がどうか
 		const bool IsBacklash(void)const { return 0 < (cnt_ - duration_) && (cnt_ - duration_) <= backlash_; };
@@ -34,7 +31,7 @@ public:
 		//攻撃判定が終了状態であるかを返却(true=当てた後)
 		const bool IsHit(void) { return isHit_; }
 	};
-
+	//アニメーション
 	enum class ANIM
 	{
 		NONE,		//初期化用
@@ -86,9 +83,9 @@ public:
 	//生存確認(生存しているとtrue)
 	const bool IsAlive(void)const;
 
-	//Transformいただき
+	//Transform取得(汎用)
 	const Transform& GetTransform(void)const;
-
+	//Transform取得(要所)
 	const Transform* GetTransformEntity(void)const;
 
 	//位置
@@ -131,8 +128,8 @@ public:
 	/// <summary>
 	/// ダメージ設定
 	/// </summary>
-	/// <param name="attackerPower"></param>攻撃者の攻撃力
-	/// <param name="skillPower"></param>当てた技の技威力
+	/// <param name="attackerPower">攻撃者の攻撃力</param>
+	/// <param name="skillPower">当てた技の技威力</param>
 	void SetDamage(const int attackerPower, const int skillPower);
 	int GetDamage(void);
 
@@ -149,11 +146,10 @@ public:
 	virtual void SetSpeed(const float percent);
 	void SetHpMax(const int hp);
 
-
+	//移動速度の設定
 	virtual void SetMoveSpeed(const float _speed);
 
 protected:
-
 	//各キャラクターのデフォルトのパラメーター
 	float defAtk_;
 	float defDef_;
@@ -196,7 +192,7 @@ protected:
 	//アニメーション終了時の動き
 	virtual void FinishAnim(void);	
 	//アニメーション配列用終了時の動き
-	virtual void FinishAnimArray(int i);
+	virtual void FinishAnimArray(const int i);
 	//カウンタ増加
 	void CntUp(float& _count);
 	//カウンタ減少

@@ -5,7 +5,7 @@ struct PS_INPUT
     float4 Position : SV_POSITION;
     //ディフーズカラー
     float4 Diffuse : COLORO;
-    float4 Spe : COLOR1;
+   // float4 Spe : COLOR1;
     //float3 color : COLOR1;    // カスタムデータ
     //テクスチャ座標
     float2 TexCoords0 : TEXCOORD0;
