@@ -447,10 +447,9 @@ void GameScene::CollisionPlayer(void)
 		{
 			CollisionPlayerArrow(i);
 			CollisionPlayerSerch(i);
+			continue;
 		}
 		//--------------------------------
-		// 
-		// 
 		//プレイヤーがCPUの時だけサーチしたい
 		//if (p->GetPlayMode() == SceneManager::PLAY_MODE::CPU)CollisionPlayerCPU(*p, pPos);
 
@@ -482,8 +481,6 @@ void GameScene::CollisionPlayerArrow(int _p1Num)
 	auto& col = Collision::GetInstance();
 	//敵の総数取得
 	int maxCnt = enmMng_->GetActiveNum();
-
-
 
 	PlayerBase* p = playerMng_->GetPlayer(_p1Num);
 
@@ -555,6 +552,8 @@ void GameScene::CollisionPlayerArrow(int _p1Num)
 	}
 
 }
+
+
 
 void GameScene::CollisionPlayerSerch(int _p1Num)
 {

@@ -94,7 +94,8 @@ public:
     //‰¹—Ê
     static constexpr int SKILL_CHANGE_SE_VOL = 80;
 
-
+    //‰ŠúŠp“x
+    static constexpr float INIT_DEG = 180.0f;
 
     //*************************************************
     // —ñ‹“Œ^

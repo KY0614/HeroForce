@@ -29,7 +29,7 @@ void AxeMan::SetParam(void)
 	trans_.pos = { 0.0f, 0.0f, 0.0f };
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::Euler(
-		0.0f, AsoUtility::Deg2RadF(180.0f),
+		0.0f, AsoUtility::Deg2RadF(INIT_DEG),
 		0.0f
 	);
 	auto& effIns = EffectManager::GetInstance();

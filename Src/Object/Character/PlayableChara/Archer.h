@@ -146,6 +146,8 @@ public:
     const int GetArrowCnt(const int _type)override { return arrow_[static_cast<ATK_TYPE>(_type)].size(); }
     //矢のヒット
     void SetIsArrowHit(ATK_TYPE _type, const bool _flg, int _num)override;
+    //矢の当たり判定で必要
+    std::vector<ATK> GetAtks(ATK_TYPE _type)override { return arrowAtk_[_type]; }
     //-------------------------------------------------
     //バフ
     void Buff(PlayerBase& _target)override;
