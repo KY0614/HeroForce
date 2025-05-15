@@ -13,8 +13,7 @@ UnitBase::UnitBase(void)
 	trans_.scl = { 0.0f,0.0f,0.0f };
 	trans_.rot = { 0.0f,0.0f,0.0f };	
 
-	for (int i = 0; i < ARRAY_NUM;i++)
-	{
+	for (int i = 0; i < ARRAY_NUM;i++){
 		transArray_[i].pos = {0.0f,0.0f,0.0f};
 		transArray_[i].scl = { 0.0f,0.0f,0.0f };
 		transArray_[i].rot = { 0.0f,0.0f,0.0f };
@@ -181,7 +180,7 @@ void UnitBase::ResetAnim(const ANIM _anim, const float _speed)
 	//アタッチ
 	//実質atcAnimの代入
 	atcAnim_ = MV1AttachAnim(trans_.modelId, animNum_[anim_]);
-
+	//再生時間取得
 	animTotalTime_ = MV1GetAttachAnimTotalTime(trans_.modelId, atcAnim_);
 	stepAnim_ = 0.0f;
 
@@ -195,6 +194,7 @@ void UnitBase::AnimArray(int i)
 	// 経過時間の取得
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
 	stepAnimArray_[i] += (speedAnimArray_[i] * deltaTime);
+	//stepが総再生時間を超えていたら
 	if (stepAnimArray_[i] > animArrayTotalTime_[i])
 	{
 		//アニメーション終了時処理（継承先で行動を決めておく）
@@ -227,13 +227,14 @@ int UnitBase::GetDamage(void)
 
 void UnitBase::SubHp()
 {
-	//ダメージが0より大きいか調べる
+	//ダメージがあるとき
 	if(0 < damage_)
 	{
+		//ダメージ量を減少
 		damage_--;
-
+		//HPの減少
 		hp_--;
-
+		//HPがマイナスにならないように
 		if (hp_ < 0) { hp_ = 0; }
 	}
 }
@@ -318,7 +319,7 @@ void UnitBase::FinishAnim(void)
 	stepAnim_ = 0.0f;
 }
 
-void UnitBase::FinishAnimArray(int i)
+void UnitBase::FinishAnimArray(const int i)
 {
 	stepAnimArray_[i] = 0.0f;
 }
@@ -327,6 +328,7 @@ void UnitBase::CntUp(float& _count)
 {
 	// 経過時間の取得
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
+	//カウンタ更新
 	_count += deltaTime;
 }
 
@@ -334,6 +336,7 @@ void UnitBase::CntDown(float& _count)
 {
 	// 経過時間の取得
 	float deltaTime = 1.0f / Application::DEFAULT_FPS;
+	//カウンタ更新
 	_count -= deltaTime;
 }
 
