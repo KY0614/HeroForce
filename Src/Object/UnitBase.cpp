@@ -22,10 +22,12 @@ UnitBase::UnitBase(void)
 		animArrayTotalTime_[i] = -1;
 		stepAnimArray_[i] = -1.0f;
 		speedAnimArray_[i] = -1.0f;
+		animStateArray_[i] = ANIM::NONE;
 	}
 
 	anim_ = ANIM::NONE;
 	atcAnim_ = -1;
+	atk_ = ATK();
 	atkPow_ = -1.0f;
 	damage_ = -1;
 	animTotalTime_ = -1;
@@ -34,6 +36,7 @@ UnitBase::UnitBase(void)
 
 	prePos_ = AsoUtility::VECTOR_ZERO;
 	def_ = -1.0f;
+	moveSpeed_ = -1.0f;
 	radius_ = -1.0f;
 	hpMax_ = -1;
 
@@ -181,7 +184,7 @@ void UnitBase::ResetAnim(const ANIM _anim, const float _speed)
 	//実質atcAnimの代入
 	atcAnim_ = MV1AttachAnim(trans_.modelId, animNum_[anim_]);
 	//再生時間取得
-	animTotalTime_ = MV1GetAttachAnimTotalTime(trans_.modelId, atcAnim_);
+	animTotalTime_ = static_cast<int>(MV1GetAttachAnimTotalTime(trans_.modelId, atcAnim_));
 	stepAnim_ = 0.0f;
 
 	// 再生するアニメーション時間の設定
@@ -214,7 +217,7 @@ void UnitBase::SetIsHit(const bool _flag)
 void UnitBase::SetDamage(const int attackerPower, const int skillPower)
 {
 	//与えるダメージを増やす(ここdefDefになってるから間違ってる可能性あり)
-	damage_ += attackerPower * skillPower / defDef_;
+	damage_ += static_cast<int>(attackerPower * skillPower / defDef_);
 
 	//攻撃を喰らったのでSE再生
 	SoundManager::GetInstance().Play(SoundManager::SOUND::HIT);
@@ -255,7 +258,7 @@ void UnitBase::ResetAnimArray(const ANIM _anim, const float _speed, int i)
 	//実質atcAnimの代入
 	animArray_[i] = MV1AttachAnim(transArray_[i].modelId, animNumArray_[i][animStateArray_[i]]);
 
-	animArrayTotalTime_[i] = MV1GetAttachAnimTotalTime(transArray_[i].modelId, animArray_[i]);
+	animArrayTotalTime_[i] = static_cast<int>(MV1GetAttachAnimTotalTime(transArray_[i].modelId, animArray_[i]));
 	stepAnimArray_[i] = 0.0f;
 
 	// 再生するアニメーション時間の設定

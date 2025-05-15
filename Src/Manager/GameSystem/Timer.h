@@ -13,8 +13,8 @@ public:
 
 	//タイマー背景サイズ
 	static constexpr float TIMER_BACK_RATE = 0.8f;
-	static constexpr int TIMER_BACK_SIZE_X = 298 * TIMER_BACK_RATE;
-	static constexpr int TIMER_BACK_SIZE_Y = 168 * TIMER_BACK_RATE;
+	static constexpr int TIMER_BACK_SIZE_X = static_cast<int>(298 * TIMER_BACK_RATE);
+	static constexpr int TIMER_BACK_SIZE_Y = static_cast <int>(168 * TIMER_BACK_RATE);
 
 	//数字大きさ
 	static constexpr float NUM_RATE = 0.75f;

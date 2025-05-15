@@ -10,11 +10,19 @@
 #include "FazeResult.h"
 FazeResult::FazeResult(void)
 {
+	step_ = 0.0f;
 	exp_ = 0.0f;
 	afterExp_ = 0.0f;
 	rank_ = RANK::MAX;
 	isEnd_ = false;
 	imgBack_ = -1;
+	for (int i = 0; i < RANK_MAX_NUM; i++) {
+		rankImg_[i] = -1;
+	}
+
+	aliveChicken_ = -1;
+	dunkEnm_ = -1;
+	font_ = -1;
 
 	int i = -1;
 	imgRank_ = &i;
@@ -31,13 +39,13 @@ void FazeResult::Init(void)
 	rankImg_[static_cast<int>(RANK::A)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::RANK_A).handleId_;
 	rankImg_[static_cast<int>(RANK::B)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::RANK_B).handleId_;
 	rankImg_[static_cast<int>(RANK::C)] = ResourceManager::GetInstance().Load(ResourceManager::SRC::RANK_C).handleId_;
-	backImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::RESULT).handleId_;
+
 
 	rank_ = RANK::S;
 	isEnd_ = false;
 
 	//獲得経験値量はフェーズ終了時のプレイヤーたちの経験値をデータバンクから取得する
-	exp_ = 1500.0f;
+	exp_ = EXP_INIT;
 
 	//画像
 	imgBack_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::REZALT_BACK).handleId_;
@@ -47,11 +55,6 @@ void FazeResult::Init(void)
 	font_ = CreateFontToHandle(
 		TextManager::GetInstance().GetFontName(TextManager::FONT_TYPE::LOGO).c_str(),
 		FONT_SIZE,
-		0);
-
-	heasdFont_ = CreateFontToHandle(
-		TextManager::GetInstance().GetFontName(TextManager::FONT_TYPE::LOGO).c_str(),
-		FONT_HEAD_SIZE,
 		0);
 
 	SoundManager::GetInstance().Add(SoundManager::TYPE::SE,
@@ -81,15 +84,19 @@ void FazeResult::Draw(void)
 	);
 
 	int fezeCnt = 1;
+	int drawInformCnt = 0;
+
 	std::string mes = "%dフェーズ終了";
 	//テキストの描画
 	DrawFormatStringToHandle(
 		HEAD_TEXT_POS_X,
-		HEAD_TEXT_POS_Y - mes.length() * FONT_HEAD_SIZE / 2,
+		HEAD_TEXT_POS_Y - static_cast<int>(mes.length() * FONT_HEAD_SIZE / 2),
 		0xffffff,
 		font_,
 		mes.c_str(),
 		fezeCnt);
+	//カウンタ増加
+	drawInformCnt++;
 
 	if (step_ < INTERVEL) { return; }
 	DrawFormatStringToHandle(
@@ -98,38 +105,45 @@ void FazeResult::Draw(void)
 		font_,
 		"敵を倒した総数 : %d体",
 		dunkEnm_);
+	//カウンタ増加
+	drawInformCnt++;
 
 	if (state_ == STATE::NOMAL) {
-		if (step_ < INTERVEL * 2) { return; }
+		if (step_ < INTERVEL * drawInformCnt) { return; }
 		DrawFormatStringToHandle(
 			MES2_POS_X, MES2_POS_Y,
 			0xffffff,
 			font_,
 			"ニワトリの生存数 : %d体",
 			aliveChicken_);
+		//カウンタ増加
+		drawInformCnt++;
 	}
 
 	//経験値の描画
-	if (step_ < INTERVEL * 3) { return; }
+	if (step_ < INTERVEL * drawInformCnt) { return; }
 	DrawFormatStringToHandle(
 		MES3_POS_X, MES3_POS_Y,
 		0xffffff,
 		font_,
 		"Exp.%d",
 		static_cast<int>(afterExp_));
+	//カウンタ増加
+	drawInformCnt++;
 
 
 	//ランクの描画
-	if (step_ < INTERVEL * 4) { return; }
+	if (step_ < INTERVEL * drawInformCnt) { return; }
 	DrawRotaGraph(
 		RANK_POS_X,
 		RANK_POS_Y,
-		0.85f,
+		RANK_IMG_EX,
 		0.0f,
 		imgRank_[static_cast<int>(rank_)],
 		true,
 		false);
-
+	//カウンタ増加
+	drawInformCnt++;
 }
 
 void FazeResult::Release(void)

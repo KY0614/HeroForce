@@ -47,11 +47,11 @@ void InformFaze::Draw(void)
 	if (informCnt_ <= INFORM_HARF)
 	{
 		//フェーズ数表示
-		DrawFormatStringToHandle(informStrPos_.x, informStrPos_.y, RED_COLOR, font_, "第%dフェーズ", fazeCnt_);
+		DrawFormatStringToHandle(static_cast<int>(informStrPos_.x), static_cast<int>(informStrPos_.y), RED_COLOR, font_, "第%dフェーズ", fazeCnt_);
 		return;
 	}
 	
-	DrawRotaGraph(informImgPos_.x, informImgPos_.y,
+	DrawRotaGraph(static_cast<int>(informImgPos_.x), static_cast<int>(informImgPos_.y),
 		0.5f,
 		0.0f,
 		missionImg_[missionCnt_],
