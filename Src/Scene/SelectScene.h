@@ -13,6 +13,9 @@ class SelectScene :public SceneBase
 {
 public:
 
+	//サウンド関連
+	static constexpr int BGM_VOLUME = 128;
+
 	//キャラクター関連
 	static constexpr int PLAYER_NUM = SceneManager::PLAYER_NUM;	//最大プレイ人数
 

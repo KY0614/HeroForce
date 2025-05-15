@@ -67,8 +67,9 @@ void SelectScene::Init(void)
 	//音楽読み込み
 	snd.Add(SoundManager::TYPE::BGM, SoundManager::SOUND::SELECT,
 		res.Load(ResourceManager::SRC::SELECT_BGM).handleId_);
+
 	//音量調節
-	snd.AdjustVolume(SoundManager::SOUND::SELECT, 128);
+	snd.AdjustVolume(SoundManager::SOUND::SELECT, BGM_VOLUME);
 	//音楽再生
 	snd.Play(SoundManager::SOUND::SELECT);
 
@@ -105,11 +106,11 @@ void SelectScene::Init(void)
 	camera[0]->SetPos(DEFAULT_CAMERA_POS, DEFAULT_TARGET_POS);
 	camera[0]->ChangeMode(Camera::MODE::FIXED_POINT);
 
-	//人数選択から
+	//使用ディスプレイ数選択から
 	ChangeSelect(SELECT::DISPLAY);
 
+	//キーコンフィグとデバイスを初期化
 	key_ = KEY_CONFIG::NONE;
-
 	Change1PDevice(SceneManager::CNTL::NONE);
 }
 
@@ -224,7 +225,7 @@ void SelectScene::RoleUpdate(void)
 	bool checkAllReady = false;
 	if (IsAllReady()) checkAllReady = true;
 
-	// 何も押されてないとき
+	// 何も押されてないときはNONE
 	for (auto& i : input_)i.config_ = KEY_CONFIG::NONE;
 
 	//1Pがキーボードだったらキーボード処理もするように(その場合1PのPADは操作できなくなる)
@@ -257,7 +258,7 @@ void SelectScene::RoleUpdate(void)
 			VECTOR prevPointLPos = pointL[i].pos;
 			VECTOR prevPointRPos = pointR[i].pos;
 
-			//回転させる
+			//回転前の座標から９０度回転させる
 			//人数選択メッシュ
 			VECTOR pos = AsoUtility::RotXZPos(
 				DEFAULT_CAMERA_POS, prevPos, AsoUtility::Deg2RadF(90.0f));

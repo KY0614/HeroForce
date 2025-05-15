@@ -1,9 +1,0 @@
-diff a/Src/Scene/SelectScene.cpp b/Src/Scene/SelectScene.cpp	(rejected hunks)
-@@ -100,6 +100,7 @@
- 	interval_ = 0.0f;
- 
- 	//// �t�H�O�ݒ�(�X�e�[�W������)
-+	//SetFogEnable(true);
- 	//SetFogColor(255, 255, 255);
- 	//SetFogStartEnd(-10000.0f, 15000.0f);
- }

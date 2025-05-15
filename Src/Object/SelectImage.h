@@ -248,14 +248,14 @@ private:
 	//準備オッケーかどうか
 	bool isReady_;
 
-	//キーを何秒押しているか
+	//キー押下時間
 	float keyPressTime_;
 	
-	//キーの判定を１回だけ取得する用
-	bool press_;
+	//キーが押されているか
+	bool isPress_;
 
-	//人数を一定間隔で加算していくためのインターバル用時間(加算して次加算するまでの間)
-	float interval_;
+	//一定間隔で加算していくためのインターバル用時間(加算して次加算するまでの間)
+	float addIntervalTime_;
 
 	//カメラ用のターゲット座標
 	VECTOR target_[SceneManager::PLAYER_NUM];
