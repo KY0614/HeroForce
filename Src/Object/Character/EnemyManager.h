@@ -55,7 +55,7 @@ public:
 	EnemyManager(std::vector<VECTOR> _pos);
 
 	//デストラクタ
-	~EnemyManager() = default;
+	~EnemyManager();
 
 	//初期化
 	void Init(void);

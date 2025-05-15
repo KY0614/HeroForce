@@ -44,6 +44,10 @@ Enemy::Enemy(const VECTOR& _spawnPos)
 	}
 }
 
+Enemy::~Enemy()
+{
+}
+
 void Enemy::Destroy(void)
 {
 	//Šeíœˆ—

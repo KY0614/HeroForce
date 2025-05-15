@@ -88,7 +88,7 @@ public:
 	/// <param name="_spawnPos">出現位置</param>
 	Enemy(const VECTOR& _spawnPos);
 	//デストラクタ
-	~Enemy() = default;
+	~Enemy();
 
 	//解放
 	virtual void Destroy(void)override;

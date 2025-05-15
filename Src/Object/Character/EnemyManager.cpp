@@ -28,6 +28,10 @@ EnemyManager::EnemyManager(std::vector<VECTOR> _pos) : createPos_(_pos)
 	dunkCnt_ = 0;
 }
 
+EnemyManager::~EnemyManager()
+{
+}
+
 void EnemyManager::Init(void)
 {
 	for (int a = 0; a < static_cast<int>(TYPE::MAX); a++)
