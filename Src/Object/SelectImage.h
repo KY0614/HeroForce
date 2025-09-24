@@ -1,13 +1,10 @@
 #pragma once
 #include <functional>
-#include"../Utility/AsoUtility.h"
-#include"Common/Transform.h"
-#include "../Common/Vector2.h"
 #include "./UnitBase.h"
 #include "../Scene/SelectScene.h"
 
-//class SelectScene;
-class SelectPlayer;
+
+class SelectCharacter;
 
 class SelectImage : public UnitBase
 {
@@ -15,8 +12,8 @@ public:
 	//#define DRAW_DEBUG
 
 	//画像関連
-	static constexpr float POINT_SCALE = 52.0f;			//矢印画像の大きさ
-	static constexpr float IMAGE_SCALE = 50.0f;			//画像の大きさ
+	static constexpr float POINT_SCALE = 52.0f;		//矢印画像の大きさ
+	static constexpr float IMAGE_SCALE = 50.0f;		//画像の大きさ
 
 	//頂点関連（４点)--------------------------------------------------------------
 
@@ -50,6 +47,12 @@ public:
 
 	static constexpr int BLEND_PARAM = 128;			//ブレンドモードの強さ
 
+	//準備完了用メッシュ関連
+	static constexpr VECTOR READYMESH_LEFT_TOP = { 80.0f, 70.0f, -408.0f };
+	static constexpr VECTOR READYMESH_LEFT_BOT = { -80.0f, 70.0f, -408.0f };
+	static constexpr VECTOR READYMESH_RIGHT_TOP = { 80.0f, 160.0f, -410.0f };
+	static constexpr VECTOR READYMESH_RIGHT_BOT = { 80.0f, 70.0f, -408.0f };
+
 	//キー入力関連
 	static constexpr float SELECT_TIME = 1.0f;		//キー押下経過時間
 	static constexpr float INTERVAL_TIME = 0.6f;	//インターバル上限
@@ -77,31 +80,36 @@ public:
 
 		//初期化
 		Point() : isToggle_(false),mesh_() {}
-		Point(bool isT,Mesh& mesh) :
-			 isToggle_(isT) , mesh_(mesh)  {}
+		Point(const bool isToggle,Mesh& mesh) : isToggle_(isToggle) , mesh_(mesh)  {}
 	};
 
 	//------------------------------------------------------------------------------
 
 	//コンストラクタ
-	SelectImage(SelectScene& select, std::shared_ptr<SelectPlayer> player);
+	SelectImage(SelectScene& select);
 
 	//デストラクタ
 	~SelectImage(void) = default;
 
 	//解放
-	virtual void Destroy(void);
+	void Destroy(void);
 
 	//初期化
-	virtual void Init(void)override;
+	void Init(void)override;
 	//更新
-	virtual void Update(void)override;
+	void Update(void)override;
 	//描画
-	virtual void Draw(void)override;
+	void Draw(void)override;
 
-	//役職選択の際に表示するメッシュの座標へ移動させる
+	/// <summary>
+	/// 役職選択の際に表示するメッシュの座標へ移動させる
+	/// </summary>
 	void MoveVertexPos(void);
-	void ReductinVertexPos(void);	//ComingSoon用の縮小用
+
+	/// <summary>
+	/// ComingSoon画像用のメッシュ縮小用
+	/// </summary>
+	void ReductionVertexPos(void);
 
 	/// <summary>
 	/// 選択しているオブジェクトを変更する
@@ -118,21 +126,45 @@ public:
 
 	//ゲッター　---------------------------------------------------
 
-	//選んでいる役職を取得
-	int GetRole(void) { return role_; };	
+	/// <summary>
+	/// 選択している役職を取得
+	/// </summary>
+	/// <returns>選択中の役職</returns>
+	int GetRole(void)const { return role_; };	
 
 	/// <summary>
 	/// メッシュの頂点情報を取得
 	/// </summary>
-	/// <param name="i">vertex配列の指定</param>
-	/// <returns>指定したvertexの頂点情報</returns>
-	VERTEX3D GetMeshVertex(int i){ return mesh_.vertex_[i]; };
-	VERTEX3D GetReadyMeshVertex(int i) { return readyMesh_.vertex_[i]; };
-	VERTEX3D GetPointLMeshVertex(int i){ return pointL_.mesh_.vertex_[i]; };
-	VERTEX3D GetPointRMeshVertex(int i){ return pointR_.mesh_.vertex_[i]; };
+	/// <param name="index">vertex配列の要素指定</param>
+	/// <returns>指定した要素の頂点情報</returns>
+	VERTEX3D GetMeshVertexAtIndex(int index)const{ return mesh_.vertex_[index]; };
 
-	//準備完了かどうか得る
-	bool GetReady(void) { return isReady_; };
+	/// <summary>
+	/// 準備完了画像用のメッシュ頂点情報を取得
+	/// </summary>
+	/// <param name="index">vertex配列の要素指定</param>
+	/// <returns>指定した要素の頂点情報</returns>
+	VERTEX3D GetReadyMeshVertexAtIndex(int index) const{ return readyMesh_.vertex_[index]; };
+
+	/// <summary>
+	/// 左矢印画像用のメッシュ頂点情報を取得
+	/// </summary>
+	/// <param name="index">vertex配列の要素指定</param>
+	/// <returns>指定した要素の頂点情報</returns>
+	VERTEX3D GetPointLMeshVertexAtIndex(int index)const{ return pointL_.mesh_.vertex_[index]; };
+
+	/// <summary>
+	/// 右矢印画像用のメッシュ頂点情報を取得
+	/// </summary>
+	/// <param name="index">vertex配列の要素指定</param>
+	/// <returns>指定した要素の頂点情報</returns>
+	VERTEX3D GetPointRMeshVertexAtIndex(int index)const{ return pointR_.mesh_.vertex_[index]; };
+
+	/// <summary>
+	/// 準備完了かどうか取得する
+	/// </summary>
+	/// <returns>true:準備完了 false:未完了</returns>
+	bool GetReady(void)const { return isReady_; };
 
 	// セッター　--------------------------------------------------
 
@@ -140,11 +172,29 @@ public:
 	/// メッシュ座標を設定する
 	/// </summary>
 	/// <param name="pos">設定する座標</param>
-	/// <param name="i">設定するvertex配列の指定</param>
-	void RotMeshPos(VECTOR pos, int i) { mesh_.vertex_[i].pos = pos; }
-	void RotReadyMeshPos(VECTOR pos, int i) { readyMesh_.vertex_[i].pos = pos; }
-	void RotPointLMeshPos(VECTOR pos, int i) { pointL_.mesh_.vertex_[i].pos = pos; }
-	void RotPointRMeshPos(VECTOR pos, int i) { pointR_.mesh_.vertex_[i].pos = pos; }
+	/// <param name="index">設定するvertex配列の要素</param>
+	void RotMeshPos(VECTOR pos, int index) { mesh_.vertex_[index].pos = pos; }
+
+	/// <summary>
+	/// 右矢印画像用のメッシュ座標を設定する
+	/// </summary>
+	/// <param name="pos">設定する座標</param>
+	/// <param name="index">設定するvertex配列の要素</param>
+	void RotReadyMeshPos(VECTOR pos, int index) { readyMesh_.vertex_[index].pos = pos; }
+
+	/// <summary>
+	/// 右矢印画像用のメッシュ座標を設定する
+	/// </summary>
+	/// <param name="pos">設定する座標</param>
+	/// <param name="index">設定するvertex配列の要素</param>
+	void RotPointLMeshPos(VECTOR pos, int index) { pointL_.mesh_.vertex_[index].pos = pos; }
+
+	/// <summary>
+	/// 右矢印画像用のメッシュ座標を設定する
+	/// </summary>
+	/// <param name="pos">設定する座標</param>
+	/// <param name="index">設定するvertex配列の要素</param>
+	void RotPointRMeshPos(VECTOR pos, int index) { pointR_.mesh_.vertex_[index].pos = pos; }
 
 private:
 
@@ -152,6 +202,8 @@ private:
 	std::function<void(void)> stateUpdate_;
 	//状態管理(状態遷移時初期処理)
 	std::map<SelectScene::SELECT, std::function<void(void)>> stateChanges_;
+
+	SelectScene& selectScene_;			//セレクトシーン
 
 	//選択中の種類
 	SelectScene::SELECT state_;
@@ -196,18 +248,14 @@ private:
 	//準備オッケーかどうか
 	bool isReady_;
 
-	//キーを何秒押しているか
+	//キー押下時間
 	float keyPressTime_;
 	
-	//キーの判定を１回だけ取得する用
-	bool press_;
+	//キーが押されているか
+	bool isPress_;
 
-	//人数を一定間隔で加算していくためのインターバル用時間(加算して次加算するまでの間)
-	float interval_;
-
-	//インスタンス
-	SelectScene& selectScene_;				//セレクトシーン
-	std::shared_ptr<SelectPlayer> player_;	//セレクトシーン用のプレイヤー
+	//一定間隔で加算していくためのインターバル用時間(加算して次加算するまでの間)
+	float addIntervalTime_;
 
 	//カメラ用のターゲット座標
 	VECTOR target_[SceneManager::PLAYER_NUM];
@@ -215,13 +263,11 @@ private:
 	//関数-------------------------------------------------------------------------------------
 
 	//読み込み用
-	void Load(void);	
+	void LoadImages(void);	
+	void LoadSounds(void);	
 
 	//頂点座標初期化
 	void InitVertex(void);
-
-	//頂点座標回転用
-	VECTOR RotateVertex(VECTOR pos, VECTOR center, float angle);
 
 	//状態遷移
 	void ChangeStateDisplay(void);

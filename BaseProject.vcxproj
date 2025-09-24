@@ -29,7 +29,7 @@
     <ClCompile Include="Src\Object\Character\Chiken\ChickenBase.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ChickenManager.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Other\OverPlayers.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\Other\SelectEnemy.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Other\WaitEnemy.cpp" />
     <ClCompile Include="Src\Object\Character\Chiken\ClearChicken.cpp" />
     <ClCompile Include="Src\Object\Character\EnemyManager.cpp" />
     <ClCompile Include="Src\Object\Character\EnemySort\EneArcher.cpp" />
@@ -47,7 +47,7 @@
     <ClCompile Include="Src\Object\Character\PlayableChara\Knight.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Mage.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\Other\ClearPlayers.cpp" />
-    <ClCompile Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.cpp" />
+    <ClCompile Include="Src\Object\Character\PlayableChara\Other\SelectCharacter.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\PlayerBase.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\PlayerCpu.cpp" />
     <ClCompile Include="Src\Object\Character\PlayableChara\USER\PlArcher.cpp" />
@@ -106,7 +106,7 @@
     <ClInclude Include="Src\Object\System\InformFaze.h" />
     <ClInclude Include="Src\Scene\ExplanScene.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Other\OverPlayers.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\Other\SelectEnemy.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Other\WaitEnemy.h" />
     <ClInclude Include="Src\Object\Character\Chiken\ClearChicken.h" />
     <ClInclude Include="Src\Object\System\GameUi\PlayerUI.h" />
     <ClInclude Include="Src\Scene\GameClearScene.h" />
@@ -154,7 +154,7 @@
     <ClInclude Include="Src\Object\Character\PlayableChara\Knight.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Mage.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\Other\ClearPlayers.h" />
-    <ClInclude Include="Src\Object\Character\PlayableChara\Other\SelectPlayer.h" />
+    <ClInclude Include="Src\Object\Character\PlayableChara\Other\SelectCharacter.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\PlayerBase.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\PlayerCpu.h" />
     <ClInclude Include="Src\Object\Character\PlayableChara\USER\PlArcher.h" />

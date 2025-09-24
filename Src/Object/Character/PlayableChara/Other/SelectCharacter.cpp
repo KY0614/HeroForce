@@ -1,22 +1,20 @@
 #include "../../../../Manager/Generic/ResourceManager.h"
-#include "../PlayerBase.h"
-#include "../../Chiken/ChickenBase.h"
-#include "SelectPlayer.h"
+#include "SelectCharacter.h"
 
-SelectPlayer::SelectPlayer(void)
+SelectCharacter::SelectCharacter(void)
 {
 	role_ = -1;
-	for (auto& animTime : animChangeTime_)
+	for (int i = 0; i < 4; i++) 
 	{
-		animTime = -1.0f;
+		animChangeTime_[i] = -1.0f;
 	}
 }
 
-void SelectPlayer::Destroy(void)
+void SelectCharacter::Destroy(void)
 {
 }
 
-void SelectPlayer::Init(void)
+void SelectCharacter::Init(void)
 {
 	//3Dモデル初期化
 	Init3DModel();
@@ -35,7 +33,7 @@ void SelectPlayer::Init(void)
 	animNumArray_[3].emplace(ANIM::SKILL_1, ARCHER_ANIM);
 
 	//チキン用
-	animNum_.emplace(ANIM::UNIQUE_1, SWING_ANIM);
+	animNum_.emplace(ANIM::UNIQUE_1, CHICKEN_SWINGHAND_ANIM);
 	ResetAnim(ANIM::UNIQUE_1, CHICKEN_SPEED);
 
 	//アニメーション時間を初期化
@@ -43,10 +41,12 @@ void SelectPlayer::Init(void)
 	{
 		animTime = 0.0f;
 	}
+
+	//初期の役職を騎士にしとく
 	role_ = 0;
 }
 
-void SelectPlayer::Update(void)
+void SelectCharacter::Update(void)
 {
 	//アニメーション
 	for (int i = 0; i < SceneManager::PLAYER_NUM; i++) { AnimArray(i); }
@@ -59,8 +59,8 @@ void SelectPlayer::Update(void)
 		animTime += ANIM_SPEED * deltaTime;
 	}
 
-	//アニメーションを変更する
-	ChangeAnim();
+	//一定時間ごとにアニメーションを変更
+	UpdateAnimCycle();
 
 	for (auto& tran_ : transArray_) 
 	{
@@ -73,7 +73,7 @@ void SelectPlayer::Update(void)
 	trans_.Update();
 }
 
-void SelectPlayer::Draw(void)
+void SelectCharacter::Draw(void)
 {
 	//キャラ
 	MV1DrawModel(transArray_[role_].modelId);
@@ -81,49 +81,16 @@ void SelectPlayer::Draw(void)
 	MV1DrawModel(trans_.modelId);
 }
 
-void SelectPlayer::SetPos(VECTOR pos)
+void SelectCharacter::SetPos(VECTOR pos)
 {
+	//配列の座標を順々に設定
 	for (auto& tran_ : transArray_)
 	{
 		tran_.pos = pos;
 	}
 }
 
-void SelectPlayer::ChangeAnim(void)
-{
-	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
-	{
-		//現在のアニメーション再生時間を超えていたら違うアニメーションにする
-		if (animChangeTime_[i] > GetAnimArrayTime(i))
-		{
-			if (animStateArray_[i] != ANIM::IDLE)
-			{
-				ResetAnimArray(ANIM::IDLE, ANIM_SPEED, i);
-				animChangeTime_[i] = 0.0f;
-			}
-			else
-			{
-				ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, i);
-				animChangeTime_[i] = 0.0f;
-			}
-		}
-	}
-}
-
-void SelectPlayer::SetAtkAnim(int i)
-{
-	if(i == 0)ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 0);
-	if(i == 1)ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 1);
-	if(i == 2)ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 2);
-	if(i == 3)ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, 3);
-}
-
-void SelectPlayer::SetIdleAnim(int i)
-{
-	ResetAnimArray(ANIM::IDLE, ANIM_SPEED, i);
-}
-
-void SelectPlayer::Init3DModel(void)
+void SelectCharacter::Init3DModel(void)
 {	
 	//騎士
 	transArray_[0].SetModel(
@@ -178,4 +145,26 @@ void SelectPlayer::Init3DModel(void)
 		tran_.Update();
 	}
 	trans_.Update();
+}
+
+void SelectCharacter::UpdateAnimCycle(void)
+{
+	for (int i = 0; i < SceneManager::PLAYER_NUM; i++)
+	{
+		//現在のアニメーション再生時間を超えていたら違うアニメーションにする
+		if (animChangeTime_[i] > GetAnimArrayTime(i))
+		{
+			//アイドルアニメーションと攻撃アニメーションを交互に再生させる
+			if (animStateArray_[i] != ANIM::IDLE)
+			{
+				ResetAnimArray(ANIM::IDLE, ANIM_SPEED, i);
+				animChangeTime_[i] = 0.0f;
+			}
+			else
+			{
+				ResetAnimArray(ANIM::SKILL_1, ANIM_SPEED, i);
+				animChangeTime_[i] = 0.0f;
+			}
+		}
+	}
 }
