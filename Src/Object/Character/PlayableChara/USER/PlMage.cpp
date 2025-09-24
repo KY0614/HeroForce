@@ -28,8 +28,7 @@ void PlMage::Update(void)
 	//“ü—Í
 	//ƒL[“ü—Í
 	PlayerDodge* dodge = obj_->GetDodge();
-	PlayerInput::GetInstance().Update(obj_, padNum_, info_.cntrol_);
-	ActionInput(obj_, dodge);
+	ActionInput(obj_, dodge, input_);
 
 	//’ÊíUŒ‚
 	AtkInput();

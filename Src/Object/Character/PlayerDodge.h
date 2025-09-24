@@ -37,9 +37,6 @@ public:
 	//クールタイム中かどうか
 	const bool IsCoolDodge(void)const;
 
-	//// 回避
-	//void Dodge(Transform* transform);
-
 	//ドッジカウント初期化
 	void ResetDodgeFrame(void) { dodgeCnt_ = 0.0f; }
 

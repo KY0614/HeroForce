@@ -4,12 +4,14 @@
 PlKnight::PlKnight(const SceneManager::CNTL _cntl)
 {
 	info_.cntrol_ = _cntl;
+	input_ = std::make_shared<PlayerInput>();
 }
 
 PlKnight::PlKnight(const InputManager::JOYPAD_NO _padNum)
 {
 	info_.cntrol_ = SceneManager::CNTL::PAD;
 	padNum_ = _padNum;
+	input_ = std::make_shared<PlayerInput>();
 }
 
 void PlKnight::Init(void)
@@ -26,8 +28,8 @@ void PlKnight::Update(void)
 	//入力
 		//キー入力
 	PlayerDodge* dodge = obj_->GetDodge();
-	PlayerInput::GetInstance().Update(obj_, padNum_, info_.cntrol_);
-	ActionInput(obj_, dodge);
+	input_->Update(obj_, padNum_, info_.cntrol_);
+	ActionInput(obj_, dodge, input_);
 
 	//通常攻撃
 	AtkInput();
@@ -65,11 +67,10 @@ void PlKnight::Release(void)
 
 void PlKnight::AtkInput(void)
 {
-	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
 	if(obj_->GetIsCool(PlayerBase::ATK_ACT::ATK))return;
-	if (ins.CheckAct(ACT_CNTL::NMLATK) && !obj_->GetIsAtk()&&!obj_->GetIsSkill())
+	if (input_->CheckAct(ACT_CNTL::NMLATK) && !obj_->GetIsAtk()&&!obj_->GetIsSkill())
 	{
 		float deltaTime = 1.0f / 60.0f;
 		if (obj_->GetIsCool(ATK_ACT::ATK))return;
@@ -83,10 +84,9 @@ void PlKnight::AtkInput(void)
 
 void PlKnight::SkillOneInput(void)
 {
-	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	if (obj_->GetIsCool(PlayerBase::ATK_ACT::SKILL1))return;
-	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN))
+	if (input_->CheckAct(ACT_CNTL::SKILL_DOWN))
 	{
 		SkillOneInit();
 	}
@@ -94,17 +94,16 @@ void PlKnight::SkillOneInput(void)
 
 void PlKnight::SkillTwoInput(void)
 {
-	auto& ins = PlayerInput::GetInstance();
 	using ACT_CNTL = PlayerInput::ACT_CNTL;
 	using ATK_ACT = PlayerBase::ATK_ACT;
-	if (ins.CheckAct(ACT_CNTL::SKILL_DOWN)
+	if (input_->CheckAct(ACT_CNTL::SKILL_DOWN)
 		&&obj_->GetCoolTime(ATK_ACT::SKILL2)>= Knight::SKILL_TWO_START_COOLTIME)
 	{
 		//ボタンの押しはじめの時に値初期化
 		SkillTwoInit();
 	}
 	//スキル(長押しでガード状態維持)
-	if (ins.CheckAct(ACT_CNTL::SKILL_KEEP) && obj_->GetIsSkill())
+	if (input_->CheckAct(ACT_CNTL::SKILL_KEEP) && obj_->GetIsSkill())
 	{
 		if (obj_->GetCoolTime(ATK_ACT::SKILL2) > 0.0f)
 		{
@@ -117,7 +116,7 @@ void PlKnight::SkillTwoInput(void)
 			}
 		}
 	}
-	else if (ins.CheckAct(ACT_CNTL::SKILL_UP) && obj_->GetIsSkill())
+	else if (input_->CheckAct(ACT_CNTL::SKILL_UP) && obj_->GetIsSkill())
 	{
 		obj_->SetIsCool(true, ATK_ACT::SKILL2);
 		obj_->SetIsSkill(false);

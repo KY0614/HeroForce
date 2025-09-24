@@ -22,6 +22,7 @@ void PlayerManager::Init(void)
 
 	PLAYER info[4];
 
+	//プレイヤー番号ごとにプレイヤー情報を入れる
 	info[0].info= DataBank::GetInstance().Output(1);
 	info[1].info= DataBank::GetInstance().Output(2);
 	info[2].info= DataBank::GetInstance().Output(3);
@@ -44,10 +45,8 @@ void PlayerManager::Init(void)
 			players_[i].ins = CreateCpuPlayer(players_[i].info.role_);
 			players_[i].ins->SetPlayerNum(i);
 		}
-		
-
 		//デバッグ用
-		if (players_[i].ins == nullptr)assert("プレイヤーの生成が正常に動作していません");
+		//if (players_[i].ins == nullptr)assert("プレイヤーの生成が正常に動作していません");
 
 		players_[i].ins->Init();
 	}
@@ -100,26 +99,22 @@ void PlayerManager::ResetFaze(void)
 	}
 }
 
-JobManagerBase* PlayerManager::CreateKeybordPlayer(const SceneManager::ROLE _role) const
+std::shared_ptr<JobManagerBase> PlayerManager::CreateKeybordPlayer(const SceneManager::ROLE _role) const
 {
-	JobManagerBase* ret = nullptr;
+	std::shared_ptr<JobManagerBase> ret;
 
 	switch (_role) {
 	case SceneManager::ROLE::AXEMAN:
-		ret = new PlAxe(SceneManager::CNTL::KEYBOARD);  //キャラクタ一人に必要な情報
-		//ret = new PlAxe();
+		ret = std::make_shared<PlAxe>(SceneManager::CNTL::KEYBOARD);  //キャラクタ一人に必要な情報
 		break;
 	case SceneManager::ROLE::ARCHER:
-		ret = new PlArcher(SceneManager::CNTL::KEYBOARD);
-		//ret = new PlArcher();
+		ret = std::make_shared<PlArcher>(SceneManager::CNTL::KEYBOARD);
 		break;
 	case SceneManager::ROLE::KNIGHT:
-		ret = new PlKnight(SceneManager::CNTL::KEYBOARD);
-		//ret = new PlKnight();
+		ret = std::make_shared<PlKnight>(SceneManager::CNTL::KEYBOARD);
 		break;
 	case SceneManager::ROLE::MAGE:
-		ret = new PlMage(SceneManager::CNTL::KEYBOARD);
-		//ret = new PlMage();
+		ret = std::make_shared<PlMage>(SceneManager::CNTL::KEYBOARD);
 		break;
 	default:
 		assert("プレイヤーの役職情報が間違っています");
@@ -129,26 +124,22 @@ JobManagerBase* PlayerManager::CreateKeybordPlayer(const SceneManager::ROLE _rol
 	return ret;
 }
 
-JobManagerBase* PlayerManager::CreatePadPlayer(const SceneManager::ROLE _role)
+std::shared_ptr<JobManagerBase> PlayerManager::CreatePadPlayer(const SceneManager::ROLE _role)
 {
-	JobManagerBase* ret = nullptr;
+	std::shared_ptr<JobManagerBase> ret;
 
 	switch (_role) {
 	case SceneManager::ROLE::AXEMAN:
-		ret = new PlAxe(static_cast<InputManager::JOYPAD_NO>(padNum_));
-		//ret = new PlAxe();
+		ret = std::make_shared<PlAxe>(static_cast<InputManager::JOYPAD_NO>(padNum_));
 		break;
 	case SceneManager::ROLE::ARCHER:
-		ret = new PlArcher(static_cast<InputManager::JOYPAD_NO>(padNum_));
-		//ret = new PlArcher();
+		ret = std::make_shared<PlArcher>(static_cast<InputManager::JOYPAD_NO>(padNum_));
 		break;
 	case SceneManager::ROLE::KNIGHT:
-		ret = new PlKnight(static_cast<InputManager::JOYPAD_NO>(padNum_));
-		//ret = new PlKnight();
+		ret = std::make_shared<PlKnight>(static_cast<InputManager::JOYPAD_NO>(padNum_));
 		break;
 	case SceneManager::ROLE::MAGE:
-		ret = new PlMage(static_cast<InputManager::JOYPAD_NO>(padNum_));
-		//ret = new PlMage();
+		ret = std::make_shared<PlMage>(static_cast<InputManager::JOYPAD_NO>(padNum_));
 		break;
 	default:
 		assert("プレイヤーの役職情報が間違っています");
@@ -160,35 +151,26 @@ JobManagerBase* PlayerManager::CreatePadPlayer(const SceneManager::ROLE _role)
 	return ret;
 }
 
-JobManagerBase* PlayerManager::CreateCpuPlayer(const SceneManager::ROLE _role)
+std::shared_ptr<JobManagerBase> PlayerManager::CreateCpuPlayer(const SceneManager::ROLE _role)
 {
-	JobManagerBase* ret = nullptr;
+	std::shared_ptr<JobManagerBase> ret;
 
 	switch (_role) {
 	case SceneManager::ROLE::AXEMAN:
-		//ret = new PlAxe(SceneManager::CNTL::NONE);
-		ret = new CpuAxe();
-		//ret = new PlAxe();
+		ret = std::make_shared<CpuAxe>();
 		break;
 	case SceneManager::ROLE::ARCHER:
-		//ret = new PlArcher(SceneManager::CNTL::NONE);
-		ret = new CpuArcher();
-		//ret = new PlArcher();
+		ret = std::make_shared<CpuArcher>();
 		break;
 	case SceneManager::ROLE::KNIGHT:
-		//ret = new PlKnight(SceneManager::CNTL::NONE);
-		ret = new CpuKnight();
-		//ret = new PlKnight();
+		ret = std::make_shared<CpuKnight>();
 		break;
 	case SceneManager::ROLE::MAGE:
-		//ret = new PlMage(SceneManager::CNTL::NONE);
-		ret = new CpuMage();
-		//ret = new PlMage();
+		ret = std::make_shared<CpuMage>();
 		break;
 	default:
 		assert("プレイヤーの役職情報が間違っています");
 		break;
 	}
-
 	return ret;
 }

@@ -20,6 +20,26 @@ void Archer::DrawDebug(void)
 
 Archer::Archer(void)
 {
+	//スキルが終わったらクールタイムのカウント開始
+	isCool_[static_cast<int>(act_)] = true;
+
+	//移動可能にする
+	moveAble_ = true;
+
+	//攻撃の発生
+	atkStartCnt_ = 0.0f;
+
+	isShotArrow_ = false;
+
+
+	backrashCnt_ = 0.0f;
+
+	arrowMdlId_ = -1;
+
+	for (int i = 0; i < static_cast<int>(ATK_TYPE::MAX); i++)
+	{
+		arrowCnt_[i] = 0.0f;
+	}
 
 }
 void Archer::Destroy(void)
@@ -37,10 +57,10 @@ void Archer::SetParam(void)
 		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_ARCHER));
 	float scale = CHARACTER_SCALE;
 	trans_.scl = { scale, scale, scale };
-	trans_.pos = { -300.0f, 0.0f, 0.0f };
+	trans_.pos = { 0.0f, 0.0f, 0.0f };
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::Euler(
-		0.0f, AsoUtility::Deg2RadF(180.0f),
+		0.0f, AsoUtility::Deg2RadF(INIT_DEG),
 		0.0f
 	);
 
@@ -73,7 +93,7 @@ void Archer::SetParam(void)
 
 	//当たり判定の設定
 	radius_ = MY_COL_RADIUS;
-	//acts_[ATK_ACT::ATK].radius_ = COL_ATK;
+	//acts_[ATK_ACT::ATK].radius_ = NORMAL_ATK_COL;
 
 	auto& effIns = EffectManager::GetInstance();
 	auto& resIns = ResourceManager::GetInstance();
@@ -82,9 +102,6 @@ void Archer::SetParam(void)
 	//スキルチャージ(ロードするとなぜかエフェクトが出なくなるから念のためコメントアウト)
 	EffectManager::GetInstance().Add(EFFECT::CHARGE_SKILL,
 		ResourceManager::GetInstance().Load(ResourceManager::SRC::CHARGE_SKILL).handleId_);
-
-	atkAbleCnt_ = 0;
-
 
 	for (int i = 0; i < static_cast<int>(ATK_TYPE::MAX); i++)
 	{
@@ -105,13 +122,13 @@ void Archer::InitAct(void)
 
 
 	//クールタイム
-	coolTimeMax_[static_cast<int>(ATK_ACT::ATK)] = ATK_COOLTIME;
+	coolTimeMax_[static_cast<int>(ATK_ACT::ATK)] = NORMAL_ATK_COOLTIME;
 	coolTimeMax_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_COOLTIME;
 	coolTimeMax_[static_cast<int>(ATK_ACT::SKILL2)] = SKILL_TWO_COOLTIME;
 
 
 	//攻撃発生時間
-	atkStartTime_[static_cast<int>(ATK_ACT::ATK)] = ATK_START;
+	atkStartTime_[static_cast<int>(ATK_ACT::ATK)] = NORMAL_ATK_START;
 	atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;
 	atkStartTime_[static_cast<int>(ATK_ACT::SKILL2)] = SKILL_TWO_START;
 }
@@ -136,14 +153,7 @@ void Archer::InitAtk(void)
 
 	isShotArrow_ = false;
 
-	//攻撃可能時間
-	atkAbleCnt_ = 0.0f;
-
 }
-
-
-
-
 
 void Archer::CreateArrow(ATK_TYPE _type)
 {
@@ -229,9 +239,9 @@ void Archer::Buff(PlayerBase& _target)
 	_target.SetPreStatus();
 
 	//バフ情報をセット
-	_target.SetBuff(STATUSBUFF_TYPE::ATK_BUFF,SKILL_BUFF::BUFF_ARROW, BUFF, SKILL2_BUFF_TIME);
-	_target.SetBuff(STATUSBUFF_TYPE::SPD_BUFF, SKILL_BUFF::BUFF_ARROW, BUFF, SKILL2_BUFF_TIME);
-	_target.SetBuff(STATUSBUFF_TYPE::DEF_BUFF, SKILL_BUFF::BUFF_ARROW, BUFF, SKILL2_BUFF_TIME);
+	_target.SetBuff(STATUSBUFF_TYPE::ATK_BUFF,SKILL_BUFF::BUFF_ARROW, BUFF, SKILL_TWO_BUFF_TIME);
+	_target.SetBuff(STATUSBUFF_TYPE::SPD_BUFF, SKILL_BUFF::BUFF_ARROW, BUFF, SKILL_TWO_BUFF_TIME);
+	_target.SetBuff(STATUSBUFF_TYPE::DEF_BUFF, SKILL_BUFF::BUFF_ARROW, BUFF, SKILL_TWO_BUFF_TIME);
 }
 
 
@@ -259,8 +269,6 @@ void Archer::Draw(void)
 			arrow.get()->Draw();
 		}
 	}
-
-
 #ifdef DEBUG_ON
 	DrawDebug();
 #endif // DEBUG_ON
@@ -323,6 +331,7 @@ void Archer::Skill1Func(void)
 				SoundManager::SOUND::NONE);
 		}
 		CntUp(atkStartCnt_);
+		moveAble_ = false;
 		if (isSerchArcher_)
 		{
 			VECTOR targetVec = GetTargetVec(targetPos_, false);
@@ -342,12 +351,14 @@ void Archer::Skill1Func(void)
 			CreateAtk(ATK_TYPE::ATTACK);
 			CreateArrow(ATK_TYPE::ATTACK);
 		}
-		if (atkStartCnt_ > SKILL_ONE_CHARE_STARTCNT)
+		if (atkStartCnt_ > SKILL_ONE_CHARGE_START_CNT)
+		{
 			arrowAtk_[ATK_TYPE::ATTACK].back().pow_ = SKILL_ONE_POW_MAX;
+		}
 
 		isShotArrow_ = true;
 		CntUp(backrashCnt_);
-		if (backrashCnt_ >= SKILL1_BACKRASH_MAX)
+		if (backrashCnt_ >= SKILL_ONE_BACKRASH_MAX)
 		{
 			coolTime_[static_cast<int>(ATK_ACT::SKILL1)] = 0.0f;
 
@@ -393,7 +404,7 @@ void Archer::Skill2Func(void)
 		CntUp(backrashCnt_);
 		//クールタイムの初期化
 		coolTime_[static_cast<int>(act_)] = 0.0f;
-		if (backrashCnt_ >= SKILL2_BACKRASH_MAX)
+		if (backrashCnt_ >= SKILL_TWO_BACKRASH_MAX)
 		{
 			InitAtk();
 			isSkill_ = false;
@@ -444,19 +455,10 @@ void Archer::ArrowUpdate(ATK_TYPE _type)
 				//存在している矢を減らす
 				arrowCnt_[static_cast<int>(_type)]--;
 			}
-
 			arrow_[_type][a].get()->Destroy();
-
 		}
 		//更新
 		arrow_[_type][a].get()->Update(arrowAtk_[_type][a]);
-
-		////エフェクト設定
-		//EffectManager::GetInstance().SyncEffect(
-		//	EffectManager::EFFECT::ARROW_RED,
-		//	arrowAtk_[_type][a].pos_,
-		//	trans_.GetForward(),
-		//	ARROW_EFFECT_SIZE);
 	}
 }
 void Archer::InitArrowAtk(ATK& arrowAtk)

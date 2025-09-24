@@ -26,10 +26,10 @@ void AxeMan::SetParam(void)
 		.LoadModelDuplicate(ResourceManager::SRC::PLAYER_AXEMAN));
 	float scale = CHARACTER_SCALE;
 	trans_.scl = { scale, scale, scale };
-	trans_.pos = { -300.0f, 0.0f, 0.0f };
+	trans_.pos = { 0.0f, 0.0f, 0.0f };
 	trans_.quaRot = Quaternion();
 	trans_.quaRotLocal = Quaternion::Euler(
-		0.0f, AsoUtility::Deg2RadF(180.0f),
+		0.0f, AsoUtility::Deg2RadF(INIT_DEG),
 		0.0f
 	);
 	auto& effIns = EffectManager::GetInstance();
@@ -59,7 +59,7 @@ void AxeMan::SetParam(void)
 
 	//当たり判定の設定
 	radius_ = MY_COL_RADIUS;
-	//acts_[ATK_ACT::ATK].radius_ = COL_ATK;
+	//acts_[ATK_ACT::ATK].radius_ = NORMAL_ATK_COL;
 
 }
 void AxeMan::InitAct(void)
@@ -75,12 +75,12 @@ void AxeMan::InitAct(void)
 
 
 	//クールタイム
-	coolTimeMax_[static_cast<int>(ATK_ACT::ATK)] = ATK_COOLTIME;
+	coolTimeMax_[static_cast<int>(ATK_ACT::ATK)] = NORMAL_ATK_COOLTIME;
 	coolTimeMax_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_COOLTIME;
 	coolTimeMax_[static_cast<int>(ATK_ACT::SKILL2)] = SKILL_TWO_COOLTIME;
 
 	//攻撃発生時間
-	atkStartTime_[static_cast<int>(ATK_ACT::ATK)] = ATK_START;
+	atkStartTime_[static_cast<int>(ATK_ACT::ATK)] = NORMAL_ATK_START;
 	atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;
 	atkStartTime_[static_cast<int>(ATK_ACT::SKILL2)] = SKILL_TWO_START;
 
@@ -104,8 +104,6 @@ void AxeMan::Draw(void)
 #ifdef DEBUG_ON
 	DrawDebug();
 #endif // DEBUG_ON
-
-	
 }
 
 void AxeMan::InitCharaAnim(void)
@@ -179,9 +177,9 @@ void AxeMan::Skill1Func(void)
 		}
 
 		CntUp(atkStartCnt_);
-		if (stepAnim_ >= SKILL_CHARGE_STEPANIM)
+		if (stepAnim_ >= SKILL_ONE_CHARGE_STEPANIM)
 		{
-			stepAnim_ = SKILL_CHARGE_STEPANIM;
+			stepAnim_ = SKILL_ONE_CHARGE_STEPANIM;
 		}
 	}
 	else if (atkStartCnt_ >= atkStartTime_[static_cast<int>(skillNo_)])
@@ -201,8 +199,6 @@ void AxeMan::Skill1Func(void)
 		if (atk_.IsFinishMotion())
 		{
 			coolTime_[static_cast<int>(ATK_ACT::SKILL1)] = 0.0f;
-
-			//efeIns.Stop(EffectManager::EFFECT::CHARGE_SKILL);
 
 			//スキル終わったら攻撃発生時間の最大時間をセットする
 			atkStartTime_[static_cast<int>(ATK_ACT::SKILL1)] = SKILL_ONE_START;
@@ -236,36 +232,36 @@ void AxeMan::Skill2Func(void)
 			//クールタイムの初期化
 			coolTime_[static_cast<int>(act_)] = 0.0f;
 		}
-		else //if(atk_.IsFinishMotion())/*これつけると通常連打の時にバグる*/
+		else
 		{
 			InitAtk();
 			isSkill_ = false;
 		}
 	}
+	
+	//スキルチェンジのカウントになったらアニメーション変更
+	if (atk_.cnt_ < SKILL2_CHANGE_ANIM_TIME)return;
 
-
-	if (atk_.cnt_ >= SKILL2_CHANGE_ANIM_TIME)
+	if (stepAnim_ > SKILL_TWO_CHANGE_ANIM_STEP)ResetAnim(ANIM::UNIQUE_2, SPEED_ANIM_ATK);
+	//回転中移動できる
+	moveAble_ = true;
+	//攻撃座標を移動中も同期する
+	SyncActPos(atk_);
+	//持続回転切り
+	if (atk_.isHit_)
 	{
-		if (stepAnim_ > 14.0f)ResetAnim(ANIM::UNIQUE_2, SPEED_ANIM_ATK);
-		//回転中移動できる
-		moveAble_ = true;
-		//攻撃座標を移動中も同期する
-		SyncActPos(atk_);
-		//持続回転切り
-		if (atk_.isHit_)
+		CntUp(multiHitInterval_);
+		//クールタイムの初期化
+		coolTime_[static_cast<int>(act_)] = 0.0f;
+		if (multiHitInterval_ >= MULTIHIT_INTERVAL)
 		{
-			CntUp(multiHitInterval_);
-			//クールタイムの初期化
-			coolTime_[static_cast<int>(act_)] = 0.0f;
-			if (multiHitInterval_ >= MULTIHIT_INTERVAL)
-			{
-				atk_.isHit_ = false;
-				multiHitInterval_ = 0.0f;
-			}
-		}
-		else
-		{
+			atk_.isHit_ = false;
 			multiHitInterval_ = 0.0f;
 		}
 	}
+	else
+	{
+		multiHitInterval_ = 0.0f;
+	}
+
 }

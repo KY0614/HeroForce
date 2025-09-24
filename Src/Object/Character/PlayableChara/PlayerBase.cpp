@@ -7,40 +7,56 @@
 
 PlayerBase::PlayerBase(void)
 {
-	skillNo_ = ATK_ACT::SKILL1;
-
-	moveSpeed_ = 0.0f;
-
-	userOnePos_ = { -400.0f,0.0f,0.0f };
-
-	atk_.isHit_ = false;
-
-	multiHitInterval_ = 0.0f;
-
+	act_ = ATK_ACT::MAX;
 	atkStartCnt_ = 0.0f;
+	for (int i = 0; i < static_cast<int>(ATK_ACT::MAX); i++)
+	{
+		atkStartTime_[i] = 0.0f;
+		buffCnt_[i] = 0.0f;
+		buffPercent_[i] = 0.0f;
+		coolTimeMax_[i] = 0.0f;
+		coolTime_[i] = 0.0f;
+		coolTimePer_[i] = 1.0f;
+		isCool_[i] = false;
+	}
+	buffType_ = STATUSBUFF_TYPE::MAX;
 
-	isPush_ = false;
+	isAtk_ = false;
 
-	dodge_ = nullptr;
-
-	moveAble_ = true;
-
-	stickDeg_ = -1;
-
-	isSerchArcher_ = false;
-
+	isBuff_ = false;
 	isBuffing_ = false;
-
+	colPos_ = AsoUtility::VECTOR_ZERO;
+	isSkill_ = false;
+	skillNo_ = ATK_ACT::SKILL1;
+	padNum_ = InputManager::JOYPAD_NO::INPUT_KEY;
+	moveSpeed_ = 0.0f;
+	atk_.isHit_ = false;
+	multiHitInterval_ = 0.0f;
+	atkStartCnt_ = 0.0f;
+	isPush_ = false;
+	dodge_ = nullptr;
+	moveAble_ = true;
+	isSerchArcher_ = false;
+	isBuffing_ = false;
 	bufAtk_ = atkPow_;
 	bufDef_ = defDef_;
 	bufSpd_ = defSpeed_;
-
 	speed_ = 0.0f;
+	for (int i = 0; i < PlayerManager::PLAYER_NUM; i++)
+	{
+		initPos_[i] = { PLAYER_ONE_POS_X + DISTANCE * i,0.0f,0.0f };
+	}
+	preAtkPow_ = atkPow_;
+	preDef_ = def_;
+	preSpd_ = moveSpeed_;
+	role_ = SceneManager::ROLE::NONE;
+	targetPos_ = AsoUtility::VECTOR_ZERO;
+	atkType_ = ATK_TYPE::MAX;
+	for (int i = 0; i < static_cast<int>(ATK_TYPE::MAX); i++)
+	{
+		atkTypes_[i] = ATK_TYPE::MAX;
+	}
 
-	initPos_[0] = PLAYER1_POS;
-	initPos_[1] = PLAYER2_POS;
-	initPos_[2] = PLAYER3_POS;
-	initPos_[3] = PLAYER4_POS;
 
 	for (int i = 0; i < static_cast<int>(ATK_ACT::MAX); i++)
 	{
@@ -69,7 +85,6 @@ void PlayerBase::Init(void)
 	//アニメーションNo初期化
 	InitAnimNum();
 
-
 	InitCharaAnim();
 
 	SetParam();
@@ -88,9 +103,6 @@ void PlayerBase::Init(void)
 
 	skillNo_ = ATK_ACT::SKILL1;
 
-	
-
-	//dodgeCdt_ = DODGE_CDT_MAX;
 	dodge_ = new PlayerDodge();
 	dodge_->Init();
 
@@ -100,9 +112,6 @@ void PlayerBase::Init(void)
 	ChangeSkillControll(ATK_ACT::SKILL1);
 
 	speed_ = 0.0f;
-
-	userOnePos_ = { -400.0f,0.0f,0.0f };
-
 
 	atk_.isHit_ = false;
 
@@ -133,9 +142,6 @@ void PlayerBase::Init(void)
 	snd.Add(SoundManager::TYPE::SE, SoundManager::SOUND::SKILL_CHANGE
 		, res.Load(ResourceManager::SRC::SKILL_CHANGE).handleId_);
 
-	//プレイヤー入力のインスタンスを作る
-	PlayerInput::CreateInstance();
-
 	//モデルの初期化
 	trans_.Update();
 
@@ -163,18 +169,16 @@ void PlayerBase::Update(void)
 #ifdef INPUT_DEBUG_ON
 	InputUpdate();
 #endif // INPUT_DEBUG_ON
-
-
 	//座標のバックアップ
 	prePos_ = trans_.pos;
 
 	//モデルの更新
 	trans_.Update();
-
 	SyncActPos(atk_);
 
 	colPos_ = VAdd(trans_.pos, VScale(PLAYER_COL_LOCAL_POS, CHARACTER_SCALE));
 
+	//プレイヤー更新
 	UserUpdate();
 
 	//クールタイム割合の計算
@@ -183,9 +187,8 @@ void PlayerBase::Update(void)
 	//HPを減らす処理
 	SubHp();
 
+	//バフ更新
 	BuffUpdate();
-
-
 #ifdef DEBUG_ON
 
 
@@ -224,6 +227,8 @@ void PlayerBase::Move(float _deg, VECTOR _axis)
 
 void PlayerBase::UserUpdate(void)
 {
+	//操作関係
+	ProcessAct();
 
 	//停止アニメーションになる条件
 	if (!IsMove() && !dodge_->IsDodge() && 0.0f >= atkStartCnt_ &&!isAtk_&&!isSkill_)
@@ -231,13 +236,6 @@ void PlayerBase::UserUpdate(void)
 		ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 		speed_ = 0.0f;
 	}
-
-	//操作関係
-	ProcessAct();
-
-	auto& inpMng = InputManager::GetInstance();
-	auto& pInp = PlayerInput::GetInstance();
-
 	//回避
 	dodge_->Update(trans_);
 	if (dodge_->IsDodge() && !dodge_->IsCoolDodge()) {
@@ -262,12 +260,12 @@ void PlayerBase::InitAnimNum(void)
 
 void PlayerBase::InitCharaAnim(void)
 {
-
+	//スタブ
 }
 
 void PlayerBase::InitAct(void)
 {
-
+	//スタブ
 }
 
 void PlayerBase::ChangeAct(const ATK_ACT _act)
@@ -276,28 +274,24 @@ void PlayerBase::ChangeAct(const ATK_ACT _act)
 	if (isCool_[static_cast<int>(_act)] && !IsAtkable())return;
 	act_ = _act;
 
-
 	//変更点
-	changeAct_[_act]();
+	changeAct_[act_]();
 }
 
 void PlayerBase::ChangeNmlAtk(void)
 {
 	ResetAnim(ANIM::UNIQUE_1, SPEED_ANIM_ATK);
-	//actUpdate_ = std::bind(&PlayerBase::AtkFunc, this);
 }
 
 void PlayerBase::ChangeSkillOne(void)
 {
 	ResetAnim(ANIM::SKILL_1, SPEED_ANIM_ATK);
 	isCool_[static_cast<int>(SKILL_NUM::TWO)] = true;
-	//actUpdate_ = std::bind(&PlayerBase::Skill1Func, this);
 }
 
 void PlayerBase::ChangeSkillTwo(void)
 {
 	ResetAnim(ANIM::SKILL_2, SPEED_ANIM_ATK);
-	//actUpdate_ = std::bind(&PlayerBase::Skill2Func, this);
 }
 
 void PlayerBase::ResetParam(ATK& _atk)
@@ -371,14 +365,8 @@ VECTOR PlayerBase::GetTargetVec(VECTOR _targetPos,bool _isMove)
 	else { return targetVec; }
 }
 
-
-
-
 void PlayerBase::Turn(float _deg, VECTOR _axis)
 {
-	//transform_.quaRot =
-	//	transform_.quaRot.Mult(Quaternion::AngleAxis(AsoUtility::Deg2RadF(deg), axis));
-
 	trans_.quaRot =
 		trans_.quaRot.AngleAxis(AsoUtility::Deg2RadF(_deg), _axis);
 }
@@ -402,18 +390,25 @@ void PlayerBase::InitAtk(void)
 	//攻撃の発生
 	atkStartCnt_ = 0.0f;
 
-
 	EffectManager::GetInstance().Stop(EffectManager::EFFECT::GUARD);
-
-
-
-	
 }
 
 void PlayerBase::SetBuff(STATUSBUFF_TYPE _type, SKILL_BUFF _skill, float _per, float _second)
 {
 	buffs_[_skill].cnt = _second;
 	buffs_[_skill].percent[static_cast<int>(_type)] = _per;
+}
+
+void PlayerBase::AddBuffStatus(SKILL_BUFF _skill, int _type)
+{
+	STATUSBUFF_TYPE type = static_cast<STATUSBUFF_TYPE>(_type);
+	buffpers_[type] += buffs_[_skill].percent[_type] / DEFAULT_PERCENT;
+}
+
+void PlayerBase::SubBuffStatus(const SKILL_BUFF _skill, const int _type)
+{
+	STATUSBUFF_TYPE type = static_cast<STATUSBUFF_TYPE>(_type);
+	buffpers_[type] -= buffs_[_skill].percent[_type] / DEFAULT_PERCENT;
 }
 
 void PlayerBase::SetPreStatus(void)
@@ -428,51 +423,48 @@ void PlayerBase::BuffUpdate(void)
 	for (auto& buff : buffs_)
 	{
 		CntDown(buff.second.cnt);
-	
-		if (buff.second.cnt>0.0f&&buff.second.isBuff)
-		{
-			for (int i = 0; i < static_cast<int>(SKILL_BUFF::MAX); i++)
-			{
-				if (buff.second.isBuffing == true)continue;
 
-				//それぞれのバフ(スキルごとに設定されたバフ)をステータスのバフに足す
-				buffpers_[STATUSBUFF_TYPE::ATK_BUFF] += buff.second.percent[static_cast<int>(STATUSBUFF_TYPE::ATK_BUFF)]/ DEFAULT_PERCENT;
-				buffpers_[STATUSBUFF_TYPE::DEF_BUFF] += buff.second.percent[static_cast<int>(STATUSBUFF_TYPE::DEF_BUFF)]/ DEFAULT_PERCENT;
-				buffpers_[STATUSBUFF_TYPE::SPD_BUFF] += buff.second.percent[static_cast<int>(STATUSBUFF_TYPE::SPD_BUFF)]/ DEFAULT_PERCENT;
-				buff.second.isBuffing = true;
+		if (buff.second.cnt > 0.0f && buff.second.isBuff)
+		{
+			//バフを重ねないためにバフ中だったらバフを受けないようにする
+			if (buff.second.isBuffing == true)continue;
+
+			//それぞれのバフ(スキルごとに設定されたバフ)をステータスのバフに足す
+			for (int i = 0; i < static_cast<int>(STATUSBUFF_TYPE::MAX); i++)
+			{
+				//バフを足す
+				AddBuffStatus(buff.first, i);
 			}
+			buff.second.isBuffing = true;
+
 		}
-		else if(buff.second.cnt <= 0.0f)
+		else if (buff.second.cnt <= 0.0f)
 		{
 			buff.second.cnt = 0.0f;
-			for (int i = 0; i < static_cast<int>(SKILL_BUFF::MAX); i++)
-			{
-				if (buff.second.isBuffing == false)continue;
 
-				//制限時間が終わったらスキルで増やした増加量分引く
-				buffpers_[STATUSBUFF_TYPE::ATK_BUFF] -= buff.second.percent[static_cast<int>(STATUSBUFF_TYPE::ATK_BUFF)] / DEFAULT_PERCENT;
-				buffpers_[STATUSBUFF_TYPE::DEF_BUFF] -= buff.second.percent[static_cast<int>(STATUSBUFF_TYPE::DEF_BUFF)] / DEFAULT_PERCENT;
-				buffpers_[STATUSBUFF_TYPE::SPD_BUFF] -= buff.second.percent[static_cast<int>(STATUSBUFF_TYPE::SPD_BUFF)] / DEFAULT_PERCENT;
-				buff.second.isBuffing = false;
-				buff.second.isBuff = false;
+			if (buff.second.isBuffing == false)continue;
+
+			//制限時間が終わったらスキルで増やした増加量分引く
+			for (int i = 0; i < static_cast<int>(STATUSBUFF_TYPE::MAX); i++)
+			{
+				SubBuffStatus(buff.first, i);
 			}
+			buff.second.isBuffing = false;
+			buff.second.isBuff = false;
 		}
-		atkPow_ = preAtkPow_ * (1.0f + buffpers_[STATUSBUFF_TYPE::ATK_BUFF]);
-		def_ = preDef_ * (1.0f + buffpers_[STATUSBUFF_TYPE::DEF_BUFF]);
-		moveSpeed_ = preSpd_ * (1.0f + buffpers_[STATUSBUFF_TYPE::SPD_BUFF]);
+		atkPow_ = preAtkPow_ * (PER_MAX + buffpers_[STATUSBUFF_TYPE::ATK_BUFF]);
+		def_ = preDef_ * (PER_MAX + buffpers_[STATUSBUFF_TYPE::DEF_BUFF]);
+		moveSpeed_ = preSpd_ * (PER_MAX + buffpers_[STATUSBUFF_TYPE::SPD_BUFF]);
 	}
 }
 
 void PlayerBase::Reset(void)
 {
-	//アニメーション初期化
 	ResetAnim(ANIM::IDLE, SPEED_ANIM);
 
 	skillNo_ = ATK_ACT::SKILL1;
 
 	dodge_->Init();
-
-	userOnePos_ = { -400.0f,0.0f,0.0f };
 
 	ResetParam();
 
@@ -530,7 +522,6 @@ void PlayerBase::ChangeSkillControll(ATK_ACT _skill)
 	atkType_ = atkTypes_[static_cast<int>(_skill)];
 	isPush_ = false;
 	moveAble_ = true;
-
 }
 const bool PlayerBase::IsAtkable(void) const
 {
@@ -539,20 +530,6 @@ const bool PlayerBase::IsAtkable(void) const
 const bool PlayerBase::IsDodgeable(void) const
 {
 	 return !dodge_->IsDodge() && !IsAtkAction() && !dodge_->IsCoolDodge(); 
-}
-void PlayerBase::Damage(void)
-{
-	//とりあえず1ダメージ減らす
-	hp_--;
-
-	//アニメーション変更
-	ResetAnim(ANIM::DAMAGE, SPEED_ANIM_DODGE);
-#ifdef DEBUG_ON
-	const unsigned int  DMG_COLOR = 0x00ffff;
-	color_Col_ = DMG_COLOR;
-#endif // DEBUG_ON
-	if (!IsAlive()) { ResetAnim(ANIM::DEATH, SPEED_ANIM); }
-
 }
 
 #ifdef DEBUG_ON
@@ -617,11 +594,12 @@ void PlayerBase::CoolTimePerCalc(void)
 
 bool PlayerBase::IsSkillable(void)
 {
-	{ return !IsAtkAction() && !dodge_->IsDodge(); }
+	return !IsAtkAction() && !dodge_->IsDodge();
 }
 
 void PlayerBase::SkillChange(void)
 {
+	//スキルを変えるために１つ加算する
 	skillNo_ = static_cast<ATK_ACT>(static_cast<int>(skillNo_) + 1);
 	auto& snd = SoundManager::GetInstance();
 	snd.Play(SoundManager::SOUND::SKILL_CHANGE);

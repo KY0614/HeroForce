@@ -34,6 +34,8 @@ public:
       //エフェクトを最初の1フレームの時に再生させる用のFPS
     static constexpr float DELTATIME = 1.0f / 60.0f;
 
+    //割合最大値
+    static constexpr float PER_MAX = 1.0f;
 
     //各アニメーション番号
     static constexpr int T_POSE_NUM = 64;
@@ -51,7 +53,7 @@ public:
     static constexpr float SPEED_ANIM_ATK = 50.0f;
 
     //死にアニメーションの止めるカウント
-    static constexpr float DEATH_STEP_ANIM = 22.7;
+    static constexpr float DEATH_STEP_ANIM = 22.7f;
 
     //攻撃の種類の数
     static constexpr int ATK_TOTAL = 3;
@@ -84,8 +86,16 @@ public:
     static constexpr VECTOR PLAYER3_POS = { 0.0F,0.0F,0.0f };
     static constexpr VECTOR PLAYER4_POS = { 100.0F,0.0F,0.0f };
 
+    //プレイヤー１を置くX座標
+    static constexpr float PLAYER_ONE_POS_X = -200.0f;
+    //他プレイヤーとの間隔
+    static constexpr float DISTANCE = 100;
+
     //音量
     static constexpr int SKILL_CHANGE_SE_VOL = 80;
+
+    //初期角度
+    static constexpr float INIT_DEG = 180.0f;
 
     //*************************************************
     // 列挙型
@@ -164,10 +174,7 @@ public:
 
     virtual void SetIsArrowHit(ATK_TYPE _type, const bool _flg, int _num){ atks_[_type][_num].isHit_ = _flg; }
 
-     //ダメージ関数
-    void Damage(void);
-
-    //リセット
+    //リセット(基本的にはステータスの初期化)
     void Reset(void);
 
     //役職それぞれのバフ(使わない役職もあるためスタブ)
@@ -224,8 +231,6 @@ public:
     const float* GetCoolTimePer(void) { return coolTimePer_; }
 
     //バフされているかゲッタ
-    //const bool GetIsBuff(void) { return isBuff_; }
-
     const bool GetIsBuff(SKILL_BUFF _skill) { return buffs_[_skill].isBuff; }
 
     //矢などの遠距離武器のゲッタ(KnightとArcherで使う)
@@ -267,7 +272,7 @@ public:
     //攻撃発生したのを確認する
     const bool IsFinishAtkStart(void)const { return atkStartCnt_ > atkStartTime_[static_cast<int>(act_)]; }
 
-    //攻撃変更用(主に入力されたら変えるようにする)
+    //攻撃変更用(主に初期化用)
     void ChangeAct(const ATK_ACT _act);
 
     //攻撃の最大値の初期化(弓矢とかの違うatkの配列とか使う用)
@@ -308,22 +313,26 @@ public:
     //void SetBuff(STATUSBUFF_TYPE _type, float _per,float _second);
 
     /// <summary>
-    /// 
+    /// バフセット
     /// </summary>
-    /// <param name="_type"></param>
-    /// <param name="_skill"></param>
-    /// <param name="_per"></param>
-    /// <param name="_second"></param>
+    /// <param name="_type">どのステータスをバフするか</param>
+    /// <param name="_skill">どのスキルをつかうか</param>
+    /// <param name="_per">バフ量</param>
+    /// <param name="_second">バフ効果時間</param>
     void SetBuff(STATUSBUFF_TYPE _type,SKILL_BUFF _skill, float _per,float _second);
 
-    //時間制限なし
-    //void SetBuff(STATUSBUFF_TYPE _type, float _per);
+
+    /// <summary>
+    /// バフを足す
+    /// </summary>
+    /// <param name="_skill">何のスキルか</param>
+    /// <param name="_type">どのステータスか</param>
+    void AddBuffStatus(const SKILL_BUFF _skill, const int _type);
+    //バフを引く
+    void SubBuffStatus(const SKILL_BUFF _skill, const int _type);
 
     //前のステータス情報をセットする
     void SetPreStatus(void);
-
-    //バフした判定セッタ
-    //void SetIsBuff(const bool _isBuff) { isBuff_ = _isBuff; }
 
     /// <summary>
     /// バフしたかセッタ
@@ -333,7 +342,6 @@ public:
     void SetIsBuff(SKILL_BUFF _skill,const bool _isBuff) { buffs_[_skill].isBuff = _isBuff; }
 
     void SetIsBuff(PlayerBase& _player,SKILL_BUFF _skill, const bool _isBuff) { _player.SetIsBuff(_skill, _isBuff); }
-
 
     //ターゲットセッタ
     void SetTargetPos(const VECTOR _targetPos) { targetPos_ = _targetPos; } 
@@ -348,19 +356,6 @@ protected:
     //*************************************************
     // 列挙型
     //*************************************************
-    struct PlayerAtk
-    {
-        ATK_ACT act_;
-        float atkStartCnt_;
-        ATK atk_;
-        float CoolTime_[static_cast<int>(ATK_ACT::MAX)];
-        float CoolTimeMax_[static_cast<int>(ATK_ACT::MAX)];                //クールタイム最大
-        std::map<ATK_ACT, ATK>atkMax_;
-        float atkStartTime_[static_cast<int>(ATK_ACT::MAX)];            //攻撃発生時間
-        bool IsAtkStart(void) { return 0.0f < atkStartCnt_ && atkStartCnt_ <= atkStartTime_[static_cast<int>(act_)]; }
-    };
-
-
     //*************************************************
     // メンバ変数
     //*************************************************
@@ -377,26 +372,18 @@ protected:
     float coolTime_[static_cast<int>(ATK_ACT::MAX)];            //それぞれのクールタイムカウント
     bool isCool_[static_cast<int>(ATK_ACT::MAX)];               //それぞれの攻撃使い終わりを格納する
     float multiHitInterval_;                                    //多段ヒットのダメージ間隔
-    VECTOR userOnePos_;                                         //ユーザー1追従用の座標   
     VECTOR colPos_;                                             //プレイヤーの当たり判定座標
-    bool isSerchArcher_;                                              //アーチャーの射程圏内に入ったかどうか
+    bool isSerchArcher_;                                        //アーチャーの射程圏内に入ったかどうか
     float speed_;                                               //プレイヤーのスピード(ステータスではなく1フレームに動くもの)
-
-
 
     //誰をターゲットにするか
     VECTOR targetPos_;
-
- 
-
 
     bool isPush_;                                               //長押しスキル用のボタンを押しているかどうか  true:押している
     bool moveAble_;             //移動可能かを返す  true:移動可能
     bool isAtk_;                                                 //通常攻撃開始したかどうか
     bool isSkill_;                                                 //スキル開始したかどうか
     bool isBuff_;                                               //バフかそうでないか     true：バフである
-
-
 
 
     //それぞれの最大値セット用(攻撃の座標はローカル座標で設定してます)
@@ -406,10 +393,6 @@ protected:
 
     //コントローラー系
     InputManager::JOYPAD_NO padNum_;                //ゲームパッドの番号
-    int leftStickX_;            //パッドのスティックのX角度  
-    int leftStickY_;            //パッドのスティックのY角度
-    float stickDeg_;            //パッドのスティックの角度
-
 
     //*************************************************
     //メンバ関数
