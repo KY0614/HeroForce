@@ -109,14 +109,14 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="player"></param>プレイヤー
-	/// <param name="info"></param>プレイヤー情報
+	/// <param name="player">プレイヤー</param>
+	/// <param name="info">プレイヤー情報</param>
 	void Init(PlayerBase& _player,const DataBank::PLAYER_INFO& _info);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	/// <param name="player"></param>プレイヤー
+	/// <param name="player">プレイヤー</param>
 	void Update(PlayerBase& _player);
 
 	//描画

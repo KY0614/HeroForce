@@ -48,8 +48,8 @@ protected:
 	/// <summary>
 	/// アニメーションの初期化
 	/// </summary>
-	/// <param name="_anim"></param>アニメーション種類
-	/// <param name="_speed"></param>アニメーションスピード
+	/// <param name="_anim">アニメーション種類</param>
+	/// <param name="_speed">アニメーションスピード</param>
 	void ResetAnim(const ANIM _anim, const float _speed) override;
 
 private:

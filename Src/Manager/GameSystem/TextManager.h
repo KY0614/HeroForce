@@ -53,23 +53,23 @@ public:
 	/// <summary>
 	/// テキストを読みこむ
 	/// </summary>
-	/// <param name="_text"></param>テキスト種類
-	/// <returns></returns>テキスト
+	/// <param name="_text">テキスト種類</param>
+	/// <returns>テキスト</returns>
 	std::string TextLoad(const TEXTS _text);
 
 	/// <summary>
 	/// フォントの名前を返す
 	/// </summary>
-	/// <param name="_type"></param>フォント種類
-	/// <returns></returns>名前
+	/// <param name="_type">フォント種類</param>
+	/// <returns>名前</returns>
 	inline std::string GetFontName(const FONT_TYPE _type) const { return fontName_[static_cast<int>(_type)]; }
 
 	/// <summary>
 	/// テキストサイズを返す
 	/// </summary>
-	/// <param name="_txt"></param>テキスト
-	/// <param name="_num"></param>ナンバー
-	/// <returns></returns>テキストサイズ
+	/// <param name="_txt">テキスト</param>
+	/// <param name="_num">ナンバー</param>
+	/// <returns>テキストサイズ</returns>
 	int GetTextSize(const std::string _txt,const int _num)const;
 
 	//解放処理

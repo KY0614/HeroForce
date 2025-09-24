@@ -93,14 +93,14 @@ public:
 	/// <summary>
 	/// 状態を返す
 	/// </summary>
-	/// <returns></returns>状態
+	/// <returns>状態</returns>
 	inline const STATE GetState() const { return state_; }
 
 	/// <summary>
 	/// 種類を返す
 	/// </summary>
-	/// <param name="plNum"></param>プレイヤー番号
-	/// <returns></returns>選択した種類
+	/// <param name="plNum">プレイヤー番号</param>
+	/// <returns>選択した種類</returns>
 	inline LevelScreenManager::TYPE GetType(const int _plNum) { return selectTypes_[_plNum]; }
 	
 	//スキップ用処理

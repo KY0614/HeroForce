@@ -72,13 +72,13 @@ public:
 	/// <summary>
 	/// 状態変更
 	/// </summary>
-	/// <param name="_state"></param>状態
+	/// <param name="_state">状態</param>
 	void ChangeState(const STATE _state);
 
 	/// <summary>
 	/// 新しいレベル設定
 	/// </summary>
-	/// <param name="_newLevel"></param>新しいレベル
+	/// <param name="_newLevel">新しいレベル</param>
 	void SetNewLevel(const int& _newLevel);
 
 	//状態を返す

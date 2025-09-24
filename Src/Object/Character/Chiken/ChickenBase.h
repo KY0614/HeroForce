@@ -104,7 +104,7 @@ public:
 	/// <summary>
 	/// 生成
 	/// </summary>
-	/// <param name="pos"></param>生成位置
+	/// <param name="pos">生成位置</param>
 	virtual void Create(const VECTOR& _pos);
 
 	//更新
@@ -119,7 +119,7 @@ public:
 	/// <summary>
 	/// ターゲットの座標を受け取る
 	/// </summary>
-	/// <param name="pos"></param>ターゲット位置
+	/// <param name="pos">ターゲット位置</param>
 	inline void SetTarget(const VECTOR _pos) { targetPos_ = _pos; }
 
 	//状態を返す

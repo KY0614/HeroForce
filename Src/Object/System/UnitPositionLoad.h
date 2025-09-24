@@ -39,15 +39,15 @@ public:
 	/// <summary>
 	/// 指定したユニットの座標配列を返す
 	/// </summary>
-	/// <param name="_type"></param>ユニットの種類
-	/// <returns></returns>指定したユニットの座標配列
+	/// <param name="_type">ユニットの種類</param>
+	/// <returns>指定したユニットの座標配列</returns>
 	const std::vector<VECTOR>GetPos(const UNIT_TYPE _type);
 
 	/// <summary>
 	/// 指定したユニットの角度配列を返す
 	/// </summary>
-	/// <param name="_type"></param>ユニットの種類
-	/// <returns></returns>指定したユニットの角度配列
+	/// <param name="_type">ユニットの種類</param>
+	/// <returns>指定したユニットの角度配列</returns>
 	const std::vector<VECTOR>GetRot(const UNIT_TYPE _type);
 
 private:	

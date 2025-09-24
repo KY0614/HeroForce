@@ -47,7 +47,7 @@ public:
 	/// <summary>
 	/// インスタンスを返す
 	/// </summary>
-	/// <returns></returns>インスタンス
+	/// <returns>インスタンス</returns>
 	static CharacterParamData& GetInstance();
 
 	//初期化
@@ -56,8 +56,8 @@ public:
 	/// <summary>
 	/// 情報の受け取り
 	/// </summary>
-	/// <param name="type"></param>
-	/// <returns></returns>
+	/// <param name="type">ユニット種類</param>
+	/// <returns>パラメータ</returns>
 	inline const PARAM GetParamData(const UNIT_TYPE type)const { return charParam_.at(type); }
 
 private:

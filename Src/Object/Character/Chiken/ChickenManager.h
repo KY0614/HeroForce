@@ -20,9 +20,9 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="pos"></param>配置座標配列
-	/// <param name="stageTrans"></param>ステージの情報
-	/// <param name="playerTrans"></param>プレイヤー情報(1pのみ)
+	/// <param name="pos">配置座標配列</param>
+	/// <param name="stageTrans">ステージの情報</param>
+	/// <param name="playerTrans">プレイヤー情報(1pのみ)</param>
 	ChickenManager(
 		std::vector<VECTOR> pos,
 		const Transform& stageTrans,

@@ -102,68 +102,68 @@ public:
 	/// <summary>
 	/// 経験値を加える
 	/// </summary>
-	/// <param name="_value"></param>追加経験値量
+	/// <param name="_value">追加経験値量</param>
 	inline void AddExp(const float _value) { restExp_ += _value; }
 
 	/// <summary>
 	/// 経験値ゲージの設定
 	/// </summary>
-	/// <param name="_level"></param>レベル
+	/// <param name="_level">レベル</param>
 	void SetGage(const int _level);
 
 	/// <summary>
 	/// レベルアップ効果反映
 	/// </summary>
-	/// <param name="_player"></param>プレイヤー
-	/// <param name="_playerNum"></param>プレイヤー番号
+	/// <param name="_player">プレイヤー</param>
+	/// <param name="_playerNum">プレイヤー番号</param>
 	void Reflection(PlayerBase &_player,const int _playerNum);
 
 	/// <summary>
 	/// 状態変更
 	/// </summary>
-	/// <param name="_state"></param>状態
+	/// <param name="_state">状態</param>
 	void ChangeState(const STATE _state);
 	
 	/// <summary>
 	/// エフェクトを追従させる
 	/// </summary>
-	/// <param name="_player"></param>プレイヤー
-	/// <param name="_playerNum"></param>プレイヤー番号
+	/// <param name="_player">プレイヤー</param>
+	/// <param name="_playerNum">プレイヤー番号</param>
 	void EffectSyne(PlayerBase& _player, const int _playerNum);
 
 	/// <summary>
 	/// 経験値量を返す
 	/// </summary>
 	/// <param name=""></param>
-	/// <returns></returns>経験値
+	/// <returns>経験値</returns>
 	inline const float GetExp()const { return exp_; };
 
 	/// <summary>
 	/// 状態を返す
 	/// </summary>
 	/// <param name=""></param>
-	/// <returns></returns>
+	/// <returns>状態</returns>
 	inline const STATE GetState()const { return state_; };
 
 	/// <summary>
 	/// 種類を返す
 	/// </summary>
-	/// <param name="_playerNum"></param>プレイヤー番号
-	/// <returns></returns>種類を返す
+	/// <param name="_playerNum">プレイヤー番号</param>
+	/// <returns>種類を返す</returns>
 	inline TYPE GetType(const int _playerNum)const { return selectTypes_[_playerNum]; }
 
 	/// <summary>
 	/// 前の種類を返す
 	/// </summary>
-	/// <param name="_playerNum"></param>プレイヤー番号
-	/// <returns></returns>前の種類
+	/// <param name="_playerNum">プレイヤー番号</param>
+	/// <returns>前の種類</returns>
 	inline const TYPE GetPreType(const int _playerNum)const { return preTypeData_[_playerNum]; }
 
 	/// <summary>
 	/// レベルアップ判定
 	/// </summary>
 	/// <param name=""></param>
-	/// <returns></returns>レベルアップ処理を行う場合は,true,そうではない場合は,false
+	/// <returns>レベルアップ処理を行う場合は,true,そうではない場合は,false</returns>
 	inline const bool IsLevelUp()const  { return !(state_ == STATE::NONE || state_ == STATE::END); }
 
 private:	
