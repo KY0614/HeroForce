@@ -1,14 +1,12 @@
 #include<cassert>
 #include<random>
 #include"../Manager/Generic/SceneManager.h"
-
 #include"EnemySort/Enemy.h"
 #include"EnemySort/EneArcher.h"
 #include"EnemySort/EneAxe.h"
 #include"EnemySort/EneBrig.h"
 #include"EnemySort/EneGolem.h"
 #include"EnemySort/EneMage.h"
-
 #include "EnemyManager.h"
 
 EnemyManager::EnemyManager(std::vector<VECTOR> _pos) : createPos_(_pos)
@@ -25,10 +23,13 @@ EnemyManager::EnemyManager(std::vector<VECTOR> _pos) : createPos_(_pos)
 	}
 
 	allExp_ = 0.0f;
-
 	activeNum_ = 0;
-
 	createIntCnt_ = 0.0f;
+	dunkCnt_ = 0;
+}
+
+EnemyManager::~EnemyManager()
+{
 }
 
 void EnemyManager::Init(void)
@@ -46,7 +47,7 @@ void EnemyManager::Init(void)
 
 	createIntCnt_ = 0.0f;
 
-	ProcessChangePhase(1);
+	ProcessChangePhase(PHASE_ONE);
 }
 
 void EnemyManager::Update(void)
@@ -115,40 +116,57 @@ void EnemyManager::CreateEnemy(void)
 	//敵が最大数いたら生成処理を行わない
 	if (activeNum_ >= ENEMY_MAX)return;
 
-	Enemy* enm = nullptr;
+	//敵の生成用
+	std::unique_ptr<Enemy> enm;
+
+	//ループ制限
+	int retry = 0;
 
 	//乱数で種類決める
-	TYPE type;
+	int typeRand = GetRand(static_cast<int>(TYPE::MAX) - 1);
 	
-	//ゴーレム以外で
-	do
+	//ゴーレム　又は　同じ種類の敵数制限に引っかかったらもう一度
+	while (typeRand == static_cast<int>(TYPE::GOLEM)|| activeTypeNum_[typeRand] >= ONETYPE_MAX && retry < RETRY_LIMIT)
 	{
-		type = static_cast<TYPE>(GetRand(static_cast<int>(TYPE::MAX) - 1));
-	} while (type == TYPE::GOLEM || activeTypeNum_[static_cast<int>(type)] >= ONETYPE_MAX);
+		//ランダムで敵を決める
+		typeRand = GetRand(static_cast<int>(TYPE::MAX) - 1);
+		
+		//リトライ回数
+		retry++;
+	} 
 
+	//TYPEに変換
+	TYPE type = static_cast<TYPE>(typeRand);
+
+	//ループ制限を超えていたら処理をやめる
+	if (retry >= RETRY_LIMIT)return;
+
+	//生成地点をランダムで決める
+	int createPosPoint = GetRand(createPos_.size() - 1);
 	//生成相対座標
-	VECTOR createLocalPos = createPos_[GetRand(createPos_.size() - 1)];
+	VECTOR createLocalPos = createPos_[createPosPoint];
+	//敵の数分座標をずらす
 	createLocalPos.x += activeNum_ * Enemy::COL_RADIUS;
 	createLocalPos.y = 0.0f;
+	createLocalPos.z += activeNum_ * Enemy::COL_RADIUS;
 
 	//インスタンス生成
 	switch (type)
 	{
 	case EnemyManager::TYPE::ARCHER:
-		enm = new EneArcher(createLocalPos);
+		enm = std::make_unique<EneArcher>(createLocalPos);
 		break;
 	case EnemyManager::TYPE::AXE:
-		enm = new EneAxe(createLocalPos);
+		enm = std::make_unique <EneAxe>(createLocalPos);
 		break;
 	case EnemyManager::TYPE::BRIG:
-		enm = new EneBrig(createLocalPos);
+		enm = std::make_unique <EneBrig>(createLocalPos);
 		break;
 	case EnemyManager::TYPE::GOLEM:
-		//ゴーレムはボスキャラなのでここでは生成しない
+		//ゴーレムはボスキャラなのでここでは生成されない
 		return;
-		break;
 	case EnemyManager::TYPE::MAGE:
-		enm = new EneMage(createLocalPos);
+		enm = std::make_unique <EneMage>(createLocalPos);
 		break;
 	default:
 		return;
@@ -162,13 +180,14 @@ void EnemyManager::CreateEnemy(void)
 	enm->Init();
 
 	//敵の更新等を掛けるやつをセット
-	activeEnemys_[activeNum_] = enm;
+	activeEnemys_[activeNum_] = std::move(enm);
 
 	//敵の種類を保存
 	activeEnemysType_[activeNum_] = type;
 
 	//カウンタ増加
-	activeTypeNum_[static_cast<int>(activeEnemysType_[activeNum_])]++;
+	int activeEnmType = static_cast<int>(activeEnemysType_[activeNum_]);
+	activeTypeNum_[activeEnmType]++;
 	activeNum_++;
 }
 
@@ -178,13 +197,13 @@ void EnemyManager::CreateBoss(void)
 	if (activeNum_ >= ENEMY_MAX)return;
 
 	//敵の生成
-	Enemy* enm = nullptr;
+	std::unique_ptr<Enemy> enm;
 
 	//生成相対座標
-	VECTOR createLocalPos = createPos_[1];
+	VECTOR createLocalPos = createPos_[GOLEM_SPAWN];
 
 	//ゴーレムの生成
-	enm = new EneGolem(createLocalPos);
+	enm = std::make_unique<EneGolem>(createLocalPos);
 
 	//念のためのエラー回避用
 	if (enm == nullptr)assert("敵の生成で問題がありました。");
@@ -193,118 +212,26 @@ void EnemyManager::CreateBoss(void)
 	enm->Init();
 
 	//敵の更新等を掛けるやつをセット
-	activeEnemys_[activeNum_] = enm;
+	activeEnemys_[activeNum_] = std::move(enm);
 
 	//敵の種類を保存
 	activeEnemysType_[activeNum_] = TYPE::GOLEM;
 
 	//カウンタ増加
-	activeTypeNum_[static_cast<int>(activeEnemysType_[activeNum_])]++;
+	int activeEnmType = static_cast<int>(activeEnemysType_[activeNum_]);
+	activeTypeNum_[activeEnmType]++;
 	activeNum_++;
-}
-
-VECTOR EnemyManager::GetNotOverlappingPos(void)
-{
-	//敵の大きさ
-	float eneSize;
-	eneSize = Enemy::COL_RADIUS;
-
-	//生成判定
-	bool isGenelateEnemy = false;
-
-	//生成挑戦回数
-	int challengeCnt = 0;
-
-	//生成座標
-	VECTOR createPos = AsoUtility::VECTOR_ZERO;//createPos_[GetRand(createPos_.size() - 1)];
-
-	//生成相対座標
-	VECTOR ret = AsoUtility::VECTOR_ZERO;
-
-	//生成できるまで繰り返す
-	while (!isGenelateEnemy)
-	{
- 		if (challengeCnt == ENEMY_CREATE_CHALLENGE_LIMIT)
-			assert("敵の生成挑戦回数上限に達したためフリーズと判断しました");
-
-		//カウンタ
-		challengeCnt++;
-
-		//生成座標
-		VECTOR createPos = createPos_[GetRand(createPos_.size() - 1)];
-
-		//円範囲の中の一点を取る
-		GetRandomPointInCircle(createPos, GENELATE_RADIUS, ret);
-
-		//生成場所が被っていないか
-		if (!IsOverlap(ret, eneSize * 2))
-		{
-			//被っていなかった
-
-			//生成完了
-			isGenelateEnemy = true;
-		}
-	}
-
-	return ret;
-}
-
-void EnemyManager::GetRandomPointInCircle(VECTOR _myPos, const int _r, VECTOR& _tPos)
-{
-	// ランダムエンジンを生成
-	std::random_device rd;
-	std::mt19937 gen(rd());
-
-	//乱数の範囲(0 ～ 2π)
-	std::uniform_real_distribution<> dis(0, 2 * DX_PI_F);
-
-	//乱数の範囲(0 ～ 1)
-	std::uniform_int_distribution<> create(0, createPos_.size() - 1);
-
-	// ランダムな角度theta
-	float theta = dis(gen);
-
-	// ランダムな半径r' (0 ～ r) で、均等に分布するように sqrt を使う
-	float radius = sqrt(static_cast<float>(rand()) / RAND_MAX) * _r;
-
-	// 円内の点を計算
-	_tPos.x = static_cast<int>(_myPos.x + radius * cos(theta));
-	_tPos.z = static_cast<int>(_myPos.z + radius * sin(theta));
-
-	//出現位置の指定しなおし
-	_myPos = createPos_[create(gen)];
-}
-
-bool EnemyManager::IsOverlap(VECTOR& _tPos, float _minDist)
-{
-	//1体も作られていないなら判定しない
-	if (activeNum_ <= 0)
-		return false;
-
-	for (const auto& enemy : activeEnemys_) {
-		if (enemy == nullptr)
-			continue;
-
-		int dx = _tPos.x - enemy->GetPos().x;
-		int dz = _tPos.z - enemy->GetPos().z;
-		double distance = std::sqrt(dx * dx + dz * dz);
-		if (distance < _minDist) {
-			return true; // 重なっている場合
-		}
-	}
-	return false; // 重なっていない場合
 }
 
 void EnemyManager::DeleteAllEnemy(void)
 {
 	for (int i = activeNum_ - 1; i >= 0;i--) {
-		if (activeEnemys_[i] == nullptr)
+		if (activeEnemys_[i] == nullptr || activeEnemysType_[i] == TYPE::MAX)
 			continue;
 
 		//敵をすべて削除
 		activeEnemys_[i]->Destroy();
-		delete activeEnemys_[i];
-		activeEnemys_[i] = nullptr;
+		activeEnemys_[i].reset();
 		activeTypeNum_[static_cast<int>(activeEnemysType_[i])]--;
 		activeEnemysType_[i] = TYPE::MAX;
 		activeNum_--;
@@ -319,7 +246,7 @@ void EnemyManager::DeathEnemy(int _num)
 
 	//倒された敵の消去
 	activeEnemys_[_num]->Destroy();
-	delete activeEnemys_[_num];
+	activeEnemys_[_num].reset();
 
 	//総数の減少
 	//この時点でactiveNum_は配列の末尾の番号を示すようになる。
@@ -335,9 +262,8 @@ void EnemyManager::DeathEnemy(int _num)
 	if (_num == activeNum_)return;
 
 	//挿入処理
-	//deleteをすると移行された側の情報も消えるのでnullptr設定のみ　移動方法はstd::moveでもあり
-	activeEnemys_[_num] = activeEnemys_[activeNum_];
-	activeEnemys_[activeNum_] = nullptr;
+	//末尾配列を消去した配列に移す
+	activeEnemys_[_num] = std::move(activeEnemys_[activeNum_]);
 	activeEnemysType_[_num] = activeEnemysType_[activeNum_];
 }
 
@@ -345,24 +271,34 @@ void EnemyManager::ProcessChangePhase(const int _phase)
 {
 	//敵の削除
 	DeleteAllEnemy();
+
+	//倒した敵の数初期化
 	dunkCnt_ = 0;
 
-	//敵作成数
+	//敵の初期作成数
 	int createNum = 0;
 
 	//フェーズによって作成する敵の数を変える
-	if (_phase == 1)
-		createNum = PHASE_ONE_INIT_CREATE_ENEMY;
-	else if (_phase == 2)
-		createNum = PHASE_TWO_INIT_CREATE_ENEMY;
-	else if (_phase == 3)
+	switch (_phase)
 	{
-		//ボスの作成
+	case PHASE_ONE:
+		//フェーズ1の時
+		createNum = PHASE_ONE_INIT_CREATE_ENEMY;
+		break;
+
+	case PHASE_TWO:
+		//フェーズ2の時
+		createNum = PHASE_TWO_INIT_CREATE_ENEMY;
+		break;
+
+	case PHASE_LAST:
+		//ボスの生成
 		CreateBoss();
 		return;
-	}
-	else 
+
+	default:
 		return;
+	}
 
 	for (int i = 0; i < createNum; i++)
 	{

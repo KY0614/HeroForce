@@ -4,16 +4,27 @@
 EneMage::EneMage(const VECTOR& _spawnPos) : Enemy(_spawnPos)
 {
 	trans_.pos = _spawnPos;
+
+	skillOneShot_ = AsoUtility::VECTOR_ZERO;
+	skillOneDelayCnt_ = 0.0f;
+	skillOneShotCnt_ = 0;
+	skillAllCnt_ = 0.0f;
 }
 
 void EneMage::Destroy(void)
 {
+	//エフェクト
 	auto& eff = EffectManager::GetInstance();
 
 	//共通
 	Enemy::Destroy();
 
+#pragma region 固有エフェクトの停止
+
+	//ステータスダウン
 	eff.Stop(EffectManager::EFFECT::STATE_DOWN);
+
+#pragma endregion
 }
 
 void EneMage::SetParam(void)
@@ -47,13 +58,23 @@ void EneMage::InitAnim(void)
 	//共通アニメーション初期化
 	Enemy::InitAnim();
 
-	//固有アニメーション初期化
+#pragma region 固有アニメーション初期化
+
+	//スキル1
 	animNum_.emplace(ANIM::SKILL_1, ANIM_SKILL_ONE);
+	//チャージ
 	animNum_.emplace(ANIM::UNIQUE_1, ANIM_CHARGE);
 
-	//アニメーション速度設定
+#pragma endregion
+
+#pragma region アニメーション速度設定
+
+	//スキル1
 	changeSpeedAnim_.emplace(ANIM::SKILL_1, SPEED_ANIM);
+	//チャージ
 	changeSpeedAnim_.emplace(ANIM::UNIQUE_1, SPEED_ANIM);
+
+#pragma endregion
 
 	//アニメーションリセット
 	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
@@ -61,27 +82,42 @@ void EneMage::InitAnim(void)
 
 void EneMage::InitEffect(void)
 {
+	//エフェクト
 	auto& eff = EffectManager::GetInstance();
+	//リソース
 	auto& res = ResourceManager::GetInstance();
 
+#pragma region 固有エフェクト追加
+
+	//ステータスダウン
 	eff.Add(EffectManager::EFFECT::STATE_DOWN,
 		res.Load(ResourceManager::SRC::STATE_DOWN_EFE).handleId_);
+
+#pragma endregion
 }
 
 void EneMage::InitSkill(void)
 {
-	//ここにスキルの数分格納させる
+#pragma region スキルの格納
+
+	//スキル1
 	skills_.emplace(ATK_ACT::SKILL_ONE, SKILL_ONE);
 
-	//ここにスキルの数分アニメーションを格納させる
-	//----------------------------------------------
+#pragma endregion
 
-	//予備動作アニメーション
+#pragma region スキルの予備動作アニメーション格納
+
+	//スキル1
 	skillPreAnims_.emplace_back(ANIM::UNIQUE_1);
 
-	//動作アニメーション
+#pragma endregion
+
+#pragma region スキルの動作アニメーション
+
+	//スキル1
 	skillAnims_.emplace_back(ANIM::SKILL_1);
 
+#pragma endregion
 
 	//初期スキルを設定しておく
 	RandSkill();
@@ -89,6 +125,7 @@ void EneMage::InitSkill(void)
 
 void EneMage::AlertSkill_One(void)
 {
+	//何もしない
 }
 
 void EneMage::Attack(void)
@@ -154,8 +191,10 @@ void EneMage::Skill_One(void)
 
 void EneMage::DrawDebug(void)
 {
+	//共通
 	Enemy::DrawDebug();
 	
+	//攻撃の後隙
 	if(!isEndAllAtk_)DrawSphere3D(skillOneShot_, 25.0f, 20, 0xf0f0f0, 0xf0f0f0, true);
 }
 

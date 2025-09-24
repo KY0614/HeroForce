@@ -5,12 +5,20 @@
 EneArcher::EneArcher(const VECTOR& _spawnPos) : Enemy(_spawnPos)
 {
 	trans_.pos = _spawnPos;
+
+	arrowMdlId_ = -1;
+	isShotArrow_ = false;
+	arrowCnt_ = 0;
+	reloadCnt_ = 0.0f;
+	lastArrow_ = nullptr;
 }
 
 void EneArcher::Destroy(void)
 {
+	//共通解放
 	Enemy::Destroy();
 
+	//ポインタの解放
 	lastArrow_ = nullptr;
 	delete lastArrow_;
 }
@@ -25,9 +33,9 @@ void EneArcher::SetParam(void)
 
 	//モデル読み込み
 	trans_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ENEMY_ARCHER));
-	arrowMdlId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ARROW);	//矢のモデル
+	arrowMdlId_ = ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ARROW);	
 
-	//※個々で設定する
+	//※個々で設定する変数
 	trans_.scl = { CHARACTER_SCALE,CHARACTER_SCALE,CHARACTER_SCALE };
 	colPos_ = VAdd(trans_.pos, LOCAL_CENTER_POS);
 	arrowCnt_ = 0;
@@ -45,15 +53,27 @@ void EneArcher::InitAnim(void)
 	//共通アニメーション初期化
 	Enemy::InitAnim();
 
-	//固有アニメーション初期化
+#pragma region 固有アニメーション初期化
+
+	//スキル1
 	animNum_.emplace(ANIM::SKILL_1, ANIM_SKILL_ONE);
+	//エイム
 	animNum_.emplace(ANIM::UNIQUE_1, ANIM_AIMING);
+	//リロード
 	animNum_.emplace(ANIM::UNIQUE_2, ANIM_RELOAD);
 
-	//アニメーション速度設定
+#pragma endregion
+
+#pragma region アニメーション速度設定
+
+	//スキル1
 	changeSpeedAnim_.emplace(ANIM::SKILL_1, SPEED_ANIM);
+	//エイム
 	changeSpeedAnim_.emplace(ANIM::UNIQUE_1, SPEED_ANIM);
+	//リロード
 	changeSpeedAnim_.emplace(ANIM::UNIQUE_2, SPEED_ANIM_RELOAD);
+
+#pragma endregion
 
 	//アニメーションリセット
 	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
@@ -61,18 +81,26 @@ void EneArcher::InitAnim(void)
 
 void EneArcher::InitSkill(void)
 {
-	//ここにスキルの数分格納させる
+#pragma region スキルの格納
+
+	//スキル1
 	skills_.emplace(ATK_ACT::SKILL_ONE, SKILL_ONE);
 
-	//ここにスキルの数分アニメーションを格納させる
-	//----------------------------------------------
+#pragma endregion
 
-	//予備動作アニメーション
+#pragma region スキルの予備動作アニメーション格納
+
+	//スキル1
 	skillPreAnims_.emplace_back(ANIM::UNIQUE_1);
 
-	//動作アニメーション
+#pragma endregion
+
+#pragma region スキルの動作アニメーション
+
+	//スキル1
 	skillAnims_.emplace_back(ANIM::SKILL_1);
 
+#pragma endregion
 
 	//初期スキルを設定しておく
 	RandSkill();
@@ -90,7 +118,7 @@ void EneArcher::AlertSkill_One(void)
 	pos = VAdd(trans_.pos, VScale(pos, ARROW_SPEED * SKILL_ONE_DURATION));
 
 	//範囲作成
-	CreateAlert(pos, SKILL_ONE_COL_RADIUS * 2, SKILL_ONE_COL_RADIUS * 2 * ARROW_SPEED * SKILL_ONE_DURATION);
+	CreateAlert(pos, (SKILL_ONE_COL_RADIUS * 2), (SKILL_ONE_COL_RADIUS * 2) * ARROW_SPEED * SKILL_ONE_DURATION);
 }
 
 void EneArcher::Skill_One(void)

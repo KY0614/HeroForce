@@ -15,8 +15,6 @@ public:
 
 //#define DEBUG_ENEMY
 
-	//移行テストしております
-
 	//****************************************************************
 	//定数(キャラ共通)
 	//****************************************************************
@@ -38,10 +36,15 @@ public:
 	//補完用
 	static constexpr float KEEP_COL_STAGE_POS = 500.0f;	//ステージ接触時座標補完用
 	static constexpr float COL_STAGE_CNT = 0.3f;		//ステージ接触時補完用カウント
-	
 	static constexpr float START_CNT = 3.0f;			//スタート時補完用カウント
-
 	static constexpr float COL_RADIUS = 50.0f;			//敵生成時の距離用
+
+	//頂点情報
+	static constexpr int SQUARE_VERTEX_NUM = 6;						//四角形の頂点の個数
+	static constexpr int SQUARE_POLYGON_NUM= 2;						//四角形のポリゴン数
+	static constexpr VECTOR ALERT_NORM = { 0.0f,0.0f,-1.0f };		//警告の法線
+	static constexpr int COLOR_MAX = 255;							//カラー最大値
+	static constexpr int ALPHA_MAX = 100;							//アルファ最大値
 
 	//****************************************************************
 	//列挙型
@@ -75,16 +78,17 @@ public:
 		,MAX
 	};
 
-	//自分の種類のラベル分け　※作るかも！！
-
 	//****************************************************************
 	//メンバ関数
 	//****************************************************************
 
-	//コンストラクタ
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="_spawnPos">出現位置</param>
 	Enemy(const VECTOR& _spawnPos);
 	//デストラクタ
-	~Enemy() = default;
+	~Enemy();
 
 	//解放
 	virtual void Destroy(void)override;
@@ -100,9 +104,6 @@ public:
 	virtual const bool IsAlertTime(void)const = 0;
 	//休憩時間中かどうかを返す(純粋仮想関数)
 	virtual const bool IsBreak(void)const = 0;
-
-	//スタン中かどうかを返す
-	//const bool IsStun(void)const { return stunDef_ > stunDefMax_; }
 
 	//現在のスキルの全配列を返す
 	const std::vector<ATK> GetAtks(void)const { return nowSkill_; }
@@ -122,6 +123,11 @@ public:
 	//攻撃情報を設定
 	void SetAtk(const ATK& _atk) { atk_ = _atk; }
 
+	/// <summary>
+	/// 各攻撃のヒット確認
+	/// </summary>
+	/// <param name="_arrayNum">配列番号</param>
+	/// <param name="_isHit">ヒットしたかどうか</param>
 	void SetAtksIsHit(int _arrayNum, const bool _isHit) { nowSkill_[_arrayNum].isHit_ = _isHit; }
 
 	//探索状態を返す
@@ -153,13 +159,6 @@ public:
 	void SetTargetPos(const VECTOR _targetPos) { if(!isColStage_ && startCnt_ >= START_CNT)targetPos_ = _targetPos; }
 
 	/// <summary>
-	/// ダメージ
-	/// </summary>
-	/// <param name="_damage">ダメージ量</param>
-	/// <param name="_stunPow">スタン攻撃力</param>
-	//void Damage(const int _damage, const int _stunPow);
-
-	/// <summary>
 	/// 状態遷移
 	/// </summary>
 	/// <param name="_state">遷移する状態</param>
@@ -187,7 +186,7 @@ protected:
 	float walkSpeed_;		//敵ごとの歩く速度
 	float runSpeed_;		//敵ごとの走る速度
 
-	VERTEX3D alertVertex_[6];	//警告用の頂点情報
+	VERTEX3D alertVertex_[SQUARE_VERTEX_NUM];	//警告用の頂点情報
 
 	std::map<ATK_ACT, ATK> skills_;								//スキルの種類
 	std::vector<ATK> nowSkill_;									//現在のスキル
@@ -220,9 +219,6 @@ protected:
 
 	float searchRange_;		//索敵範囲
 	float atkStartRange_;	//攻撃開始範囲
-
-	//int stunDefMax_;	//気絶防御値の最大値
-	//int stunDef_;		//気絶防御値
 
 	bool isColStage_;	//ステージに当たったか(true:当たった)
 	float colStageCnt_;	//ステージ接触補完用カウンタ
@@ -316,7 +312,7 @@ protected:
 	//更新(休憩)
 	virtual void UpdateBreak(void);
 
-	//描画(※デバッグ)
+	//デバッグ描画
 	virtual void DrawDebug(void);
 
 	//探索状態ごとの情報更新(探索中)
