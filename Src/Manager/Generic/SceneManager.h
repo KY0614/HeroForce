@@ -142,7 +142,7 @@ public:
 	/// <summary>
 	/// ウィンドウのパラメータ設定
 	/// </summary>
-	void SetWindowPram(void);
+	void SetWindowParam(void);
 
 	/// <summary>
 	/// 使用中のウィンドウ数取得

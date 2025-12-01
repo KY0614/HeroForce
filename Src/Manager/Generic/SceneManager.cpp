@@ -257,8 +257,8 @@ void SceneManager::RedySubWindow(void)
 	for (int i = 0; i < subWindowNum; i++) {
 		subWindowH_.push_back(Application::GetInstance().CreateSubWindow(i));
 	}
-	SetWindowPram();
-
+	SetWindowParam();
+	//サブウィンドウ用のカメラ用意
 	RedySubWindowCamera();
 }
 
@@ -444,7 +444,7 @@ void SceneManager::RedySubWindowCamera(void)
 }
 
 //ウィンドウのサイズ及び位置設定
-void SceneManager::SetWindowPram(void)
+void SceneManager::SetWindowParam(void)
 {
 	//現在はディスプレイ一枚と仮定して制作している
 	//後で対応版の制作が必要
