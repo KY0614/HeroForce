@@ -249,10 +249,13 @@ void SceneManager::SetSubWindowH(HWND _mode)
 void SceneManager::RedySubWindow(void)
 {
 	//ウィンドウの設定
-	int num = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
-	SetActiveNum(num);
-	for (int i = 1; i < num; i++) {
-		subWindowH_.push_back(Application::GetInstance().CreateSubWindow(i-1));
+	int userNum = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
+	SetActiveNum(userNum);
+
+	//追加するウィンドウの数(ユーザー１はメインウィンドウがあるので-1)
+	int subWindowNum = userNum - 1;
+	for (int i = 0; i < subWindowNum; i++) {
+		subWindowH_.push_back(Application::GetInstance().CreateSubWindow(i));
 	}
 	SetWindowPram();
 
