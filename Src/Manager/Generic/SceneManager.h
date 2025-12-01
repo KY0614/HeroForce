@@ -163,6 +163,7 @@ private:
 	// 静的インスタンス
 	static SceneManager* instance_;
 
+
 	//ウィンドウ関係
 	std::vector<HWND> subWindowH_;	//ウィンドウハンドルの全体管理(動的配列)
 	int activeWindowNum_;			//使用するウィンドウの数
@@ -206,4 +207,8 @@ private:
 
 	//現在何番目のウィンドウかをセット
 	void SetNowWindow(const int _num);
+
+	void DeleteSubWindow(void);
+
+	void RedySubWindowCamera(void);
 };
