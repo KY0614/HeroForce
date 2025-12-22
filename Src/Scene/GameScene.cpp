@@ -412,7 +412,7 @@ void GameScene::CollisionEnemy(void)
 					if (col.IsHitAtk(*e, *p)/* && !p->GetDodge()->IsDodge()*/)
 					{
 						//ダメージ
-						p->SetDamage(e->GetAtkPow(), eAtk.pow_);
+						p->SetDamage(static_cast<int>(e->GetAtkPow()), static_cast<int>(eAtk.pow_));
 						//使用した攻撃を判定終了に
 						e->SetAtksIsHit(a, true);
 					}
@@ -466,7 +466,7 @@ void GameScene::CollisionPlayer(void)
 			//当たり判定
 			if (col.IsHitAtk(*p, *e)) {
 				//被弾
-				e->SetDamage(p->GetAtkPow(), p->GetAtk().pow_);
+				e->SetDamage(static_cast<int>(p->GetAtkPow()), static_cast<int>(p->GetAtk().pow_));
 				EffectManager::GetInstance().Play(EffectManager::EFFECT::HIT2, ePos, Quaternion(), HIT_EFFECT_SIZE, SoundManager::SOUND::NONE);
 				//攻撃判定の終了
 				p->SetIsHit(true);
@@ -512,7 +512,7 @@ void GameScene::CollisionPlayerArrow(int _p1Num)
 			//if (col.IsHitArrowAtk(p, *e, arrowCnt)) {
 			if (col.IsHitAtk(*p, *e)) {
 				//被弾
-				e->SetDamage(p->GetAtkPow(), p->GetAtk().pow_);
+				e->SetDamage(static_cast<int>(p->GetAtkPow()), static_cast<int>(p->GetAtk().pow_));
 				EffectManager::GetInstance().Play(EffectManager::EFFECT::HIT2, e->GetPos(), Quaternion(), HIT_EFFECT_SIZE, SoundManager::SOUND::NONE);
 				//攻撃判定の終了
 				p->SetIsArrowHit(PlayerBase::ATK_TYPE::ATTACK, true, arrowCnt);
@@ -655,7 +655,7 @@ void GameScene::CollisionChicken(void)
 				if (col.IsHitAtk(*e, *c))
 				{
 					//ダメージ
-					c->SetDamage(e->GetAtkPow(),e->GetAtk().pow_);
+					c->SetDamage(static_cast<int>(e->GetAtkPow()), static_cast<int>(e->GetAtk().pow_));
 					//使用した攻撃を判定終了に
 					e->SetAtksIsHit(a, true);
 				}

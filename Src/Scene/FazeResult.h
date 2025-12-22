@@ -17,6 +17,7 @@ public:
     static constexpr float BNS_RANK_A = 1.5f;
     static constexpr float BNS_RANK_B = 1.3f;
     static constexpr float BNS_RANK_C = 1.0f;
+    static constexpr float RANK_IMG_EX = 0.85f;
 
     //•\¦ŠÔŠu
     static constexpr float INTERVEL = 1.25f;
@@ -44,10 +45,13 @@ public:
     //•]‰¿’lŠÖŒW
     static constexpr int CHICKEN_VALUE = 10;    //ƒjƒƒgƒŠ¶‘¶‚Ì•]‰¿’l(ˆê•C•ª)
     static constexpr int ENEMY_VALUE = 5;       //“G‚ğ“|‚µ‚½‚Æ‚«‚Ì‰¿’l(ˆê‘Ì•ª)
-
+    //ƒ‰ƒ“ƒN•]‰¿’l
     static constexpr int RANK_S_BORDER = 170;
     static constexpr int RANK_A_BORDER = 140;
     static constexpr int RANK_B_BORDER = 100;
+
+    //ŒoŒ±’l‰Šú‰»
+    static constexpr float EXP_INIT = 1500.0f;
 
 
     enum class RANK {
@@ -86,14 +90,12 @@ private:
 
     //‰æ‘œŠi”[
     int rankImg_[RANK_MAX_NUM]; //•]‰¿UI
-    int backImg_;   //”wŒi
 
     //‰æ‘œ
     int imgBack_;
     int* imgRank_;
 
     //ƒtƒHƒ“ƒg
-    int heasdFont_;
     int font_;
 
     //•`‰æƒJƒEƒ“ƒg

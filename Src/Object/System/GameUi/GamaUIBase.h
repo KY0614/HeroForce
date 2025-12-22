@@ -40,13 +40,13 @@ public:
 	/// <summary>
 	/// À•Wİ’è
 	/// </summary>
-	/// <param name="_pos"></param>À•W
+	/// <param name="_pos">À•W</param>
 	inline void SetPos(const VECTOR _pos) { pos_ = _pos; }
 
 	/// <summary>
 	/// ‘Ì—Íİ’è
 	/// </summary>
-	/// <param name="_hp"></param>‘Ì—Í
+	/// <param name="_hp">‘Ì—Í</param>
 	inline void SetHP(const int _hp) { hp_ = _hp; if (hp_ <= 0) { hp_ = 0; }}
 
 protected:

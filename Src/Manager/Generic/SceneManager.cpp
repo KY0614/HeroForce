@@ -430,32 +430,42 @@ void SceneManager::SetWindowPram(void)
 {
 	//現在はディスプレイ一枚と仮定して制作している
 	//後で対応版の制作が必要
-	const int DISPLAY_X = 1920;
-	const int DISPLAY_Y = 1080;
-
-
 	//配列の要素数なのです初期値０
 	int cnt = 0;
 
 	int posX = 0;
 	int posY = 0;
 
+	int windowSizeX = Application::DEFA_SCREEN_SIZE_X;
+	int windowSizeY = Application::DEFA_SCREEN_SIZE_Y;
 
 	int displayNum = DataBank::GetInstance().Output(DataBank::INFO::DHISPLAY_NUM);
 	int userNum = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
+
+	//ユーザーが一人の時
+	if (userNum <= 1)
+	{
+		int displayWidth = GetSystemMetrics(SM_CXSCREEN);
+		int displayHeight = GetSystemMetrics(SM_CYSCREEN);
+
+		windowSizeX = Application::SCREEN_SIZE_X;
+		windowSizeY = Application::SCREEN_SIZE_Y;
+
+		posX = (displayWidth - windowSizeX) / 2;
+		posY = (displayHeight - windowSizeY) / 2;
+	}
 
 	int r = 1;
 	//ディスプレイが余っているとき
 	if (displayNum > userNum) r = userNum;
 	else r = displayNum;
 
-
-	int sizeX = DISPLAY_X * r;
-	int sizeY = DISPLAY_Y;
+	int sizeX = windowSizeX * r;
+	int sizeY = windowSizeY;
 
 	if (activeWindowNum_ != displayNum)sizeX /= 2;
 	if (activeWindowNum_ > displayNum)sizeY /= 2;
-	if (sizeX > DISPLAY_X)sizeX = DISPLAY_X;
+	if (sizeX > windowSizeX)sizeX = windowSizeX;
 
 	for (HWND hwnd : subWindowH_){
 		//cntは配列の要素数を表すのでactiveWindow未満の間だけ

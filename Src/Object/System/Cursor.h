@@ -48,8 +48,8 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="plNum"></param>プレイヤーナンバー
-	/// <param name="img"></param>画像
+	/// <param name="plNum">プレイヤーナンバー</param>
+	/// <param name="img">画像</param>
 	void Init(const int _plNum,const int _img);
 
 	//更新

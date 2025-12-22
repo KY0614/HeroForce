@@ -1,5 +1,5 @@
-#include<EffekseerForDXLib.h>
-#include<cassert>
+#include <EffekseerForDXLib.h>
+#include <cassert>
 #include "EffectManager.h"
 
 EffectManager* EffectManager::instance_ = nullptr;
