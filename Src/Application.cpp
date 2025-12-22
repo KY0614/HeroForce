@@ -72,12 +72,12 @@ void Application::Init(void)
 	SceneManager::CreateInstance();
 
 
-	//ウィンドウ
-	for (int i = 0; i < SUBWINDOW_NUM; i++)
-	{
-		InitWindows(i);
-		SceneManager::GetInstance().SetSubWindowH(hWnd_); // SceneManagerに用意するHWND subWindowH_変数にセットする関数
-	}
+	////ウィンドウ
+	//for (int i = 0; i < SUBWINDOW_NUM; i++)
+	//{
+	//	InitWindows(i);
+	//	SceneManager::GetInstance().SetSubWindowH(hWnd_); // SceneManagerに用意するHWND subWindowH_変数にセットする関数
+	//}
 
 	//FPS用初期化
 	currentFrame_ = 0;
@@ -176,6 +176,47 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	}
 	return 0;
 }
+
+HWND Application::CreateSubWindow(const int _num)
+{
+	HWND retWindow;
+
+	LPCSTR windowName = "01234" + _num;
+
+	HINSTANCE hInstance = GetModuleHandle(NULL);
+	WNDCLASS myWindow;
+	myWindow.style = CS_HREDRAW | CS_VREDRAW;
+	myWindow.lpfnWndProc = WndProc;
+	myWindow.cbClsExtra = 0;
+	myWindow.cbWndExtra = 0;
+	myWindow.hInstance = hInstance;
+	myWindow.hIcon = NULL;
+	myWindow.hCursor = LoadCursor(NULL, IDC_ARROW);
+	myWindow.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	myWindow.lpszMenuName = NULL;
+	myWindow.lpszClassName = szClassNme[_num];
+	RegisterClass(&myWindow);
+	/*if (!RegisterClass(&myWindow))
+	{
+		return retWindow;
+	}*/
+	RECT windowRect = { 0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y };
+	AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
+	retWindow = CreateWindow(
+		szClassNme[_num],
+		windowName,
+		WS_OVERLAPPEDWINDOW,
+		0, 0, windowRect.right - windowRect.left,
+		windowRect.bottom - windowRect.top,
+		NULL, NULL, hInstance, NULL
+	);
+	//表示状態を設定する
+	ShowWindow(retWindow, static_cast<int>(WINDOW::SHOW));
+	UpdateWindow(retWindow);
+
+	return retWindow;
+}
+
 /// <summary>
 /// ウィンドウの初期化
 /// </summary>

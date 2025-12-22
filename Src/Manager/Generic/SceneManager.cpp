@@ -22,7 +22,7 @@
 
 SceneManager* SceneManager::instance_ = nullptr;
 
-void SceneManager::CreateInstance()
+void SceneManager::CreateInstance(void)
 {
 	if (instance_ == nullptr){
 		instance_ = new SceneManager();
@@ -249,19 +249,17 @@ void SceneManager::SetSubWindowH(HWND _mode)
 void SceneManager::RedySubWindow(void)
 {
 	//ウィンドウの設定
-	int num = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
-	SetActiveNum(num);
-	ChangeWindowMode(Application::WINDOW::SHOW);
-	SetWindowPram();
+	int userNum = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
+	SetActiveNum(userNum);
 
-	//すでに一つは生成されているので初期値は①
-	for (int i = 1; i < num; i++){
-		//生成及び初期化
-		auto c = std::make_shared<Camera>();
-		c->Init();
-		//格納
-		cameras_.push_back(std::move(c));
+	//追加するウィンドウの数(ユーザー１はメインウィンドウがあるので-1)
+	int subWindowNum = userNum - 1;
+	for (int i = 0; i < subWindowNum; i++) {
+		subWindowH_.push_back(Application::GetInstance().CreateSubWindow(i));
 	}
+	SetWindowParam();
+	//サブウィンドウ用のカメラ用意
+	RedySubWindowCamera();
 }
 
 //ウィンドウの状態を変える
@@ -301,8 +299,8 @@ void SceneManager::ReturnSolo(void)
 {
 	//画面枚数を一枚に戻す
 	SetActiveNum(MAIN_WINDOW_NUM);
-	//サブウィンドウを隠す
-	SetHideSubWindows();
+	//サブウィンドウの消去
+	DeleteSubWindow();
 	//フルスクに戻る
 	SetWindowSize(Application::DEFA_SCREEN_SIZE_X, Application::DEFA_SCREEN_SIZE_Y);
 }
@@ -365,8 +363,10 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 		break;	
 	
 	case SCENE_ID::GAME:
-		//ウィンドウの設定
-		RedySubWindow();
+		////ウィンドウの設定
+		//RedySubWindow();
+		//カメラの設定
+		RedySubWindowCamera();
 		scene_ = new GameScene();
 		resM.InitGame();
 		break;
@@ -425,8 +425,26 @@ void SceneManager::SetNowWindow(const int _num)
 	nowWindowNum_ = _num;
 }
 
+void SceneManager::DeleteSubWindow(void)
+{
+	subWindowH_.clear();
+}
+
+void SceneManager::RedySubWindowCamera(void)
+{
+	int num = DataBank::GetInstance().Output(DataBank::INFO::USER_NUM);
+	//すでに一つは生成されているので初期値は①
+	for (int i = 1; i < num; i++) {
+		//生成及び初期化
+		auto c = std::make_shared<Camera>();
+		c->Init();
+		//格納
+		cameras_.push_back(std::move(c));
+	}
+}
+
 //ウィンドウのサイズ及び位置設定
-void SceneManager::SetWindowPram(void)
+void SceneManager::SetWindowParam(void)
 {
 	//現在はディスプレイ一枚と仮定して制作している
 	//後で対応版の制作が必要
@@ -474,12 +492,10 @@ void SceneManager::SetWindowPram(void)
 
 		if (cnt == MAIN_WINDOW_NUM){
 			SetWindowSize(sizeX - WINDOW_MARGIN / 2, sizeY - WINDOW_MARGIN);
-			//SetWindowSizeExtendRate(0.95, 0.95);
 			SetWindowPosition(posX, posY);
 		}
 		else{
 			SetWindowPos(hwnd, NULL, posX, posY, sizeX, sizeY, NULL);
-			//MoveWindow(hwnd, posX, posY, sizeX, sizeY, true);
 		}
 		posX += sizeX;
 

@@ -97,6 +97,8 @@ public:
 	// 解放成功／失敗の判定
 	bool IsReleaseFail(void) const;
 
+	HWND CreateSubWindow(const int _num);
+
 private:
 
 	//ウィンドウハンドル

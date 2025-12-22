@@ -142,7 +142,7 @@ public:
 	/// <summary>
 	/// ウィンドウのパラメータ設定
 	/// </summary>
-	void SetWindowPram(void);
+	void SetWindowParam(void);
 
 	/// <summary>
 	/// 使用中のウィンドウ数取得
@@ -162,6 +162,7 @@ public:
 private:
 	// 静的インスタンス
 	static SceneManager* instance_;
+
 
 	//ウィンドウ関係
 	std::vector<HWND> subWindowH_;	//ウィンドウハンドルの全体管理(動的配列)
@@ -206,4 +207,8 @@ private:
 
 	//現在何番目のウィンドウかをセット
 	void SetNowWindow(const int _num);
+
+	void DeleteSubWindow(void);
+
+	void RedySubWindowCamera(void);
 };
