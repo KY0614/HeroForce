@@ -5,8 +5,8 @@ class PlayerCpu :
 {
 public:
     //CPU
- //--------------------------------------------------------
- //範囲関係
+    //--------------------------------------------------------
+    //範囲関係
     static constexpr float SEARCH_RANGE = 800.0f * CHARACTER_SCALE;		//索敵判定の大きさ
     static constexpr float SEARCH_RADIUS = 400.0f;
 
@@ -15,6 +15,9 @@ public:
 
     //呼び出されたときのスピード
     static constexpr float CALLED_MOVE_SPEED_SCALE = 3.0f;
+
+    //攻撃後の何もしない時間
+    static constexpr float BREAK_TIME = 2.0f;
 
     enum class CPU_STATE
     {
@@ -91,12 +94,12 @@ private:
     float moveStartDelay_;      //移動の初めを遅らせる
 
 
-    //CPUの前の攻撃格納用
-    ATK_ACT preAtk_;
+   
+    ATK_ACT preAtk_;       //CPUの前の攻撃格納用
 
-    //休憩カウント
-    float breakCnt_;
-
+   
+    float breakCnt_;       //休憩カウント
+    VECTOR userOnePos_;    //ユーザー1追従用の座標   
 
 
     //前について行ってたターゲットの保存用
@@ -119,7 +122,5 @@ private:
 
     //CPU移動
     void CpuMove(VECTOR _targetPos);
-
-
 };
 

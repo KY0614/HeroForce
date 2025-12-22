@@ -2,20 +2,7 @@
 #include"PlayableChara/PlayerBase.h"
 #include"../../Utility/AsoUtility.h"
 
-PlayerInput* playerInput_ = nullptr;
-void PlayerInput::CreateInstance(void)
-{
-	if (playerInput_ == nullptr)
-	{
-		playerInput_ = new PlayerInput();
-	}
-	//actCntl_ = SceneManager::CNTL::NONE;
-}
 
-PlayerInput& PlayerInput::GetInstance(void)
-{
-	return *playerInput_;
-}
 
 void PlayerInput::Update(PlayerBase* _player, InputManager::JOYPAD_NO _padNum,SceneManager::CNTL _cntl)
 {
@@ -43,11 +30,10 @@ void PlayerInput::InputKeyBoard(PlayerBase* _player)
 	if (ins.IsNew(MOVE_FRONT_KEY) || ins.IsNew(MOVE_BACK_KEY) || ins.IsNew(MOVE_LEFT_KEY) || ins.IsNew(MOVE_RIGHT_KEY)) { actCntl_ = ACT_CNTL::MOVE; }
 
 	//移動角度を決める
-	if (ins.IsNew(PlayerInput::MOVE_FRONT_KEY)) { moveDeg_ = 0.0f; }
-	else if (ins.IsNew(PlayerInput::MOVE_LEFT_KEY)) { moveDeg_ = 270.0f; }
-	else if (ins.IsNew(PlayerInput::MOVE_BACK_KEY)) { moveDeg_ = 180.0f; }
-	else if (ins.IsNew(PlayerInput::MOVE_RIGHT_KEY)) { moveDeg_ = 90.0f; }
-
+	if (ins.IsNew(PlayerInput::MOVE_FRONT_KEY)) { moveDeg_ = FLONT_DEG; }
+	else if (ins.IsNew(PlayerInput::MOVE_LEFT_KEY)) { moveDeg_ = LEFT_DEG; }
+	else if (ins.IsNew(PlayerInput::MOVE_BACK_KEY)) { moveDeg_ = BACK_DEG; }
+	else if (ins.IsNew(PlayerInput::MOVE_RIGHT_KEY)) { moveDeg_ = RIGHT_DEG; }
 	//通常攻撃
 	if (ins.IsTrgDown(ATK_KEY) && !_player->GetIsCool(ATK_ACT::ATK) && !_player->GetIsAtk() && !_player->GetIsSkill()) { actCntl_ = ACT_CNTL::NMLATK; }
 
@@ -87,7 +73,7 @@ void PlayerInput::InputPad(PlayerBase* _player, InputManager::JOYPAD_NO _padNum)
 	//スティックの角度によって移動方向を決める
 	moveDeg_ = stickDeg_;
 
-
+	//各アクションの入力条件
 	if (ins.IsPadBtnTrgDown(_padNum, ATK_BTN) && !_player->GetIsCool(ATK_ACT::ATK) &&!_player->GetIsAtk() && !_player->GetIsSkill()) { actCntl_ = ACT_CNTL::NMLATK; }
 	if(ins.IsPadBtnTrgDown(_padNum, SKILL_BTN) && !_player->GetIsAtk() && !_player->GetIsSkill()){ actCntl_ = ACT_CNTL::SKILL_DOWN; }
 	else if(ins.IsPadBtnNew(_padNum, SKILL_BTN) && _player->GetIsSkill()&& !_player->GetIsAtk()){ actCntl_ = ACT_CNTL::SKILL_KEEP; }
@@ -102,4 +88,5 @@ PlayerInput::PlayerInput(void)
 	leftStickX_ = -1;
 	leftStickY_ = -1;
 	stickDeg_ = -1;
+	moveDeg_ = 0.0f;
 }

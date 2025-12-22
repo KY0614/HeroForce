@@ -11,7 +11,7 @@ public:
 
 	//プレイヤーについての構造体
 	struct PLAYER {
-		JobManagerBase* ins;	//動かすキャラクターのインスタンス
+		std::shared_ptr<JobManagerBase> ins;	//動かすキャラクターのインスタンス
 		DataBank::PLAYER_INFO info;	//その他情報(詳細はDataBank参照)
 	};
 
@@ -41,8 +41,8 @@ private:
 	//パッドの使用台数を管理
 	int padNum_;
 	
-	JobManagerBase* CreateKeybordPlayer(const SceneManager::ROLE _role)const;
-	JobManagerBase* CreatePadPlayer(const SceneManager::ROLE _role);
-	JobManagerBase* CreateCpuPlayer(const SceneManager::ROLE _role);
+	std::shared_ptr<JobManagerBase> CreateKeybordPlayer(const SceneManager::ROLE _role)const;
+	std::shared_ptr<JobManagerBase> CreatePadPlayer(const SceneManager::ROLE _role);
+	std::shared_ptr<JobManagerBase> CreateCpuPlayer(const SceneManager::ROLE _role);
 };
 

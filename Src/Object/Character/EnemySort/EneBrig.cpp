@@ -33,32 +33,49 @@ void EneBrig::InitAnim(void)
 	//共通アニメーション初期化
 	Enemy::InitAnim();
 
-	//固有アニメーション初期化
+#pragma region 固有アニメーションの初期化
+
+	//スキル1
 	animNum_.emplace(ANIM::SKILL_1, ANIM_SKILL_ONE);
+	//スイング準備
 	animNum_.emplace(ANIM::UNIQUE_1, ANIM_PRE_SWING);
 
-	//アニメーション速度設定
+#pragma endregion
+
+#pragma region アニメーション速度の設定
+
+	//スキル1
 	changeSpeedAnim_.emplace(ANIM::SKILL_1, SPEED_ANIM);
+	//スイング準備
 	changeSpeedAnim_.emplace(ANIM::UNIQUE_1, SPEED_ANIM);
 
+#pragma endregion
 	//アニメーションリセット
 	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
 }
 
 void EneBrig::InitSkill(void)
 {
-	//ここにスキルの数分格納させる
+#pragma region スキルの格納
+
+	//スキル1
 	skills_.emplace(ATK_ACT::SKILL_ONE, SKILL_ONE);
 
-	//ここにスキルの数分アニメーションを格納させる
-	//----------------------------------------------
+#pragma endregion
 
-	//予備動作アニメーション
+#pragma region スキルの予備動作アニメーション格納
+
+	//スキル1
 	skillPreAnims_.emplace_back(ANIM::UNIQUE_1);
 
-	//動作アニメーション
+#pragma endregion
+
+#pragma region スキルの動作アニメーション
+
+	//スキル1
 	skillAnims_.emplace_back(ANIM::SKILL_1);
 
+#pragma endregion
 
 	//初期スキルを設定しておく
 	RandSkill();

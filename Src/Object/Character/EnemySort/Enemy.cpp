@@ -7,10 +7,50 @@
 Enemy::Enemy(const VECTOR& _spawnPos)
 {
 	trans_.pos = _spawnPos;
+	state_ = STATE::MAX;
+	alertCnt_ = 0.0f;
+	breakCnt_ = 0.0f;
+	walkSpeed_ = 0.0f;
+	runSpeed_ = 0.0f;
+	atkAct_ = ATK_ACT::MAX;
+	lastAtk_ = nullptr;
+	isEndAlert_ = false;
+	isEndAllAtkSign_ = false;
+	isEndAllAtk_ = false;
+	nowSkillPreAnim_ = ANIM::NONE;
+	nowSkillAnim_ = ANIM::NONE;
+	localCenterPos_ = AsoUtility::VECTOR_ZERO;
+	colPos_ = AsoUtility::VECTOR_ZERO;
+	searchState_ = SEARCH_STATE::MAX;
+	preTargetPos_ = AsoUtility::VECTOR_ZERO;
+	targetPos_ = AsoUtility::VECTOR_ZERO;
+	searchRange_ = 0.0f;
+	atkStartRange_ = 0.0f;
+	isColStage_ = false;
+	colStageCnt_ = 0.0f;
+	startCnt_ = 0.0f;
+	exp_ = 0.0f;
+
+	for (int i = 0 ; i < SQUARE_VERTEX_NUM ; i++)
+	{
+		alertVertex_[i].dif = GetColorU8(0, 0, 0, 0);
+		alertVertex_[i].norm = AsoUtility::VECTOR_ZERO;
+		alertVertex_[i].pos = AsoUtility::VECTOR_ZERO;
+		alertVertex_[i].spc = GetColorU8(0, 0, 0, 0);
+		alertVertex_[i].su = 0.0f;
+		alertVertex_[i].sv = 0.0f;
+		alertVertex_[i].u = 0.0f;
+		alertVertex_[i].v = 0.0f;
+	}
+}
+
+Enemy::~Enemy()
+{
 }
 
 void Enemy::Destroy(void)
 {
+	//各削除処理
 	animNum_.clear();
 	stateChanges_.clear();
 	changeSpeedAnim_.clear();
@@ -21,9 +61,6 @@ void Enemy::Destroy(void)
 	skillPreAnims_.clear();
 	skillAnims_.clear();
 	SearchStateInfo_.clear();
-
-	lastAtk_ = nullptr;
-	delete lastAtk_;
 }
 
 void Enemy::Init(void)
@@ -69,8 +106,10 @@ void Enemy::Init(void)
 	InitSkill();
 	atk_.ResetCnt();
 
+	//モデル情報の初期更新
 	trans_.Update();
 
+	//敵のUI
 	ui_ = std::make_unique<EnemyHpBar>();
 	ui_->Init();
 }
@@ -83,18 +122,19 @@ void Enemy::Update(void)
 	//アニメーション
 	Anim();
 
-#ifdef DEBUG_ENEMY
+#ifdef DEBUG_ENEMY	//デバッグ処理
 	//入力用
 	InputManager& ins = InputManager::GetInstance();
 
-	//if (ins.IsNew(KEY_INPUT_W)) { targetPos_.z+= 3.0f; }
-	//if (ins.IsNew(KEY_INPUT_D)) { targetPos_.x+= 3.0f; }
-	//if (ins.IsNew(KEY_INPUT_S)) { targetPos_.z-= 3.0f; }
-	//if (ins.IsNew(KEY_INPUT_A)) { targetPos_.x-= 3.0f; }
+	if (ins.IsNew(KEY_INPUT_W)) { targetPos_.z+= 3.0f; }
+	if (ins.IsNew(KEY_INPUT_D)) { targetPos_.x+= 3.0f; }
+	if (ins.IsNew(KEY_INPUT_S)) { targetPos_.z-= 3.0f; }
+	if (ins.IsNew(KEY_INPUT_A)) { targetPos_.x-= 3.0f; }
 
 	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_Q)) { Damage(1, 10); }
 #endif // DEBUG_ENEMY
 
+	//HP減少処理
 	SubHp();
 
 	//やられているなら何もしない
@@ -138,23 +178,6 @@ void Enemy::ChangeSearchState(const SEARCH_STATE _searchState)
 	//状態による情報更新
 	SearchStateInfo_[searchState_]();
 }
-
-//void Enemy::Damage(const int _damage, const int _stunPow)
-//{
-//	//既にやられているなら処理しない
-//	if (!IsAlive()) 
-//	{
-//		//やられたら死亡アニメーション
-//		ResetAnim(ANIM::DEATH, changeSpeedAnim_[ANIM::DEATH]);
-//		return;
-//	}
-//
-//	//ダメージカウント
-//	hp_ -= _damage;
-//
-//	//スタン値カウント
-//	//stunDef_ += _stunPow;
-//}
 
 void Enemy::ChangeState(const STATE _state)
 {
@@ -230,34 +253,57 @@ void Enemy::ChangeStateBreak(void)
 
 void Enemy::ParamLoad(CharacterParamData::UNIT_TYPE type)
 {
-	//共通
-	UnitBase::ParamLoad(type);
-
+	//キャラクターのパラメータデータ取得
 	auto& data = CharacterParamData::GetInstance().GetParamData(type);
+
+	//共通パラメータ
+	UnitBase::ParamLoad(type);
 
 	//歩きの速度
 	walkSpeed_ = data.speed_;
+
+	//走り速度
 	runSpeed_ = data.speed_ * RUN_SPEED_MULTI;
+	
+	//経験値
 	exp_ = data.exp_;
 }
 
 void Enemy::InitAnim()
 {
-	//共通アニメーション
+#pragma region 共通アニメーション設定
+
+	//立ち
 	animNum_.emplace(ANIM::IDLE, ANIM_IDLE);
+	//歩き
 	animNum_.emplace(ANIM::WALK, ANIM_WALK);
+	//走り
 	animNum_.emplace(ANIM::RUN, ANIM_RUN);
+	//ダメージ
 	animNum_.emplace(ANIM::DAMAGE, ANIM_DAMAGE);
+	//死亡
 	animNum_.emplace(ANIM::DEATH, ANIM_DEATH);
+	//出現
 	animNum_.emplace(ANIM::ENTRY, ANIM_ENTRY);
 
-	//アニメーション速度設定
+#pragma endregion
+
+#pragma region アニメーション速度設定
+
+	//立ち
 	changeSpeedAnim_.emplace(ANIM::IDLE, SPEED_ANIM);
+	//歩き
 	changeSpeedAnim_.emplace(ANIM::WALK, SPEED_ANIM_WALK);
+	//走り
 	changeSpeedAnim_.emplace(ANIM::RUN, SPEED_ANIM);
+	//ダメージ
 	changeSpeedAnim_.emplace(ANIM::DAMAGE, SPEED_ANIM);
+	//死亡
 	changeSpeedAnim_.emplace(ANIM::DEATH, SPEED_ANIM);
+	//出現
 	changeSpeedAnim_.emplace(ANIM::ENTRY, SPEED_ANIM);
+
+#pragma endregion
 }
 
 void Enemy::InitEffect(void)
@@ -272,6 +318,7 @@ void Enemy::Alert(void)
 	//クールダウンカウンタ
 	CntUp(alertCnt_);
 
+	//警告終了条件
 	if (!IsAlertTime())isEndAlert_ = true;
 }
 
@@ -290,17 +337,13 @@ void Enemy::Attack(void)
 
 void Enemy::UpdateNml(void)
 {
-	//**********************************************************
-	//終了処理
-	//**********************************************************
+#pragma region 終了処理
 
-	/*誰かが攻撃範囲に入ったら状態を遷移します*/
-	
-	/*処理はゲームシーンにあります*/
+	/*ゲームシーンの当たり判定でやっています*/
 
-	//**********************************************************
-	//動作処理
-	//**********************************************************
+#pragma endregion
+
+#pragma region アニメーション条件
 
 	//待機アニメーション
 	if (moveSpeed_ == 0.0)
@@ -311,10 +354,12 @@ void Enemy::UpdateNml(void)
 	//走りアニメーション
 	else if (moveSpeed_ >= runSpeed_)
 		ResetAnim(ANIM::RUN, changeSpeedAnim_[ANIM::RUN]);
-	
-	//索敵
 
-	//最初のみ
+#pragma endregion
+	
+#pragma region 索敵
+
+	//最初のみ補完する
 	if (startCnt_ < START_CNT)CntUp(startCnt_);
 
 	//ステージに当たったなら
@@ -332,17 +377,17 @@ void Enemy::UpdateNml(void)
 
 	//移動処理
 	Move();
+
+#pragma endregion
 }
 
 void Enemy::UpdateAlert(void)
 {
-	//**********************************************************
-	//終了処理
-	//**********************************************************
+#pragma region 終了処理
 
 	//警告カウンタが終わったなら攻撃開始
 	if (isEndAlert_)
-	{		
+	{
 		//警告終了判定の初期化
 		ResetAlertJudge();
 
@@ -352,19 +397,19 @@ void Enemy::UpdateAlert(void)
 		return;
 	}
 
-	//**********************************************************
-	//動作処理
-	//**********************************************************
+#pragma endregion
+
+#pragma region 警告処理
 
 	//警告
 	Alert();
+
+#pragma endregion
 }
 
 void Enemy::UpdateAtk(void)
 {
-	//**********************************************************
-	//終了処理
-	//**********************************************************
+#pragma region 終了処理
 
 	//攻撃が終わっているなら状態遷移
 	if (isEndAllAtk_)
@@ -377,22 +422,22 @@ void Enemy::UpdateAtk(void)
 		return;
 	}
 
-	//**********************************************************
-	//動作処理
-	//**********************************************************
+#pragma endregion
+
+#pragma region 攻撃処理
 
 	//攻撃処理
 	Attack();
 
 	//攻撃アニメーション
 	ResetAnim(nowSkillAnim_, changeSpeedAnim_[nowSkillAnim_]);
+
+#pragma endregion
 }
 
 void Enemy::UpdateBreak(void)
 {
-	//**********************************************************
-	//終了処理
-	//**********************************************************
+#pragma region 終了処理
 
 	//休憩時間が終わったら
 	if (!IsBreak())
@@ -402,20 +447,22 @@ void Enemy::UpdateBreak(void)
 		return;
 	}
 
-	//**********************************************************
-	//動作処理
-	//**********************************************************
+#pragma endregion
+
+#pragma region 待機処理
 
 	//待機アニメーション
 	ResetAnim(ANIM::IDLE, changeSpeedAnim_[ANIM::IDLE]);
 
 	//攻撃休憩時間カウンタ
 	CntUp(breakCnt_);
+
+#pragma endregion
 }
 
 void Enemy::DrawDebug(void)
 {
-	//デバッグ
+	//デバッグ描画
 	DrawFormatString(0, Application::SCREEN_SIZE_Y - 16, 0xffffff, "EnemyHP = %d", hp_);
 	int statePos = Application::SCREEN_SIZE_Y - 32;
 	switch (state_)
@@ -468,24 +515,17 @@ void Enemy::Draw(void)
 	//UIの描画
 	ui_->Draw(*this);
 
+	//敵が生きている　又は　やられモーション中なら描画する
 	if (IsAlive() || anim_ == ANIM::DEATH && animTotalTime_ >= stepAnim_)
 	{
 		//敵モデルの描画
 		MV1DrawModel(trans_.modelId);
 		
-
-
-		//for (auto& nowSkill : nowSkill_)
-		//{
-		//	//攻撃の描画
-		//	if (nowSkill.IsAttack()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 50.0f, 0xff0f0f, 0xff0f0f, true); }
-		//	else if (nowSkill.IsBacklash()) { DrawSphere3D(nowSkill.pos_, nowSkill.radius_, 5.0f, 0xff0f0f, 0xff0f0f, false); }
-		//}
-
 		//攻撃予兆の描画
 		if (state_ == STATE::ALERT)
 		{
-			DrawPolygon3D(alertVertex_, 2, DX_NONE_GRAPH, false);
+			//予兆用ポリゴン描画
+			DrawPolygon3D(alertVertex_, SQUARE_POLYGON_NUM, DX_NONE_GRAPH, false);
 		}
 	}
 
@@ -505,6 +545,7 @@ const VECTOR Enemy::GetMoveVec(const VECTOR _start, const VECTOR _goal, const fl
 	//移動量を求める
 	VECTOR ret = VScale(targetVec, _speed);
 
+	//移動(方向)ベクトルを返す
 	return ret;
 }
 
@@ -525,18 +566,17 @@ void Enemy::Move(void)
 
 Enemy::ATK& Enemy::CreateSkill(ATK_ACT _atkAct)
 {
-	//**********************************************************
-	//使い終わった攻撃がある場合
-	//**********************************************************
+#pragma region 使い終わった攻撃がある場合
 
 	//使い終わった攻撃に上書き
 	for (auto& nowSkill : nowSkill_)
 	{
+		//攻撃が使い終わっているなら
 		if (nowSkill.IsFinishMotion())
 		{
 			//スキル上書き
 			nowSkill = skills_[_atkAct];
-			
+
 			//カウンタの初期化
 			nowSkill.ResetCnt();
 
@@ -548,9 +588,9 @@ Enemy::ATK& Enemy::CreateSkill(ATK_ACT _atkAct)
 		}
 	}
 
-	//**********************************************************
-	//ない場合
-	//**********************************************************
+#pragma endregion
+
+#pragma region ない場合
 
 	//ランダムでとってきた攻撃の種類を今から発動するスキルに設定
 	nowSkill_.emplace_back(skills_[_atkAct]);
@@ -563,6 +603,8 @@ Enemy::ATK& Enemy::CreateSkill(ATK_ACT _atkAct)
 
 	//処理終了
 	return nowSkill_.back();
+
+#pragma endregion
 }
 
 void Enemy::FinishAnim(void)
@@ -582,6 +624,7 @@ void Enemy::FinishAnim(void)
 	case UnitBase::ANIM::DAMAGE:
 	case UnitBase::ANIM::DEATH:
 	case UnitBase::ANIM::ENTRY:
+		//ループしない
 		break;
 	}
 }
@@ -652,38 +695,51 @@ void Enemy::CreateAlert(const VECTOR& _pos, const float _widthX, const float _wi
 	float radX = _widthX / 2;
 	float radZ = _widthZ / 2;
 
+	//右上の頂点
 	alertVertex_[0].pos = { _pos.x + radX,0.0f,_pos.z + radZ };
 	alertVertex_[0].u = _widthX;
 	alertVertex_[0].v = 0.0f;
 
+	//左下の頂点
 	alertVertex_[1].pos = { _pos.x - radX,0.0f,_pos.z - radZ };
 	alertVertex_[1].u = 0.0f;
 	alertVertex_[1].v = _widthX;
 
+	//左上の頂点
 	alertVertex_[2].pos = { _pos.x - radX,0.0f,_pos.z + radZ };
 	alertVertex_[2].u = 0.0f;
 	alertVertex_[2].v = 0.0f;
 
+	//右上の頂点
 	alertVertex_[3].pos = { _pos.x + radX,0.0f,_pos.z + radZ };
 	alertVertex_[3].u = _widthX;
 	alertVertex_[3].v = 0.0f;
 
+	//右下の頂点
 	alertVertex_[4].pos = { _pos.x + radX,0.0f,_pos.z - radZ };
 	alertVertex_[4].u = _widthX;
 	alertVertex_[4].v = _widthZ;
 
+	//左下の頂点
 	alertVertex_[5].pos = { _pos.x - radX,0.0f,_pos.z - radZ };
 	alertVertex_[5].u = 0.0f;
 	alertVertex_[5].v = _widthZ;
 
+	//四角形の描画準備
 	for (auto& ver : alertVertex_)
 	{
+		//回転するために位置を(0,0)にする
 		ver.pos = VSub(ver.pos, _pos);
+
+		//回転
 		ver.pos = Quaternion::PosAxis(trans_.quaRot, ver.pos);
+		
+		//位置を戻す
 		ver.pos = VAdd(ver.pos, _pos);
 		
-		ver.norm = { 0.0f,0.0f,-1.0f };
-		ver.dif = GetColorU8(255, 0, 0, 100);
+		//表示関係
+		ver.norm = ALERT_NORM;
+		ver.dif = GetColorU8(COLOR_MAX, 0, 0, ALPHA_MAX);
 		ver.spc = GetColorU8(0, 0, 0, 0);
 		ver.su = 0;
 		ver.sv = 0;

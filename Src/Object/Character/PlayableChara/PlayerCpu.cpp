@@ -4,7 +4,17 @@
 
 PlayerCpu::PlayerCpu(void)
 {
-	
+	userOnePos_ = { 0.0f,0.0f,0.0f };
+	atkStartRange_ = 0;
+	calledMoveSpeed_ = 0;
+	cpuState_ = CPU_STATE::NORMAL;
+	isCall_ = false;
+	isEnemySerch_ = false;
+	isMove_ = false;
+	moveStartDelay_ = 0.0f;
+	preAtk_ = ATK_ACT::MAX;
+	preTargetPos_ = { 0.0f,0.0f,0.0f };
+	searchRange_ = SEARCH_RANGE;
 }
 void PlayerCpu::SetParam(void)
 {
@@ -236,7 +246,6 @@ void PlayerCpu::CpuAtkUpdate(void)
 
 void PlayerCpu::CpuBreakUpdate(void)
 {
-	const float BREAK_TIME = 2.0f;
 	ResetAnim(ANIM::IDLE, SPEED_ANIM_IDLE);
 	if (breakCnt_ > BREAK_TIME)
 	{
