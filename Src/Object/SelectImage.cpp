@@ -178,7 +178,6 @@ void SelectImage::Draw(void)
 
 void SelectImage::MoveVertexPos(void)
 {
-	//600,800用
 	mesh_.vertex_[0].pos = { ROLE_MESH_LEFT_X, ROLE_MESH_UNDER_Z, VERTEX_Z + 12.0f };	//左下
 	mesh_.vertex_[1].pos = { ROLE_MESH_RIGHT_X, ROLE_MESH_UNDER_Z, VERTEX_Z + 12.0f };	//右下
 	mesh_.vertex_[2].pos = { ROLE_MESH_LEFT_X, ROLE_MESH_TOP_Z, VERTEX_Z };				//左上
@@ -434,7 +433,6 @@ void SelectImage::NumberUpdate(void)
 		for (int i = 1; i <= playerNum_; i++)
 		{
 			//ディスプレイの設定
-			//data.Input(DataBank::INFO::DHISPLAY_NUM, i);
 			data.Input(DataBank::INFO::USER_NUM, i);
 		}
 
@@ -781,7 +779,7 @@ void SelectImage::ChangeObject(SelectScene::Device& input, int i)
 
 			isPress_ = true;
 
-			//役職を選択
+			//役職を選択する際選択数がじょうげんにいきそうになったらループするように
 			role_ = (role_ + 3) % SceneManager::PLAYER_NUM;
 			if (role_ == 0)role_ = SceneManager::PLAYER_NUM;
 		}

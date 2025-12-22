@@ -216,12 +216,6 @@ void Camera::SetBeforeDrawShake(void)
 
 	// à⁄ìÆêÊç¿ïW
 	 pos_ = VAdd(defaultPos_, velocity);
-
-	//float pow = WIDTH_SHAKE * sinf(stepShake_ * SPEED_SHAKE);
-	//VECTOR velocity = VScale(shakeDir_, pow);
-	//VECTOR newPos = VAdd(defaultPos_, velocity);
-	//pos_ = newPos;
-
 }
 
 void Camera::Draw(void)
